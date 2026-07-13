@@ -21,7 +21,7 @@ mkdir -p "$LOGS" "$PIDS"
 RPC="${RPC:-http://127.0.0.1:8545}"
 CLIENT_URL="http://localhost:3000"
 
-# anvil default keys: #0 deployer/admin (matches contracts/.env.puter),
+# anvil default keys: #0 deployer/admin (matches contracts/.env.local),
 # #1/#2 smoke-test player owner/operator
 ANVIL0=0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80
 ANVIL1=0x59c6995e998f97a5a0044966f0945389dc9e86dae88c7a8412f4603b6b78690d
@@ -39,7 +39,7 @@ ok()  { printf '%s  ✓ %s%s\n' "$GREEN" "$*" "$RESET"; }
 warn(){ printf '%s  ~ %s%s\n' "$YELLOW" "$*" "$RESET"; }
 err() { printf '%s  ✗ %s%s\n' "$RED"   "$*" "$RESET" >&2; }
 
-world_addr() { (. "$CONTRACTS/.env.puter" && printf '%s' "$WORLD"); }
+world_addr() { (. "$CONTRACTS/.env.local" && printf '%s' "$WORLD"); }
 anvil_up()   { cast block-number --rpc-url "$RPC" >/dev/null 2>&1; }
 client_up()  { curl -sf -o /dev/null "$CLIENT_URL" 2>/dev/null; }
 world_up()   { [ "$(cast code "$(world_addr)" --rpc-url "$RPC" 2>/dev/null)" != "0x" ]; }

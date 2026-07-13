@@ -99,6 +99,15 @@ deploy_world() {
   # network-based trace identification
   ( cd "$CONTRACTS" && pnpm deploy:local ) > "$LOGS/deploy.log" 2>&1 \
     || { err "deploy failed — tail of $LOGS/deploy.log:"; tail -20 "$LOGS/deploy.log" >&2; exit 1; }
+  # the deploy is deterministic on a fresh chain — verify it actually landed
+  # at the address .env.local (and everything downstream) expects
+  local deployed
+  deployed="$(grep -oiE 'Deployed world at: 0x[0-9a-f]+' "$LOGS/deploy.log" | tail -1 | grep -oiE '0x[0-9a-f]+')"
+  if [ -n "$deployed" ] && [ "$(echo "$deployed" | tr 'A-F' 'a-f')" != "$(world_addr | tr 'A-F' 'a-f')" ]; then
+    err "deployed world $deployed != WORLD in contracts/.env.local ($(world_addr))"
+    err "chain was not fresh, or the deploy changed — update .env.local or rerun with --redeploy"
+    exit 1
+  fi
   world_up || { err "deploy finished but no code at $(world_addr)"; exit 1; }
   ok "world deployed at $(world_addr)"
   snapshot_save
@@ -109,8 +118,8 @@ start_client() {
     ok "client already up at $CLIENT_URL"
     return
   fi
-  c "starting client (vite, puter mode)"
-  ( cd "$CLIENT" && pnpm dev:puter ) > "$LOGS/client.log" 2>&1 &
+  c "starting client (vite, local mode)"
+  ( cd "$CLIENT" && pnpm dev:local ) > "$LOGS/client.log" 2>&1 &
   save_pid client $!
   for _ in $(seq 1 60); do client_up && break; sleep 1; done
   client_up || { err "client did not come up — see $LOGS/client.log"; exit 1; }
@@ -216,7 +225,10 @@ indexer_down() {
   stop_pid indexer || warn "no indexer pid recorded"
   pkill -f 'cmd/indexer/main.go -mode local' 2>/dev/null || true
   if kamigaze_db_up; then
-    ( cd "$KAMIGAZE" && make stop-db ) >/dev/null 2>&1 && ok "kamigaze_db stopped"
+    # not `make stop-db` — kamigaze's target runs `docker compose down db`,
+    # which modern compose rejects (services arg unsupported for `down`)
+    docker stop kamigaze_db >/dev/null 2>&1 && ok "kamigaze_db stopped" \
+      || warn "could not stop kamigaze_db"
   fi
 }
 
@@ -230,6 +242,11 @@ indexer_status() {
 
 cmd_start() {
   local redeploy="${1:-}"
+  if [ "$redeploy" = "--redeploy" ] && anvil_up; then
+    c "redeploy requested — recycling the running chain"
+    kill_anvil
+    sleep 1
+  fi
   if ! anvil_up && [ -f "$SNAP" ] && [ "$redeploy" != "--redeploy" ]; then
     snapshot_restore
   else
@@ -245,9 +262,21 @@ cmd_start() {
 
 cmd_stop() {
   stop_pid client || warn "no client pid recorded"
-  pkill -f 'vite --force --port 3000 --mode puter' 2>/dev/null || true
+  # the recorded pid is the pnpm wrapper; kill the vite listener by port
+  local vitepid; vitepid="$(lsof -nP -iTCP:3000 -sTCP:LISTEN -t 2>/dev/null | head -1 || true)"
+  if [ -n "$vitepid" ]; then kill "$vitepid" 2>/dev/null || true; fi
   indexer_down
   stop_pid anvil || warn "no anvil pid recorded"
+  kill_anvil
+}
+
+# recorded pids go stale across script invocations — the port is the truth
+kill_anvil() {
+  local pid; pid="$(lsof -nP -iTCP:8545 -sTCP:LISTEN -t 2>/dev/null | head -1 || true)"
+  if [ -n "$pid" ]; then
+    kill "$pid" 2>/dev/null && ok "stopped anvil (pid $pid)" || warn "could not stop anvil (pid $pid)"
+  fi
+  rm -f "$PIDS/anvil.pid"
 }
 
 cmd_status() {

@@ -21,7 +21,7 @@ repo root, or invoke `stack.sh` directly.
 anvil (:8545)
  ├─ deploy world (pnpm -F contracts deploy:local, FOUNDRY_OFFLINE=true)
  │   ├─ snapshot (.local-stack/anvil-state.json.gz — auto-saved post-deploy)
- │   └─ client (vite :3000, puter mode)
+ │   └─ client (vite :3000, development mode + .env.local)
  │       → http://localhost:3000/?worldAddress=<world>&initialBlockNumber=<block>
  └─ kamigaze indexer (go, sibling repo)              [optional]
      └─ kamigaze_db (Docker Postgres :5432)
@@ -70,8 +70,19 @@ fresh db — rerun them after the first backfill if you need them.
   for many minutes after simulation doing network-based trace identification
   (openchain/etherscan lookups) before broadcasting.
 - The world address is deterministic on a fresh chain and matches
-  `packages/contracts/.env.puter` (`WORLD=0xa852...`), which is what
+  `packages/contracts/.env.local` (`WORLD=0xa852...`), which is what
   `smoke:pool` reads.
+- "invalid chain id for signer" in the client → your gitignored
+  `packages/client/.env.local` predates the 31337 standardization: set
+  `VITE_CHAIN_ID=31337` (and check `VITE_WORLD_ADDRESS=0xa852...`), then
+  restart vite — dotenv is read at server start, not hot-reloaded.
+- Local env files are `.env.local` in both packages (renamed from `.env.puter`;
+  the deploy tooling runs with `NODE_ENV=local`). Vite forbids `local` as a
+  *mode* name, so `pnpm -F client dev:local` runs `--mode development`. Vite
+  also auto-loads `.env.local` in every mode as a low-priority override — any
+  key present there must be pinned explicitly in `.env.production`/`.env.testing`
+  (done for `VITE_RPC_TRANSPORT_URL`) or prod-mode dev sessions inherit
+  localhost values.
 - Known data gotcha: fresh deploys crash during init-script generation if
   `deployment/world/data/**/*.csv` contains fractional uint values (e.g. a
   listing priced at `0.05`); the generator feeds `Number(row[...])` straight
