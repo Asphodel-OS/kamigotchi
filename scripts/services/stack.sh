@@ -14,6 +14,7 @@
 #   scripts/services/stack.sh indexer <up|down|status|logs>
 #                                                    kamigaze indexer + its Postgres (needs Docker
 #                                                    and the sibling ../kamigaze repo)
+#   scripts/services/stack.sh fund <address> [eth]   set an address's local ETH balance (default 10)
 #   scripts/services/stack.sh logs [service]         tail logs (anvil|deploy|client|indexer)
 #
 # Also runnable as `pnpm --filter services <start|stop|status|smoke|logs|...>`.
@@ -269,6 +270,16 @@ cmd_logs() {
   if [ -n "$svc" ]; then tail -f "$LOGS/$svc.log"; else tail -f "$LOGS"/*.log; fi
 }
 
+# fund an address with local ETH (anvil_setBalance: instant, no sender needed)
+cmd_fund() {
+  local addr="${1:-}" eth="${2:-10}"
+  [ -n "$addr" ] || { err "usage: stack.sh fund <address> [eth-amount, default 10]"; exit 1; }
+  anvil_up || { err "anvil is down — run start first"; exit 1; }
+  local wei; wei="$(cast to-wei "$eth" eth)"
+  cast rpc anvil_setBalance "$addr" "$(cast to-hex "$wei")" --rpc-url "$RPC" >/dev/null
+  ok "$addr balance set to $(cast from-wei "$(cast balance "$addr" --rpc-url "$RPC")") ETH"
+}
+
 case "${1:-}" in
   start)    cmd_start "${2:-}" ;;
   stop)     cmd_stop ;;
@@ -280,6 +291,7 @@ case "${1:-}" in
   indexer)  case "${2:-}" in
               up) indexer_up ;; down) indexer_down ;; logs) cmd_logs indexer ;; *) indexer_status ;;
             esac ;;
+  fund)     cmd_fund "${2:-}" "${3:-}" ;;
   logs)     cmd_logs "${2:-}" ;;
-  *) sed -n '2,19p' "${BASH_SOURCE[0]}" | sed 's/^# \{0,1\}//'; exit 1 ;;
+  *) sed -n '2,20p' "${BASH_SOURCE[0]}" | sed 's/^# \{0,1\}//'; exit 1 ;;
 esac

@@ -11,6 +11,7 @@
     "smoke": "bash stack.sh smoke",
     "snapshot": "bash stack.sh snapshot save",
     "snapshot:clear": "bash stack.sh snapshot clear",
+    "fund": "bash stack.sh fund",
     "indexer": "bash stack.sh indexer up",
     "indexer:down": "bash stack.sh indexer down",
     "logs": "bash stack.sh logs"
