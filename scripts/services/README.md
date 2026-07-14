@@ -11,7 +11,8 @@ repo root, or invoke `stack.sh` directly.
 | `pnpm --filter services status` | Health-check anvil / world / client / snapshot / kamigaze. |
 | `pnpm --filter services smoke` | Run the pool AMM smoke test (`deployment/contracts/PoolSmoke.s.sol`) against the live world. |
 | `pnpm --filter services snapshot` / `snapshot:clear` | Save / delete the anvil state snapshot manually. |
-| `pnpm --filter services indexer` / `indexer:down` | Start / stop the kamigaze indexer + its Postgres (needs Docker + the sibling `../kamigaze` repo). |
+| `pnpm --filter services kamigaze` / `kamigaze:down` | Start / stop all three kamigaze services + Postgres (needs Docker + the sibling `../kamigaze` repo). |
+| `pnpm --filter services indexer` / `indexer:down` | Just the kamigaze ingestion service (legacy alias). |
 | `pnpm --filter services stop` | Stop everything this script started (client, indexer, db, anvil). |
 | `pnpm --filter services logs [svc]` | Tail logs (`anvil` \| `deploy` \| `client` \| `indexer`). |
 
@@ -23,9 +24,17 @@ anvil (:8545)
  │   ├─ snapshot (.local-stack/anvil-state.json.gz — auto-saved post-deploy)
  │   └─ client (vite :3000, development mode + .env.local)
  │       → http://localhost:3000/?worldAddress=<world>&initialBlockNumber=<block>
- └─ kamigaze indexer (go, sibling repo)              [optional]
-     └─ kamigaze_db (Docker Postgres :5432)
+ └─ kamigaze (go, sibling repo — three services)     [optional]
+     ├─ kamigaze_db (Docker Postgres :5432)
+     ├─ indexer   chain → Postgres ingestion
+     ├─ snapshot  client bootstrap state (grpc :50051, grpc-web :8080)
+     └─ streamer  live event stream (grpc :50061, grpc-web :50062)
 ```
+
+With kamigaze up and `VITE_KAMIGAZE_URL` / `VITE_KAMIGAZE_STREAM_URL` in the
+client's `.env.local` (pointing at :8080 / :50062), the client boots from the
+snapshot service in seconds instead of replaying every event from the node.
+Remove those env keys to fall back to full replay.
 
 State, logs, pids, and the snapshot live in `.local-stack/` at the repo root
 (gitignored).

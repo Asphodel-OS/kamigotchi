@@ -54,6 +54,10 @@ export const getLocalConfig = (provider?: BrowserProvider): NetworkConfig => {
     wsRpc: 'ws://localhost:8545',
     worldAddress: params.get('worldAddress') ?? '0xceeDaE2390570eD717A8c07f462D59234b12D39d',
     initialBlockNumber: parseInt(params.get('initialBlockNumber') ?? '0'),
+    // boot from a local kamigaze when configured (scripts/services: kamigaze up);
+    // undefined falls back to full event replay from the local node
+    snapshotServiceUrl: import.meta.env.VITE_KAMIGAZE_URL || undefined,
+    streamServiceUrl: import.meta.env.VITE_KAMIGAZE_STREAM_URL || undefined,
   };
 
   // EOAs and privatekey

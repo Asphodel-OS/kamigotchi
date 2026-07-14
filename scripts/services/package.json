@@ -12,6 +12,8 @@
     "snapshot": "bash stack.sh snapshot save",
     "snapshot:clear": "bash stack.sh snapshot clear",
     "fund": "bash stack.sh fund",
+    "kamigaze": "bash stack.sh kamigaze up",
+    "kamigaze:down": "bash stack.sh kamigaze down",
     "indexer": "bash stack.sh indexer up",
     "indexer:down": "bash stack.sh indexer down",
     "logs": "bash stack.sh logs"

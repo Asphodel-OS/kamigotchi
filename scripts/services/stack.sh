@@ -11,9 +11,12 @@
 #   scripts/services/stack.sh smoke                  run the pool AMM smoke test on the live world
 #   scripts/services/stack.sh snapshot <save|clear|status>
 #                                                    manage the anvil state snapshot
-#   scripts/services/stack.sh indexer <up|down|status|logs>
-#                                                    kamigaze indexer + its Postgres (needs Docker
-#                                                    and the sibling ../kamigaze repo)
+#   scripts/services/stack.sh kamigaze <up|down|status>
+#                                                    all three kamigaze services + Postgres (needs
+#                                                    Docker and the sibling ../kamigaze repo)
+#   scripts/services/stack.sh kamigaze <indexer|snapshot|streamer> <up|down|logs>
+#                                                    one kamigaze service ("indexer" alone still
+#                                                    works as an alias for the ingestion service)
 #   scripts/services/stack.sh fund <address> [eth]   set an address's local ETH balance (default 10)
 #   scripts/services/stack.sh logs [service]         tail logs (anvil|deploy|client|indexer)
 #
@@ -127,9 +130,16 @@ start_client() {
 }
 
 ##################
-# INDEXER (kamigaze)
+# KAMIGAZE (the indexer — one repo, three services)
+#   indexer:  chain → Postgres ingestion
+#   snapshot: serves client bootstrap state from Postgres (grpc :50051, grpc-web :8080)
+#   streamer: serves live event stream (grpc :50061, grpc-web :50062)
 
-indexer_pid_alive() { [ -f "$PIDS/indexer.pid" ] && kill -0 "$(cat "$PIDS/indexer.pid")" 2>/dev/null; }
+KAMIGAZE_SVCS=(indexer snapshot streamer)
+SNAPSHOT_HTTP_PORT=8080 # cmd/snapshot defaults its http port to :80 (privileged)
+STREAMER_GRPC_PORT=50061 # its grpc-web port is grpc+1 (50062)
+
+svc_pid_alive() { [ -f "$PIDS/kamigaze-$1.pid" ] && kill -0 "$(cat "$PIDS/kamigaze-$1.pid")" 2>/dev/null; }
 
 # start the Docker daemon if it isn't running (macOS: Docker Desktop)
 ensure_docker() {
@@ -143,28 +153,27 @@ ensure_docker() {
   exit 1
 }
 
-indexer_up() {
+# postgres + one-time schema — shared prerequisite for all three services
+kamigaze_db_ensure() {
   [ -d "$KAMIGAZE" ] || { err "kamigaze repo not found at $KAMIGAZE"; exit 1; }
   ensure_docker
-  anvil_up && world_up || { err "anvil/world not up — run start first"; exit 1; }
 
-  # 1. postgres
   if kamigaze_db_up; then
     ok "kamigaze_db already running"
   else
     c "starting kamigaze Postgres"
-    ( cd "$KAMIGAZE" && make start-db ) > "$LOGS/indexer.log" 2>&1
+    ( cd "$KAMIGAZE" && make start-db ) > "$LOGS/kamigaze-db.log" 2>&1
     # require a real query, not just pg_isready — on a fresh data dir postgres
     # initdb's then restarts, and pg_isready passes during the transient window
     for _ in $(seq 1 30); do
       docker exec kamigaze_db psql -U kami -d dev -qc 'select 1' >/dev/null 2>&1 && break; sleep 1
     done
     docker exec kamigaze_db psql -U kami -d dev -qc 'select 1' >/dev/null 2>&1 \
-      || { err "kamigaze_db not ready — see $LOGS/indexer.log"; exit 1; }
+      || { err "kamigaze_db not ready — see $LOGS/kamigaze-db.log"; exit 1; }
     ok "kamigaze_db up"
   fi
 
-  # 2. schema (one-time; marker cleared via `indexer down --nuke-schema` by hand)
+  # one-time schema deploy (marker-gated; rm the marker to force a rerun)
   if [ ! -f "$STATE/kamigaze-schema.done" ]; then
     c "deploying kamigaze db schema (one-time)"
     (
@@ -184,48 +193,89 @@ indexer_up() {
       # pipefail would turn yes's SIGPIPE into a failure
       source sql/deployment/venv/bin/activate \
         && printf 'y\ny\ny\n' | python3 sql/deployment/deploy.py local dev 127.0.0.1
-    ) >> "$LOGS/indexer.log" 2>&1 \
+    ) >> "$LOGS/kamigaze-db.log" 2>&1 \
       && { touch "$STATE/kamigaze-schema.done"; ok "schema deployed"; } \
-      || { err "schema deploy failed — see $LOGS/indexer.log (README one-time steps may be needed)"; exit 1; }
+      || { err "schema deploy failed — see $LOGS/kamigaze-db.log (README one-time steps may be needed)"; exit 1; }
   fi
+}
 
-  # 3. the indexer itself. exported vars beat .env.local (godotenv doesn't
-  # override), so point it at the local chain + host-visible db without
-  # touching kamigaze's config
-  if indexer_pid_alive; then
-    ok "indexer already running (pid $(cat "$PIDS/indexer.pid"))"
+# compose a db connection string aimed at the host-visible postgres, with
+# credentials sourced from kamigaze's own .env.local. exported CONN_STRs beat
+# the file's (which point at the docker-network hostname and may predate the
+# .dist template — e.g. missing DB_RO_CONN_STR entirely)
+kamigaze_conn_str() {
+  ( . "$KAMIGAZE/.env.local" 2>/dev/null; \
+    printf 'host=127.0.0.1 port=%s user=%s password=%s dbname=%s sslmode=disable connect_timeout=10' \
+      "${DB_PORT:-5432}" "${DB_USER:-kami}" "${DB_PWD:-}" "${DB_NAME:-dev}" )
+}
+
+# run one kamigaze service on the host. exported vars beat .env.local
+# (godotenv doesn't override), so we point each at the local chain and the
+# host-visible db without touching kamigaze's config
+kamigaze_svc_up() {
+  local svc="$1"
+  kamigaze_db_ensure
+  if svc_pid_alive "$svc"; then
+    ok "kamigaze $svc already running (pid $(cat "$PIDS/kamigaze-$svc.pid"))"
     return
   fi
-  c "starting kamigaze indexer against $(world_addr)"
-  local start; start="$(meta_get start || echo 0)"
-  local emitter; emitter="$(cast call "$(world_addr)" '_emitter()(address)' --rpc-url "$RPC")"
-  # INDEXER_OVERRIDE=true forces reprocessing from the start block, ignoring
-  # the db's last-seen block (one-shot repair after a bad starting block)
-  local logmark; logmark="$(wc -l < "$LOGS/indexer.log" 2>/dev/null || echo 0)"
+
+  local start emitter=""
+  start="$(meta_get start || echo 0)"
+  anvil_up && emitter="$(cast call "$(world_addr)" '_emitter()(address)' --rpc-url "$RPC" 2>/dev/null || true)"
+
+  local cmdargs=()
+  case "$svc" in
+    indexer)
+      anvil_up && world_up || { err "anvil/world not up — run start first"; exit 1; }
+      # INDEXER_OVERRIDE=true forces reprocessing from the start block,
+      # ignoring the db's last-seen block (one-shot repair)
+      cmdargs=(./cmd/indexer/main.go -mode local
+        -world-addresses "$(world_addr)" -emitter-addresses "$emitter"
+        -starting-block "${start:-0}" -override-db-block "${INDEXER_OVERRIDE:-false}") ;;
+    snapshot)
+      cmdargs=(./cmd/snapshot/main.go -mode local -port 50051 -http-port "$SNAPSHOT_HTTP_PORT") ;;
+    streamer)
+      anvil_up || { err "anvil not up — run start first"; exit 1; }
+      cmdargs=(./cmd/streamer/main.go -mode local -port "$STREAMER_GRPC_PORT" -world-addresses "$(world_addr)") ;;
+    *) err "unknown kamigaze service: $svc"; exit 1 ;;
+  esac
+
+  c "starting kamigaze $svc"
+  local log="$LOGS/kamigaze-$svc.log"
+  local logmark; logmark="$(wc -l < "$log" 2>/dev/null || echo 0)"
+  local conn; conn="$(kamigaze_conn_str)"
   (
     cd "$KAMIGAZE" \
-      && DB_HOST=127.0.0.1 EMITTER_ADDRESS="$emitter" \
+      && DB_HOST=127.0.0.1 DB_RO_HOST=127.0.0.1 \
+         DB_CONN_STR="$conn" DB_RO_CONN_STR="$conn" \
+         EMITTER_ADDRESS="$emitter" \
          RPC_HTTP_PROVIDER="http://127.0.0.1:8545" RPC_WS_PROVIDER="ws://127.0.0.1:8545" \
-         go run ./cmd/indexer/main.go -mode local \
-           -world-addresses "$(world_addr)" -emitter-addresses "$emitter" \
-           -starting-block "${start:-0}" \
-           -override-db-block "${INDEXER_OVERRIDE:-false}"
-  ) >> "$LOGS/indexer.log" 2>&1 &
-  save_pid indexer $!
+         go run "${cmdargs[@]}"
+  ) >> "$log" 2>&1 &
+  save_pid "kamigaze-$svc" $!
   # `go run` compiles first, so wait for the app to actually boot before judging
   for _ in $(seq 1 45); do
-    indexer_pid_alive || break
-    tail -n +"$((logmark + 1))" "$LOGS/indexer.log" | grep -q 'Configuration loaded' && break
+    svc_pid_alive "$svc" || break
+    tail -n +"$((logmark + 1))" "$log" 2>/dev/null | grep -qiE 'configuration loaded|listening|server' && break
     sleep 2
   done
   sleep 3
-  indexer_pid_alive || { err "indexer exited — tail of $LOGS/indexer.log:"; tail -10 "$LOGS/indexer.log" >&2; exit 1; }
-  ok "indexer up (pid $(cat "$PIDS/indexer.pid"), log $LOGS/indexer.log)"
+  svc_pid_alive "$svc" || { err "kamigaze $svc exited — tail of $log:"; tail -10 "$log" >&2; exit 1; }
+  ok "kamigaze $svc up (pid $(cat "$PIDS/kamigaze-$svc.pid"), log $log)"
 }
 
-indexer_down() {
-  stop_pid indexer || warn "no indexer pid recorded"
-  pkill -f 'cmd/indexer/main.go -mode local' 2>/dev/null || true
+kamigaze_svc_down() {
+  local svc="$1"
+  stop_pid "kamigaze-$svc" || true
+  stop_pid "$svc" || true # legacy pid name from before the split
+  pkill -f "cmd/$svc/main.go -mode local" 2>/dev/null || true
+}
+
+kamigaze_up() { local s; for s in "${KAMIGAZE_SVCS[@]}"; do kamigaze_svc_up "$s"; done; }
+
+kamigaze_down() {
+  local s; for s in "${KAMIGAZE_SVCS[@]}"; do kamigaze_svc_down "$s"; done
   if kamigaze_db_up; then
     # not `make stop-db` — kamigaze's target runs `docker compose down db`,
     # which modern compose rejects (services arg unsupported for `down`)
@@ -234,9 +284,13 @@ indexer_down() {
   fi
 }
 
-indexer_status() {
+kamigaze_status() {
   if kamigaze_db_up; then ok "kamigaze_db: up"; else err "kamigaze_db: down"; fi
-  if indexer_pid_alive; then ok "indexer: up (pid $(cat "$PIDS/indexer.pid"))"; else err "indexer: down"; fi
+  local s
+  for s in "${KAMIGAZE_SVCS[@]}"; do
+    if svc_pid_alive "$s"; then ok "kamigaze $s: up (pid $(cat "$PIDS/kamigaze-$s.pid"))"
+    else err "kamigaze $s: down"; fi
+  done
 }
 
 ##################
@@ -256,6 +310,11 @@ cmd_start() {
     deploy_world "$redeploy"
   fi
   start_client
+  # the client boots via kamigaze's snapshot service when its env points there;
+  # warn if it's configured but the services aren't running
+  if grep -q 'VITE_KAMIGAZE_URL' "$CLIENT/.env.local" 2>/dev/null && ! svc_pid_alive snapshot; then
+    warn "client .env.local points at kamigaze but it isn't running — run: stack.sh kamigaze up"
+  fi
   local start; start="$(meta_get start || echo 0)"
   echo
   c "stack is up:"
@@ -267,7 +326,7 @@ cmd_stop() {
   # the recorded pid is the pnpm wrapper; kill the vite listener by port
   local vitepid; vitepid="$(lsof -nP -iTCP:3000 -sTCP:LISTEN -t 2>/dev/null | head -1 || true)"
   if [ -n "$vitepid" ]; then kill "$vitepid" 2>/dev/null || true; fi
-  indexer_down
+  kamigaze_down
   stop_pid anvil || warn "no anvil pid recorded"
   kill_anvil
 }
@@ -286,7 +345,7 @@ cmd_status() {
   if world_up; then ok "world: deployed at $(world_addr)"; else err "world: no code at $(world_addr)"; fi
   if client_up; then ok "client: up at $CLIENT_URL"; else err "client: down"; fi
   snapshot_status
-  [ -d "$KAMIGAZE" ] && indexer_status
+  [ -d "$KAMIGAZE" ] && kamigaze_status
 }
 
 cmd_smoke() {
@@ -319,10 +378,21 @@ case "${1:-}" in
   snapshot) case "${2:-}" in
               save) snapshot_save ;; clear) snapshot_clear ;; *) snapshot_status ;;
             esac ;;
+  kamigaze) case "${2:-}" in
+              up) kamigaze_up ;; down) kamigaze_down ;;
+              indexer|snapshot|streamer)
+                case "${3:-}" in
+                  up) kamigaze_svc_up "$2" ;; down) kamigaze_svc_down "$2" ;;
+                  logs) cmd_logs "kamigaze-$2" ;; *) kamigaze_status ;;
+                esac ;;
+              *) kamigaze_status ;;
+            esac ;;
+  # legacy alias for the ingestion service
   indexer)  case "${2:-}" in
-              up) indexer_up ;; down) indexer_down ;; logs) cmd_logs indexer ;; *) indexer_status ;;
+              up) kamigaze_svc_up indexer ;; down) kamigaze_svc_down indexer ;;
+              logs) cmd_logs kamigaze-indexer ;; *) kamigaze_status ;;
             esac ;;
   fund)     cmd_fund "${2:-}" "${3:-}" ;;
   logs)     cmd_logs "${2:-}" ;;
-  *) sed -n '2,20p' "${BASH_SOURCE[0]}" | sed 's/^# \{0,1\}//'; exit 1 ;;
+  *) sed -n '2,23p' "${BASH_SOURCE[0]}" | sed 's/^# \{0,1\}//'; exit 1 ;;
 esac
