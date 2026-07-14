@@ -37,7 +37,7 @@ start_anvil() {
   # same flags as contracts' node:local. the fixed genesis timestamp applies
   # only to fresh chains — a restored chain must keep its own (later) clock or
   # time-dependent contracts (TWAP oracles, cooldowns) underflow
-  local args=(--chain-id 1337 -b 1 --base-fee 0 --gas-price 0 --gas-limit 10000000000)
+  local args=(--chain-id 31337 -b 1 --base-fee 0 --gas-price 0 --gas-limit 10000000000)
   if [ -n "$load" ]; then args+=(--load-state "$load"); else args+=(--timestamp 1708214400); fi
   anvil "${args[@]}" > "$LOGS/anvil.log" 2>&1 &
   save_pid anvil $!

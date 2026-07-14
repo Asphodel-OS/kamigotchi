@@ -14,7 +14,7 @@
     "test": "pnpm build:codegen && FOUNDRY_PROFILE=build forge test --contracts test --gas-limit=10000000000000",
     "nuke": "rimraf abi types out node_modules",
     "----- SPECIFIC COMMANDS -----": "---------------------------",
-    "deploy:local": "NODE_ENV=local FOUNDRY_OFFLINE=true pnpm deploy:script  --forge='--code-size-limit 9999999'",
+    "deploy:local": "NODE_ENV=local FOUNDRY_OFFLINE=true pnpm deploy:script  --forge='--code-size-limit 9999999 --skip-simulation'",
     "deploy:local:partial": "pnpm deploy:local --partial",
     "smoke:pool": "sh -c '. ./.env.local && FOUNDRY_OFFLINE=true forge script deployment/contracts/PoolSmoke.s.sol:PoolSmoke --broadcast --fork-url $RPC --priority-gas-price=0 --with-gas-price=0 --skip test --sig \"run(uint256,uint256,uint256,address)\" $PRIV_KEY 0x59c6995e998f97a5a0044966f0945389dc9e86dae88c7a8412f4603b6b78690d 0x5de4111afa1a4b94908f83103eb1f1706367c2e68ca870fc3fb9a804cdab365a $WORLD'",
     "deploy:test": "NODE_ENV=testing pnpm deploy:script --forge='-g=88 --batch-size=5'",
