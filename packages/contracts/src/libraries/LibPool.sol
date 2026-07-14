@@ -9,7 +9,6 @@ import { LibTypes } from "solecs/LibTypes.sol";
 import { IdHolderComponent, ID as IdHolderCompID } from "components/IdHolderComponent.sol";
 import { IDTypeComponent, ID as IDTypeCompID } from "components/IDTypeComponent.sol";
 import { ValueComponent, ID as ValueCompID } from "components/ValueComponent.sol";
-import { ValuesComponent, ID as ValuesCompID } from "components/ValuesComponent.sol";
 
 import { FixedPointMathLib } from "utils/FixedPointMathLib.sol";
 import { LibEmitter } from "libraries/utils/LibEmitter.sol";
@@ -21,9 +20,10 @@ import { LibPoolRegistry as LibRegistry } from "libraries/LibPoolRegistry.sol";
 uint256 constant BPS_DENOMINATOR = 10000;
 
 /** @notice
- * LibPool handles all runtime interactions with Pools: swaps, liquidity
- * provision and the price oracle. Constant-product (x*y=k) semantics with
- * the swap fee accruing to reserves (LPs earn it pro-rata on burn).
+ * LibPool handles all runtime interactions with Pools: swaps and liquidity
+ * provision. Constant-product (x*y=k) semantics with the swap fee accruing
+ * to reserves (LPs earn it pro-rata on burn). Total LP supply lives in the
+ * pool entity's Value component (its fee sits in Rate — see LibPoolRegistry).
  *
  * All rounding floors in the pool's favor, so k never decreases.
  *
@@ -48,7 +48,6 @@ library LibPool {
     uint256 minAmountOut
   ) public returns (uint256 amountOut) {
     require(amountIn > 0, "Pool: zero input");
-    pokeOracle(comps, poolID);
 
     uint256 reserveIn = LibInventory.getBalanceOf(comps, poolID, indexIn);
     uint256 reserveOut = LibInventory.getBalanceOf(comps, poolID, indexOut);
@@ -77,8 +76,6 @@ library LibPool {
     uint256 accID,
     AddLiqParams memory p
   ) public returns (uint256 amtA, uint256 amtB, uint256 liquidity) {
-    pokeOracle(comps, poolID);
-
     uint256 reserveA = LibInventory.getBalanceOf(comps, poolID, p.indexA);
     uint256 reserveB = LibInventory.getBalanceOf(comps, poolID, p.indexB);
 
@@ -117,7 +114,6 @@ library LibPool {
     RemoveLiqParams memory p
   ) public returns (uint256 amtA, uint256 amtB) {
     require(p.shares > 0, "Pool: zero shares");
-    pokeOracle(comps, poolID);
 
     uint256 supply = getTotalSupply(comps, poolID);
     amtA = (p.shares * LibInventory.getBalanceOf(comps, poolID, p.indexA)) / supply;
@@ -142,7 +138,7 @@ library LibPool {
       IDTypeComponent(getAddrByID(comps, IDTypeCompID)).set(shareID, poolID);
     }
     ValueComponent(getAddrByID(comps, ValueCompID)).inc(shareID, amt);
-    ValueComponent(getAddrByID(comps, ValueCompID)).inc(LibRegistry.genSupplyID(poolID), amt);
+    ValueComponent(getAddrByID(comps, ValueCompID)).inc(poolID, amt); // total supply on the pool
   }
 
   /// @notice burn LP shares from a holder, deleting the position entity at 0
@@ -159,7 +155,7 @@ library LibPool {
       IDTypeComponent(getAddrByID(comps, IDTypeCompID)).remove(shareID);
       valComp.remove(shareID);
     } else valComp.set(shareID, newBal);
-    valComp.dec(LibRegistry.genSupplyID(poolID), amt);
+    valComp.dec(poolID, amt); // total supply on the pool
   }
 
   /// @notice clear the pool's own locked shares; only used during pool removal
@@ -172,7 +168,7 @@ library LibPool {
     IdHolderComponent(getAddrByID(comps, IdHolderCompID)).remove(shareID);
     IDTypeComponent(getAddrByID(comps, IDTypeCompID)).remove(shareID);
     valComp.remove(shareID);
-    valComp.dec(LibRegistry.genSupplyID(poolID), bal);
+    valComp.dec(poolID, bal); // total supply on the pool
   }
 
   function getShares(
@@ -184,32 +180,7 @@ library LibPool {
   }
 
   function getTotalSupply(IUintComp comps, uint256 poolID) internal view returns (uint256) {
-    return ValueComponent(getAddrByID(comps, ValueCompID)).safeGet(LibRegistry.genSupplyID(poolID));
-  }
-
-  /////////////////
-  // ORACLE
-
-  /// @notice accumulate time-weighted prices (UniswapV2-style), called before reserves change
-  /// @dev oracle entity holds [priceLoCumulative, priceHiCumulative, lastUpdateTs];
-  ///      prices are 1e18-scaled spot prices of each item in terms of the other
-  function pokeOracle(IUintComp comps, uint256 poolID) internal {
-    uint256 oracleID = LibRegistry.genOracleID(poolID);
-    ValuesComponent valsComp = ValuesComponent(getAddrByID(comps, ValuesCompID));
-    uint256[] memory vals = valsComp.get(oracleID);
-
-    uint256 elapsed = block.timestamp - vals[2];
-    if (elapsed == 0) return;
-
-    (uint32 lo, uint32 hi) = LibRegistry.getItemIndices(comps, poolID);
-    uint256 reserveLo = LibInventory.getBalanceOf(comps, poolID, lo);
-    uint256 reserveHi = LibInventory.getBalanceOf(comps, poolID, hi);
-    if (reserveLo > 0 && reserveHi > 0) {
-      vals[0] += ((reserveHi * 1e18) / reserveLo) * elapsed;
-      vals[1] += ((reserveLo * 1e18) / reserveHi) * elapsed;
-    }
-    vals[2] = block.timestamp;
-    valsComp.set(oracleID, vals);
+    return ValueComponent(getAddrByID(comps, ValueCompID)).safeGet(poolID);
   }
 
   /////////////////

@@ -5,9 +5,9 @@ import { IUint256Component as IUintComp } from "solecs/interfaces/IUint256Compon
 import { getAddrByID } from "solecs/utils.sol";
 
 import { KeysComponent, ID as KeysCompID } from "components/KeysComponent.sol";
+import { RateComponent, ID as RateCompID } from "components/RateComponent.sol";
 import { TimeStartComponent, ID as TimeStartCompID } from "components/TimeStartComponent.sol";
 import { ValueComponent, ID as ValueCompID } from "components/ValueComponent.sol";
-import { ValuesComponent, ID as ValuesCompID } from "components/ValuesComponent.sol";
 
 import { LibDisabled } from "libraries/utils/LibDisabled.sol";
 import { LibEntityType } from "libraries/utils/LibEntityType.sol";
@@ -19,13 +19,12 @@ import { LibEntityType } from "libraries/utils/LibEntityType.sol";
  * Pool entities are shaped as follows:
  *  - EntityType: POOL
  *  - Keys: [itemIndexLo, itemIndexHi] (canonically sorted, lo < hi)
- *  - Value: the swap fee, in basis points
+ *  - Rate: the swap fee, in basis points
+ *  - Value: total LP shares outstanding
  *  - TimeStart: the time the pool was created
  *  - IsDisabled: (optional) pauses swaps and liquidity adds
  *
- * Child entities hanging off a pool:
- *  - Supply (Value): total LP shares outstanding
- *  - Oracle (Values): [priceLoCumulative, priceHiCumulative, lastUpdateTs]
+ * Related entities:
  *  - Reserves: the pool's own inventory instances (see LibInventory)
  *  - Shares: LP positions (see LibPool)
  */
@@ -49,12 +48,8 @@ library LibPoolRegistry {
     keys[0] = lo;
     keys[1] = hi;
     KeysComponent(getAddrByID(comps, KeysCompID)).set(id, keys);
-    ValueComponent(getAddrByID(comps, ValueCompID)).set(id, feeBps);
+    RateComponent(getAddrByID(comps, RateCompID)).set(id, feeBps);
     TimeStartComponent(getAddrByID(comps, TimeStartCompID)).set(id, block.timestamp);
-
-    uint256[] memory oracle = new uint256[](3);
-    oracle[2] = block.timestamp;
-    ValuesComponent(getAddrByID(comps, ValuesCompID)).set(genOracleID(id), oracle);
   }
 
   /// @notice remove all data associated with a pool
@@ -62,19 +57,17 @@ library LibPoolRegistry {
   function remove(IUintComp comps, uint256 id) internal {
     LibEntityType.remove(comps, id);
     KeysComponent(getAddrByID(comps, KeysCompID)).remove(id);
-    ValueComponent(getAddrByID(comps, ValueCompID)).remove(id);
+    RateComponent(getAddrByID(comps, RateCompID)).remove(id);
+    ValueComponent(getAddrByID(comps, ValueCompID)).remove(id); // total LP supply
     TimeStartComponent(getAddrByID(comps, TimeStartCompID)).remove(id);
     LibDisabled.set(comps, id, false);
-
-    ValueComponent(getAddrByID(comps, ValueCompID)).remove(genSupplyID(id));
-    ValuesComponent(getAddrByID(comps, ValuesCompID)).remove(genOracleID(id));
   }
 
   /////////////////
   // SETTERS
 
   function setFee(IUintComp comps, uint256 id, uint256 feeBps) internal {
-    ValueComponent(getAddrByID(comps, ValueCompID)).set(id, feeBps);
+    RateComponent(getAddrByID(comps, RateCompID)).set(id, feeBps);
   }
 
   function setDisabled(IUintComp comps, uint256 id, bool disabled) internal {
@@ -99,7 +92,7 @@ library LibPoolRegistry {
   }
 
   function getFeeBps(IUintComp comps, uint256 id) internal view returns (uint256) {
-    return ValueComponent(getAddrByID(comps, ValueCompID)).get(id);
+    return RateComponent(getAddrByID(comps, RateCompID)).get(id);
   }
 
   /////////////////
@@ -112,13 +105,5 @@ library LibPoolRegistry {
   function genID(uint32 indexA, uint32 indexB) internal pure returns (uint256) {
     (uint32 lo, uint32 hi) = sortIndices(indexA, indexB);
     return uint256(keccak256(abi.encodePacked("amm.pool", lo, hi)));
-  }
-
-  function genSupplyID(uint256 poolID) internal pure returns (uint256) {
-    return uint256(keccak256(abi.encodePacked("amm.pool.supply", poolID)));
-  }
-
-  function genOracleID(uint256 poolID) internal pure returns (uint256) {
-    return uint256(keccak256(abi.encodePacked("amm.pool.oracle", poolID)));
   }
 }

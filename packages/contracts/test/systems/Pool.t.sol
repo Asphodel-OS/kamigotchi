@@ -451,31 +451,4 @@ contract PoolTest is SetupTemplate {
     assertEq(_getItemBal(poolID, MUSU_INDEX), SEED_A + 1_000);
   }
 
-  /////////////////
-  // ORACLE
-
-  function testOracle() public {
-    uint256 poolID = _createPool();
-    uint256 oracleID = LibPoolRegistry.genOracleID(poolID);
-    _giveItem(alice, ITEM_A, 10_000);
-
-    // 100s at 1:1 spot price accumulates 100 * 1e18 on both sides
-    _fastForward(100);
-    _swap(alice, ITEM_A, ITEM_B, 1_000, 0);
-
-    uint256[] memory vals = _ValuesComponent.get(oracleID);
-    assertEq(vals[0], 100 * 1e18);
-    assertEq(vals[1], 100 * 1e18);
-    assertEq(vals[2], block.timestamp);
-
-    // second period accumulates at the new (post-swap) spot price
-    uint256 reserveA = _getItemBal(poolID, ITEM_A);
-    uint256 reserveB = _getItemBal(poolID, ITEM_B);
-    _fastForward(50);
-    _swap(alice, ITEM_A, ITEM_B, 1_000, 0);
-
-    vals = _ValuesComponent.get(oracleID);
-    assertEq(vals[0], 100 * 1e18 + ((reserveB * 1e18) / reserveA) * 50);
-    assertEq(vals[1], 100 * 1e18 + ((reserveA * 1e18) / reserveB) * 50);
-  }
 }
