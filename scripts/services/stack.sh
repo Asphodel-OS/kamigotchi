@@ -420,8 +420,7 @@ case "${1:-}" in
             esac ;;
   fund)     cmd_fund "${2:-}" "${3:-}" ;;
   give)     cmd_give "${2:-}" "${3:-}" "${4:-}" ;;
-  roles)    anvil_up || { err "anvil is down — run start first"; exit 1; }
-            ( cd "$CONTRACTS" && pnpm roles:local ) ;;
+  roles)    bash "$SCRIPTS_DIR/ops/auth-roles.sh" local ;;
   logs)     cmd_logs "${2:-}" ;;
   *) sed -n '2,24p' "${BASH_SOURCE[0]}" | sed 's/^# \{0,1\}//'; exit 1 ;;
 esac
