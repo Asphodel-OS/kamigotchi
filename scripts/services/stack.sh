@@ -113,6 +113,7 @@ deploy_world() {
   fi
   world_up || { err "deploy finished but no code at $(world_addr)"; exit 1; }
   ok "world deployed at $(world_addr)"
+  DID_FRESH_DEPLOY=1 # a fresh chain wiped all balances — cmd_start offers a re-fund
   snapshot_save
 }
 
@@ -320,6 +321,13 @@ cmd_start() {
   echo
   c "stack is up:"
   echo "  ${BOLD}$CLIENT_URL/?worldAddress=$(world_addr)&initialBlockNumber=${start:-0}${RESET}"
+
+  # a fresh chain reset every wallet balance — offer a re-fund when interactive
+  if [ "${DID_FRESH_DEPLOY:-0}" = 1 ] && [ -t 0 ]; then
+    local fundaddr
+    read -r -p "$(printf '%s▸ fresh chain — address to fund with 10 ETH (enter to skip): %s' "$CYAN" "$RESET")" fundaddr
+    if [ -n "$fundaddr" ]; then cmd_fund "$fundaddr"; fi
+  fi
 }
 
 cmd_stop() {
