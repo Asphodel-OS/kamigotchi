@@ -171,7 +171,7 @@ export const AccountRegistrar: UIComponent = {
     /////////////////
     // RENDERING
 
-    const needsBridge = ethBalance < GasConstants.Empty && import.meta.env.MODE !== 'puter';
+    const needsBridge = ethBalance < GasConstants.Empty && import.meta.env.MODE !== 'development';
 
     return (
       <ValidatorWrapper

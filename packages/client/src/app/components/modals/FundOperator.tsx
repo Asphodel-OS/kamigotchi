@@ -133,7 +133,7 @@ export const FundOperator: UIComponent = {
     }, [parsedWei, sourceBalanceWei, overBudget]);
 
     const needsToBridge = () => {
-      return ownerEthBalance < GasConstants.Empty && import.meta.env.MODE !== 'puter';
+      return ownerEthBalance < GasConstants.Empty && import.meta.env.MODE !== 'development';
     };
 
     /////////////////
