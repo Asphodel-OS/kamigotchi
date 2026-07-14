@@ -24,8 +24,12 @@ const YominetRaw = {
 // TODO: move everything below to the appropriate file
 const yominet = addRpcUrlOverrideToChain(YominetRaw, import.meta.env.VITE_RPC_TRANSPORT_URL);
 
+// pin the local RPC for Privy the same way yominet's is pinned — without the
+// override the embedded wallet's broadcast path never reaches localhost
+const anvil = addRpcUrlOverrideToChain(foundry, 'http://localhost:8545');
+
 export const chainConfigs: Map<string, Chain> = new Map();
-chainConfigs.set('development', foundry); // anvil's chain id (31337); wagmi's `localhost` is 1337
+chainConfigs.set('development', anvil); // anvil's chain id (31337); wagmi's `localhost` is 1337
 chainConfigs.set('testing', yominet);
 chainConfigs.set('staging', yominet);
 chainConfigs.set('production', yominet);
