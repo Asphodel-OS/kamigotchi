@@ -320,6 +320,22 @@ export async function sendTx(
     }
 
     if (shouldReconcileSubmissionError(e)) {
+      // the sync variant can fail without ever broadcasting — e.g. anvil
+      // accepts the method but rejects the timeout param with -32602 — so
+      // reconciliation would poll for a tx no node has. rebroadcast the
+      // already-signed bytes plainly first; if the original send did land,
+      // the node dedupes the identical hash ("already known") and we fall
+      // through to reconciliation either way
+      if (signedTx) {
+        try {
+          await (signer.provider as any).send('eth_sendRawTransaction', [signedTx]);
+          log.time.info('[queue] Rebroadcast signed tx via eth_sendRawTransaction');
+        } catch (rebroadcastError: any) {
+          log.time.info(
+            `[queue] Rebroadcast rejected (tx may already be known): ${normalizeMessage(rebroadcastError).slice(0, 80)}`
+          );
+        }
+      }
       return reconcileSubmittedTx(signer.provider, { txHash, from, nonce });
     }
 
