@@ -19,6 +19,7 @@
 #                                                    works as an alias for the ingestion service)
 #   scripts/services/stack.sh fund <address> [eth]   set an address's local ETH balance (default 10)
 #   scripts/services/stack.sh give <owner> [item] [amt]  distribute an item to a registered account
+#   scripts/services/stack.sh roles                  who holds which auth role on the local world
 #   scripts/services/stack.sh logs [service]         tail logs (anvil|deploy|client|indexer)
 #
 # Also runnable as `pnpm --filter services <start|stop|status|smoke|logs|...>`.
@@ -422,5 +423,5 @@ case "${1:-}" in
   give)     cmd_give "${2:-}" "${3:-}" "${4:-}" ;;
   roles)    bash "$SCRIPTS_DIR/ops/auth-roles.sh" local ;;
   logs)     cmd_logs "${2:-}" ;;
-  *) sed -n '2,24p' "${BASH_SOURCE[0]}" | sed 's/^# \{0,1\}//'; exit 1 ;;
+  *) sed -n '2,25p' "${BASH_SOURCE[0]}" | sed 's/^# \{0,1\}//'; exit 1 ;;
 esac
