@@ -63,11 +63,12 @@ export const KamiAdoptionAgency: UIComponent = {
       const timerID = setInterval(() => {
         const room = _getAccount(world, components, accountEntity)?.roomIndex;
         if (room !== undefined && room !== startRoom) {
+          clearInterval(timerID); // don't tick again while React flushes the close
           setModals({ kamiAdoptionAgency: false });
         }
       }, 1000);
       return () => clearInterval(timerID);
-    }, [isModalOpen, accountEntity]);
+    }, [isModalOpen, accountEntity, world, components, setModals]);
     const displayedKamis = useMemo(() => {
       return getDisplayedKamiEntities().map((entity) => getKami(entity));
     }, [world, components]);
