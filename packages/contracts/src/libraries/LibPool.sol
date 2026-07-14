@@ -85,12 +85,19 @@ library LibPool {
       (amtA, amtB) = (p.amountADesired, amountBOptimal);
     } else {
       uint256 amountAOptimal = quote(p.amountBDesired, reserveB, reserveA);
+      // guaranteed by quote()'s floor; assert like the UniswapV2 router so a
+      // rounding edge-case reverts instead of overspending the caller's A
+      require(amountAOptimal <= p.amountADesired, "Pool: excessive A amount");
       require(amountAOptimal >= p.amountAMin, "Pool: insufficient A amount");
       (amtA, amtB) = (amountAOptimal, p.amountBDesired);
     }
 
     uint256 supply = getTotalSupply(comps, poolID);
-    liquidity = min((amtA * supply) / reserveA, (amtB * supply) / reserveB);
+    // 512-bit mulDiv: amt × supply may exceed 2^256 at extreme scales
+    liquidity = min(
+      FixedPointMathLib.mulDivDown(amtA, supply, reserveA),
+      FixedPointMathLib.mulDivDown(amtB, supply, reserveB)
+    );
     require(liquidity > 0, "Pool: insufficient liquidity minted");
 
     mintShares(comps, poolID, accID, liquidity);
@@ -116,8 +123,8 @@ library LibPool {
     require(p.shares > 0, "Pool: zero shares");
 
     uint256 supply = getTotalSupply(comps, poolID);
-    amtA = (p.shares * LibInventory.getBalanceOf(comps, poolID, p.indexA)) / supply;
-    amtB = (p.shares * LibInventory.getBalanceOf(comps, poolID, p.indexB)) / supply;
+    amtA = FixedPointMathLib.mulDivDown(p.shares, LibInventory.getBalanceOf(comps, poolID, p.indexA), supply);
+    amtB = FixedPointMathLib.mulDivDown(p.shares, LibInventory.getBalanceOf(comps, poolID, p.indexB), supply);
     require(amtA > 0 && amtB > 0, "Pool: insufficient liquidity burned");
     require(amtA >= p.amountAMin && amtB >= p.amountBMin, "Pool: slippage exceeded");
 

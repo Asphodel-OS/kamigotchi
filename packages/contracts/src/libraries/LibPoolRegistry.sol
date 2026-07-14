@@ -60,7 +60,7 @@ library LibPoolRegistry {
     RateComponent(getAddrByID(comps, RateCompID)).remove(id);
     ValueComponent(getAddrByID(comps, ValueCompID)).remove(id); // total LP supply
     TimeStartComponent(getAddrByID(comps, TimeStartCompID)).remove(id);
-    LibDisabled.set(comps, id, false);
+    LibDisabled.set(comps, id, false); // set(false) removes the component entry outright
   }
 
   /////////////////

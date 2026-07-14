@@ -1,7 +1,12 @@
 import { Pool } from './types';
 
-// client mirrors of LibPool's constant-product math. all rounding floors
-// in the pool's favor, matching the contracts exactly
+// client mirrors of LibPool's constant-product math. all intermediate math is
+// BigInt — the products (e.g. amountIn × 9970 × reserveOut) exceed
+// Number.MAX_SAFE_INTEGER once reserves reach the low millions — with floors
+// matching the contracts exactly. results are returned as number (game
+// amounts are far below 2^53 even when intermediates are not)
+
+const BPS = 10_000n;
 
 // output for an exact input, after the swap fee
 export const calcAmountOut = (
@@ -11,35 +16,38 @@ export const calcAmountOut = (
   feeBps: number
 ): number => {
   if (amountIn <= 0 || reserveIn <= 0 || reserveOut <= 0) return 0;
-  const amountInWithFee = amountIn * (10000 - feeBps);
-  return Math.floor((amountInWithFee * reserveOut) / (reserveIn * 10000 + amountInWithFee));
+  const amountInWithFee = BigInt(Math.floor(amountIn)) * (BPS - BigInt(feeBps));
+  const out = (amountInWithFee * BigInt(reserveOut)) / (BigInt(reserveIn) * BPS + amountInWithFee);
+  return Number(out);
 };
 
 // equivalent value of amountA in item B at the current reserve ratio
 export const quote = (amountA: number, reserveA: number, reserveB: number): number => {
   if (reserveA <= 0) return 0;
-  return Math.floor((amountA * reserveB) / reserveA);
+  return Number((BigInt(Math.floor(amountA)) * BigInt(reserveB)) / BigInt(reserveA));
 };
 
 // shares minted for a deposit of (amtA, amtB)
 export const calcSharesMinted = (pool: Pool, amtA: number, amtB: number): number => {
   if (pool.reserveA <= 0 || pool.reserveB <= 0) return 0;
-  return Math.min(
-    Math.floor((amtA * pool.totalSupply) / pool.reserveA),
-    Math.floor((amtB * pool.totalSupply) / pool.reserveB)
-  );
+  const supply = BigInt(pool.totalSupply);
+  const byA = (BigInt(Math.floor(amtA)) * supply) / BigInt(pool.reserveA);
+  const byB = (BigInt(Math.floor(amtB)) * supply) / BigInt(pool.reserveB);
+  return Number(byA < byB ? byA : byB);
 };
 
 // amounts returned for burning shares
 export const calcRemoveAmounts = (pool: Pool, shares: number): [number, number] => {
   if (pool.totalSupply <= 0) return [0, 0];
+  const s = BigInt(Math.floor(shares));
+  const supply = BigInt(pool.totalSupply);
   return [
-    Math.floor((shares * pool.reserveA) / pool.totalSupply),
-    Math.floor((shares * pool.reserveB) / pool.totalSupply),
+    Number((s * BigInt(pool.reserveA)) / supply),
+    Number((s * BigInt(pool.reserveB)) / supply),
   ];
 };
 
 // min-received bound for a slippage tolerance in bps (e.g. 50 = 0.5%)
 export const applySlippage = (amountOut: number, slippageBps: number): number => {
-  return Math.floor((amountOut * (10000 - slippageBps)) / 10000);
+  return Number((BigInt(Math.floor(amountOut)) * (BPS - BigInt(slippageBps))) / BPS);
 };
