@@ -361,6 +361,19 @@ cmd_logs() {
   if [ -n "$svc" ]; then tail -f "$LOGS/$svc.log"; else tail -f "$LOGS"/*.log; fi
 }
 
+# give items to a registered account by owner address (admin distribution)
+cmd_give() {
+  local owner="${1:-}" item="${2:-1}" amt="${3:-10000}"
+  [ -n "$owner" ] || { err "usage: stack.sh give <owner-address> [itemIndex, default 1=MUSU] [amt, default 10000]"; exit 1; }
+  anvil_up && world_up || { err "anvil/world not up — run start first"; exit 1; }
+  ( cd "$CONTRACTS" && . ./.env.local && FOUNDRY_OFFLINE=true forge script \
+      deployment/contracts/GiveItems.s.sol:GiveItems --broadcast --fork-url "$RPC" \
+      --priority-gas-price=0 --with-gas-price=0 --skip test \
+      --sig 'run(uint256,address,address,uint32,uint256)' \
+      "$PRIV_KEY" "$WORLD" "$owner" "$item" "$amt" ) 2>&1 \
+    | grep -E 'gave item|Error|revert' || true
+}
+
 # fund an address with local ETH (anvil_setBalance: instant, no sender needed)
 cmd_fund() {
   local addr="${1:-}" eth="${2:-10}"
@@ -394,6 +407,7 @@ case "${1:-}" in
               logs) cmd_logs kamigaze-indexer ;; *) kamigaze_status ;;
             esac ;;
   fund)     cmd_fund "${2:-}" "${3:-}" ;;
+  give)     cmd_give "${2:-}" "${3:-}" "${4:-}" ;;
   logs)     cmd_logs "${2:-}" ;;
   *) sed -n '2,23p' "${BASH_SOURCE[0]}" | sed 's/^# \{0,1\}//'; exit 1 ;;
 esac
