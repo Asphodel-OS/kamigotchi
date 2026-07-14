@@ -173,30 +173,18 @@ kamigaze_db_ensure() {
     ok "kamigaze_db up"
   fi
 
-  # one-time schema deploy (marker-gated; rm the marker to force a rerun)
-  if [ ! -f "$STATE/kamigaze-schema.done" ]; then
-    c "deploying kamigaze db schema (one-time)"
-    (
-      cd "$KAMIGAZE"
-      # venvs hardcode their creation path — recreate if missing OR broken
-      # (e.g. stale shebangs after the repo moved). probe pip, not python3:
-      # the python3 symlink survives a move but script shebangs don't.
-      # pin to an older interpreter when available — psycopg2-binary has no
-      # wheels yet for bleeding-edge pythons (e.g. 3.14)
-      local py=python3
-      for v in 3.12 3.11 3.10; do command -v "python$v" >/dev/null && { py="python$v"; break; }; done
-      ./sql/deployment/venv/bin/pip --version >/dev/null 2>&1 \
-        || { rm -rf sql/deployment/venv; "$py" -m venv sql/deployment/venv; }
-      ./sql/deployment/venv/bin/pip install -q -r sql/deployment/requirements.txt
-      # shellcheck disable=SC1091
-      # deploy.py confirms interactively; finite printf (not `yes`) since
-      # pipefail would turn yes's SIGPIPE into a failure
-      source sql/deployment/venv/bin/activate \
-        && printf 'y\ny\ny\n' | python3 sql/deployment/deploy.py local dev 127.0.0.1
-    ) >> "$LOGS/kamigaze-db.log" 2>&1 \
-      && { touch "$STATE/kamigaze-schema.done"; ok "schema deployed"; } \
-      || { err "schema deploy failed — see $LOGS/kamigaze-db.log (README one-time steps may be needed)"; exit 1; }
-  fi
+  # schema via goose migrations (kamigaze v1.3+). idempotent — runs every
+  # bring-up and no-ops when the db is current
+  local goose_bin="${GOOSE_BIN:-$(go env GOPATH)/bin/goose}"
+  command -v "$goose_bin" >/dev/null 2>&1 || goose_bin="$(command -v goose || true)"
+  [ -n "$goose_bin" ] && [ -x "$goose_bin" ] \
+    || { err "goose not found — install: go install github.com/pressly/goose/v3/cmd/goose@latest"; exit 1; }
+  c "applying kamigaze migrations"
+  ( cd "$KAMIGAZE" \
+      && GOOSE_DRIVER=postgres GOOSE_DBSTRING="$(kamigaze_conn_str)" \
+         "$goose_bin" -dir sql/migrations up ) >> "$LOGS/kamigaze-db.log" 2>&1 \
+    && ok "migrations current" \
+    || { err "goose migrations failed — see $LOGS/kamigaze-db.log"; exit 1; }
 }
 
 # compose a db connection string aimed at the host-visible postgres, with
@@ -230,14 +218,14 @@ kamigaze_svc_up() {
       anvil_up && world_up || { err "anvil/world not up — run start first"; exit 1; }
       # INDEXER_OVERRIDE=true forces reprocessing from the start block,
       # ignoring the db's last-seen block (one-shot repair)
-      cmdargs=(./cmd/indexer/main.go -mode local
-        -world-addresses "$(world_addr)" -emitter-addresses "$emitter"
+      cmdargs=(./cmd/indexer/main.go -mode dev -is-primary-indexer true
+        -world-address "$(world_addr)" -emitter-addresses "$emitter"
         -starting-block "${start:-0}" -override-db-block "${INDEXER_OVERRIDE:-false}") ;;
     snapshot)
-      cmdargs=(./cmd/snapshot/main.go -mode local -port 50051 -http-port "$SNAPSHOT_HTTP_PORT") ;;
+      cmdargs=(./cmd/snapshot/main.go -mode dev -port 50051 -http-port "$SNAPSHOT_HTTP_PORT") ;;
     streamer)
       anvil_up || { err "anvil not up — run start first"; exit 1; }
-      cmdargs=(./cmd/streamer/main.go -mode local -port "$STREAMER_GRPC_PORT" -world-addresses "$(world_addr)") ;;
+      cmdargs=(./cmd/streamer/main.go -mode dev -port "$STREAMER_GRPC_PORT" -http-port "$((STREAMER_GRPC_PORT + 1))" -world-address "$(world_addr)") ;;
     *) err "unknown kamigaze service: $svc"; exit 1 ;;
   esac
 
@@ -249,6 +237,7 @@ kamigaze_svc_up() {
     cd "$KAMIGAZE" \
       && DB_HOST=127.0.0.1 DB_RO_HOST=127.0.0.1 \
          DB_CONN_STR="$conn" DB_RO_CONN_STR="$conn" \
+         LOCAL_DB_CONN_STR="$conn" LOCAL_DB_RO_CONN_STR="$conn" \
          EMITTER_ADDRESS="$emitter" \
          RPC_HTTP_PROVIDER="http://127.0.0.1:8545" RPC_WS_PROVIDER="ws://127.0.0.1:8545" \
          go run "${cmdargs[@]}"
@@ -269,7 +258,19 @@ kamigaze_svc_down() {
   local svc="$1"
   stop_pid "kamigaze-$svc" || true
   stop_pid "$svc" || true # legacy pid name from before the split
-  pkill -f "cmd/$svc/main.go -mode local" 2>/dev/null || true
+  pkill -f "cmd/$svc/main.go" 2>/dev/null || true
+  # `go run` children are compiled temp binaries whose cmdline doesn't match
+  # the pkill pattern — reap survivors by their listen ports
+  local ports=() p pid
+  case "$svc" in
+    snapshot) ports=(50051 "$SNAPSHOT_HTTP_PORT") ;;
+    streamer) ports=("$STREAMER_GRPC_PORT" "$((STREAMER_GRPC_PORT + 1))") ;;
+  esac
+  for p in "${ports[@]:-}"; do # :- guards bash 3.2's set -u on empty arrays
+    [ -n "$p" ] || continue
+    pid="$(lsof -nP -iTCP:"$p" -sTCP:LISTEN -t 2>/dev/null | head -1 || true)"
+    if [ -n "$pid" ]; then kill "$pid" 2>/dev/null || true; fi
+  done
 }
 
 kamigaze_up() { local s; for s in "${KAMIGAZE_SVCS[@]}"; do kamigaze_svc_up "$s"; done; }

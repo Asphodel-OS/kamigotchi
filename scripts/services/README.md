@@ -52,12 +52,14 @@ underflow.
 
 ## kamigaze indexer
 
-`indexer up` handles the one-time setup from kamigaze's README automatically:
-starts Docker Desktop itself if needed, brings up the Postgres container
-(`make start-db`), creates the python venv (recreating it when its shebangs
-are stale from a repo move, pinned to python ≤3.12 for psycopg2 wheels) and
-deploys the schema on first run (marker: `.local-stack/kamigaze-schema.done`),
-then runs `go run ./cmd/indexer -mode local` pointed at the local chain.
+Targets kamigaze **v1.3+** (post schema-restructure). Bring-up handles the
+one-time setup automatically: starts Docker Desktop if needed, brings up the
+plv8 Postgres container (`make start-db`, which reads `.env.dev`/`.env.test` —
+created from your old `.env.local` if kamigaze's repo lacks them), applies
+goose migrations on every run (idempotent; needs
+`go install github.com/pressly/goose/v3/cmd/goose@latest`), then runs each
+service via `go run ./cmd/<svc> -mode dev` pointed at the local chain. The
+indexer runs with `-is-primary-indexer true` (a secondary just sleeps).
 
 Exported env overrides kamigaze's `.env.local` (godotenv doesn't clobber
 existing vars), so no `/etc/hosts` alias or config edits are needed:
