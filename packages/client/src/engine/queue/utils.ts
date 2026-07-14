@@ -322,11 +322,29 @@ export async function sendTx(
     if (shouldReconcileSubmissionError(e)) {
       // the sync variant can fail without ever broadcasting — e.g. anvil
       // accepts the method but rejects the timeout param with -32602 — so
-      // reconciliation would poll for a tx no node has. rebroadcast the
-      // already-signed bytes plainly first; if the original send did land,
-      // the node dedupes the identical hash ("already known") and we fall
-      // through to reconciliation either way
+      // reconciliation would poll for a tx no node has
       if (signedTx) {
+        // some nodes support the bare 1-param sync method even when they
+        // reject the timeout variant: retry it first for an instant receipt
+        try {
+          const receipt = (await (signer.provider as any).send('eth_sendRawTransactionSync', [
+            signedTx,
+          ])) as TransactionReceipt;
+          if (receipt) {
+            log.time.info('[queue] Sync retry without timeout param succeeded');
+            if (toStatusNumber((receipt as any).status) !== 1) {
+              const failure = new Error(`Transaction failed with status ${receipt.status}`);
+              (failure as any).receipt = receipt;
+              throw failure;
+            }
+            return receipt;
+          }
+        } catch (retryError: any) {
+          if (retryError?.receipt) throw retryError; // real on-chain failure
+          log.time.info('[queue] Sync retry unavailable, rebroadcasting plainly');
+        }
+        // last resort: plain broadcast of the same signed bytes, then poll.
+        // if the original send did land, the node dedupes the identical hash
         try {
           await (signer.provider as any).send('eth_sendRawTransaction', [signedTx]);
           log.time.info('[queue] Rebroadcast signed tx via eth_sendRawTransaction');
