@@ -339,6 +339,9 @@ export async function sendTx(
             }
             return receipt;
           }
+          // falsy receipt: the node accepted the method but returned nothing —
+          // treat as unbroadcast and fall through to the plain rebroadcast
+          log.time.info('[queue] Sync retry returned no receipt, rebroadcasting plainly');
         } catch (retryError: any) {
           if (retryError?.receipt) throw retryError; // real on-chain failure
           log.time.info('[queue] Sync retry unavailable, rebroadcasting plainly');
@@ -349,8 +352,27 @@ export async function sendTx(
           await (signer.provider as any).send('eth_sendRawTransaction', [signedTx]);
           log.time.info('[queue] Rebroadcast signed tx via eth_sendRawTransaction');
         } catch (rebroadcastError: any) {
+          const msg = normalizeMessage(rebroadcastError);
+          // these rejections mean the original send DID land — reconcile finds it
+          const alreadyLanded = ['already known', 'already imported', 'nonce too low', 'duplicate'].some(
+            (p) => msg.includes(p)
+          );
+          if (!alreadyLanded) {
+            // deterministic failures can never mine — reconciling would just
+            // burn the full timeout on a tx no node will ever accept
+            const fatal = [
+              'insufficient funds',
+              'rejected',
+              'denied',
+              'intrinsic gas',
+              'invalid signature',
+              'invalid chain',
+              'exceeds block gas',
+            ].some((p) => msg.includes(p));
+            if (fatal) throw rebroadcastError;
+          }
           log.time.info(
-            `[queue] Rebroadcast rejected (tx may already be known): ${normalizeMessage(rebroadcastError).slice(0, 80)}`
+            `[queue] Rebroadcast ${alreadyLanded ? 'confirms tx already known' : 'rejected (non-deterministic)'}: ${msg.slice(0, 80)}`
           );
         }
       }
