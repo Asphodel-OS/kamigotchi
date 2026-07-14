@@ -18,11 +18,16 @@
 #                                                    one kamigaze service ("indexer" alone still
 #                                                    works as an alias for the ingestion service)
 #   scripts/services/stack.sh fund <address> [eth]   set an address's local ETH balance (default 10)
+#   scripts/services/stack.sh give <owner> [item] [amt]  distribute an item to a registered account
 #   scripts/services/stack.sh logs [service]         tail logs (anvil|deploy|client|indexer)
 #
 # Also runnable as `pnpm --filter services <start|stop|status|smoke|logs|...>`.
 set -euo pipefail
 . "$(dirname "${BASH_SOURCE[0]}")/lib.sh"
+
+# snapshot_restore's decompressed temp file must not survive a mid-restore
+# failure (set -e would skip its inline rm)
+trap 'rm -f "$STATE/anvil-state.restore.json"' EXIT
 
 ##################
 # ANVIL
@@ -259,7 +264,7 @@ kamigaze_svc_down() {
   local svc="$1"
   stop_pid "kamigaze-$svc" || true
   stop_pid "$svc" || true # legacy pid name from before the split
-  pkill -f "cmd/$svc/main.go" 2>/dev/null || true
+  pkill -f "go run ./cmd/$svc/main.go" 2>/dev/null || true
   # `go run` children are compiled temp binaries whose cmdline doesn't match
   # the pkill pattern — reap survivors by their listen ports
   local ports=() p pid
@@ -360,8 +365,7 @@ cmd_status() {
 cmd_smoke() {
   anvil_up || { err "anvil is down — run start first"; exit 1; }
   world_up || { err "no world deployed — run start first"; exit 1; }
-  c "running pool AMM smoke test"
-  ( cd "$CONTRACTS" && pnpm smoke:pool ) 2>&1 | grep -E 'pool created|account registered|swap out|final reserves|player shares|SMOKE|[Ee]rror|[Rr]evert' || true
+  SMOKE_OWNER_KEY="$ANVIL1" SMOKE_OPERATOR_KEY="$ANVIL2" bash "$SCRIPTS_DIR/ops/pool-smoke.sh"
 }
 
 cmd_logs() {
@@ -417,5 +421,5 @@ case "${1:-}" in
   fund)     cmd_fund "${2:-}" "${3:-}" ;;
   give)     cmd_give "${2:-}" "${3:-}" "${4:-}" ;;
   logs)     cmd_logs "${2:-}" ;;
-  *) sed -n '2,23p' "${BASH_SOURCE[0]}" | sed 's/^# \{0,1\}//'; exit 1 ;;
+  *) sed -n '2,24p' "${BASH_SOURCE[0]}" | sed 's/^# \{0,1\}//'; exit 1 ;;
 esac
