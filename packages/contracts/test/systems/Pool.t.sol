@@ -4,6 +4,7 @@ pragma solidity >=0.8.28;
 import "tests/utils/SetupTemplate.t.sol";
 
 import { FixedPointMathLib } from "utils/FixedPointMathLib.sol";
+import { LibData } from "libraries/LibData.sol";
 import { LibPool } from "libraries/LibPool.sol";
 import { LibPoolRegistry } from "libraries/LibPoolRegistry.sol";
 
@@ -451,4 +452,65 @@ contract PoolTest is SetupTemplate {
     assertEq(_getItemBal(poolID, MUSU_INDEX), SEED_A + 1_000);
   }
 
+  /////////////////
+  // REVIEW REGRESSIONS
+
+  // token-backed (ERC20-mirrored) items cannot be pooled — seeding mints
+  // unbacked reserves. explicit guard, not incidental to incFor.
+  function testCreateRejectsTokenItem() public {
+    address erc20 = _createERC20("Onyx", "ONYX");
+    _addItemERC20(ITEM_A, erc20, 1e2); // ITEM_A now carries a TokenAddress
+
+    vm.prank(deployer);
+    vm.expectRevert("LibItem: item has a token");
+    __PoolRegistrySystem.create(ITEM_A, ITEM_B, SEED_A, SEED_B, FEE_BPS);
+  }
+
+  // a griefer precomputes the (pure-hash) pool id and pre-funds the entity
+  // before creation; seeding onto non-empty reserves must revert
+  function testCreateRejectsPreFundedReserves() public {
+    uint256 poolID = LibPoolRegistry.genID(ITEM_A, ITEM_B);
+    vm.startPrank(deployer);
+    LibInventory.incFor(components, poolID, ITEM_A, 1_000_000); // attacker donation
+    vm.stopPrank();
+
+    vm.prank(deployer);
+    vm.expectRevert("Pool: reserves not empty");
+    __PoolRegistrySystem.create(ITEM_A, ITEM_B, SEED_A, SEED_B, FEE_BPS);
+  }
+
+  // a small position in a ratio-skewed pool floors one side to 0; the LP must
+  // still be able to exit (forfeiting the zero side) instead of being frozen
+  function testRemoveDustSideStillExits() public {
+    // skew the pool hard: 1,000,000 A : 1,000 B
+    vm.prank(deployer);
+    uint256 poolID = __PoolRegistrySystem.create(ITEM_A, ITEM_B, 1_000_000, 1_000, FEE_BPS);
+
+    _giveItem(alice, ITEM_A, 1_000);
+    _giveItem(alice, ITEM_B, 10);
+    (, , uint256 shares) = _addLiquidity(alice, 1_000, 10);
+    assertGt(shares, 0);
+
+    // B slice floors to 0 at this ratio; exit still succeeds and pays A
+    (uint256 amtA, uint256 amtB) = _removeLiquidity(alice, shares);
+    assertGt(amtA, 0);
+    assertEq(amtB, 0);
+    assertEq(LibPool.getShares(components, poolID, alice.id), 0);
+  }
+
+  // swap payouts must not credit ITEM_TOTAL — kamiden reads ITEM_TOTAL[MUSU]
+  // as coin earned, so a solo round-trip would otherwise inflate the leaderboard
+  function testSwapDoesNotInflateItemTotal() public {
+    if (LibItem.getByIndex(components, MUSU_INDEX) == 0) _createGenericItem(MUSU_INDEX);
+    vm.prank(deployer);
+    __PoolRegistrySystem.create(MUSU_INDEX, ITEM_A, SEED_A, SEED_B, FEE_BPS);
+
+    _giveItem(alice, ITEM_A, 10_000);
+    uint256 before = LibData.get(components, alice.id, MUSU_INDEX, "ITEM_TOTAL");
+
+    // acquire MUSU by swapping — must NOT read as earned MUSU
+    _swap(alice, ITEM_A, MUSU_INDEX, 1_000, 0);
+    assertGt(_getItemBal(alice.id, MUSU_INDEX), 0); // actually received MUSU
+    assertEq(LibData.get(components, alice.id, MUSU_INDEX, "ITEM_TOTAL"), before);
+  }
 }

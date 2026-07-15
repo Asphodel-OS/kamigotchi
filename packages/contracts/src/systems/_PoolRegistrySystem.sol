@@ -33,9 +33,27 @@ contract _PoolRegistrySystem is System, AuthRoles {
     require(LibItem.getByIndex(components, indexA) != 0, "Item: does not exist");
     require(LibItem.getByIndex(components, indexB) != 0, "Item: does not exist");
     verifyTradable(indexA, indexB);
+    // token-backed items (ERC20-mirrored, e.g. ONYX) are unsupported: seeding
+    // mints reserves from thin air, which would create shards with no portal
+    // backing. explicit guard so a future transfer-based seeding refactor can't
+    // silently make unbacked token pools (incFor already reverts, but only
+    // incidentally). ONYX pools need a treasury seed/return model — see PR notes.
+    verifyNoToken(indexA, indexB);
     require(feeBps <= MAX_FEE_BPS, "Pool: fee too high");
     require(amtA >= MINIMUM_SEED && amtB >= MINIMUM_SEED, "Pool: seed too small");
     require(LibPoolRegistry.get(components, indexA, indexB) == 0, "Pool already exists");
+
+    // the pool id is a pure hash of the item pair, so anyone can precompute it
+    // and pre-fund the entity before creation (ItemTransferSystem does not
+    // require an account target). refuse to seed onto non-empty reserves — the
+    // locked shares are sqrt(amt*amt) of the ARGS, so a pre-funded reserve would
+    // launch the pool at a skewed price and hand free arbitrage to the griefer.
+    id = LibPoolRegistry.genID(indexA, indexB);
+    require(
+      LibInventory.getBalanceOf(components, id, indexA) == 0 &&
+        LibInventory.getBalanceOf(components, id, indexB) == 0,
+      "Pool: reserves not empty"
+    );
 
     id = LibPoolRegistry.create(components, indexA, indexB, feeBps);
     LibInventory.incFor(components, id, indexA, amtA);
@@ -52,6 +70,7 @@ contract _PoolRegistrySystem is System, AuthRoles {
   ) public onlyAdmin(components) {
     uint256 id = LibPoolRegistry.get(components, indexA, indexB);
     require(id != 0, "Pool does not exist");
+    verifyNoToken(indexA, indexB); // same token-backed exclusion as create
     if (amtA > 0) LibInventory.incFor(components, id, indexA, amtA);
     if (amtB > 0) LibInventory.incFor(components, id, indexB, amtB);
   }
@@ -99,6 +118,14 @@ contract _PoolRegistrySystem is System, AuthRoles {
     indices[0] = indexA;
     indices[1] = indexB;
     LibInventory.verifyTransferable(components, indices);
+  }
+
+  /// @dev reverts if either item is ERC20-backed (has a TokenAddress). pools
+  ///      hold reserves as plain inventory; token-backed reserves would be
+  ///      unbacked in the portal.
+  function verifyNoToken(uint32 indexA, uint32 indexB) internal view {
+    LibItem.verifyToken(components, indexA, false);
+    LibItem.verifyToken(components, indexB, false);
   }
 
   function execute(bytes memory arguments) public onlyAdmin(components) returns (bytes memory) {

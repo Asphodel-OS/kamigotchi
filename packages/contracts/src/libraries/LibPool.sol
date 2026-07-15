@@ -55,8 +55,8 @@ library LibPool {
     require(amountOut > 0, "Pool: insufficient output");
     require(amountOut >= minAmountOut, "Pool: slippage exceeded");
 
-    LibInventory.transferFor(comps, accID, poolID, indexIn, amountIn); // implicit balance check
-    LibInventory.transferFor(comps, poolID, accID, indexOut, amountOut);
+    LibInventory.transferForNoLog(comps, accID, poolID, indexIn, amountIn); // implicit balance check
+    LibInventory.transferForNoLog(comps, poolID, accID, indexOut, amountOut);
   }
 
   struct AddLiqParams {
@@ -101,8 +101,8 @@ library LibPool {
     require(liquidity > 0, "Pool: insufficient liquidity minted");
 
     mintShares(comps, poolID, accID, liquidity);
-    LibInventory.transferFor(comps, accID, poolID, p.indexA, amtA); // implicit balance check
-    LibInventory.transferFor(comps, accID, poolID, p.indexB, amtB);
+    LibInventory.transferForNoLog(comps, accID, poolID, p.indexA, amtA); // implicit balance check
+    LibInventory.transferForNoLog(comps, accID, poolID, p.indexB, amtB);
   }
 
   struct RemoveLiqParams {
@@ -125,12 +125,16 @@ library LibPool {
     uint256 supply = getTotalSupply(comps, poolID);
     amtA = FixedPointMathLib.mulDivDown(p.shares, LibInventory.getBalanceOf(comps, poolID, p.indexA), supply);
     amtB = FixedPointMathLib.mulDivDown(p.shares, LibInventory.getBalanceOf(comps, poolID, p.indexB), supply);
-    require(amtA > 0 && amtB > 0, "Pool: insufficient liquidity burned");
+    // OR, not AND: at game-scale integers a small position in a skewed pool
+    // floors one side to 0. requiring both > 0 would freeze it forever, so an
+    // exit is allowed as long as SOME value is recoverable (the zero side is
+    // genuinely worth ~0 and is forfeited).
+    require(amtA > 0 || amtB > 0, "Pool: insufficient liquidity burned");
     require(amtA >= p.amountAMin && amtB >= p.amountBMin, "Pool: slippage exceeded");
 
     burnShares(comps, poolID, accID, p.shares); // implicit share balance check
-    LibInventory.transferFor(comps, poolID, accID, p.indexA, amtA);
-    LibInventory.transferFor(comps, poolID, accID, p.indexB, amtB);
+    LibInventory.transferForNoLog(comps, poolID, accID, p.indexA, amtA);
+    LibInventory.transferForNoLog(comps, poolID, accID, p.indexB, amtB);
   }
 
   /////////////////
