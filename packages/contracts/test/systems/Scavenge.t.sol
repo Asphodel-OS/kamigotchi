@@ -475,6 +475,79 @@ contract ScavengeTest is SetupTemplate {
     assertEq(_getItemBal(alice, 1), 100, "no double distribution");
   }
 
+  /// @notice draining a commit yields the same items no matter how it is batched.
+  ///         a co-bundled commit shifts the fat commit's chunk boundaries; the
+  ///         per-roll global index makes the outcome invariant, so a player cannot
+  ///         cherry-pick a favorable batching. would fail under a per-chunk nonce.
+  function testChunkedRevealIsBatchInvariant() public {
+    // fat commit on a 3-item droptable so the distribution is observable
+    uint32[] memory keysF = new uint32[](3);
+    keysF[0] = 1;
+    keysF[1] = 2;
+    keysF[2] = 3;
+    uint256[] memory wF = new uint256[](3);
+    wF[0] = 3;
+    wF[1] = 2;
+    wF[2] = 1;
+    _addReward(scavbar1.id, keysF, wF, 12); // 12 rolls/tier
+    _incFor(alice, scavbar1, 500 * scavbar1.tierCost); // 500 tiers -> 6000 rolls
+    uint256 fat = _claimGetDTCommit(alice, scavbar1.id);
+    assertEq(_ValueComponent.get(fat), 6000, "fat rolls");
+
+    // sibling commit on a disjoint droptable (item 100) that eats budget ahead of fat
+    ScavBarData memory bar2 = _createScavBar("TEST", 2, "NORMAL", 5);
+    uint32[] memory keysS = new uint32[](1);
+    keysS[0] = 100;
+    uint256[] memory wS = new uint256[](1);
+    wS[0] = 1;
+    _addReward(bar2.id, keysS, wS, 1);
+    _incFor(alice, bar2, 500 * bar2.tierCost); // 500 rolls
+    uint256 sibling = _claimGetDTCommit(alice, bar2.id);
+    assertEq(_ValueComponent.get(sibling), 500, "sibling rolls");
+
+    vm.roll(block.number + 2);
+
+    // strategy 1: fat alone -> chunks [5000, 1000]
+    uint256 snap = vm.snapshotState();
+    _drain(alice, _one(fat));
+    uint256 a1 = _getItemBal(alice, 1);
+    uint256 a2 = _getItemBal(alice, 2);
+    uint256 a3 = _getItemBal(alice, 3);
+    assertEq(a1 + a2 + a3, 6000, "all fat rolls distributed (alone)");
+    assertTrue(a1 > 0 && a2 > 0 && a3 > 0, "multi-item spread (non-vacuous)");
+
+    // strategy 2: [sibling, fat] -> sibling eats 500, fat chunks shift to [4500, 1500]
+    vm.revertToState(snap);
+    uint256[] memory bundled = new uint256[](2);
+    bundled[0] = sibling;
+    bundled[1] = fat;
+    _drain(alice, bundled);
+    // items 1/2/3 come only from the fat commit; item 100 only from the sibling
+    assertEq(_getItemBal(alice, 1), a1, "item1 invariant to batch composition");
+    assertEq(_getItemBal(alice, 2), a2, "item2 invariant to batch composition");
+    assertEq(_getItemBal(alice, 3), a3, "item3 invariant to batch composition");
+    assertEq(_getItemBal(alice, 100), 500, "sibling fully drained");
+  }
+
+  function _one(uint256 id) internal pure returns (uint256[] memory ids) {
+    ids = new uint256[](1);
+    ids[0] = id;
+  }
+
+  function _anyAlive(uint256[] memory ids) internal view returns (bool) {
+    for (uint256 i; i < ids.length; i++) if (_BlockRevealComponent.has(ids[i])) return true;
+    return false;
+  }
+
+  function _drain(PlayerAccount memory acc, uint256[] memory ids) internal {
+    uint256 guard;
+    while (_anyAlive(ids)) {
+      vm.prank(acc.operator);
+      _DroptableRevealSystem.executeTyped(ids);
+      require(++guard < 20, "drain did not converge");
+    }
+  }
+
   /// @notice a commit of a non-droptable type is rejected (checkIsCommit)
   function testRevealNonDroptableCommitReverts() public {
     vm.startPrank(deployer);

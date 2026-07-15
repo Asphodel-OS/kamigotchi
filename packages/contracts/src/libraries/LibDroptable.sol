@@ -114,11 +114,16 @@ library LibDroptable {
     ); // latest result, to show on FE
   }
 
-  /// @notice selects `chunk` droptable results
-  /// @dev raw component use for puter efficiency. a commit that fully drains this
-  ///      call uses the legacy seed verbatim (result identical to a single-pass
-  ///      reveal); a chunk that leaves a remainder is nonced by `remaining` so
-  ///      chunks never collide. the outcome is fixed at the commit block either way
+  /// @notice selects `chunk` droptable results, one per roll
+  /// @dev each roll is keyed by its ABSOLUTE position within the commit (counting
+  ///      down from `remaining`), not by a per-chunk nonce. so the full outcome is
+  ///      fixed by (blockhash, commitID, count) at commit time and is identical no
+  ///      matter how the rolls are split across txs. this closes the seed-path
+  ///      cherry-pick where a co-bundled commit shifts a chunk boundary to reroll
+  ///      the distribution. a single-pass reveal covers positions count-1..0, the
+  ///      same index set as the legacy selectMultipleFromWeighted(base, count), so
+  ///      it stays byte-identical to pre-chunking. mirrors that function's body
+  ///      (raw component use for puter efficiency) with the global index offset.
   function _select(
     BlockRevComponent blockComp,
     WeightsComponent weightsComp,
@@ -126,16 +131,23 @@ library LibDroptable {
     uint256 commitID,
     uint256 remaining,
     uint256 chunk
-  ) internal view returns (uint256[] memory) {
+  ) internal view returns (uint256[] memory results) {
     uint256[] memory weights = weightsComp.get(dtID);
     LibRandom.processWeightedRarityInPlace(weights);
+    uint256 totalWeight;
+    for (uint256 i; i < weights.length; i++) totalWeight += weights[i];
 
     uint256 base = LibCommit.seedDirect(blockComp, commitID);
-    uint256 seed = chunk == remaining
-      ? base
-      : uint256(keccak256(abi.encodePacked(base, remaining)));
 
-    return LibRandom.selectMultipleFromWeighted(weights, seed, chunk);
+    results = new uint256[](weights.length);
+    for (uint256 k; k < chunk; k++) {
+      uint256 pos = LibRandom._positionFromWeighted(
+        weights,
+        totalWeight,
+        uint256(keccak256(abi.encode(base, remaining - 1 - k)))
+      );
+      results[pos]++;
+    }
   }
 
   /// @notice deletes a fully-drained commit
