@@ -1,7 +1,8 @@
 import { EntityID, EntityIndex, getComponentValue, World } from 'engine/recs';
 
+import { getItemByIndex as getCachedItemByIndex } from 'app/cache/item';
 import { Components } from 'network/';
-import { getItemByIndex, Item } from 'network/shapes/Item';
+import { getItemBalance, Item } from 'network/shapes/Item';
 import { getEntityByHash } from '../utils';
 import { getKeys, getRate, getValue } from '../utils/component';
 
@@ -27,8 +28,11 @@ export const get = (world: World, comps: Components, entity: EntityIndex): Pool 
   return {
     id,
     entity,
-    itemA: getItemByIndex(world, comps, indexA),
-    itemB: getItemByIndex(world, comps, indexB),
+    // cached lookup: get() runs on the modal's 1s tick, and the uncached
+    // shape getter would rebuild full Item shapes (requirement/effect
+    // traversals) for every pool every second
+    itemA: getCachedItemByIndex(world, comps, indexA),
+    itemB: getCachedItemByIndex(world, comps, indexB),
     reserveA: getReserve(world, comps, id, indexA),
     reserveB: getReserve(world, comps, id, indexB),
     feeBps: getRate(comps, entity),
@@ -37,15 +41,16 @@ export const get = (world: World, comps: Components, entity: EntityIndex): Pool 
   };
 };
 
-// a pool's reserve of an item is its own inventory balance
+// a pool's reserve of an item is its own inventory balance — reuse the shared
+// Inventory helper so the inventory.instance ID scheme lives in exactly one
+// place (a private copy would silently read 0 if that preimage ever changes)
 export const getReserve = (
   world: World,
   comps: Components,
   poolID: EntityID,
   itemIndex: number
 ): number => {
-  const entity = genReserveEntity(world, poolID, itemIndex);
-  return entity ? getValue(comps, entity) : 0;
+  return getItemBalance(world, comps, poolID, itemIndex);
 };
 
 
@@ -62,14 +67,6 @@ export const getShares = (
 
 /////////////////
 // ENTITY HASHES (mirror LibPool/LibPoolRegistry genIDs)
-
-export const genReserveEntity = (world: World, poolID: EntityID, itemIndex: number) => {
-  return getEntityByHash(
-    world,
-    ['inventory.instance', poolID, itemIndex],
-    ['string', 'uint256', 'uint32']
-  );
-};
 
 export const genShareEntity = (world: World, poolID: EntityID, holderID: EntityID) => {
   return getEntityByHash(
