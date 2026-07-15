@@ -56,12 +56,14 @@ export const KamiAdoptionAgency: UIComponent = {
     >({});
 
     // close the modal when the player moves to a different room (movement is
-    // possible while open — e.g. the map modal occupies a different zone)
+    // possible while open — e.g. the map modal occupies a different zone).
+    // { live: 1 } forces the cache to re-read roomIndex — a bare getAccount()
+    // returns the same cached object and would never observe the move
     useEffect(() => {
       if (!isModalOpen) return;
-      const startRoom = _getAccount(world, components, accountEntity)?.roomIndex;
+      const startRoom = _getAccount(world, components, accountEntity, { live: 1 })?.roomIndex;
       const timerID = setInterval(() => {
-        const room = _getAccount(world, components, accountEntity)?.roomIndex;
+        const room = _getAccount(world, components, accountEntity, { live: 1 })?.roomIndex;
         if (room !== undefined && room !== startRoom) {
           clearInterval(timerID); // don't tick again while React flushes the close
           setModals({ kamiAdoptionAgency: false });
