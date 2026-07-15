@@ -2,10 +2,10 @@
 * @Asphodel-OS/Kamigotchi
 
 # By Language
-*.sol @jiracheron
+*.sol @jiracheron @kanyaveral @Cooops
 
 # By Domain
 pnpm-lock.yaml @Asphodel-OS/Kamigotchi
 
-.github/workflows/ @hubur @Cooops
-.github/scripts/ @hubur @Cooops
+.github/workflows/ @hubur @Cooops @kanyaveral
+.github/scripts/ @hubur @Cooops @kanyaveral
