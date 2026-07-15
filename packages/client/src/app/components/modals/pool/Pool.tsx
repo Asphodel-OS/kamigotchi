@@ -49,11 +49,13 @@ export const PoolModal: UIComponent = {
     const [addAmountA, setAddAmountA] = useState(0);
     const [removeShares, setRemoveShares] = useState(0);
 
-    // ticking
+    // ticking — only while open (the modal is permanently mounted, so an
+    // unconditional interval would re-render every second for the whole session)
     useEffect(() => {
+      if (!poolModalOpen) return;
       const timerID = setInterval(() => setLastTick(Date.now()), 1000);
       return () => clearInterval(timerID);
-    }, []);
+    }, [poolModalOpen]);
 
     // refresh pools + account on each tick while open
     useEffect(() => {
@@ -66,6 +68,16 @@ export const PoolModal: UIComponent = {
       () => pools.find((p) => p.id === poolID) ?? pools[0],
       [pools, poolID]
     );
+
+    // reset amount inputs whenever the effective pool changes — including the
+    // silent fallback to pools[0] when a stored poolID drops out of the list,
+    // so a stale amount can never execute against a different pair
+    useEffect(() => {
+      setSwapInput(0);
+      setAddAmountA(0);
+      setRemoveShares(0);
+      setInverted(false);
+    }, [pool?.id]);
 
     /////////////////
     // INTERPRETATION
@@ -167,7 +179,14 @@ export const PoolModal: UIComponent = {
               placeholder='0'
               onChange={(e) => setSwapInput(parseAmount(e.target.value))}
             />
-            <FlipButton onClick={() => setInverted(!inverted)}>⇅</FlipButton>
+            <FlipButton
+              onClick={() => {
+                setInverted(!inverted); // reset: the amount re-denominates to the other item
+                setSwapInput(0);
+              }}
+            >
+              ⇅
+            </FlipButton>
           </Row>
           <Row>
             <Label>receive {swapOut.name}</Label>
@@ -175,13 +194,34 @@ export const PoolModal: UIComponent = {
           </Row>
           <Note>
             rate: 1 {swapIn.name} ≈ {reserveIn > 0 ? (reserveOut / reserveIn).toFixed(4) : '-'}{' '}
-            {swapOut.name} · fee: {pool.feeBps / 100}% · slippage: {SLIPPAGE_BPS / 100}%
+            {swapOut.name} · fee: {pool.feeBps / 100}%
+          </Note>
+          {/* show the ACTUAL enforced minimum, not a nominal %: applySlippage
+              floors, so on small quotes the real bound is far looser than 1%
+              (a quote of 1 gives minOut 0 = unprotected) */}
+          <Note>
+            min received: {applySlippage(swapOutput, SLIPPAGE_BPS)} {swapOut.name}
+            {swapOutput > 0 && applySlippage(swapOutput, SLIPPAGE_BPS) === 0
+              ? ' ⚠ trade too small to protect from slippage'
+              : ''}
           </Note>
           <ActionButton
-            disabled={pool.disabled || swapInput <= 0 || swapOutput <= 0 || insufficient}
+            disabled={
+              pool.disabled ||
+              swapInput <= 0 ||
+              swapOutput <= 0 ||
+              insufficient ||
+              applySlippage(swapOutput, SLIPPAGE_BPS) <= 0
+            }
             onClick={swap}
           >
-            {pool.disabled ? 'pool disabled' : insufficient ? 'insufficient balance' : 'swap'}
+            {pool.disabled
+              ? 'pool disabled'
+              : insufficient
+                ? 'insufficient balance'
+                : swapOutput > 0 && applySlippage(swapOutput, SLIPPAGE_BPS) <= 0
+                  ? 'trade too small'
+                  : 'swap'}
           </ActionButton>
         </Section>
       );
