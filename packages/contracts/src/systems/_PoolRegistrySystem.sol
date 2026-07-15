@@ -89,20 +89,24 @@ contract _PoolRegistrySystem is System, AuthRoles {
     LibPoolRegistry.setDisabled(components, id, disabled);
   }
 
-  /// @notice delete a pool once all players have exited, burning remaining reserves
+  /// @notice delete a pool, force-exiting any remaining LPs at the current ratio
+  /// @dev previously required all players to have exited first, which let a
+  ///      single dust share block teardown forever. now every player position
+  ///      is settled to its holder (made whole) before deletion, so removal
+  ///      can't be griefed. only the pool's own locked seed is then discarded.
   function remove(uint32 indexA, uint32 indexB) public onlyAdmin(components) {
     uint256 id = LibPoolRegistry.get(components, indexA, indexB);
     require(id != 0, "Pool does not exist");
 
-    uint256 locked = LibPool.getShares(components, id, id);
-    require(LibPool.getTotalSupply(components, id) == locked, "Pool: shares outstanding");
+    // pay out and burn every player LP position at the current reserve ratio
+    LibPool.forceExitAll(components, id);
 
-    // clear locked shares directly (burnShares forbids the pool as holder)
-    if (locked > 0) {
+    // clear the pool's own locked shares (burnShares forbids the pool as holder)
+    if (LibPool.getShares(components, id, id) > 0) {
       LibPool.burnLockedShares(components, id);
     }
 
-    // burn remaining reserves
+    // burn the remaining (seed) reserves that backed the locked shares
     (uint32 lo, uint32 hi) = LibPoolRegistry.getItemIndices(components, id);
     uint256 reserveLo = LibInventory.getBalanceOf(components, id, lo);
     uint256 reserveHi = LibInventory.getBalanceOf(components, id, hi);

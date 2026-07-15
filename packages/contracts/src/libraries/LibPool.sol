@@ -182,6 +182,34 @@ library LibPool {
     valComp.dec(poolID, bal); // total supply on the pool
   }
 
+  /// @notice force-exit every player LP position, paying each holder their
+  ///         pro-rata reserves. used at pool teardown so a single dust share
+  ///         can't block removal forever (and no LP is deprived of value).
+  /// @dev the pool's own locked share is left for burnLockedShares; every other
+  ///      POOL_SHARE for this pool is settled at the current reserve ratio.
+  function forceExitAll(IUintComp comps, uint256 poolID) internal {
+    // POOL_SHARE entities are reverse-indexed by IDType == poolID
+    uint256[] memory shares = IDTypeComponent(getAddrByID(comps, IDTypeCompID))
+      .getEntitiesWithValue(poolID);
+    (uint32 lo, uint32 hi) = LibRegistry.getItemIndices(comps, poolID);
+    IdHolderComponent holderComp = IdHolderComponent(getAddrByID(comps, IdHolderCompID));
+
+    for (uint256 i; i < shares.length; i++) {
+      uint256 holderID = holderComp.get(shares[i]);
+      if (holderID == poolID) continue; // locked seed share, handled separately
+
+      uint256 s = getShares(comps, poolID, holderID);
+      if (s == 0) continue;
+      uint256 supply = getTotalSupply(comps, poolID);
+      uint256 amtLo = (s * LibInventory.getBalanceOf(comps, poolID, lo)) / supply;
+      uint256 amtHi = (s * LibInventory.getBalanceOf(comps, poolID, hi)) / supply;
+
+      burnShares(comps, poolID, holderID, s); // decrements supply, deletes the position
+      if (amtLo > 0) LibInventory.transferForNoLog(comps, poolID, holderID, lo, amtLo);
+      if (amtHi > 0) LibInventory.transferForNoLog(comps, poolID, holderID, hi, amtHi);
+    }
+  }
+
   function getShares(
     IUintComp comps,
     uint256 poolID,

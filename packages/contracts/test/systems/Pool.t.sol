@@ -407,17 +407,8 @@ contract PoolTest is SetupTemplate {
 
   function testRemovePool() public {
     uint256 poolID = _createPool();
-    _giveItem(alice, ITEM_A, 10_000);
-    _giveItem(alice, ITEM_B, 10_000);
-    (, , uint256 shares) = _addLiquidity(alice, 10_000, 10_000);
 
-    // blocked while player shares outstanding
-    vm.prank(deployer);
-    vm.expectRevert("Pool: shares outstanding");
-    __PoolRegistrySystem.remove(ITEM_A, ITEM_B);
-
-    // after exit, removal cleans everything up
-    _removeLiquidity(alice, shares);
+    // removal cleans everything up (no outstanding player shares here)
     vm.prank(deployer);
     __PoolRegistrySystem.remove(ITEM_A, ITEM_B);
 
@@ -431,6 +422,29 @@ contract PoolTest is SetupTemplate {
     uint256 newID = _createPool();
     assertEq(newID, poolID);
     assertEq(_getItemBal(poolID, ITEM_A), SEED_A);
+  }
+
+  // teardown force-exits outstanding LPs (a dust holder can no longer block
+  // it) and pays each their pro-rata reserves before deleting the pool
+  function testRemovePoolForceExitsLPs() public {
+    uint256 poolID = _createPool();
+    _giveItem(alice, ITEM_A, 10_000);
+    _giveItem(alice, ITEM_B, 10_000);
+    (uint256 depA, uint256 depB, uint256 shares) = _addLiquidity(alice, 10_000, 10_000);
+    assertGt(shares, 0);
+    assertEq(_getItemBal(alice.id, ITEM_A), 10_000 - depA);
+
+    // alice never exited; admin removes anyway
+    vm.prank(deployer);
+    __PoolRegistrySystem.remove(ITEM_A, ITEM_B);
+
+    // pool gone, and alice was made whole (got her deposit back, pool held 1:1)
+    assertEq(LibPoolRegistry.get(components, ITEM_A, ITEM_B), 0);
+    assertEq(LibPool.getShares(components, poolID, alice.id), 0);
+    assertEq(_getItemBal(alice.id, ITEM_A), 10_000);
+    assertEq(_getItemBal(alice.id, ITEM_B), 10_000);
+    assertEq(_getItemBal(poolID, ITEM_A), 0);
+    assertEq(_getItemBal(poolID, ITEM_B), 0);
   }
 
   /////////////////
