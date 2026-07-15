@@ -31,10 +31,15 @@ anvil (:8545)
      └─ streamer  live event stream (grpc :50061, grpc-web :50062)
 ```
 
-With kamigaze up and `VITE_KAMIGAZE_URL` / `VITE_KAMIGAZE_STREAM_URL` in the
-client's `.env.local` (pointing at :8080 / :50062), the client boots from the
-snapshot service in seconds instead of replaying every event from the node.
-Remove those env keys to fall back to full replay.
+With kamigaze up and `VITE_LOCAL_KAMIGAZE_URL` / `VITE_LOCAL_KAMIGAZE_STREAM_URL`
+in the client's `.env.local` (pointing at :8080 / :50062), the client boots from
+the snapshot service in seconds instead of replaying every event from the node.
+Remove those keys to fall back to full replay.
+
+These are deliberately **local-only** keys, distinct from the `VITE_KAMIGAZE_URL`
+used by prod/test builds: vite loads `.env` in every mode, so reusing that key
+would silently point a local client at the prod indexer, and "remove to replay"
+could never reach `undefined`.
 
 State, logs, pids, and the snapshot live in `.local-stack/` at the repo root
 (gitignored).

@@ -319,7 +319,7 @@ cmd_start() {
   start_client
   # the client boots via kamigaze's snapshot service when its env points there;
   # warn if it's configured but the services aren't running
-  if grep -q 'VITE_KAMIGAZE_URL' "$CLIENT/.env.local" 2>/dev/null && ! svc_pid_alive snapshot; then
+  if grep -q 'VITE_LOCAL_KAMIGAZE_URL' "$CLIENT/.env.local" 2>/dev/null && ! svc_pid_alive snapshot; then
     warn "client .env.local points at kamigaze but it isn't running — run: stack.sh kamigaze up"
   fi
   local start; start="$(meta_get start || echo 0)"

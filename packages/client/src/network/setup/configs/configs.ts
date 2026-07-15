@@ -55,9 +55,13 @@ export const getLocalConfig = (provider?: BrowserProvider): NetworkConfig => {
     worldAddress: params.get('worldAddress') ?? '0xceeDaE2390570eD717A8c07f462D59234b12D39d',
     initialBlockNumber: parseInt(params.get('initialBlockNumber') ?? '0'),
     // boot from a local kamigaze when configured (scripts/services: kamigaze up);
-    // undefined falls back to full event replay from the local node
-    snapshotServiceUrl: import.meta.env.VITE_KAMIGAZE_URL || undefined,
-    streamServiceUrl: import.meta.env.VITE_KAMIGAZE_STREAM_URL || undefined,
+    // undefined falls back to full event replay from the local node.
+    // NB: dedicated VITE_LOCAL_* keys, never VITE_KAMIGAZE_URL — that key is set
+    // by .env.production/.env.testing (and possibly a base .env), and since vite
+    // loads .env in every mode it would silently point this LOCAL client at the
+    // PROD indexer. These keys are set only in .env.local, so unset => replay.
+    snapshotServiceUrl: import.meta.env.VITE_LOCAL_KAMIGAZE_URL || undefined,
+    streamServiceUrl: import.meta.env.VITE_LOCAL_KAMIGAZE_STREAM_URL || undefined,
   };
 
   // EOAs and privatekey
