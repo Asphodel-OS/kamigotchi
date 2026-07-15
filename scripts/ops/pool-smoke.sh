@@ -6,9 +6,12 @@ OPS_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 KAMIGOTCHI="$(cd "$OPS_DIR/../.." && pwd)"
 CONTRACTS="$KAMIGOTCHI/packages/contracts"
 
-# anvil default keys #1/#2 — smoke-test player owner/operator (overridable)
-OWNER_KEY="${SMOKE_OWNER_KEY:-0x59c6995e998f97a5a0044966f0945389dc9e86dae88c7a8412f4603b6b78690d}"
-OPERATOR_KEY="${SMOKE_OPERATOR_KEY:-0x5de4111afa1a4b94908f83103eb1f1706367c2e68ca870fc3fb9a804cdab365a}"
+# anvil default keys #1/#2 — smoke-test player owner/operator (overridable).
+# sourced from the canonical shared file so the raw literals live in one place.
+# shellcheck disable=SC1091
+. "$OPS_DIR/../services/anvil-keys.sh"
+OWNER_KEY="${SMOKE_OWNER_KEY:-$ANVIL1}"
+OPERATOR_KEY="${SMOKE_OPERATOR_KEY:-$ANVIL2}"
 
 if [ -t 1 ]; then BOLD=$'\033[1m'; DIM=$'\033[2m'; RED=$'\033[31m'; GREEN=$'\033[32m'; CYAN=$'\033[36m'; RESET=$'\033[0m'
 else BOLD=""; DIM=""; RED=""; GREEN=""; CYAN=""; RESET=""; fi

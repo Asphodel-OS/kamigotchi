@@ -21,11 +21,9 @@ mkdir -p "$LOGS" "$PIDS"
 RPC="${RPC:-http://127.0.0.1:8545}"
 CLIENT_URL="http://localhost:3000"
 
-# anvil default keys: #0 deployer/admin (matches contracts/.env.local),
-# #1/#2 smoke-test player owner/operator
-ANVIL0=0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80
-ANVIL1=0x59c6995e998f97a5a0044966f0945389dc9e86dae88c7a8412f4603b6b78690d
-ANVIL2=0x5de4111afa1a4b94908f83103eb1f1706367c2e68ca870fc3fb9a804cdab365a
+# canonical anvil dev keys (single source, shared with the ops scripts)
+# shellcheck disable=SC1091
+. "$DEV_DIR/anvil-keys.sh"
 
 # color vars, gated on a tty; empty when piped
 if [ -t 1 ]; then
