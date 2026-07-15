@@ -16,8 +16,9 @@ uint256 constant MAX_FEE_BPS = 1000; // 10%
 uint256 constant MINIMUM_SEED = 1000; // per side, keeps integer rounding tolerable
 
 // create or manage a constant-product Pool between two fungible items
-// NOTE: seeding mints reserves out of thin air (admin faucet); the initial
-// shares are locked to the pool itself so supply/reserves can never fully drain
+// NOTE: reserves are supplied from the calling admin's own inventory (never
+// minted); the initial shares are locked to the pool itself so supply/reserves
+// can never fully drain
 contract _PoolRegistrySystem is System, AuthRoles {
   constructor(IWorld _world, address _components) System(_world, _components) {}
 
@@ -39,20 +40,21 @@ contract _PoolRegistrySystem is System, AuthRoles {
 
     // the pool id is a pure hash of the item pair, so anyone can precompute it
     // and pre-fund the entity before creation (ItemTransferSystem does not
-    // require an account target). refuse to seed onto non-empty reserves — the
-    // locked shares are sqrt(amt*amt) of the ARGS, so a pre-funded reserve would
-    // launch the pool at a skewed price and hand free arbitrage to the griefer.
+    // require an account target). sweep any pre-funded balance to the caller:
+    // reverting instead would let a 1-unit deposit permanently brick the pair
+    // (no donate/remove path exists pre-creation), and seeding on top would
+    // launch the pool at a skewed price. sweeping keeps the launch price at
+    // exactly the seeded ratio, with locked shares = sqrt of the true reserves.
     id = LibPoolRegistry.genID(indexA, indexB);
-    require(
-      LibInventory.getBalanceOf(components, id, indexA) == 0 &&
-        LibInventory.getBalanceOf(components, id, indexB) == 0,
-      "Pool: reserves not empty"
-    );
+    uint256 seeder = uint256(uint160(msg.sender));
+    uint256 pre = LibInventory.getBalanceOf(components, id, indexA);
+    if (pre > 0) LibInventory.transferForNoLog(components, id, seeder, indexA, pre);
+    pre = LibInventory.getBalanceOf(components, id, indexB);
+    if (pre > 0) LibInventory.transferForNoLog(components, id, seeder, indexB, pre);
 
     // seed from the calling admin's own inventory (not minted): they must hold
     // the items. token-backed items (ONYX) are fine — the shards are real,
     // bridged reserves rather than unbacked mints, so no token guard is needed.
-    uint256 seeder = uint256(uint160(msg.sender));
     id = LibPoolRegistry.create(components, indexA, indexB, feeBps);
     LibInventory.transferForNoLog(components, seeder, id, indexA, amtA); // reverts if short
     LibInventory.transferForNoLog(components, seeder, id, indexB, amtB);

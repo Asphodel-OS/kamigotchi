@@ -157,8 +157,9 @@ export const PoolModal: UIComponent = {
     // RENDERING
 
     const parseAmount = (raw: string) => {
+      // isFinite also rejects Infinity ("1e999"), which BigInt() would throw on
       const n = Math.floor(Number(raw));
-      return isNaN(n) || n < 0 ? 0 : n;
+      return !Number.isFinite(n) || n < 0 ? 0 : n;
     };
 
     const renderSwap = () => {
