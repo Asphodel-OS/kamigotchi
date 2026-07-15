@@ -19,6 +19,10 @@ import { CommitData, RevealType } from './types';
 
 export type DTRevealerSystem = ReturnType<typeof createDTRevealerSystem>;
 
+// reveal retry cap. after this many consecutive failed reveal txs a commit is
+// marked FAILED and no longer auto-queued.
+const MAX_REVEAL_FAILURES = 3;
+
 // reveals committed item drops
 export function createDTRevealerSystem(
   world: World,
@@ -38,17 +42,29 @@ export function createDTRevealerSystem(
   const entityNameMap = new Map<EntityID, string>();
 
   function add(commit: DTCommit, revealType: RevealType = 'droptable') {
-    // filters out commits that are already in the system
-    if (allCommits.has(commit.id)) return;
+    const existing = allCommits.get(commit.id);
 
-    // Add commit to system
-    const data: CommitData = {
-      ...commit,
-      failures: 0,
-      revealType,
-    };
-    allCommits.set(commit.id, data);
-    if (canRevealCommit(commit)) queuedCommits.add(commit.id);
+    // first time we see this commit: register it
+    if (!existing) {
+      const data: CommitData = {
+        ...commit,
+        failures: 0,
+        revealType,
+      };
+      allCommits.set(commit.id, data);
+      if (canRevealCommit(commit)) queuedCommits.add(commit.id);
+      return;
+    }
+
+    // already known and still on-chain (the commit query only returns live
+    // commits). a large commit reveals in bounded chunks per tx, so re-queue it
+    // whenever it is idle and still has rolls left, until it fully drains. skip
+    // commits that are mid-reveal, already queued, or out of retries.
+    const idle = !revealingCommits.has(commit.id) && !queuedCommits.has(commit.id);
+    if (idle && canRevealCommit(commit) && existing.failures < MAX_REVEAL_FAILURES) {
+      allCommits.set(commit.id, { ...existing, ...commit });
+      queuedCommits.add(commit.id);
+    }
   }
 
   function extractQueue(revealType?: RevealType): EntityID[] {
@@ -95,17 +111,21 @@ export function createDTRevealerSystem(
 
     for (let i = 0; i < commits.length; i++) revealingCommits.delete(commits[i]);
     if (getComponentValue(actions.Action, actionIndex)?.state === ActionState.Complete) {
-      // upon reveal success
+      // reveal tx succeeded. a chunked commit may still have rolls left on-chain;
+      // the per-block reconcile in add() re-queues it until it fully drains. reset
+      // failures so a long drain is not killed by earlier transient failures.
       for (let i = 0; i < commits.length; i++) {
+        const curr = allCommits.get(commits[i]);
+        if (curr) allCommits.set(commits[i], { ...curr, failures: 0 });
         removeComponent(State, world.entityToIndex.get(commits[i])!);
         notifyResult(world, components, notifications, allCommits.get(commits[i]));
       }
     } else {
-      // increment failure count, remove from queue after 3 tries
+      // increment failure count, mark FAILED after the retry cap
       for (let i = 0; i < commits.length; i++) {
         const curr = allCommits.get(commits[i]);
         if (curr) {
-          if (curr.failures < 3) queuedCommits.add(commits[i]);
+          if (curr.failures < MAX_REVEAL_FAILURES) queuedCommits.add(commits[i]);
           else setComponent(State, world.entityToIndex.get(commits[i])!, { value: 'FAILED' });
           curr.failures++;
           allCommits.set(commits[i], curr);
