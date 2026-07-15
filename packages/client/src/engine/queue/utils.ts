@@ -352,18 +352,23 @@ export async function sendTx(
           await (signer.provider as any).send('eth_sendRawTransaction', [signedTx]);
           log.time.info('[queue] Rebroadcast signed tx via eth_sendRawTransaction');
         } catch (rebroadcastError: any) {
+          if (rebroadcastError?.receipt) throw rebroadcastError; // on-chain failure surfaced
           const msg = normalizeMessage(rebroadcastError);
-          // these rejections mean the original send DID land — reconcile finds it
-          const alreadyLanded = ['already known', 'already imported', 'nonce too low', 'duplicate'].some(
-            (p) => msg.includes(p)
+          // ONLY hash-specific duplicate responses prove THIS signed tx is
+          // already in the node. "nonce too low" is excluded on purpose — a
+          // different tx may have taken the nonce, so it does not prove this
+          // hash landed; it falls through to reconciliation like any ambiguous
+          // error (finds the receipt if it landed, times out if it didn't).
+          const alreadyKnown = ['already known', 'already imported', 'duplicate'].some((p) =>
+            msg.includes(p)
           );
-          if (!alreadyLanded) {
-            // deterministic failures can never mine — reconciling would just
-            // burn the full timeout on a tx no node will ever accept
+          if (!alreadyKnown) {
+            // throw ONLY on precise deterministic tx-validation errors that can
+            // never mine. ambiguous rejections (rejected/denied/rate-limit,
+            // often gateway-level) are NOT fatal — the original submission may
+            // be mining, so they must still reach reconciliation.
             const fatal = [
               'insufficient funds',
-              'rejected',
-              'denied',
               'intrinsic gas',
               'invalid signature',
               'invalid chain',
@@ -372,7 +377,7 @@ export async function sendTx(
             if (fatal) throw rebroadcastError;
           }
           log.time.info(
-            `[queue] Rebroadcast ${alreadyLanded ? 'confirms tx already known' : 'rejected (non-deterministic)'}: ${msg.slice(0, 80)}`
+            `[queue] Rebroadcast ${alreadyKnown ? 'confirms tx already known' : 'inconclusive, reconciling'}: ${msg.slice(0, 80)}`
           );
         }
       }
