@@ -16,11 +16,24 @@ import { console } from "forge-std/console.sol";
  * beforehand (ONYX only via portal deposit; test worlds can faucet via
  * _DistributeItemSystem or a god script).
  *
- * Run via `pnpm world:pool:create:<env>` with env params:
+ * Run via `pnpm world:pool:create:<env>` with per-run env params (pass them
+ * inline on the command; deployer key / RPC / WORLD come from .env.<env>):
  *   TREASURY_PRIV_KEY  treasury account owner key (signs create)
  *   POOL_ITEM_A/B      item indices
  *   POOL_SEED_A/B      seed amounts (>= 1000 each)
- *   POOL_FEE_BPS       swap fee (<= 1000)
+ *   POOL_FEE_BPS       swap fee, basis points (<= 1000)
+ *
+ *   TREASURY_PRIV_KEY=0x... \
+ *   POOL_ITEM_A=1 POOL_ITEM_B=100 \
+ *   POOL_SEED_A=100000 POOL_SEED_B=50000 \
+ *   POOL_FEE_BPS=30 \
+ *   pnpm world:pool:create:prod
+ *
+ * Any invalid input aborts during forge's simulation with a named error,
+ * before any tx is broadcast: missing vars (runner + vm.envUint), unregistered
+ * items / missing account / short inventory (preflight below), and everything
+ * else (fee cap, minimum seed, tradability, duplicate pool) via create()'s own
+ * on-chain checks, which also execute in the simulation.
  *
  * The treasury pays real gas: it must hold the chain's fee token, and the
  * runner sends legacy txs at the chain's min gas price (the deployer alone is
