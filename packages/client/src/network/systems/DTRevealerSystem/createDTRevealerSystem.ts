@@ -121,14 +121,15 @@ export function createDTRevealerSystem(
         notifyResult(world, components, notifications, allCommits.get(commits[i]));
       }
     } else {
-      // increment failure count, mark FAILED after the retry cap
+      // increment failure count first so the cap is exact: the Nth consecutive
+      // failure marks FAILED, with no extra attempt
       for (let i = 0; i < commits.length; i++) {
         const curr = allCommits.get(commits[i]);
         if (curr) {
-          if (curr.failures < MAX_REVEAL_FAILURES) queuedCommits.add(commits[i]);
+          const failures = curr.failures + 1;
+          if (failures < MAX_REVEAL_FAILURES) queuedCommits.add(commits[i]);
           else setComponent(State, world.entityToIndex.get(commits[i])!, { value: 'FAILED' });
-          curr.failures++;
-          allCommits.set(commits[i], curr);
+          allCommits.set(commits[i], { ...curr, failures });
         }
       }
     }

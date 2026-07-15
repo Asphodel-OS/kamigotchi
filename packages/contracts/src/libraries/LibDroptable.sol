@@ -52,7 +52,10 @@ library LibDroptable {
 
   /// @notice reveals and distributes items, bounded to MAX_ROLLS_PER_REVEAL per tx
   /// @dev a commit larger than the remaining budget keeps its remainder and is
-  ///      revealed again on a later tx; commits past the budget wait their turn
+  ///      revealed again on a later tx; commits past the budget wait their turn.
+  ///      every chunk re-reads the same reveal blockhash, so a drain stalled past
+  ///      the 256-block window (client offline mid-drain) leaves the remainder
+  ///      unrevealable via this path — forceReveal/resetBlocks rescues the tail
   function reveal(IWorld world, IUintComp components, uint256[] memory commitIDs) internal {
     uint256 budget = MAX_ROLLS_PER_REVEAL;
     for (uint256 i; i < commitIDs.length; i++) {
