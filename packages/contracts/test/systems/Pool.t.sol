@@ -24,7 +24,21 @@ contract PoolTest is SetupTemplate {
   /////////////////
   // HELPERS
 
+  // seeding now comes from the admin's own inventory, so fund the deployer
+  // (the admin/seeder) before creating or donating
+  function _fundSeeder(uint32 index, uint256 amt) internal {
+    vm.startPrank(deployer);
+    LibInventory.incFor(components, uint256(uint160(deployer)), index, amt);
+    vm.stopPrank();
+  }
+
+  function _seederBal(uint32 index) internal view returns (uint256) {
+    return LibInventory.getBalanceOf(components, uint256(uint160(deployer)), index);
+  }
+
   function _createPool() internal returns (uint256) {
+    _fundSeeder(ITEM_A, SEED_A);
+    _fundSeeder(ITEM_B, SEED_B);
     vm.prank(deployer);
     return __PoolRegistrySystem.create(ITEM_A, ITEM_B, SEED_A, SEED_B, FEE_BPS);
   }
@@ -107,6 +121,8 @@ contract PoolTest is SetupTemplate {
   }
 
   function testPoolCreateValidation() public {
+    _fundSeeder(ITEM_A, SEED_A);
+    _fundSeeder(ITEM_B, SEED_B);
     vm.startPrank(deployer);
 
     vm.expectRevert("Pool: identical items");
@@ -397,6 +413,8 @@ contract PoolTest is SetupTemplate {
     uint256 poolID = _createPool();
     uint256 supplyBefore = LibPool.getTotalSupply(components, poolID);
 
+    _fundSeeder(ITEM_A, 5_000);
+    _fundSeeder(ITEM_B, 5_000);
     vm.prank(deployer);
     __PoolRegistrySystem.donate(ITEM_A, ITEM_B, 5_000, 5_000);
 
@@ -417,8 +435,11 @@ contract PoolTest is SetupTemplate {
     assertEq(_getItemBal(poolID, ITEM_A), 0);
     assertEq(_getItemBal(poolID, ITEM_B), 0);
     assertEq(LibPool.getTotalSupply(components, poolID), 0);
+    // the seed was returned to the admin, not burned
+    assertEq(_seederBal(ITEM_A), SEED_A);
+    assertEq(_seederBal(ITEM_B), SEED_B);
 
-    // same pair can be recreated
+    // same pair can be recreated (reuses the returned seed)
     uint256 newID = _createPool();
     assertEq(newID, poolID);
     assertEq(_getItemBal(poolID, ITEM_A), SEED_A);
@@ -453,6 +474,8 @@ contract PoolTest is SetupTemplate {
   function testMusuPair() public {
     // MUSU is just item index 1; ensure it has a registry entry in the test world
     if (LibItem.getByIndex(components, MUSU_INDEX) == 0) _createGenericItem(MUSU_INDEX);
+    _fundSeeder(MUSU_INDEX, SEED_A);
+    _fundSeeder(ITEM_A, SEED_B);
 
     vm.prank(deployer);
     uint256 poolID = __PoolRegistrySystem.create(MUSU_INDEX, ITEM_A, SEED_A, SEED_B, FEE_BPS);
@@ -469,14 +492,26 @@ contract PoolTest is SetupTemplate {
   /////////////////
   // REVIEW REGRESSIONS
 
-  // token-backed (ERC20-mirrored) items cannot be pooled — seeding mints
-  // unbacked reserves. explicit guard, not incidental to incFor.
-  function testCreateRejectsTokenItem() public {
+  // token-backed (ERC20-mirrored, e.g. ONYX) items CAN be pooled now that the
+  // seed comes from the admin's real inventory — the shards are backed, not
+  // minted. fund the seeder before marking the item token-backed.
+  function testCreateAllowsTokenItem() public {
+    _fundSeeder(ITEM_A, SEED_A);
+    _fundSeeder(ITEM_B, SEED_B);
     address erc20 = _createERC20("Onyx", "ONYX");
     _addItemERC20(ITEM_A, erc20, 1e2); // ITEM_A now carries a TokenAddress
 
     vm.prank(deployer);
-    vm.expectRevert("LibItem: item has a token");
+    uint256 poolID = __PoolRegistrySystem.create(ITEM_A, ITEM_B, SEED_A, SEED_B, FEE_BPS);
+    assertEq(_getItemBal(poolID, ITEM_A), SEED_A);
+    assertEq(_seederBal(ITEM_A), 0); // deducted from the seeder, not minted
+  }
+
+  // create reverts if the admin doesn't actually hold the seed items
+  function testCreateRevertsIfSeederShort() public {
+    _fundSeeder(ITEM_A, SEED_A); // only one side funded
+    vm.prank(deployer);
+    vm.expectRevert(); // arithmetic underflow on the ITEM_B transfer
     __PoolRegistrySystem.create(ITEM_A, ITEM_B, SEED_A, SEED_B, FEE_BPS);
   }
 
@@ -497,6 +532,8 @@ contract PoolTest is SetupTemplate {
   // still be able to exit (forfeiting the zero side) instead of being frozen
   function testRemoveDustSideStillExits() public {
     // skew the pool hard: 1,000,000 A : 1,000 B
+    _fundSeeder(ITEM_A, 1_000_000);
+    _fundSeeder(ITEM_B, 1_000);
     vm.prank(deployer);
     uint256 poolID = __PoolRegistrySystem.create(ITEM_A, ITEM_B, 1_000_000, 1_000, FEE_BPS);
 
@@ -516,6 +553,8 @@ contract PoolTest is SetupTemplate {
   // as coin earned, so a solo round-trip would otherwise inflate the leaderboard
   function testSwapDoesNotInflateItemTotal() public {
     if (LibItem.getByIndex(components, MUSU_INDEX) == 0) _createGenericItem(MUSU_INDEX);
+    _fundSeeder(MUSU_INDEX, SEED_A);
+    _fundSeeder(ITEM_A, SEED_B);
     vm.prank(deployer);
     __PoolRegistrySystem.create(MUSU_INDEX, ITEM_A, SEED_A, SEED_B, FEE_BPS);
 

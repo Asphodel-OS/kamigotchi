@@ -33,12 +33,6 @@ contract _PoolRegistrySystem is System, AuthRoles {
     require(LibItem.getByIndex(components, indexA) != 0, "Item: does not exist");
     require(LibItem.getByIndex(components, indexB) != 0, "Item: does not exist");
     verifyTradable(indexA, indexB);
-    // token-backed items (ERC20-mirrored, e.g. ONYX) are unsupported: seeding
-    // mints reserves from thin air, which would create shards with no portal
-    // backing. explicit guard so a future transfer-based seeding refactor can't
-    // silently make unbacked token pools (incFor already reverts, but only
-    // incidentally). ONYX pools need a treasury seed/return model — see PR notes.
-    verifyNoToken(indexA, indexB);
     require(feeBps <= MAX_FEE_BPS, "Pool: fee too high");
     require(amtA >= MINIMUM_SEED && amtB >= MINIMUM_SEED, "Pool: seed too small");
     require(LibPoolRegistry.get(components, indexA, indexB) == 0, "Pool already exists");
@@ -55,13 +49,17 @@ contract _PoolRegistrySystem is System, AuthRoles {
       "Pool: reserves not empty"
     );
 
+    // seed from the calling admin's own inventory (not minted): they must hold
+    // the items. token-backed items (ONYX) are fine — the shards are real,
+    // bridged reserves rather than unbacked mints, so no token guard is needed.
+    uint256 seeder = uint256(uint160(msg.sender));
     id = LibPoolRegistry.create(components, indexA, indexB, feeBps);
-    LibInventory.incFor(components, id, indexA, amtA);
-    LibInventory.incFor(components, id, indexB, amtB);
+    LibInventory.transferForNoLog(components, seeder, id, indexA, amtA); // reverts if short
+    LibInventory.transferForNoLog(components, seeder, id, indexB, amtB);
     LibPool.mintShares(components, id, id, LibPool.calcInitialLiquidity(amtA, amtB));
   }
 
-  /// @notice deepen reserves without minting shares (boosts LP value)
+  /// @notice deepen reserves (boosts LP value) from the caller's own inventory
   function donate(
     uint32 indexA,
     uint32 indexB,
@@ -70,9 +68,9 @@ contract _PoolRegistrySystem is System, AuthRoles {
   ) public onlyAdmin(components) {
     uint256 id = LibPoolRegistry.get(components, indexA, indexB);
     require(id != 0, "Pool does not exist");
-    verifyNoToken(indexA, indexB); // same token-backed exclusion as create
-    if (amtA > 0) LibInventory.incFor(components, id, indexA, amtA);
-    if (amtB > 0) LibInventory.incFor(components, id, indexB, amtB);
+    uint256 seeder = uint256(uint160(msg.sender));
+    if (amtA > 0) LibInventory.transferForNoLog(components, seeder, id, indexA, amtA);
+    if (amtB > 0) LibInventory.transferForNoLog(components, seeder, id, indexB, amtB);
   }
 
   function setFee(uint32 indexA, uint32 indexB, uint256 feeBps) public onlyAdmin(components) {
@@ -93,7 +91,7 @@ contract _PoolRegistrySystem is System, AuthRoles {
   /// @dev previously required all players to have exited first, which let a
   ///      single dust share block teardown forever. now every player position
   ///      is settled to its holder (made whole) before deletion, so removal
-  ///      can't be griefed. only the pool's own locked seed is then discarded.
+  ///      can't be griefed. the residual seed is returned to the calling admin.
   function remove(uint32 indexA, uint32 indexB) public onlyAdmin(components) {
     uint256 id = LibPoolRegistry.get(components, indexA, indexB);
     require(id != 0, "Pool does not exist");
@@ -106,12 +104,14 @@ contract _PoolRegistrySystem is System, AuthRoles {
       LibPool.burnLockedShares(components, id);
     }
 
-    // burn the remaining (seed) reserves that backed the locked shares
+    // return the remaining (seed) reserves to the calling admin — these are real
+    // supplied items (incl. backed ONYX shards), so they're returned, not burned
+    uint256 recipient = uint256(uint160(msg.sender));
     (uint32 lo, uint32 hi) = LibPoolRegistry.getItemIndices(components, id);
     uint256 reserveLo = LibInventory.getBalanceOf(components, id, lo);
     uint256 reserveHi = LibInventory.getBalanceOf(components, id, hi);
-    if (reserveLo > 0) LibInventory.decFor(components, id, lo, reserveLo);
-    if (reserveHi > 0) LibInventory.decFor(components, id, hi, reserveHi);
+    if (reserveLo > 0) LibInventory.transferForNoLog(components, id, recipient, lo, reserveLo);
+    if (reserveHi > 0) LibInventory.transferForNoLog(components, id, recipient, hi, reserveHi);
 
     LibPoolRegistry.remove(components, id);
   }
@@ -122,14 +122,6 @@ contract _PoolRegistrySystem is System, AuthRoles {
     indices[0] = indexA;
     indices[1] = indexB;
     LibInventory.verifyTransferable(components, indices);
-  }
-
-  /// @dev reverts if either item is ERC20-backed (has a TokenAddress). pools
-  ///      hold reserves as plain inventory; token-backed reserves would be
-  ///      unbacked in the portal.
-  function verifyNoToken(uint32 indexA, uint32 indexB) internal view {
-    LibItem.verifyToken(components, indexA, false);
-    LibItem.verifyToken(components, indexB, false);
   }
 
   function execute(bytes memory arguments) public onlyAdmin(components) returns (bytes memory) {
