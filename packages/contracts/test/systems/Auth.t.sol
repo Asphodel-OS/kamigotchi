@@ -53,6 +53,30 @@ contract AuthTest is SetupTemplate {
     wrapper.mustAdmin(components);
   }
 
+  // an admin must not be able to escalate to ROLE_ADMIN via the generic flag
+  // setter (which would bypass the owner-gated auth registry and the Safe)
+  function testAdminSetFlagCannotGrantRoles() public {
+    address Admin = address(0x2);
+    setRole(Admin, "ROLE_ADMIN", true);
+
+    uint256[] memory targets = new uint256[](1);
+    targets[0] = _getAccount(0); // alice's account (id == uint160(owner))
+
+    // role flags are rejected regardless of target
+    vm.prank(Admin);
+    vm.expectRevert("roles: use auth registry");
+    __AdminSetFlagSystem.executeTyped(targets, "ROLE_ADMIN", true);
+
+    vm.prank(Admin);
+    vm.expectRevert("roles: use auth registry");
+    __AdminSetFlagSystem.executeTyped(targets, "ROLE_COMMUNITY_MANAGER", true);
+
+    // non-role flags still work (giveaways, airdrops)
+    vm.prank(Admin);
+    __AdminSetFlagSystem.executeTyped(targets, "AIRDROP_2026", true);
+    assertTrue(LibFlag.has(components, targets[0], "AIRDROP_2026"));
+  }
+
   ///////////////
   // UTILS
 

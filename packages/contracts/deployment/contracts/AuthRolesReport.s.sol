@@ -29,6 +29,15 @@ contract AuthRolesReport is SystemCall {
     for (uint256 i; i < roles.length; i++) {
       reportRole(roles[i]);
     }
+
+    // Soundness note: this enumerates grants via the IDType anchor written by
+    // _AuthManageRoleSystem.setFull (owner/Safe-gated). That is complete ONLY
+    // on worlds where _AdminSetFlagSystem rejects ROLE_ flags (the guard
+    // shipped alongside this script). On a world deployed before that guard, an
+    // admin could have bare-set a ROLE_ flag with no anchor — invisible here.
+    // Treat the list as authoritative post-guard, and as a floor pre-guard.
+    console.log("");
+    console.log("(anchored grants only; sound iff _AdminSetFlagSystem rejects ROLE_ flags)");
   }
 
   function reportRole(string memory role) internal {
