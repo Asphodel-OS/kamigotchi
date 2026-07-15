@@ -362,4 +362,130 @@ contract ScavengeTest is SetupTemplate {
     for (uint i = 0; i < itemAmounts.length; i++) totalDropItems += itemAmounts[i];
     assertEq(totalDropItems, 6, "droptable items total mismatch");
   }
+
+  /////////////////
+  // CHUNKED REVEAL
+
+  // single-item droptable so every roll yields item 1: bal(1) == rolls revealed
+  function _addSingleItemDT(uint256 rollsPerTier) internal {
+    uint32[] memory keys = new uint32[](1);
+    keys[0] = 1;
+    uint256[] memory weights = new uint256[](1);
+    weights[0] = 1;
+    _addReward(scavbar1.id, keys, weights, rollsPerTier);
+  }
+
+  function _claimGetDTCommit(
+    PlayerAccount memory acc,
+    uint256 scavBarID
+  ) internal returns (uint256) {
+    vm.recordLogs();
+    _claim(acc, scavBarID);
+    (, , , , , uint256[] memory commitIDs) = _decodeScavengeRewardsEvent(
+      _findWorldEvent(vm.getRecordedLogs(), "SCAVENGE_REWARDS").data
+    );
+    for (uint256 i; i < commitIDs.length; i++) if (commitIDs[i] != 0) return commitIDs[i];
+    revert("no DT commit created");
+  }
+
+  function _revealOnce(PlayerAccount memory acc, uint256 commitID) internal {
+    uint256[] memory ids = new uint256[](1);
+    ids[0] = commitID;
+    vm.prank(acc.operator);
+    _DroptableRevealSystem.executeTyped(ids);
+  }
+
+  /// @notice a commit larger than MAX drains over multiple reveals, total exact
+  function testChunkedDrainFatCommit() public {
+    _addSingleItemDT(1);
+    uint256 rolls = 12_000; // > MAX_ROLLS_PER_REVEAL
+    _incFor(alice, scavbar1, rolls * scavbar1.tierCost);
+    uint256 commitID = _claimGetDTCommit(alice, scavbar1.id);
+    assertEq(_ValueComponent.get(commitID), rolls, "initial commit rolls");
+
+    vm.roll(block.number + 2);
+
+    // first reveal caps at MAX and carries the remainder
+    _revealOnce(alice, commitID);
+    assertEq(_getItemBal(alice, 1), 5000, "first chunk distributes exactly MAX");
+    assertEq(_ValueComponent.get(commitID), rolls - 5000, "remainder carried");
+    assertTrue(_BlockRevealComponent.has(commitID), "commit alive mid-drain");
+
+    // drain the rest
+    uint256 guard;
+    while (_BlockRevealComponent.has(commitID)) {
+      _revealOnce(alice, commitID);
+      require(++guard < 10, "drain did not converge");
+    }
+
+    assertEq(_getItemBal(alice, 1), rolls, "all rolls distributed after drain");
+    assertFalse(_BlockRevealComponent.has(commitID), "commit deleted after drain");
+  }
+
+  /// @notice a commit exactly at MAX drains in a single pass (legacy behavior)
+  function testRevealAtMaxSinglePass() public {
+    _addSingleItemDT(1);
+    uint256 rolls = 5000; // == MAX
+    _incFor(alice, scavbar1, rolls * scavbar1.tierCost);
+    uint256 commitID = _claimGetDTCommit(alice, scavbar1.id);
+
+    vm.roll(block.number + 2);
+    _revealOnce(alice, commitID);
+
+    assertEq(_getItemBal(alice, 1), rolls, "all distributed in one pass");
+    assertFalse(_BlockRevealComponent.has(commitID), "commit consumed in one pass");
+  }
+
+  /// @notice the per-tx budget is shared across all commits in one reveal call
+  function testPerTxBudgetAcrossCommits() public {
+    _addSingleItemDT(1);
+
+    _incFor(alice, scavbar1, 4000 * scavbar1.tierCost);
+    uint256 c1 = _claimGetDTCommit(alice, scavbar1.id);
+    _incFor(alice, scavbar1, 4000 * scavbar1.tierCost);
+    uint256 c2 = _claimGetDTCommit(alice, scavbar1.id);
+
+    vm.roll(block.number + 2);
+    uint256[] memory ids = new uint256[](2);
+    ids[0] = c1;
+    ids[1] = c2;
+    vm.prank(alice.operator);
+    _DroptableRevealSystem.executeTyped(ids);
+
+    // budget 5000: c1 fully (4000), then 1000 of c2
+    assertEq(_getItemBal(alice, 1), 5000, "per-tx budget caps total across commits");
+    assertFalse(_BlockRevealComponent.has(c1), "c1 fully drained");
+    assertTrue(_BlockRevealComponent.has(c2), "c2 partially drained");
+    assertEq(_ValueComponent.get(c2), 3000, "c2 remainder");
+  }
+
+  /// @notice re-revealing a fully-drained commit is a no-op, not a revert
+  function testRevealDrainedCommitIsGraceful() public {
+    _addSingleItemDT(1);
+    _incFor(alice, scavbar1, 100 * scavbar1.tierCost);
+    uint256 commitID = _claimGetDTCommit(alice, scavbar1.id);
+
+    vm.roll(block.number + 2);
+    _revealOnce(alice, commitID); // fully drains (100 < MAX)
+    assertEq(_getItemBal(alice, 1), 100, "distributed");
+    assertFalse(_BlockRevealComponent.has(commitID), "consumed");
+
+    // revealing again must not revert or double-distribute
+    _revealOnce(alice, commitID);
+    assertEq(_getItemBal(alice, 1), 100, "no double distribution");
+  }
+
+  /// @notice a commit of a non-droptable type is rejected (checkIsCommit)
+  function testRevealNonDroptableCommitReverts() public {
+    vm.startPrank(deployer);
+    uint256 fakeCommit = LibCommit.commit(world, components, alice.id, block.number, "SOME_OTHER_COMMIT");
+    vm.stopPrank();
+
+    vm.roll(block.number + 2);
+    uint256[] memory ids = new uint256[](1);
+    ids[0] = fakeCommit;
+    vm.prank(alice.operator);
+    vm.expectRevert("not reveal entity");
+    _DroptableRevealSystem.executeTyped(ids);
+  }
 }
