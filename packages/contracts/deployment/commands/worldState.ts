@@ -23,13 +23,15 @@ const run = async () => {
   const world = argv.world ? argv.world : process.env.WORLD;
   const category: keyof WorldAPI = argv.category ?? 'init';
   const action = argv.action ? (argv.action as keyof SubFunc) : 'init';
-  const args = argv.args
+  // .length guard: a bare `--args` yields [] (truthy), which would flow through
+  // toString/split/Number into [0] and silently target entity index 0
+  const args = argv.args?.length
     ? argv.args
         .toString()
         .split(',') // ensure array
         .map((a: string) => Number(a)) // cast to number
     : undefined;
-  const npcArgs = argv.npc
+  const npcArgs = argv.npc?.length
     ? argv.npc
         .toString()
         .split(',')
