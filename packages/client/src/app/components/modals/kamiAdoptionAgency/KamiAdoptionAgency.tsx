@@ -1,5 +1,5 @@
 import { EntityIndex } from 'engine/recs';
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
 import { useReadContract } from 'wagmi';
 
@@ -54,6 +54,23 @@ export const KamiAdoptionAgency: UIComponent = {
     const [completedAdoptionsByAddress, setCompletedAdoptionsByAddress] = useState<
       Record<string, boolean>
     >({});
+
+    // close the modal when the player moves to a different room (movement is
+    // possible while open — e.g. the map modal occupies a different zone).
+    // { live: 1 } forces the cache to re-read roomIndex — a bare getAccount()
+    // returns the same cached object and would never observe the move
+    useEffect(() => {
+      if (!isModalOpen) return;
+      const startRoom = _getAccount(world, components, accountEntity, { live: 1 })?.roomIndex;
+      const timerID = setInterval(() => {
+        const room = _getAccount(world, components, accountEntity, { live: 1 })?.roomIndex;
+        if (room !== undefined && room !== startRoom) {
+          clearInterval(timerID); // don't tick again while React flushes the close
+          setModals({ kamiAdoptionAgency: false });
+        }
+      }, 1000);
+      return () => clearInterval(timerID);
+    }, [isModalOpen, accountEntity, world, components, setModals]);
     const displayedKamis = useMemo(() => {
       return getDisplayedKamiEntities().map((entity) => getKami(entity));
     }, [world, components]);
