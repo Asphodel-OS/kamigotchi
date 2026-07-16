@@ -338,7 +338,9 @@ async function run() {
       console.log(`\n  ${entityType.label} (${rows.length} entries) - Index component not registered!`);
       for (const row of rows) {
         const idx = Number(row[entityType.indexCol]);
-        const name = row[entityType.nameCol] || `#${idx}`;
+        // collapse whitespace so multi-line CSV names (quoted values with embedded
+        // newlines) stay on one output line and don't break line-based parsing
+        const name = (row[entityType.nameCol] || `#${idx}`).replace(/\s+/g, ' ').trim();
         stateResults.push({ category: entityType.label, name: `${name} (#${idx})`, status: row['Status'] || '', onChain: false, state: 'ERROR', detail: 'Index component not registered' });
       }
       continue;
@@ -352,7 +354,9 @@ async function run() {
       const idx = Number(row[entityType.indexCol]);
       if (isNaN(idx) || idx === 0) continue;
 
-      const name = row[entityType.nameCol] || `#${idx}`;
+      // collapse whitespace so multi-line CSV names (quoted values with embedded
+      // newlines) stay on one output line and don't break line-based parsing
+      const name = (row[entityType.nameCol] || `#${idx}`).replace(/\s+/g, ' ').trim();
       const csvStatus = hasStatus ? row['Status'] : 'In Game';
       const entityID = generateRegID(entityType.regField, idx);
 

@@ -12,6 +12,10 @@ import { SubFunc, WorldAPI } from '../world/world';
 const argv = yargs(hideBin(process.argv))
   .usage('Usage: $0 -world <address> -categories <string> -action <string>  -args <number[]>')
   .alias('category', 'c')
+  // collect list args so space-separated indices (`--args 4 5 6`) aren't dropped
+  // into positionals; comma-separated (`--args 4,5,6`) still parses identically
+  .array('args')
+  .array('npc')
   .parse();
 
 const run = async () => {
