@@ -34,43 +34,12 @@ contract PoolSmoke is SystemCall {
   ) external {
     _setUp(worldAddr);
 
-    address deployerAddr = vm.addr(deployerPriv);
     address ownerAddr = vm.addr(ownerPriv);
     address operatorAddr = vm.addr(operatorPriv);
 
     // 1. admin: create + seed the pool (skip if a prior run already created it)
-    // seeding now comes from the admin's own inventory, so the admin must be a
-    // registered account holding the seed items
     uint256 poolID = uint256(keccak256(abi.encodePacked("amm.pool", ITEM_A, ITEM_B)));
-    if (getReserve(poolID, ITEM_A) == 0) {
-      // ensure the admin has an account (id == uint160(deployer))
-      if (!_getStringComp("component.type.entity").has(uint256(uint160(deployerAddr)))) {
-        vm.startBroadcast(deployerPriv);
-        AccountRegisterSystem(_getSysAddr("system.account.register")).executeTyped(
-          deployerAddr,
-          "pooladmin"
-        );
-        vm.stopBroadcast();
-      }
-      // distribute the seed items to the admin's own inventory
-      vm.startBroadcast(deployerPriv);
-      address[] memory adminAcct = new address[](1);
-      adminAcct[0] = deployerAddr;
-      uint256[] memory seedAmt = new uint256[](1);
-      seedAmt[0] = SEED;
-      _DistributeItemSystem seeder = _DistributeItemSystem(_getSysAddr("system.distribute.item"));
-      seeder.executeTyped(adminAcct, ITEM_A, seedAmt);
-      seeder.executeTyped(adminAcct, ITEM_B, seedAmt);
-      // create + seed from the admin's inventory
-      _PoolRegistrySystem(_getSysAddr("system.pool.registry")).create(
-        ITEM_A,
-        ITEM_B,
-        SEED,
-        SEED,
-        FEE_BPS
-      );
-      vm.stopBroadcast();
-    }
+    if (getReserve(poolID, ITEM_A) == 0) adminSeedAndCreate(deployerPriv);
     console.log("pool created: reserves %d / %d", getReserve(poolID, ITEM_A), getReserve(poolID, ITEM_B));
 
     // 2. player: register an account (skip if already registered)
@@ -127,6 +96,40 @@ contract PoolSmoke is SystemCall {
     require(kAfter >= kBefore, "SMOKE FAIL: k decreased");
     require(getShares(poolID, accID) == 0, "SMOKE FAIL: shares not burned");
     console.log("POOL SMOKE PASSED");
+  }
+
+  //////////////
+  // SETUP
+
+  // seeding now comes from the admin's own inventory, so the admin must be a
+  // registered account holding the seed items before creating the pool
+  function adminSeedAndCreate(uint256 deployerPriv) internal {
+    address deployerAddr = vm.addr(deployerPriv);
+    if (!_getStringComp("component.type.entity").has(uint256(uint160(deployerAddr)))) {
+      vm.startBroadcast(deployerPriv);
+      AccountRegisterSystem(_getSysAddr("system.account.register")).executeTyped(
+        deployerAddr,
+        "pooladmin"
+      );
+      vm.stopBroadcast();
+    }
+    address[] memory adminAcct = new address[](1);
+    adminAcct[0] = deployerAddr;
+    uint256[] memory seedAmt = new uint256[](1);
+    seedAmt[0] = SEED;
+
+    vm.startBroadcast(deployerPriv);
+    _DistributeItemSystem seeder = _DistributeItemSystem(_getSysAddr("system.distribute.item"));
+    seeder.executeTyped(adminAcct, ITEM_A, seedAmt);
+    seeder.executeTyped(adminAcct, ITEM_B, seedAmt);
+    _PoolRegistrySystem(_getSysAddr("system.pool.registry")).create(
+      ITEM_A,
+      ITEM_B,
+      SEED,
+      SEED,
+      FEE_BPS
+    );
+    vm.stopBroadcast();
   }
 
   //////////////
