@@ -339,8 +339,10 @@ async function run() {
       for (const row of rows) {
         const idx = Number(row[entityType.indexCol]);
         // collapse whitespace so multi-line CSV names (quoted values with embedded
-        // newlines) stay on one output line and don't break line-based parsing
-        const name = (row[entityType.nameCol] || `#${idx}`).replace(/\s+/g, ' ').trim();
+        // newlines) stay on one output line and don't break line-based parsing;
+        // collapse BEFORE the fallback so a whitespace-only cell still yields #idx
+        const rawName = (row[entityType.nameCol] ?? '').replace(/\s+/g, ' ').trim();
+        const name = rawName || `#${idx}`;
         stateResults.push({ category: entityType.label, name: `${name} (#${idx})`, status: row['Status'] || '', onChain: false, state: 'ERROR', detail: 'Index component not registered' });
       }
       continue;
@@ -355,8 +357,10 @@ async function run() {
       if (isNaN(idx) || idx === 0) continue;
 
       // collapse whitespace so multi-line CSV names (quoted values with embedded
-      // newlines) stay on one output line and don't break line-based parsing
-      const name = (row[entityType.nameCol] || `#${idx}`).replace(/\s+/g, ' ').trim();
+      // newlines) stay on one output line and don't break line-based parsing;
+      // collapse BEFORE the fallback so a whitespace-only cell still yields #idx
+      const rawName = (row[entityType.nameCol] ?? '').replace(/\s+/g, ' ').trim();
+      const name = rawName || `#${idx}`;
       const csvStatus = hasStatus ? row['Status'] : 'In Game';
       const entityID = generateRegID(entityType.regField, idx);
 
