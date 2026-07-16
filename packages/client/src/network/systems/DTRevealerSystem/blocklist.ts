@@ -1,9 +1,9 @@
 import { EntityID } from 'engine/recs';
 
-const BLOCKED_REVEAL_COMMIT_IDS = new Set<string>([
-  '3572523974092509234678502131021303027074615784884451735238572498525911350024',
-  '48679967222604168909649595373561210760367144720897375088563730130200347959718',
-]);
+// empty since chunked reveals landed: previously held two oversized commits
+// that reverted every reveal. repopulate only if a commit gets stuck in a way
+// the chunked drain cannot recover
+const BLOCKED_REVEAL_COMMIT_IDS = new Set<string>([]);
 
 const normalizeCommitId = (id: EntityID): string => {
   const res = String(id).trim();

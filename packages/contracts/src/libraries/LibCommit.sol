@@ -97,6 +97,12 @@ library LibCommit {
     return hashSeed(blockComp.extract(id), id);
   }
 
+  /// @notice reads (without extracting) the seed for a commit, so a commit can
+  /// be revealed across multiple chunks that reuse the same reveal block
+  function seedDirect(BlockRevComponent blockComp, uint256 id) internal view returns (uint256) {
+    return hashSeed(blockComp.get(id), id);
+  }
+
   function extractSeeds(
     IUintComp components,
     uint256[] memory ids
