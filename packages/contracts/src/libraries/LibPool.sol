@@ -268,6 +268,8 @@ library LibPool {
     uint256 amountIn,
     uint256 amountOut
   ) internal {
+    // POOL_SWAP_TOTAL is farmable via solo round-trip swaps (only fees are
+    // lost) — never key a quest objective or reward off it
     LibData.inc(comps, accID, 0, "POOL_SWAP_TOTAL", 1);
     LibData.inc(comps, 0, indexIn, "POOL_VOLUME", amountIn);
     LibData.inc(comps, 0, indexOut, "POOL_VOLUME", amountOut);

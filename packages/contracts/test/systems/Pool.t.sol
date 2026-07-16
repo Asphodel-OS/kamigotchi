@@ -516,16 +516,25 @@ contract PoolTest is SetupTemplate {
   }
 
   // a griefer precomputes the (pure-hash) pool id and pre-funds the entity
-  // before creation; seeding onto non-empty reserves must revert
-  function testCreateRejectsPreFundedReserves() public {
+  // before creation; the pre-fund is swept to the caller so creation can't be
+  // bricked and the pool launches at exactly the seeded ratio
+  function testCreateSweepsPreFundedReserves() public {
     uint256 poolID = LibPoolRegistry.genID(ITEM_A, ITEM_B);
     vm.startPrank(deployer);
     LibInventory.incFor(components, poolID, ITEM_A, 1_000_000); // attacker donation
     vm.stopPrank();
 
-    vm.prank(deployer);
-    vm.expectRevert("Pool: reserves not empty");
-    __PoolRegistrySystem.create(ITEM_A, ITEM_B, SEED_A, SEED_B, FEE_BPS);
+    uint256 id = _createPool();
+    assertEq(id, poolID);
+
+    // reserves and locked shares reflect only the seed args, not the pre-fund
+    assertEq(_getItemBal(poolID, ITEM_A), SEED_A);
+    assertEq(_getItemBal(poolID, ITEM_B), SEED_B);
+    assertEq(LibPool.getTotalSupply(components, poolID), FixedPointMathLib.sqrt(SEED_A * SEED_B));
+
+    // the pre-fund was swept to the calling admin (seed itself was spent)
+    assertEq(_seederBal(ITEM_A), 1_000_000);
+    assertEq(_seederBal(ITEM_B), 0);
   }
 
   // a small position in a ratio-skewed pool floors one side to 0; the LP must

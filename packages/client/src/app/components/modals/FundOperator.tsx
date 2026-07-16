@@ -14,7 +14,7 @@ import { TokenIcons } from 'assets/images/tokens';
 import { GasConstants } from 'constants/gas';
 import { EntityID, EntityIndex } from 'engine/recs';
 import { waitForActionCompletion } from 'network/utils';
-import { playFund } from 'utils/sounds';
+import { playClick, playFund } from 'utils/sounds';
 
 const MIN_AMOUNT_ETH = 0.00001;
 const ETH_INPUT_REGEX = /^\d*\.?\d{0,7}$/;
@@ -222,6 +222,7 @@ export const FundOperator: UIComponent = {
     };
 
     const switchMode = (funding: boolean) => {
+      playClick();
       setIsFunding(funding);
       hasEdited.current = false;
       const balance = funding ? ownerBalanceWei : operatorBalanceWei;
