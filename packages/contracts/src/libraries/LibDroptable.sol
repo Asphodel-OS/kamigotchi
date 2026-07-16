@@ -11,6 +11,7 @@ import { BlockRevealComponent as BlockRevComponent, ID as BlockRevealCompID } fr
 import { IdSourceComponent, ID as IdSourceCompID } from "components/IdSourceComponent.sol";
 import { IdHolderComponent, ID as IdHolderCompID } from "components/IdHolderComponent.sol";
 import { KeysComponent, ID as KeysCompID } from "components/KeysComponent.sol";
+import { TypeComponent, ID as TypeCompID } from "components/TypeComponent.sol";
 import { WeightsComponent, ID as WeightsCompID } from "components/WeightsComponent.sol";
 import { TimeComponent, ID as TimeCompID } from "components/TimeComponent.sol";
 import { ValueComponent, ID as ValueCompID } from "components/ValueComponent.sol";
@@ -21,6 +22,12 @@ import { LibData } from "libraries/LibData.sol";
 import { LibEmitter } from "libraries/utils/LibEmitter.sol";
 import { LibInventory } from "libraries/LibInventory.sol";
 import { LibRandom } from "libraries/utils/LibRandom.sol";
+
+// max rolls a single reveal transaction may process. reveal cost scales with a
+// commit's roll count; a large scavenge claim can mint one commit too big to
+// reveal within the block gas limit, which strands it forever. commits above
+// this cap drain across multiple transactions instead.
+uint256 constant MAX_ROLLS_PER_REVEAL = 5000;
 
 library LibDroptable {
   /**
@@ -43,60 +50,116 @@ library LibDroptable {
   ///////////////////
   // INTERACTIONS
 
-  /// @notice reveals and distributes items
-  /// @dev avoid big array for memory's sake
+  /// @notice reveals and distributes items, bounded to MAX_ROLLS_PER_REVEAL per tx
+  /// @dev a commit larger than the remaining budget keeps its remainder and is
+  ///      revealed again on a later tx; commits past the budget wait their turn.
+  ///      every chunk re-reads the same reveal blockhash, so a drain stalled past
+  ///      the 256-block window (client offline mid-drain) leaves the remainder
+  ///      unrevealable via this path — forceReveal/resetBlocks rescues the tail
   function reveal(IWorld world, IUintComp components, uint256[] memory commitIDs) internal {
+    uint256 budget = MAX_ROLLS_PER_REVEAL;
     for (uint256 i; i < commitIDs.length; i++) {
+      if (budget == 0) break;
       if (commitIDs[i] == 0) continue;
-      _revealSingle(world, components, commitIDs[i]);
+      budget -= _revealSingle(world, components, commitIDs[i], budget);
     }
   }
 
-  /// @notice reveals and distributes a single commit
-  /// @dev helper function to avoid stack too deep errors in reveal()
+  /// @notice reveals and distributes up to `budget` rolls of a single commit
+  /// @dev returns the number of rolls processed. reads (does not extract) the
+  ///      commit shape so a partially-revealed commit stays revealable; the
+  ///      commit is deleted only once fully drained
   function _revealSingle(
     IWorld world,
     IUintComp components,
-    uint256 commitID
-  ) internal {
-    IdSourceComponent idSourceComp = IdSourceComponent(getAddrByID(components, IdSourceCompID));
-    IdHolderComponent holderComp = IdHolderComponent(getAddrByID(components, IdHolderCompID));
-    
-    uint256 dtID = idSourceComp.extract(commitID);
-    uint256 holderID = holderComp.extract(commitID);
-
-    BlockRevComponent blockComp = BlockRevComponent(getAddrByID(components, BlockRevealCompID));
-    WeightsComponent weightsComp = WeightsComponent(getAddrByID(components, WeightsCompID));
+    uint256 commitID,
+    uint256 budget
+  ) internal returns (uint256 chunk) {
     ValueComponent valComp = ValueComponent(getAddrByID(components, ValueCompID));
-    
-    uint256[] memory amts = _select(blockComp, weightsComp, valComp, dtID, commitID);
-    
-    KeysComponent keysComp = KeysComponent(getAddrByID(components, KeysCompID));
-    uint32[] memory indices = keysComp.get(dtID);
-    
-    _distribute(components, indices, amts, holderID);
-    emitRevealEvent(world, commitID, holderID, dtID, indices, amts);
-    
-    ValuesComponent logComp = ValuesComponent(getAddrByID(components, ValuesCompID));
-    TimeComponent timeComp = TimeComponent(getAddrByID(components, TimeCompID));
-    logLatest(timeComp, logComp, holderID, dtID, amts); // latest result, to show on FE
+    uint256 remaining = valComp.get(commitID);
+    chunk = remaining > budget ? budget : remaining;
+
+    _distributeChunk(world, components, commitID, remaining, chunk);
+
+    if (chunk == remaining) _consume(components, commitID);
+    else valComp.set(commitID, remaining - chunk);
   }
 
-  /// @notice selects a single droptable result
-  /// @dev raw component use for puter efficiency
+  /// @dev split out of _revealSingle to keep the stack shallow
+  function _distributeChunk(
+    IWorld world,
+    IUintComp components,
+    uint256 commitID,
+    uint256 remaining,
+    uint256 chunk
+  ) internal {
+    uint256 dtID = IdSourceComponent(getAddrByID(components, IdSourceCompID)).get(commitID);
+    uint256 holderID = IdHolderComponent(getAddrByID(components, IdHolderCompID)).get(commitID);
+
+    uint256[] memory amts = _select(
+      BlockRevComponent(getAddrByID(components, BlockRevealCompID)),
+      WeightsComponent(getAddrByID(components, WeightsCompID)),
+      dtID,
+      commitID,
+      remaining,
+      chunk
+    );
+    uint32[] memory indices = KeysComponent(getAddrByID(components, KeysCompID)).get(dtID);
+
+    _distribute(components, indices, amts, holderID);
+    emitRevealEvent(world, commitID, holderID, dtID, indices, amts);
+    logLatest(
+      TimeComponent(getAddrByID(components, TimeCompID)),
+      ValuesComponent(getAddrByID(components, ValuesCompID)),
+      holderID,
+      dtID,
+      amts
+    ); // latest result, to show on FE
+  }
+
+  /// @notice selects `chunk` droptable results, one per roll
+  /// @dev each roll is keyed by its ABSOLUTE position within the commit (counting
+  ///      down from `remaining`), not by a per-chunk nonce. so the full outcome is
+  ///      fixed by (blockhash, commitID, count) at commit time and is identical no
+  ///      matter how the rolls are split across txs. this closes the seed-path
+  ///      cherry-pick where a co-bundled commit shifts a chunk boundary to reroll
+  ///      the distribution. a single-pass reveal covers positions count-1..0, the
+  ///      same index set as the legacy selectMultipleFromWeighted(base, count), so
+  ///      it stays byte-identical to pre-chunking. mirrors that function's body
+  ///      (raw component use for puter efficiency) with the global index offset.
   function _select(
     BlockRevComponent blockComp,
     WeightsComponent weightsComp,
-    ValueComponent valComp,
     uint256 dtID,
-    uint256 commitID
-  ) internal returns (uint256[] memory) {
+    uint256 commitID,
+    uint256 remaining,
+    uint256 chunk
+  ) internal view returns (uint256[] memory results) {
     uint256[] memory weights = weightsComp.get(dtID);
     LibRandom.processWeightedRarityInPlace(weights);
-    uint256 seed = LibCommit.extractSeedDirect(blockComp, commitID);
-    uint256 count = valComp.extract(commitID);
+    uint256 totalWeight;
+    for (uint256 i; i < weights.length; i++) totalWeight += weights[i];
 
-    return LibRandom.selectMultipleFromWeighted(weights, seed, count);
+    uint256 base = LibCommit.seedDirect(blockComp, commitID);
+
+    results = new uint256[](weights.length);
+    for (uint256 k; k < chunk; k++) {
+      uint256 pos = LibRandom._positionFromWeighted(
+        weights,
+        totalWeight,
+        uint256(keccak256(abi.encode(base, remaining - 1 - k)))
+      );
+      results[pos]++;
+    }
+  }
+
+  /// @notice deletes a fully-drained commit
+  function _consume(IUintComp components, uint256 commitID) internal {
+    IdSourceComponent(getAddrByID(components, IdSourceCompID)).remove(commitID);
+    IdHolderComponent(getAddrByID(components, IdHolderCompID)).remove(commitID);
+    ValueComponent(getAddrByID(components, ValueCompID)).remove(commitID);
+    BlockRevComponent(getAddrByID(components, BlockRevealCompID)).remove(commitID);
+    TypeComponent(getAddrByID(components, TypeCompID)).remove(commitID);
   }
 
   /// @notice distributes item(s) to holder (single)
@@ -131,10 +194,15 @@ library LibDroptable {
   ///////////////////
   // CHECKERS
 
-  function checkAndExtractIsCommit(IUintComp components, uint256[] memory ids) internal {
-    string[] memory types = LibCommit.extractTypes(components, ids);
-    for (uint256 i; i < ids.length; i++)
-      if (!LibString.eq(types[i], "ITEM_DROPTABLE_COMMIT")) revert("not reveal entity");
+  /// @dev non-destructive: leaves the Type in place so a partially-revealed
+  ///      commit can be checked again on its next reveal tx. skips zeroed ids
+  ///      (already-drained commits filtered out by LibCommit.filterInvalid)
+  function checkIsCommit(IUintComp components, uint256[] memory ids) internal view {
+    TypeComponent typeComp = TypeComponent(getAddrByID(components, TypeCompID));
+    for (uint256 i; i < ids.length; i++) {
+      if (ids[i] == 0) continue;
+      if (!LibString.eq(typeComp.safeGet(ids[i]), "ITEM_DROPTABLE_COMMIT")) revert("not reveal entity");
+    }
   }
 
   /////////////////

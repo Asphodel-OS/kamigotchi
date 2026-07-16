@@ -1706,7 +1706,7 @@ MINA: “For human souls, no. Other things follow other rules.”
 MINA: “The skeletal giant ‘lives’, but without a mind or animating soul.”
 MINA: “The body might linger and grow for eternity, even in this form.”
 MINA: “It still pains me to see him like this, but I’m reassured it’s not worse.”","Own the Ring of Spirits,In Room: Guardian Skull",Harvest for >3 days at Guardian Skull,"5x Booster Pack,6x Elders Loyalty"
-SQ113,3113,To Deploy,Airing it Out,No,SIDE,MINA,"MINA: “You’ve found two lost souls so far. Both are quite talkative.”
+SQ113,3113,In Game,Airing it Out,No,SIDE,MINA,"MINA: “You’ve found two lost souls so far. Both are quite talkative.”
 MENU: “And they’re real scatterbrains.”
 MINA: “The poor Wet Bones has less focus than the Lost Skeleton.”
 MINA: “I’d like to try something with that one. It might help.”
@@ -1716,7 +1716,7 @@ MENU: “So that when you talk to the Bones next, you seem like a lost soul too?
 MINA: “Exactly.”","MINA: “You smell disgusting, Operator. Perfect.”
 MENU: “Then it’s time to talk to those bones again.”
 MENU: “Maybe you can clean off in the underground stream afterwards.”",Complete SQ108,Harvest for >10 days at Forest: Insect Node,"2x Elders Loyalty,5x Booster Pack"
-SQ114,3114,To Deploy,Conditioned Environment,No,SIDE,MENU,"MENU: “What do you expect to get out of them this time?”
+SQ114,3114,In Game,Conditioned Environment,No,SIDE,MENU,"MENU: “What do you expect to get out of them this time?”
 MINA: “Oh, I don’t know. Something different.”
 MINA: “Even if it doesn’t make a lot of sense, it might be worth hearing.”
 MENU: “We’ll find out soon!”","MENU: “I don’t want to sound jealous, because this person’s in a sorry state.”
@@ -1724,7 +1724,7 @@ MENU: “But a body’s a body. Skeletons are kind of cool.”
 MINA: “Yes. I’ve been thinking...”
 MINA: “I’ll have to talk to you in private.”
 MINA: “For now, let’s get to business.”",Complete SQ113,Move to Shabby Deck,2x Agency Reputation
-SQ115,3115,To Deploy,Dry Conversation,No,SIDE,MINA,"MENU: “I swear I saw them rattle.”
+SQ115,3115,In Game,Dry Conversation,No,SIDE,MINA,"MENU: “I swear I saw them rattle.”
 MINA: “He must be excited to speak.”
 WET BONES: “The Herman Miller Action Office plan was the world’s first open-plan modular workspace, designed in 1964 by Robert Propst and George Nelson.”
 WET BONES: “This system was conceptualized after extensive research into how knowledge workers operate.”

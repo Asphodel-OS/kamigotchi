@@ -51,8 +51,13 @@ contract LootboxTest is ItemTemplate {
       vm.roll(++_currBlock);
       uint256[] memory revealIDs = new uint256[](1);
       revealIDs[0] = revealID;
-      vm.prank(alice.operator);
-      _DroptableRevealSystem.executeTyped(revealIDs);
+
+      // reveal is bounded to MAX_ROLLS_PER_REVEAL per tx; drain the commit over
+      // as many reveals as its roll count requires (commit deleted when done)
+      while (_BlockRevealComponent.has(revealID)) {
+        vm.prank(alice.operator);
+        _DroptableRevealSystem.executeTyped(revealIDs);
+      }
 
       assertEq(_getItemBal(alice, 1), useAmt);
       assertEq(_getItemBal(alice, lootboxIndex), startAmt - useAmt);

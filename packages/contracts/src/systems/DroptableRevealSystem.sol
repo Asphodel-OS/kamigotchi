@@ -24,10 +24,10 @@ contract DroptableRevealSystem is System, AuthRoles {
 
     // checks
     if (ids.length == 0) revert("ItemReveal: no reveals");
-    LibDroptable.checkAndExtractIsCommit(components, ids);
+    LibCommit.filterInvalid(components, ids); // drop already-drained commits first
+    LibDroptable.checkIsCommit(components, ids);
 
     // revealing
-    LibCommit.filterInvalid(components, ids);
     LibDroptable.reveal(world, components, ids);
     return "";
   }
@@ -38,7 +38,7 @@ contract DroptableRevealSystem is System, AuthRoles {
     ids[0] = id;
 
     if (LibCommit.isAvailable(components, ids)) revert("no need for force reveal");
-    LibDroptable.checkAndExtractIsCommit(components, ids);
+    LibDroptable.checkIsCommit(components, ids);
 
     LibCommit.resetBlocks(components, ids);
     LibDroptable.reveal(world, components, ids);
