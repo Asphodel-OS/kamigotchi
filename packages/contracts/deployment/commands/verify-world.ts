@@ -94,10 +94,12 @@ async function run() {
   const worldAddr = process.env.WORLD!;
   const rpc = process.env.RPC!;
 
-  // Recompile artifacts unless --skip-build is passed
+  // Recompile artifacts unless --skip-build is passed. Verification only reads
+  // system/component/library artifacts, so the test tree (a second full compile
+  // of the world at the heavy default profile) is skipped
   if (!argv.skipBuild) {
     console.log('Building artifacts (use --skip-build to skip)...');
-    execSync('forge build', { cwd: path.join(__dirname, '../..'), stdio: 'inherit' });
+    execSync('forge build --skip test', { cwd: path.join(__dirname, '../..'), stdio: 'inherit' });
     console.log('');
   }
 
@@ -157,66 +159,114 @@ async function run() {
   const systemNames = sysList.map((sys: any) => sys.name);
   const systemIDs = sysList.map((sys: any) => getSystemIDByName(sys.name));
 
-  // Cache local library sizes
-  const libLocalSizeCache = new Map<string, number>();
-  function getLibLocalSize(libName: string): number {
-    if (libLocalSizeCache.has(libName)) return libLocalSizeCache.get(libName)!;
+  // Cache local library artifacts (deployedBytecode.object + linkReferences)
+  const libArtifactCache = new Map<string, any | null>();
+  function getLibArtifact(libName: string): any | null {
+    if (libArtifactCache.has(libName)) return libArtifactCache.get(libName)!;
     const p = path.join(artifactsDir, `${libName}.sol/${libName}.json`);
-    let size = 0;
+    let artifact: any | null = null;
     if (fs.existsSync(p)) {
       const a = JSON.parse(fs.readFileSync(p, 'utf-8'));
-      size = ((a.deployedBytecode?.object?.length || 2) - 2) / 2;
+      if ((a.deployedBytecode?.object?.length || 2) > 2) artifact = a;
     }
-    libLocalSizeCache.set(libName, size);
-    return size;
+    libArtifactCache.set(libName, artifact);
+    return artifact;
   }
 
-  // Cache deployed library sizes by address
-  const libDeployedSizeCache = new Map<string, number>();
-  async function getLibDeployedSize(addr: string): Promise<number> {
+  // Cache deployed library code by address
+  const libDeployedCodeCache = new Map<string, string>();
+  async function getLibDeployedCode(addr: string): Promise<string> {
     const key = addr.toLowerCase();
-    if (libDeployedSizeCache.has(key)) return libDeployedSizeCache.get(key)!;
+    if (libDeployedCodeCache.has(key)) return libDeployedCodeCache.get(key)!;
     const code = await provider.getCode(addr);
-    const size = (code.length - 2) / 2;
-    libDeployedSizeCache.set(key, size);
-    return size;
+    libDeployedCodeCache.set(key, code);
+    return code;
   }
 
-  // Check a system's linked libraries, return list of stale lib names
-  async function checkSystemLibs(sysName: string, onChainCode: string): Promise<string[]> {
+  // Check a system's linked libraries by CONTENT (metadata-stripped, call
+  // protection + nested link refs masked). The library address is extracted
+  // from the deployed system code at the LOCAL artifact's link offsets, which
+  // is only sound while the deployed layout matches — so extraction is gated:
+  // every link position must yield the same address and it must hold code,
+  // otherwise the lib is reported unverifiable rather than guessed at.
+  async function checkSystemLibs(
+    sysName: string,
+    onChainCode: string
+  ): Promise<{ staleLibs: string[]; unverifiable: string[] }> {
     const artifactPath = path.join(artifactsDir, `${sysName}.sol/${sysName}.json`);
-    if (!fs.existsSync(artifactPath)) return [];
+    if (!fs.existsSync(artifactPath)) return { staleLibs: [], unverifiable: [] };
     const artifact = JSON.parse(fs.readFileSync(artifactPath, 'utf-8'));
     const links = artifact.deployedBytecode?.linkReferences || {};
     const hex = onChainCode.startsWith('0x') ? onChainCode.slice(2) : onChainCode;
     const staleLibs: string[] = [];
+    const unverifiable: string[] = [];
 
     for (const [file, libs] of Object.entries(links) as [string, any][]) {
       for (const [libName, positions] of Object.entries(libs) as [string, any][]) {
-        const localSize = getLibLocalSize(libName);
-        if (localSize === 0) continue;
-        const offset = positions[0].start;
-        const libAddr = '0x' + hex.substring(offset * 2, offset * 2 + 40);
+        // no local artifact (e.g. --skip-build against an incomplete out/):
+        // inconclusive, never a silent pass
+        const libArtifact = getLibArtifact(libName);
+        if (!libArtifact) {
+          if (!unverifiable.includes(libName)) unverifiable.push(libName);
+          continue;
+        }
+
+        // extraction gate: all placeholder positions must be in-bounds and
+        // agree on one address
+        const slices = new Set<string>();
+        let outOfBounds = false;
+        for (const p of positions) {
+          const s = p.start * 2;
+          if (s + 40 > hex.length) {
+            outOfBounds = true;
+            break;
+          }
+          slices.add(hex.substring(s, s + 40).toLowerCase());
+        }
+        if (outOfBounds || slices.size !== 1) {
+          if (!unverifiable.includes(libName)) unverifiable.push(libName);
+          continue;
+        }
+        const libAddr = '0x' + [...slices][0];
+
         try {
-          const deployedSize = await getLibDeployedSize(libAddr);
+          const deployedCode = await getLibDeployedCode(libAddr);
+          if (!deployedCode || deployedCode.length <= 2) {
+            // extracted address holds no code: layout drift, not a library
+            if (!unverifiable.includes(libName)) unverifiable.push(libName);
+            continue;
+          }
+
+          const localCode = libArtifact.deployedBytecode.object;
+          const libLinks = libArtifact.deployedBytecode.linkReferences || {};
+          const current = compareLibBytecode(deployedCode, localCode, libLinks);
+
           const key = `${libName}@${libAddr.toLowerCase()}`;
-          // Track for summary
           if (!libInstanceMap.has(key)) {
-            libInstanceMap.set(key, { libName, addr: libAddr, deployedSize, localSize, systems: [] });
+            libInstanceMap.set(key, {
+              libName,
+              addr: libAddr,
+              deployedSize: (deployedCode.length - 2) / 2,
+              localSize: (localCode.length - 2) / 2,
+              current,
+              systems: [],
+            });
           }
           libInstanceMap.get(key)!.systems.push(sysName);
 
-          if (deployedSize !== localSize && !staleLibs.includes(libName)) {
-            staleLibs.push(libName);
-          }
-        } catch {}
+          if (!current && !staleLibs.includes(libName)) staleLibs.push(libName);
+        } catch {
+          // RPC failure fetching the library's code: inconclusive, never a
+          // silent pass
+          if (!unverifiable.includes(libName)) unverifiable.push(libName);
+        }
       }
     }
-    return staleLibs;
+    return { staleLibs, unverifiable };
   }
 
   // Track library instances for summary
-  const libInstanceMap = new Map<string, { libName: string; addr: string; deployedSize: number; localSize: number; systems: string[] }>();
+  const libInstanceMap = new Map<string, { libName: string; addr: string; deployedSize: number; localSize: number; current: boolean; systems: string[] }>();
 
   // Check and print each system procedurally
   console.log(`\n=== SYSTEMS (${systemNames.length}) ===`);
@@ -256,19 +306,35 @@ async function run() {
       const links = artifact.deployedBytecode.linkReferences || {};
 
       const bytecodeMatch = compareBytecode(onChainCode, compiledCode, imm, links);
-      const staleLibs = await checkSystemLibs(sysName, onChainCode);
+      const { staleLibs, unverifiable } = await checkSystemLibs(sysName, onChainCode);
       const hasStaleLib = staleLibs.length > 0;
 
-      if (bytecodeMatch && !hasStaleLib) {
+      if (bytecodeMatch && !hasStaleLib && unverifiable.length === 0) {
         results.push({ category: 'System', name: sysName, passed: true, state: 'CURRENT', detail: addr });
         console.log(`  OK  ${sysName}  ${addr}`);
+      } else if (bytecodeMatch && !hasStaleLib) {
+        // CURRENT requires every linked library affirmatively verified. an
+        // inconclusive check (RPC failure, missing artifact) is not a redeploy
+        // prescription, so it reports ERROR rather than STALE
+        const detail = `library verification inconclusive: ${unverifiable.join(', ')} (re-run to confirm)`;
+        results.push({ category: 'System', name: sysName, passed: false, state: 'ERROR', detail });
+        console.log(`  ??  ${sysName}  ${addr}  ${detail}`);
       } else {
+        // a stale system needs redeploy either way (which ships fresh library
+        // instances); lib findings only DRIVE the verdict when the system's
+        // own bytecode matches — the "needs redeploy purely to relink" case
         const reasons: string[] = [];
         if (!bytecodeMatch) reasons.push('bytecode differs');
-        if (hasStaleLib) reasons.push(`linked library ${staleLibs.join(', ')} outdated`);
-        const detail = reasons.join(' + ') + ' (needs redeploy)';
+        else if (hasStaleLib) reasons.push(`linked library ${staleLibs.join(', ')} outdated`);
+        let detail = reasons.join(' + ') + ' (needs redeploy)';
+        if (!bytecodeMatch) {
+          const notes: string[] = [];
+          if (hasStaleLib) notes.push(`linked ${staleLibs.join(', ')} instance also outdated`);
+          if (unverifiable.length > 0) notes.push(`libs unverifiable due to layout drift: ${unverifiable.join(', ')}`);
+          if (notes.length > 0) detail += `; ${notes.join('; ')}`;
+        }
         results.push({ category: 'System', name: sysName, passed: false, state: 'STALE', detail });
-        console.log(`  !!  ${sysName}  ${addr}  STALE (${reasons.join(' + ')})`);
+        console.log(`  !!  ${sysName}  ${addr}  STALE (${detail.replace(' (needs redeploy)', '')})`);
       }
     } catch (e: any) {
       results.push({ category: 'System', name: sysName, passed: false, state: 'ERROR', detail: `Bytecode check failed: ${e.message?.slice(0, 60)}` });
@@ -280,7 +346,7 @@ async function run() {
 
   // Track library results for summary (no output here)
   for (const [key, lib] of libInstanceMap) {
-    const isStale = lib.deployedSize !== lib.localSize;
+    const isStale = !lib.current;
     const delta = lib.localSize - lib.deployedSize;
     const sysList = [...new Set(lib.systems)].join(', ');
     results.push({
@@ -289,7 +355,7 @@ async function run() {
       passed: !isStale,
       state: isStale ? 'STALE' : 'CURRENT',
       detail: isStale
-        ? `${lib.addr} (deployed ${lib.deployedSize}B, local ${lib.localSize}B, delta ${delta > 0 ? '+' : ''}${delta}) affects: ${sysList}`
+        ? `${lib.addr} (content differs; deployed ${lib.deployedSize}B, local ${lib.localSize}B, delta ${delta > 0 ? '+' : ''}${delta}) affects: ${sysList}`
         : `${lib.addr}`,
     });
   }
@@ -568,6 +634,23 @@ function compareBytecode(onChainCode: string, compiledCode: string, immutableRef
   if (strippedOnChain.length !== strippedCompiled.length) return false;
   const maskedOnChain = maskRefs(strippedOnChain, immutableRefs, linkRefs);
   const maskedCompiled = maskRefs(strippedCompiled, immutableRefs, linkRefs);
+  return maskedOnChain === maskedCompiled;
+}
+
+// Compare a deployed library's runtime code with its compiled artifact.
+// Libraries additionally need CALL PROTECTION masked: solc compiles
+// `PUSH20 0x00..00; ADDRESS; EQ ..` as the first instructions and deployment
+// substitutes the library's own address, so bytes [1..21) always differ from
+// the artifact. Nested link refs (libraries linking libraries) are masked via
+// the library's own artifact linkReferences.
+function compareLibBytecode(onChainCode: string, compiledCode: string, libLinkRefs: any): boolean {
+  const strippedOnChain = stripMetadata(onChainCode);
+  const strippedCompiled = stripMetadata(compiledCode);
+  if (strippedOnChain.length !== strippedCompiled.length) return false;
+  const maskProtection = (hex: string) =>
+    hex.length >= 42 && hex.slice(0, 2) === '73' ? hex.slice(0, 2) + '00'.repeat(20) + hex.slice(42) : hex;
+  const maskedOnChain = maskRefs(maskProtection(strippedOnChain.toLowerCase()), {}, libLinkRefs);
+  const maskedCompiled = maskRefs(maskProtection(strippedCompiled.toLowerCase()), {}, libLinkRefs);
   return maskedOnChain === maskedCompiled;
 }
 
