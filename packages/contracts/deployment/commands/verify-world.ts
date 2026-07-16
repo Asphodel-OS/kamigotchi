@@ -203,8 +203,13 @@ async function run() {
 
     for (const [file, libs] of Object.entries(links) as [string, any][]) {
       for (const [libName, positions] of Object.entries(libs) as [string, any][]) {
+        // no local artifact (e.g. --skip-build against an incomplete out/):
+        // inconclusive, never a silent pass
         const libArtifact = getLibArtifact(libName);
-        if (!libArtifact) continue;
+        if (!libArtifact) {
+          if (!unverifiable.includes(libName)) unverifiable.push(libName);
+          continue;
+        }
 
         // extraction gate: all placeholder positions must be in-bounds and
         // agree on one address
@@ -250,7 +255,11 @@ async function run() {
           libInstanceMap.get(key)!.systems.push(sysName);
 
           if (!current && !staleLibs.includes(libName)) staleLibs.push(libName);
-        } catch {}
+        } catch {
+          // RPC failure fetching the library's code: inconclusive, never a
+          // silent pass
+          if (!unverifiable.includes(libName)) unverifiable.push(libName);
+        }
       }
     }
     return { staleLibs, unverifiable };
@@ -300,9 +309,16 @@ async function run() {
       const { staleLibs, unverifiable } = await checkSystemLibs(sysName, onChainCode);
       const hasStaleLib = staleLibs.length > 0;
 
-      if (bytecodeMatch && !hasStaleLib) {
+      if (bytecodeMatch && !hasStaleLib && unverifiable.length === 0) {
         results.push({ category: 'System', name: sysName, passed: true, state: 'CURRENT', detail: addr });
         console.log(`  OK  ${sysName}  ${addr}`);
+      } else if (bytecodeMatch && !hasStaleLib) {
+        // CURRENT requires every linked library affirmatively verified. an
+        // inconclusive check (RPC failure, missing artifact) is not a redeploy
+        // prescription, so it reports ERROR rather than STALE
+        const detail = `library verification inconclusive: ${unverifiable.join(', ')} (re-run to confirm)`;
+        results.push({ category: 'System', name: sysName, passed: false, state: 'ERROR', detail });
+        console.log(`  ??  ${sysName}  ${addr}  ${detail}`);
       } else {
         // a stale system needs redeploy either way (which ships fresh library
         // instances); lib findings only DRIVE the verdict when the system's
