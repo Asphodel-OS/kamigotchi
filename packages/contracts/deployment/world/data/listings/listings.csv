@@ -1,5 +1,5 @@
 ﻿Name,Status,NPC Index,Item Index,Currency Index,Value,Buy Price,Sell Price,Requirements
-Mina Stick,In-game,1,1001,100,0.05,,,
+Mina Stick,In-game,1,1001,100,50,,,
 Mina Stone,In-game,1,1002,100,1,,,
 Mina Ribbon,In-game,1,11001,1,100,GDA 300 Daily 50% Decay,,
 Mina Gum,In-game,1,11301,1,60,GDA 1500 Daily 50% Decay,,

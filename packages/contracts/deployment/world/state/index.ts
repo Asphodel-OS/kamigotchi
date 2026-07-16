@@ -26,7 +26,7 @@ import { initTraits } from './traits';
 export async function initAll(api: AdminAPI) {
   // independent
   await initAuth(api);
-  if (process.env.NODE_ENV === 'puter') await initLocalAuth(api); // needs to be declared prior
+  if (process.env.NODE_ENV === 'local') await initLocalAuth(api); // needs to be declared prior
   console.log('\n---------------------------------------------\n');
   await initConfigs(api);
   console.log('\n---------------------------------------------\n');
@@ -61,7 +61,7 @@ export async function initAll(api: AdminAPI) {
   await initRelationships(api);
   console.log('\n---------------------------------------------\n');
 
-  if (process.env.NODE_ENV === 'puter') {
+  if (process.env.NODE_ENV === 'local') {
     console.log('generating local inits');
     await initGachaPool(api, 88);
     console.log('\n---------------------------------------------\n');

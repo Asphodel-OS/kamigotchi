@@ -1,5 +1,5 @@
 import { addRpcUrlOverrideToChain } from '@privy-io/react-auth';
-import { Chain, localhost } from '@wagmi/core/chains';
+import { Chain, foundry } from '@wagmi/core/chains';
 
 // chain configuration for mainnet (prod and test world)
 const YominetRaw = {
@@ -24,8 +24,12 @@ const YominetRaw = {
 // TODO: move everything below to the appropriate file
 const yominet = addRpcUrlOverrideToChain(YominetRaw, import.meta.env.VITE_RPC_TRANSPORT_URL);
 
+// pin the local RPC for Privy the same way yominet's is pinned — without the
+// override the embedded wallet's broadcast path never reaches localhost
+const anvil = addRpcUrlOverrideToChain(foundry, 'http://localhost:8545');
+
 export const chainConfigs: Map<string, Chain> = new Map();
-chainConfigs.set('puter', localhost);
+chainConfigs.set('development', anvil); // anvil's chain id (31337); wagmi's `localhost` is 1337
 chainConfigs.set('testing', yominet);
 chainConfigs.set('staging', yominet);
 chainConfigs.set('production', yominet);
