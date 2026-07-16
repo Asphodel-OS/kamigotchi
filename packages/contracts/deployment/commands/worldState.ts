@@ -12,6 +12,10 @@ import { SubFunc, WorldAPI } from '../world/world';
 const argv = yargs(hideBin(process.argv))
   .usage('Usage: $0 -world <address> -categories <string> -action <string>  -args <number[]>')
   .alias('category', 'c')
+  // collect list args so space-separated indices (`--args 4 5 6`) aren't dropped
+  // into positionals; comma-separated (`--args 4,5,6`) still parses identically
+  .array('args')
+  .array('npc')
   .parse();
 
 const run = async () => {
@@ -19,13 +23,15 @@ const run = async () => {
   const world = argv.world ? argv.world : process.env.WORLD;
   const category: keyof WorldAPI = argv.category ?? 'init';
   const action = argv.action ? (argv.action as keyof SubFunc) : 'init';
-  const args = argv.args
+  // .length guard: a bare `--args` yields [] (truthy), which would flow through
+  // toString/split/Number into [0] and silently target entity index 0
+  const args = argv.args?.length
     ? argv.args
         .toString()
         .split(',') // ensure array
         .map((a: string) => Number(a)) // cast to number
     : undefined;
-  const npcArgs = argv.npc
+  const npcArgs = argv.npc?.length
     ? argv.npc
         .toString()
         .split(',')
