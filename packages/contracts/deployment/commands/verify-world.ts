@@ -94,10 +94,12 @@ async function run() {
   const worldAddr = process.env.WORLD!;
   const rpc = process.env.RPC!;
 
-  // Recompile artifacts unless --skip-build is passed
+  // Recompile artifacts unless --skip-build is passed. Verification only reads
+  // system/component/library artifacts, so the test tree (a second full compile
+  // of the world at the heavy default profile) is skipped
   if (!argv.skipBuild) {
     console.log('Building artifacts (use --skip-build to skip)...');
-    execSync('forge build', { cwd: path.join(__dirname, '../..'), stdio: 'inherit' });
+    execSync('forge build --skip test', { cwd: path.join(__dirname, '../..'), stdio: 'inherit' });
     console.log('');
   }
 
