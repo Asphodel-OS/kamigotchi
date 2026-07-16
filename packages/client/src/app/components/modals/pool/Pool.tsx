@@ -374,7 +374,10 @@ export const PoolModal: UIComponent = {
       const maxAddA = Math.min(balA, maxAByB);
       const addBlocked =
         pool.disabled || sharesMinted <= 0 || addAmountA > balA || addAmountB > balB;
-      const removeBlocked = removeShares <= 0 || removeShares > playerShares;
+      // a tiny position in a skewed pool can round both outputs to 0; the
+      // on-chain remove then reverts, so block it instead of queuing a failing tx
+      const zeroRemoveOutput = removeShares > 0 && removeA <= 0 && removeB <= 0;
+      const removeBlocked = removeShares <= 0 || removeShares > playerShares || zeroRemoveOutput;
       return (
         <Section>
           <Info>
@@ -463,7 +466,13 @@ export const PoolModal: UIComponent = {
                 color={removeBlocked ? RED : GREEN}
                 disabled={removeBlocked}
                 onClick={removeLiquidity}
-                text={removeShares > playerShares ? 'insufficient shares' : 'remove liquidity'}
+                text={
+                  removeShares > playerShares
+                    ? 'insufficient shares'
+                    : zeroRemoveOutput
+                      ? 'amount too small'
+                      : 'remove liquidity'
+                }
               />
             </>
           )}
