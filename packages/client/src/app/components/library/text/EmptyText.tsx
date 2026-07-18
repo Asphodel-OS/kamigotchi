@@ -2,13 +2,11 @@ import styled from 'styled-components';
 
 // before and after are used to write plain text in the same line as the link
 // href opens an external page; onClick handles in-app actions (e.g. opening a modal)
-interface Link {
+type Link = {
   before?: string;
   linkText: string;
-  href?: string;
-  onClick?: () => void;
   after?: string;
-}
+} & ({ href: string; onClick?: never } | { href?: never; onClick: () => void });
 
 type TextPart = string | Link;
 
@@ -43,6 +41,7 @@ export const EmptyText = ({
               <Text key={index} size={size} color={textColor} gapScale={gapScale}>
                 {part.before}
                 <Link
+                  as={part.href ? 'a' : 'button'}
                   href={part.href}
                   target={part.href ? '_blank' : undefined}
                   rel={part.href ? 'noopener noreferrer' : undefined}
@@ -83,7 +82,12 @@ const Text = styled.div<{ size: number; gapScale: number; color: string }>`
   pointer-events: auto;
 `;
 
+// button resets keep the onClick variant visually identical to the anchor
 const Link = styled.a<{ size: number; gapScale: number; color: string }>`
+  background: none;
+  border: none;
+  padding: 0;
+  font-family: inherit;
   color: ${({ color }) => color};
   font-size: ${({ size }) => size}vw;
   line-height: ${({ size, gapScale }) => gapScale * size}vw;
