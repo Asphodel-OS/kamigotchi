@@ -30,6 +30,7 @@ import {
   BridgePhase,
   BridgeUpdateEntry,
   BridgeUpdateTone,
+  COMPLETION_AUTO_CLOSE_MS,
   DEGRADED_POLL_INTERVAL_MS,
   DISABLED_SOURCE_CHAIN_IDS,
   MIN_BRIDGE_AMOUNT,
@@ -55,6 +56,7 @@ export const BridgeModal: UIComponent = {
     // PREPARATION
 
     const isOpen = useVisibility((s) => s.modals.bridge);
+    const setModals = useVisibility((s) => s.setModals);
     const setBridgeProcessActive = useVisibility((s) => s.setBridgeProcessActive);
     const selectedAddress = useNetwork((s) => s.selectedAddress);
     const { wallets } = useWallets();
@@ -400,6 +402,11 @@ export const BridgeModal: UIComponent = {
           appendUpdate('success', `**Yominet** Tx: ${receivedOnYominet}`, `${DefaultChain.blockExplorers?.default.url}/tx/${receivedOnYominet}`);
           appendUpdate('celebrate', 'Bridge Complete Congratulations');
           persistCompletion();
+          // auto-advance: close the modal after the celebration so onboarding
+          // (registration screen) resumes without a manual X
+          setTimeout(() => {
+            if (!signal.aborted) setModals({ bridge: false });
+          }, COMPLETION_AUTO_CLOSE_MS);
           return;
         }
       }

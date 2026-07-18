@@ -81,4 +81,6 @@ export const POLL_INTERVAL_MS = 15_000;
 export const DEGRADED_POLL_INTERVAL_MS = 45_000;
 export const POLL_MAX_ATTEMPTS = 40;
 export const STATUS_RECHECK_EVERY_ATTEMPTS = 4;
+// how long the completion celebration stays up before the modal auto-closes
+export const COMPLETION_AUTO_CLOSE_MS = 2_500;
 
