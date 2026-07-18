@@ -13,6 +13,9 @@ export const MoreMenuButton = () => {
   const setModals = useVisibility((s) => s.setModals);
   const settingsVisible = useVisibility((s) => s.modals.settings);
   const helpVisible = useVisibility((s) => s.modals.help);
+  // settings/help modals render beneath the registration overlay (z 3 vs 20),
+  // so disable those entries while the registrar is up
+  const registrarVisible = useVisibility((s) => s.validators.accountRegistrar);
   const [disabled, setDisabled] = useState(true);
 
   useEffect(() => {
@@ -106,8 +109,13 @@ export const MoreMenuButton = () => {
       img={MoreIcon}
       options={[
         { text: 'Bridge', image: MenuIcons.kami, onClick: () => triggerBridgeModal() },
-        { text: 'Settings', disabled, image: SettingsIcon, onClick: toggleSettings },
-        { text: 'Help', image: HelpIcon, onClick: toggleHelp },
+        {
+          text: 'Settings',
+          disabled: disabled || registrarVisible,
+          image: SettingsIcon,
+          onClick: toggleSettings,
+        },
+        { text: 'Help', disabled: registrarVisible, image: HelpIcon, onClick: toggleHelp },
         { text: 'Logout', disabled, image: LogoutIcon, onClick: handleLogout },
         { text: 'Reset State', image: ResetIcon, onClick: handleResetState },
       ]}
