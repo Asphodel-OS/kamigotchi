@@ -15,7 +15,7 @@ import {
 import { UIComponent } from 'app/root/types';
 import { useLayers } from 'app/root/hooks';
 import { useVisibility } from 'app/stores';
-import { ItemImages } from 'assets/images/items';
+import { LpFountainIcon } from 'assets/images/icons/menu';
 import { MUSU_INDEX } from 'constants/items';
 import { Account, NullAccount, queryAccountFromEmbedded } from 'network/shapes/Account';
 import { Item } from 'network/shapes/Item';
@@ -483,7 +483,7 @@ export const PoolModal: UIComponent = {
     return (
       <ModalWrapper
         id='pool'
-        header={<ModalHeader title='Item Pools' icon={ItemImages.musu} />}
+        header={<ModalHeader title='Item Pools' icon={LpFountainIcon} />}
         canExit
       >
         <Container>
