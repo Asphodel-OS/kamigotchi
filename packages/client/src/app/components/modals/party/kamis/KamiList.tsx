@@ -3,6 +3,8 @@ import styled from 'styled-components';
 
 import { EmptyText } from 'app/components/library';
 import { useVisibility } from 'app/stores';
+import { triggerKamiAdoptionAgencyModal } from 'app/triggers';
+import { playClick } from 'utils/sounds';
 import { objectBellShapedDevice } from 'assets/images/rooms/12_junkyard-machine';
 import { Account } from 'network/shapes/Account';
 import { Bonus } from 'network/shapes/Bonus';
@@ -47,6 +49,12 @@ export const KamiList = ({
   };
 }) => {
   const partyModalVisible = useVisibility((s) => s.modals.party);
+  const setModals = useVisibility((s) => s.setModals);
+
+  const openMarketplace = () => {
+    playClick();
+    setModals({ marketplace: true });
+  };
 
   const listedKamis = useMemo(
     () => data.kamis.filter((kami) => kami.state === 'LISTED'),
@@ -66,10 +74,16 @@ export const KamiList = ({
               'You are Kamiless.',
               '\n',
               {
-                before: 'Go to ',
-                linkText: 'Sudoswap',
-                href: 'https://sudoswap.xyz/#/browse/yominet/buy/0x5d4376b62fa8ac16dfabe6a9861e11c33a48c677',
-                after: ' to get a Kami! ',
+                before: 'New? Get your first Kami at the ',
+                linkText: 'Adoption Agency',
+                onClick: () => triggerKamiAdoptionAgencyModal(),
+                after: '!',
+              },
+              {
+                before: 'Or find one on ',
+                linkText: 'KamiSwap',
+                onClick: openMarketplace,
+                after: '.',
               },
             ]}
           />
