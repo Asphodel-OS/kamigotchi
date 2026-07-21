@@ -9,7 +9,8 @@ bindings/
 deployments
 yarn-error.log
 
-# build and deployment artifacts 
+# build and deployment artifacts
+.vault-grants.*.json
 abi/
 artifacts/
 broadcast/
