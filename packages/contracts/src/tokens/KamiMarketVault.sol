@@ -15,6 +15,11 @@ contract KamiMarketVault is Ownable {
   Kami721 public immutable KAMI721;
   mapping(address => bool) public authorizedCallers;
 
+  // NOTE: vaults deployed before these events existed cannot enumerate their
+  // grants from logs — audit those with deployment/commands/vaultAudit.ts.
+  event CallerAuthorized(address indexed caller);
+  event CallerUnauthorized(address indexed caller);
+
   error NotAuthorized();
 
   modifier onlyAuthorized() {
@@ -41,9 +46,11 @@ contract KamiMarketVault is Ownable {
 
   function authorizeCaller(address caller) external onlyOwner {
     authorizedCallers[caller] = true;
+    emit CallerAuthorized(caller);
   }
 
   function unauthorizeCaller(address caller) external onlyOwner {
     authorizedCallers[caller] = false;
+    emit CallerUnauthorized(caller);
   }
 }

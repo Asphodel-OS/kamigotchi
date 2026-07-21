@@ -4,8 +4,13 @@ import dotenv from 'dotenv';
 dotenv.config({ path: `.env.${process.env.NODE_ENV}` });
 
 import { ethers, JsonRpcProvider } from 'ethers';
-import { getAddrByID } from '../utils/addresses';
 import { getProvider, getSigner } from '../utils/chain';
+import {
+  VAULT_EXPECTED_SYSTEMS,
+  VaultABI,
+  getVaultSystemAddresses,
+  resolveVault,
+} from '../utils/vault';
 import { WorldABI } from '../contracts/mappings/worldABIs';
 
 // KamiMarketVault has no authorize/unauthorize events and the default yominet
@@ -45,34 +50,11 @@ const argv = yargs(hideBin(process.argv))
 const SEL_AUTHORIZE = '0x2c388d5d'; // authorizeCaller(address)
 const SEL_UNAUTHORIZE = '0x4ac8c5ae'; // unauthorizeCaller(address)
 
-const VaultABI = [
-  'function owner() view returns (address)',
-  'function WETH() view returns (address)',
-  'function KAMI721() view returns (address)',
-  'function authorizedCallers(address) view returns (bool)',
-  'function unauthorizeCaller(address caller) external',
-];
-const ValueCompABI = ['function get(uint256 entity) view returns (uint256)'];
-
 // World.ComponentValueSet(componentId, component, entity indexed, data)
 const COMPONENT_VALUE_SET = 'ComponentValueSet(uint256,address,uint256,bytes)';
 
-// systems expected to hold grants: everything calling getVault/transferWETH/
-// transferKami (grep src/systems), i.e. the market systems authorized by
-// deployVault.ts plus the newbie vendor. The registry must NOT hold one.
-const EXPECTED_SYSTEMS = [
-  'system.kamimarket.list',
-  'system.kamimarket.buy',
-  'system.kamimarket.offer',
-  'system.kamimarket.acceptoffer',
-  'system.kamimarket.cancel',
-  'system.newbievendor.buy',
-];
-const UNEXPECTED_SYSTEMS = ['system.kamimarket.registry'];
-
 const BATCH = 1000; // eth_calls in flight per slice (provider sub-batches them)
 
-const toAddress = (v: bigint) => ethers.getAddress('0x' + v.toString(16).padStart(40, '0'));
 const addrFromWord = (word: string) => ethers.getAddress('0x' + word.slice(-40));
 
 function getArchiveProvider(): JsonRpcProvider {
@@ -91,34 +73,6 @@ async function mapPool<T, R>(items: T[], limit: number, fn: (t: T, i: number) =>
     }
   }
   await Promise.all(Array.from({ length: Math.min(limit, items.length) }, worker));
-  return out;
-}
-
-async function resolveVault(provider: JsonRpcProvider): Promise<string> {
-  if (argv.vault) return ethers.getAddress(argv.vault);
-  const world = new ethers.Contract(process.env.WORLD!, WorldABI, provider);
-  const compsAddr = await world.components();
-  const valueCompAddr = await getAddrByID(
-    provider,
-    compsAddr,
-    ethers.solidityPackedKeccak256(['string'], ['component.value'])
-  );
-  const valueComp = new ethers.Contract(valueCompAddr, ValueCompABI, provider);
-  const configID = ethers.solidityPackedKeccak256(['string'], ['is.configKAMI_MARKET_VAULT']);
-  const raw: bigint = await valueComp.get(configID);
-  if (raw === 0n) throw new Error('KAMI_MARKET_VAULT not set in world config; pass --vault');
-  return toAddress(raw);
-}
-
-async function getSystemAddresses(provider: JsonRpcProvider): Promise<Map<string, string>> {
-  const world = new ethers.Contract(process.env.WORLD!, WorldABI, provider);
-  const sysRegAddr = await world.systems();
-  const out = new Map<string, string>();
-  for (const sysID of [...EXPECTED_SYSTEMS, ...UNEXPECTED_SYSTEMS]) {
-    const id = ethers.solidityPackedKeccak256(['string'], [sysID]);
-    const addr = await getAddrByID(provider, sysRegAddr, id);
-    out.set(sysID, addr);
-  }
   return out;
 }
 
@@ -322,7 +276,7 @@ async function revokeStale(vaultAddr: string, stale: string[]) {
 
 async function run() {
   const provider = getProvider() as JsonRpcProvider;
-  const vaultAddr = await resolveVault(provider);
+  const vaultAddr = await resolveVault(provider, argv.vault);
   const vault = new ethers.Contract(vaultAddr, VaultABI, provider);
 
   const [owner, weth, kami721] = await Promise.all([vault.owner(), vault.WETH(), vault.KAMI721()]);
@@ -333,13 +287,13 @@ async function run() {
 
   // 1. current systems from the live registry
   console.log('\n--- Current system grants ---');
-  const systems = await getSystemAddresses(provider);
+  const systems = await getVaultSystemAddresses(provider);
   const expectedAddrs = new Set<string>();
   let currentOk = true;
   for (const [sysID, addr] of systems) {
     const registered = addr !== ethers.ZeroAddress;
     const auth = registered ? await vault.authorizedCallers(addr) : false;
-    const shouldBe = EXPECTED_SYSTEMS.includes(sysID);
+    const shouldBe = VAULT_EXPECTED_SYSTEMS.includes(sysID);
     if (shouldBe) expectedAddrs.add(addr.toLowerCase());
     const ok = registered && auth === shouldBe;
     if (!ok) currentOk = false;
