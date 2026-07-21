@@ -172,12 +172,15 @@ async function archiveScan(vault: ethers.Contract): Promise<string[]> {
     toBlock: 'latest',
   });
 
-  // each event's data is abi-encoded bytes whose last 32 bytes hold the value
-  // (the system's address as a uint256); collect the distinct set
+  // the registry maps entity -> value: the entity (indexed topic[3]) is the
+  // system ADDRESS, and `data` is the value (the system ID hash). Decode the
+  // entity, not data — data's tail is an id hash, not an address.
   const seen = new Set<string>();
   for (const log of logs) {
-    const tail = log.data.slice(-40);
-    if (tail === '0'.repeat(40)) continue; // removals / zero writes
+    const entity = log.topics[3];
+    if (!entity) continue;
+    const tail = entity.slice(-40);
+    if (tail === '0'.repeat(40)) continue; // zero entity, skip
     seen.add(ethers.getAddress('0x' + tail));
   }
   console.log(`  ${logs.length} registry writes -> ${seen.size} distinct system addresses`);
@@ -229,7 +232,11 @@ async function blockOfNonce(provider: JsonRpcProvider, owner: string, k: number,
 // window, located by binary-searching each nonce (no trace_filter on this node).
 async function ownerVaultCalls(provider: JsonRpcProvider, w: OwnerWindow, vaultAddr: string): Promise<VaultCall[]> {
   const vault = vaultAddr.toLowerCase();
-  const nStart = await provider.getTransactionCount(w.owner, w.fromBlock);
+  // getTransactionCount(owner, b) counts txs up to and INCLUDING block b, so a
+  // call the new owner sends in fromBlock itself (same block it took ownership,
+  // possible on a fast chain) is baked into the count at fromBlock and would be
+  // skipped. Start the nonce window from fromBlock-1 to include that block.
+  const nStart = await provider.getTransactionCount(w.owner, Math.max(0, w.fromBlock - 1));
   const nEnd = await provider.getTransactionCount(w.owner, w.toBlock);
   const nonces = Array.from({ length: nEnd - nStart }, (_, i) => nStart + i);
   console.log(`  ${w.owner} — ${nonces.length} txs in [${w.fromBlock}, ${w.toBlock}]`);
@@ -253,14 +260,22 @@ async function ownerVaultCalls(provider: JsonRpcProvider, w: OwnerWindow, vaultA
   return found.flat();
 }
 
-// Reconstruct the final authorized set by replaying every grant/revoke in order.
-async function callsReplay(vaultAddr: string): Promise<{ authorized: Set<string>; ledger: VaultCall[] }> {
+// Collect every grant/revoke call, plus the set of every address ever targeted.
+// We intentionally do NOT trust the replayed net-authorized set for correctness:
+// a reverted tx (e.g. a revoke that failed) would mutate replay state without
+// changing on-chain state. Instead the caller probes every ever-targeted address
+// against the live mapping, so replay order and tx success are irrelevant — the
+// net-authorized figure below is informational only.
+async function callsReplay(
+  vaultAddr: string
+): Promise<{ everTargeted: string[]; netAuthorized: number; ledger: VaultCall[]; bounded: boolean }> {
   const provider = getArchiveProvider();
   const latest = argv.toBlock ?? (await provider.getBlockNumber());
+  const bounded = argv.fromBlock !== undefined || argv.toBlock !== undefined;
   console.log('\n--- Grant ledger replay (calls) ---');
 
   let windows = await ownershipWindows(provider, vaultAddr, latest);
-  if (argv.fromBlock !== undefined || argv.toBlock !== undefined) {
+  if (bounded) {
     const lo = argv.fromBlock ?? 0;
     windows = windows
       .map((w) => ({ ...w, fromBlock: Math.max(w.fromBlock, lo), toBlock: Math.min(w.toBlock, latest) }))
@@ -272,13 +287,20 @@ async function callsReplay(vaultAddr: string): Promise<{ authorized: Set<string>
   for (const w of windows) all.push(...(await ownerVaultCalls(provider, w, vaultAddr)));
   all.sort((a, b) => a.block - b.block || a.txIndex - b.txIndex);
 
-  const authorized = new Set<string>();
+  const everTargeted = new Set<string>();
+  const net = new Set<string>();
   for (const c of all) {
-    if (c.grant) authorized.add(c.target.toLowerCase());
-    else authorized.delete(c.target.toLowerCase());
+    everTargeted.add(c.target.toLowerCase());
+    if (c.grant) net.add(c.target.toLowerCase());
+    else net.delete(c.target.toLowerCase());
   }
-  console.log(`  ${all.length} grant/revoke calls replayed -> ${authorized.size} currently authorized`);
-  return { authorized: new Set([...authorized].map((a) => ethers.getAddress(a))), ledger: all };
+  console.log(`  ${all.length} grant/revoke calls -> ${everTargeted.size} addresses ever targeted, ${net.size} net-authorized (replay, informational)`);
+  return {
+    everTargeted: [...everTargeted].map((a) => ethers.getAddress(a)),
+    netAuthorized: net.size,
+    ledger: all,
+    bounded,
+  };
 }
 
 // Revoke each stale grant. Uses the same PRIV_KEY signer as the deploy commands;
@@ -332,20 +354,25 @@ async function run() {
   // 2. stale grants: ledger replay (--calls), registry scan (--archive), or crawl
   const staleSet = new Set<string>();
   let coverageNote: string;
+  let incomplete = false;
   if (argv.calls) {
-    const { authorized, ledger } = await callsReplay(vaultAddr);
-    // the replay is the ground truth for WHICH addresses were ever granted;
-    // confirm each still reads true on-chain, then flag the non-expected ones
-    const live = await mapPool([...authorized], BATCH, async (a) => ((await vault.authorizedCallers(a)) ? a : null));
+    const { everTargeted, bounded } = await callsReplay(vaultAddr);
+    // probe EVERY address ever targeted by a grant/revoke against the live
+    // mapping — not just the replay's net-authorized set. This is robust to
+    // reverted calls and replay-order: on-chain state is the source of truth.
+    const live = await mapPool(everTargeted, BATCH, async (a) => ((await vault.authorizedCallers(a)) ? a : null));
     for (const a of live) {
       if (!a) continue;
       if (!expectedAddrs.has(a.toLowerCase())) staleSet.add(a);
     }
-    const drift = ledger.length && authorized.size !== live.filter(Boolean).length;
+    incomplete = bounded;
     coverageNote =
       'replay of every authorizeCaller/unauthorizeCaller ever sent to the vault — ' +
-      'covers grants to any address, not just systems' +
-      (drift ? '\nWARNING: replay/live mismatch — a grant may have been made outside the scanned windows' : '');
+      'covers grants to any address, not just systems';
+    if (bounded)
+      coverageNote +=
+        '\nWARNING: --from-block/--to-block set — grants made OUTSIDE the scanned range are invisible; ' +
+        'this is a bounded investigation, not a complete audit. Omit the bounds for a definitive result';
   } else if (argv.archive) {
     console.log('\n--- Stale grant scan (archive) ---');
     const hits = await archiveScan(vault);
@@ -371,7 +398,9 @@ async function run() {
 
   console.log('\n--- Result ---');
   if (stale.length === 0 && currentOk) {
-    console.log('CLEAN: current systems match expectations; no stale grants found');
+    if (incomplete)
+      console.log('NO STALE GRANTS in the scanned range — but the scan was bounded, so this is NOT a complete audit (see warning).');
+    else console.log('CLEAN: current systems match expectations; no stale grants found');
   } else {
     for (const a of stale) console.log(`STALE GRANT: ${a} is authorized but is not a current market/vendor system`);
     if (!currentOk) console.log('CURRENT-STATE MISMATCH: see grants above');

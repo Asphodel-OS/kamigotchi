@@ -63,5 +63,6 @@ shift $(( $# > 0 ? 1 : 0 ))
 c "vault audit · .env.$NODE_ENV"
 ( cd "$CONTRACTS" && NODE_ENV="$NODE_ENV" pnpm exec ts-node deployment/commands/vaultAudit.ts "$@" ) \
   | sed -e "s/\(STALE GRANT\|MISMATCH\|FAIL\)/${RED}\1${RESET}/" \
+        -e "s/^\(WARNING\|NO STALE GRANTS\)/${YELLOW}\1${RESET}/" \
         -e "s/^CLEAN/${GREEN}CLEAN${RESET}/" \
         -e "s/^\(  ok  \)/${GREEN}\1${RESET}/"
