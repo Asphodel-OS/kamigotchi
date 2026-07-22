@@ -165,6 +165,37 @@ contract GachaTest is MintTemplate {
     }
   }
 
+  /// @notice a duplicated kami ID in a reroll must revert: rolls are priced by
+  ///         array length but the pool deposit is an idempotent set, so a repeat
+  ///         would surrender one kami while receiving two rolls (supply inflation)
+  function testGachaRerollDuplicateReverts() public {
+    _batchMint(2);
+    uint256 petUser = _mintKami(alice);
+
+    uint256[] memory ids = new uint256[](2);
+    ids[0] = petUser;
+    ids[1] = petUser;
+    vm.roll(++_currBlock);
+    _giveItem(alice, REROLL_TICKET_INDEX, 2);
+    vm.prank(alice.owner);
+    vm.expectRevert("LibArray: detected duplicate in array");
+    _KamiGachaRerollSystem.reroll(ids);
+  }
+
+  /// @notice a duplicated commit ID in a gacha reveal reverts explicitly
+  function testGachaRevealDuplicateReverts() public {
+    _batchMint(2);
+    uint256 commitID = _mint(alice);
+
+    uint256[] memory ids = new uint256[](2);
+    ids[0] = commitID;
+    ids[1] = commitID;
+    vm.roll(++_currBlock);
+    vm.prank(alice.owner);
+    vm.expectRevert("LibArray: detected duplicate in array");
+    _KamiGachaRevealSystem.reveal(ids);
+  }
+
   ///////////
   // UTILS //
   ///////////
