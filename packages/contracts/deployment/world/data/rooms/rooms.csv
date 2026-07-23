@@ -1,4 +1,5 @@
 ﻿.,Status,Index,Name,Exits,Description,Z,Y,X,Custom Exit Refs
+,In Game,0,deadzone,,This room is for debugging! You may not enter.,0,0,0,
 ,In Game,1,Misty Riverside,20,The air is quiet and the trees grow thick overhead. In each direction the murky river disappears into mist and darkness.,1,1,3,Ancient Riverbed (https://www.notion.so/Ancient-Riverbed-1b90220c38848177a912db5ded762ef4?pvs=21)
 ,In Game,2,Tunnel of Trees,13,A gate marks the boundary between the forest and the plains. The incongruous “SHOP” door has a cool glow.,1,3,3,Convenience Store (https://www.notion.so/Convenience-Store-1b90220c388481228373d0f0ebe6e1f1?pvs=21)
 ,In Game,3,Torii Gate,,The Torii gate standing here radiates an aura of spiritual significance. Piles of scrap and garbage rise like mountains on the horizon.,1,4,3,
