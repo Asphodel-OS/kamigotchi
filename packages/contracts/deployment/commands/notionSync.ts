@@ -208,6 +208,12 @@ function norm(v: string): string {
 function normList(v: string): string {
   return (v ?? '').split(',').map((x) => norm(x)).filter(Boolean).sort().join(',');
 }
+// order-PRESERVING normalization of a comma list — used to detect "same set,
+// different order" on rollup columns, where order mirrors the relation order and
+// can carry pairing meaning (droptable Indices[i] pairs with Tiers[i])
+function normSeq(v: string): string {
+  return (v ?? '').split(',').map((x) => norm(x)).filter(Boolean).join(',');
+}
 
 // deploy implication of a Notion Status, per the world-data flag mechanics
 // (runbook Procedure B "Status flags"): --args ignores status, but a BULK deploy
@@ -219,11 +225,14 @@ function deployImpl(status: string): string {
   const s = (status || '').trim().toLowerCase().replace(/[-_]/g, ' ').replace(/\s+/g, ' ');
   if (s === 'to deploy') return 'bulk-init candidate';
   if (s === 'to update' || s === 'revise deployment') return 'bulk-revise candidate';
+  if (s === 'to remove') return 'bulk-DELETE candidate'; // toDelete() marker
+  if (s === 'to delete') return 'delete-marked (inert: script wants "To Remove")';
   if (s === 'in game') return 'live';
   if (s === 'ready' || s === 'test') return 'staged (not bulk-auto)';
   return 'WIP / inert in bulk'; // Idea / Shelved / In Progress / In Review / blank
 }
 function implColor(impl: string): keyof typeof ANSI {
+  if (impl.includes('DELETE') || impl.startsWith('delete-marked')) return 'red';
   if (impl.startsWith('bulk-')) return 'yellow';
   if (impl === 'live') return 'green';
   if (impl.startsWith('staged')) return 'blue';
@@ -258,7 +267,9 @@ const keyCols = (m: Mapping) => (Array.isArray(m.key) ? m.key : [m.key]);
 const keyLabel = (m: Mapping) => keyCols(m).join(' + ');
 const joinKey = (parts: string[]) => parts.map((p) => norm(p)).join(' · ');
 
-async function diffTable(m: Mapping) {
+// returns a per-table verdict for the run recap; ok=false marks the run
+// incomplete (skips and aborts must fail the gate, same as thrown errors)
+async function diffTable(m: Mapping): Promise<{ ok: boolean; note: string }> {
   const { headers, rows: csvRows } = readCsv(m.csv);
   const kCols = keyCols(m);
   const kLabel = keyLabel(m);
@@ -267,7 +278,7 @@ async function diffTable(m: Mapping) {
   const missingKeyCols = kCols.filter((k) => !headers.includes(k));
   if (missingKeyCols.length) {
     console.log(`    ${bad()} CSV has no "${missingKeyCols.join('", "')}" key column (headers: ${c('dim', headers.join(', '))}) — skipped`);
-    return;
+    return { ok: false, note: 'skipped: missing key column' };
   }
 
   const dbId = m.dbId ? await verifyDbId(m.dbId, m.db) : await resolveDbId(m.db);
@@ -279,9 +290,13 @@ async function diffTable(m: Mapping) {
   // the first row exactly like the deploy pipeline's lookup maps do, and each
   // extra is classified — identical (dead row) vs CONFLICTING (deploy silently
   // ships only the first version).
-  const notby = new Map<string, { vals: Record<string, string>; status: string; name: string }>();
+  const notby = new Map<
+    string,
+    { vals: Record<string, string>; raw: Record<string, string>; status: string; name: string }
+  >();
   const complexCols = new Set<string>(); // relation/files/... — surfaced, not diffed
   const multiSel = new Set<string>(); // multi_select cols — compared order-insensitively
+  const rollupCols = new Set<string>(); // array rollups — set-compared, but order mirrors relation order
   const seenProp = new Set<string>(); // headers that exist as a Notion property at all
   const dupNotion: string[] = [];
   const conflictNotion: string[] = [];
@@ -301,6 +316,7 @@ async function diffTable(m: Mapping) {
     if (keyParts.every((v) => v === '')) { notionBlankKey++; continue; }
     const nk = joinKey(keyParts as string[]);
     const vals: Record<string, string> = {};
+    const raw: Record<string, string> = {};
     for (const col of headers) {
       const p = props[col];
       if (p !== undefined) seenProp.add(col);
@@ -309,6 +325,14 @@ async function diffTable(m: Mapping) {
       const pv = propValue(p);
       if (pv === null) { if (p) complexCols.add(col); continue; }
       vals[col] = pv;
+      // keep the UNSORTED value of array rollups: their order mirrors the relation
+      // order, which can pair with a sibling column (droptable Indices <-> Tiers)
+      if (p?.type === 'rollup' && p.rollup?.type === 'array') {
+        rollupCols.add(col);
+        const els = (p.rollup.array || []).map((el: any) => propValue(el));
+        if (!els.some((v: string | null) => v === null))
+          raw[col] = els.map((v: string) => v.trim()).filter(Boolean).join(',');
+      }
     }
     if (notby.has(nk)) {
       dupNotion.push(nk);
@@ -320,6 +344,7 @@ async function diffTable(m: Mapping) {
     const nameProp = props['Name'] ?? props['Title']; // quests title their rows "Title"
     notby.set(nk, {
       vals,
+      raw,
       status: props['Status'] ? propValue(props['Status']) ?? '' : '',
       name: nameProp ? propValue(nameProp) ?? '' : '',
     });
@@ -350,7 +375,7 @@ async function diffTable(m: Mapping) {
   if (!firstWins && (dupNotion.length || dupCsv.length)) {
     console.log(`    ${bad()} ${c('red', 'ABORT')} key "${kLabel}" is NOT unique — csv dups: ${c('dim', '[' + [...new Set(dupCsv)].join(', ') + ']')} notion dups: ${c('dim', '[' + [...new Set(dupNotion)].join(', ') + ']')}`);
     console.log(c('dim', '      row-matching would be ambiguous; this table needs a composite key or dupPolicy. Not diffed.'));
-    return;
+    return { ok: false, note: 'ABORT: duplicate key' };
   }
   const isLookup = firstWins && !hasStatusProp;
 
@@ -398,9 +423,13 @@ async function diffTable(m: Mapping) {
     for (const [k, v] of onlyNotion) console.log(statusRow(k, v.name, v.status, isLookup));
   }
 
-  // changed cells on matched rows
+  // changed cells on matched rows. Array rollups are set-compared (their display
+  // order in Notion is unstable), but their underlying order mirrors the relation
+  // order — when the set matches and the sequence doesn't, surface it: a silent
+  // re-pairing (droptable Indices vs Tiers) is exactly what a re-export would ship.
   let changed = 0;
   const changedLines: string[] = [];
+  const orderDrift: string[] = [];
   for (const [k, cRow] of csvby) {
     const n = notby.get(k);
     if (!n) continue;
@@ -410,6 +439,8 @@ async function diffTable(m: Mapping) {
       const cmp = (v: string) => (multiSel.has(col) ? normList(v) : norm(v));
       if (cmp(cRow[col] ?? '') !== cmp(n.vals[col]))
         diffs.push(`      ${pad(c('dim', col), 18)} ${c('red', JSON.stringify(cRow[col] ?? ''))} ${c('dim', '→')} ${c('green', JSON.stringify(n.vals[col]))}`);
+      else if (rollupCols.has(col) && n.raw[col] !== undefined && normSeq(cRow[col] ?? '') !== normSeq(n.raw[col]))
+        orderDrift.push(`${col} @ ${trunc(k, 30)}`);
     }
     if (diffs.length) {
       changed++;
@@ -421,6 +452,12 @@ async function diffTable(m: Mapping) {
     console.log('  ' + c('yellow', `~ changed · ${changed}`));
     changedLines.forEach((l) => console.log(l));
   }
+  if (orderDrift.length)
+    console.log(
+      '  ' + c('yellow', `⇅ same set, different order · ${orderDrift.length}`) +
+      c('dim', '   (relation order changed — check position-paired columns before re-exporting)') +
+      '\n' + c('dim', '      ' + orderDrift.slice(0, 8).join('  ·  ') + (orderDrift.length > 8 ? `  ·  +${orderDrift.length - 8} more` : ''))
+    );
 
   // rows only in CSV = reverse drift (CSV should not hold rows Notion lacks)
   const onlyCsv = [...csvby.entries()].filter(([k]) => !notby.has(k));
@@ -437,6 +474,15 @@ async function diffTable(m: Mapping) {
       c('yellow', `~${changed}`) + c('dim', ' changed  ') +
       c('red', `!${onlyCsv.length}`) + c('dim', ' csv-only')
     );
+
+  const noteParts: string[] = [];
+  if (onlyNotion.length) noteParts.push(`+${onlyNotion.length}`);
+  if (changed) noteParts.push(`~${changed}`);
+  if (onlyCsv.length) noteParts.push(`!${onlyCsv.length}`);
+  if (orderDrift.length) noteParts.push(`⇅${orderDrift.length}`);
+  const conflicts = new Set([...conflictCsv, ...conflictNotion]).size;
+  if (conflicts) noteParts.push(`CONFLICT×${conflicts}`);
+  return { ok: true, note: noteParts.length ? noteParts.join(' ') : 'in sync' };
 }
 
 async function run() {
@@ -444,22 +490,41 @@ async function run() {
   const targets = argv.table ? MAPPINGS.filter((m) => m.label.includes(argv.table)) : MAPPINGS;
   if (!targets.length) throw new Error(`no mapping matches --table "${argv.table}"`);
   titleCard(targets.length);
-  let failures = 0;
+  const results: { label: string; ok: boolean; note: string }[] = [];
   for (const m of targets) {
     try {
-      await diffTable(m);
+      results.push({ label: m.label, ...(await diffTable(m)) });
     } catch (e: any) {
-      failures++;
+      results.push({ label: m.label, ok: false, note: `FAILED: ${e.message}` });
       console.log(`    ${bad()} ${c('red', m.label + ' failed')}: ${e.message}`);
     }
   }
+
+  // recap: one line per table so a 28-table run is scannable at a glance
+  console.log('\n' + c('violetDim', '─'.repeat(RULE_W)));
+  console.log('  ' + c('bold', 'recap'));
+  for (const r of results) {
+    const icon = !r.ok ? bad() : r.note === 'in sync' ? c('green', '=') : c('yellow', '~');
+    const noteColor: keyof typeof ANSI =
+      !r.ok || r.note.includes('CONFLICT') ? 'red' : r.note === 'in sync' ? 'green' : 'yellow';
+    console.log(`  ${icon} ${pad(r.label, 28)}${c(noteColor, r.note)}`);
+  }
+
+  const failures = results.filter((r) => !r.ok).length;
+  const clean = results.filter((r) => r.ok && r.note === 'in sync').length;
+  const drifted = results.length - failures - clean;
   console.log('\n' + c('violetDim', '─'.repeat(RULE_W)));
   if (failures) {
-    // exit non-zero so a review gate never accepts a run that skipped tables
-    console.log(c('red', `done with ${failures} table(s) FAILED — this diff is INCOMPLETE`) + '\n');
+    // exit non-zero so a review gate never accepts a run that skipped, aborted,
+    // or errored a table — an incomplete diff must not read as a clean one
+    console.log(c('red', `done with ${failures} of ${results.length} table(s) FAILED — this diff is INCOMPLETE`) + '\n');
     process.exitCode = 1;
   } else {
-    console.log(c('dim', 'done · read-only · no CSV was written, nothing was deployed') + '\n');
+    console.log(
+      c('dim', `done · ${results.length} tables · `) + c('green', `${clean} in sync`) + c('dim', ' · ') +
+      (drifted ? c('yellow', `${drifted} drifted`) : c('dim', '0 drifted')) +
+      c('dim', ' · read-only · no CSV was written, nothing was deployed') + '\n'
+    );
   }
 }
 

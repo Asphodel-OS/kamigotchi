@@ -20,7 +20,7 @@ pnpm world:notion:diff:prod          # same, prod env file
 Reads `NOTION_PAT` from `.env.<NODE_ENV>` (see Setup). Output per table:
 
 - `key "X": unique on both sides ✓` — matching is trustworthy (or `! ABORT` if the key repeats).
-- `+ only in Notion` / `~ changed` — each row shows `[status: X → <deploy implication>]`, per the world-data flag mechanics (runbook Procedure B): `To Deploy` → bulk-init candidate, `To Update`/`Revise Deployment` → bulk-revise candidate, `In Game` → live, `Ready`/`Test` → staged, everything else → **WIP / inert in bulk**. So you can see at a glance what applying + bulk-deploying a row would do (a `--args` deploy ignores status — you name what ships).
+- `+ only in Notion` / `~ changed` — each row shows `[status: X → <deploy implication>]`, per the world-data flag mechanics (runbook Procedure B): `To Deploy` → bulk-init candidate, `To Update`/`Revise Deployment` → bulk-revise candidate, `To Remove` → bulk-DELETE candidate (`To Delete` is flagged but inert — the script matches `To Remove`), `In Game` → live, `Ready`/`Test` → staged, everything else → **WIP / inert in bulk**. So you can see at a glance what applying + bulk-deploying a row would do (a `--args` deploy ignores status — you name what ships). Lookup-table rows show `ships with parent row` instead (they have no Status; they deploy with their parent quest/item/listing).
 - `! only in CSV` — **reverse drift**: a row in the deploy vehicle that Notion lacks. Suspicious — verify before trusting (this is how a phantom listing gets caught).
 - `~ changed` — per-cell value differences on matched rows.
 - `not compared (complex types)` — relation/files/people columns are surfaced but not diffed.
@@ -41,7 +41,9 @@ Diffed (28 tables): items, item-effects (allos), listings, quests, nodes, npc, f
 
 Not mapped: `snapshot/` (chain-derived, no Notion source).
 
-Caveat on droptables: `Indices`/`Tiers` are position-correlated lists. The diff compares each column's value; a re-pairing that keeps both sets identical would not be caught — eyeball pairings when a droptable row changes.
+Position-correlated lists (droptable `Indices`/`Tiers`): array rollups are set-compared (Notion's display order is unstable), but the underlying order mirrors the relation order — so when a rollup matches as a set but not in sequence, the diff prints a `⇅ same set, different order` warning. A re-export after a relation re-order would ship a different pairing; check the paired column before applying.
+
+Every run ends with a **recap**: one line per table (`=` in sync / `~` drift summary / `✗` failed). A skipped, aborted, or errored table fails the run (exit 1) — an incomplete diff never reads as a clean one.
 
 ## Extending
 
