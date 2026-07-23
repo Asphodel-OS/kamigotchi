@@ -3,14 +3,11 @@ pragma solidity >=0.8.28;
 
 import { System } from "solecs/System.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
-import { LibString } from "solady/utils/LibString.sol";
-
-import { LibAccount } from "libraries/LibAccount.sol";
-import { LibCommit } from "libraries/LibCommit.sol";
-import { LibGacha } from "libraries/LibGacha.sol";
-import { LibKami } from "libraries/LibKami.sol";
 
 import { AuthRoles } from "libraries/utils/AuthRoles.sol";
+import { LibArray } from "libraries/utils/LibArray.sol";
+import { LibCommit } from "libraries/LibCommit.sol";
+import { LibGacha } from "libraries/LibGacha.sol";
 
 uint256 constant ID = uint256(keccak256("system.kami.gacha.reveal"));
 
@@ -18,12 +15,12 @@ uint256 constant ID = uint256(keccak256("system.kami.gacha.reveal"));
 contract KamiGachaRevealSystem is System, AuthRoles {
   constructor(IWorld _world, address _components) System(_world, _components) {}
 
-  function reveal(uint256[] memory rawCommitIDs) external returns (uint256[] memory) {
-    if (rawCommitIDs.length == 0) revert("need commits to reveal");
-    LibGacha.checkAndExtractIsCommit(components, rawCommitIDs);
+  function reveal(uint256[] memory commitIDs) external returns (uint256[] memory) {
+    if (commitIDs.length == 0) revert("need commits to reveal");
+    LibArray.sortAndVerifyNoRepeats(commitIDs); // sort in place in this step
+    LibGacha.checkAndExtractIsCommit(components, commitIDs);
 
     // sorts commits by cronological order via entityID
-    uint256[] memory commitIDs = LibGacha.sortCommits(components, rawCommitIDs);
     uint256[] memory kamiIDs = LibGacha.selectPets(components, commitIDs);
     LibGacha.withdrawPets(components, kamiIDs, commitIDs);
 
@@ -35,6 +32,7 @@ contract KamiGachaRevealSystem is System, AuthRoles {
     uint256[] memory commitIDs
   ) external onlyCommManager(components) returns (uint256[] memory) {
     if (commitIDs.length == 0) revert("need commits to reveal");
+    LibArray.sortAndVerifyNoRepeats(commitIDs); // sort in place in this step
     LibGacha.checkAndExtractIsCommit(components, commitIDs);
 
     // checks if blockhash is not available

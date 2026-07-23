@@ -9,9 +9,7 @@ import { getAddrByID, getCompByID } from "solecs/utils.sol";
 import { BlockRevealComponent as BlockRevComponent, ID as BlockRevealCompID } from "components/BlockRevealComponent.sol";
 import { IdHolderComponent, ID as IdHolderCompID } from "components/IdHolderComponent.sol";
 import { TypeComponent, ID as TypeCompID } from "components/TypeComponent.sol";
-
 import { LibComp } from "libraries/utils/LibComp.sol";
-import { LibRandom } from "libraries/utils/LibRandom.sol";
 
 /** @notice library for commit/reveal patters
  * Commits are designed to be extended upon depending on its use, but have a minimum shape
