@@ -30,9 +30,11 @@ const TOKEN = (process.env.NOTION_PAT || '').split('#')[0].trim().replace(/^["']
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
 // ── terminal formatting (house style, cf. game2 scripts/balance/core/format.ts) ──
+// colors gate on a REAL tty (piping the diff to a file must stay clean); use
+// FORCE_COLOR=1 to override, NO_COLOR to suppress
 const FMT_TTY =
   process.env.NO_COLOR == null &&
-  (process.env.FORCE_COLOR === '1' || process.stdout.isTTY === true || !!process.env.npm_lifecycle_event);
+  (process.env.FORCE_COLOR === '1' || process.stdout.isTTY === true);
 const ANSI = {
   reset: '\x1b[0m', bold: '\x1b[1m', dim: '\x1b[2m',
   red: '\x1b[31m', green: '\x1b[32m', yellow: '\x1b[33m', blue: '\x1b[34m', cyan: '\x1b[36m', gray: '\x1b[90m',
@@ -413,8 +415,13 @@ async function diffTable(m: Mapping): Promise<{ ok: boolean; note: string }> {
     console.log(c('dim', `      ⋯ duplicate keys (identical rows — dead, deploy uses the first): ${[...new Set([...deadCsv.map((k) => `csv:${k}`), ...deadNotion.map((k) => `notion:${k}`)])].join(', ')}`));
   for (const k of new Set(conflictCsv))
     console.log(`      ${bad()} ${c('red', 'CONFLICTING csv duplicate')} "${trunc(k, 48)}" — rows differ; deploy silently ships only the FIRST`);
-  for (const k of new Set(conflictNotion))
-    console.log(`      ${bad()} ${c('red', 'CONFLICTING notion duplicate')} "${trunc(k, 48)}" — rows differ; only the first is diffed/shipped`);
+  // csv first-wins mirrors deploy exactly (row order = deploy read order), so
+  // cell-diffing the kept csv row is faithful. Notion query order carries NO
+  // deploy meaning — a conflicting notion dup makes "which copy to diff"
+  // arbitrary, so those keys are excluded from the cell diff until resolved.
+  const conflictedNotionKeys = new Set(conflictNotion);
+  for (const k of conflictedNotionKeys)
+    console.log(`      ${bad()} ${c('red', 'CONFLICTING notion duplicate')} "${trunc(k, 48)}" — rows differ; cell diff skipped for this key, resolve the duplicate in Notion`);
 
   // rows only in notion = candidates to add (annotated with deploy implication)
   const onlyNotion = [...notby.entries()].filter(([k]) => !csvby.has(k));
@@ -433,6 +440,7 @@ async function diffTable(m: Mapping): Promise<{ ok: boolean; note: string }> {
   for (const [k, cRow] of csvby) {
     const n = notby.get(k);
     if (!n) continue;
+    if (conflictedNotionKeys.has(k)) continue; // which notion copy to diff is ambiguous
     const diffs: string[] = [];
     for (const col of comparable) {
       if (n.vals[col] === undefined) continue; // notion lacks this property on this row
@@ -521,7 +529,7 @@ async function run() {
     process.exitCode = 1;
   } else {
     console.log(
-      c('dim', `done · ${results.length} tables · `) + c('green', `${clean} in sync`) + c('dim', ' · ') +
+      c('dim', `done · ${results.length} table${results.length === 1 ? '' : 's'} · `) + c('green', `${clean} in sync`) + c('dim', ' · ') +
       (drifted ? c('yellow', `${drifted} drifted`) : c('dim', '0 drifted')) +
       c('dim', ' · read-only · no CSV was written, nothing was deployed') + '\n'
     );
