@@ -452,11 +452,29 @@ contract ScavengeTest is SetupTemplate {
     vm.prank(alice.operator);
     _DroptableRevealSystem.executeTyped(ids);
 
-    // budget 5000: c1 fully (4000), then 1000 of c2
+    // budget 5000: the dedup guard sorts the batch ascending by ID, so the
+    // lower commit ID drains fully (4000) and the other gets the remaining 1000
+    uint256 first = c1 < c2 ? c1 : c2;
+    uint256 second = c1 < c2 ? c2 : c1;
     assertEq(_getItemBal(alice, 1), 5000, "per-tx budget caps total across commits");
-    assertFalse(_BlockRevealComponent.has(c1), "c1 fully drained");
-    assertTrue(_BlockRevealComponent.has(c2), "c2 partially drained");
-    assertEq(_ValueComponent.get(c2), 3000, "c2 remainder");
+    assertFalse(_BlockRevealComponent.has(first), "lower-id commit fully drained");
+    assertTrue(_BlockRevealComponent.has(second), "higher-id commit partially drained");
+    assertEq(_ValueComponent.get(second), 3000, "higher-id commit remainder");
+  }
+
+  /// @notice a duplicated commit ID in a reveal batch reverts outright
+  function testRevealDuplicateCommitReverts() public {
+    _addSingleItemDT(1);
+    _incFor(alice, scavbar1, 100 * scavbar1.tierCost);
+    uint256 commitID = _claimGetDTCommit(alice, scavbar1.id);
+
+    vm.roll(block.number + 2);
+    uint256[] memory ids = new uint256[](2);
+    ids[0] = commitID;
+    ids[1] = commitID;
+    vm.prank(alice.operator);
+    vm.expectRevert("LibArray: detected duplicate in array");
+    _DroptableRevealSystem.executeTyped(ids);
   }
 
   /// @notice re-revealing a fully-drained commit is a no-op, not a revert

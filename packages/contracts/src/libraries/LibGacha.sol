@@ -6,7 +6,6 @@ import { IUint256Component as IUintComp } from "solecs/interfaces/IUint256Compon
 import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { getAddrByID, getCompByID } from "solecs/utils.sol";
 import { LibString } from "solady/utils/LibString.sol";
-import { LibSort } from "solady/utils/LibSort.sol";
 
 import { IDOwnsKamiComponent, ID as IDOwnsKamiCompID } from "components/IDOwnsKamiComponent.sol";
 import { RerollComponent, ID as RerollCompID } from "components/RerollComponent.sol";
@@ -22,6 +21,7 @@ uint256 constant GACHA_ID = uint256(keccak256("gacha.id"));
 
 library LibGacha {
   using LibComp for IComponent;
+  using LibString for string;
 
   /// @notice Creates a commit for multiple gacha rolls (same account)
   function commit(
@@ -69,18 +69,6 @@ library LibGacha {
   }
 
   /////////////////
-  // CALC
-
-  /// @notice sort based on entityID
-  function sortCommits(
-    IUintComp components,
-    uint256[] memory ids
-  ) internal view returns (uint256[] memory) {
-    LibSort.insertionSort(ids);
-    return ids;
-  }
-
-  /////////////////
   // RANDOMS
 
   /// @notice gets random pets from gacha with seeds
@@ -124,7 +112,7 @@ library LibGacha {
   function checkAndExtractIsCommit(IUintComp components, uint256[] memory ids) internal {
     string[] memory types = LibCommit.extractTypes(components, ids);
     for (uint256 i; i < ids.length; i++) {
-      if (!LibString.eq(types[i], "GACHA_COMMIT")) revert("not gacha commit");
+      if (!types[i].eq("GACHA_COMMIT")) revert("LibGacha: invalid commit ID");
     }
   }
 
