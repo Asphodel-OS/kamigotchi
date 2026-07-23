@@ -87,6 +87,15 @@ async function notion(path: string, body?: any): Promise<any> {
   }
 }
 
+// pinned-id path: retrieve the db and verify its live title still matches the
+// mapping — a retitled/swapped db fails loudly instead of silently mis-diffing
+async function verifyDbId(id: string, name: string): Promise<string> {
+  const db = await notion(`/databases/${id}`);
+  const title = (db.title || []).map((t: any) => t.plain_text).join('').trim();
+  if (title !== name) throw new Error(`pinned db ${id} is titled "${title}", expected "${name}" — fix the mapping`);
+  return id;
+}
+
 async function resolveDbId(name: string): Promise<string> {
   const matches: string[] = [];
   let cursor: string | undefined;
@@ -97,7 +106,9 @@ async function resolveDbId(name: string): Promise<string> {
       ...(cursor ? { start_cursor: cursor } : {}),
     });
     for (const r of res.results)
-      if (r.title?.map((t: any) => t.plain_text).join('').trim() === name) matches.push(r.id);
+      // dedupe by id — notion search can return the same db on multiple pages
+      if (r.title?.map((t: any) => t.plain_text).join('').trim() === name && !matches.includes(r.id))
+        matches.push(r.id);
     cursor = res.has_more ? res.next_cursor : undefined;
     if (cursor) await sleep(300);
   } while (cursor);
@@ -107,8 +118,12 @@ async function resolveDbId(name: string): Promise<string> {
   return matches[0];
 }
 
-// pull every row of a database (paginated)
+// pull every row of a database (paginated). Cached per run: several mappings can
+// slice one db (Droptables fans out by Type into three CSVs) — fetch it once.
+const queryCache = new Map<string, any[]>();
 async function queryAll(dbId: string): Promise<any[]> {
+  const hit = queryCache.get(dbId);
+  if (hit) return hit;
   const rows: any[] = [];
   let cursor: string | undefined;
   do {
@@ -117,6 +132,7 @@ async function queryAll(dbId: string): Promise<any[]> {
     cursor = res.has_more ? res.next_cursor : undefined;
     if (cursor) await sleep(350);
   } while (cursor);
+  queryCache.set(dbId, rows);
   return rows;
 }
 
@@ -178,6 +194,10 @@ function norm(v: string): string {
   if (low === 'no' || low === 'false' || low === 'n') return 'false';
   const n = Number(s);
   if (s !== '' && !Number.isNaN(n)) return String(n); // 5 == 5.0 == "5 "
+  // numeric lists ("9, 9, 8" vs "9,9,8"): comma-spacing is cosmetic, order is NOT
+  // (droptable Indices/Tiers are position-correlated) — so canonicalize spacing
+  // only, never sort
+  if (/^[\d\s,.\-]+$/.test(s)) return s.replace(/\s*,\s*/g, ',');
   return s; // NB: no comma-sort here — prose/positional lists compare verbatim
 }
 // order-insensitive compare, used ONLY for columns whose Notion type is a
@@ -219,42 +239,67 @@ function readCsv(rel: string): { headers: string[]; rows: Record<string, string>
 
 // aligned row: key · name(if distinct) · status · deploy-implication.
 // pad() is ANSI-aware (measures visible width), so colored cells align.
-function statusRow(key: string, name: string, status: string): string {
-  const impl = deployImpl(status);
+// lookup tables (no Status property) ship with their parent row, not by status —
+// annotating a status implication there would mislead, so say what's true instead.
+function statusRow(key: string, name: string, status: string, isLookup = false): string {
   const keyCell = pad(c('gray', trunc(key, 20)), 21);
   const nm = name && name.trim() && name.trim() !== key.trim() ? trunc(name, 30) : '';
   const nameCell = pad(nm, 31);
-  const statCell = pad(c('dim', status || '—'), 14);
+  if (isLookup) return '    ' + keyCell + nameCell + pad(c('dim', '—'), 20) + c('gray', 'ships with parent row');
+  const impl = deployImpl(status);
+  const statCell = pad(c('dim', trunc(status || '—', 18)), 20);
   return '    ' + keyCell + nameCell + statCell + c(implColor(impl), impl);
 }
 
+// composite-key support: a mapping's key may be one column or several; several
+// are joined into a single match key. Notion-side extraction returns null if any
+// part is a complex/unparseable property (the row is then dropped + counted).
+const keyCols = (m: Mapping) => (Array.isArray(m.key) ? m.key : [m.key]);
+const keyLabel = (m: Mapping) => keyCols(m).join(' + ');
+const joinKey = (parts: string[]) => parts.map((p) => norm(p)).join(' · ');
+
 async function diffTable(m: Mapping) {
   const { headers, rows: csvRows } = readCsv(m.csv);
-  tableRule(m.label, `${m.csv} ⇄ "${m.db}"`);
-  if (!headers.includes(m.key)) {
-    console.log(`    ${bad()} CSV has no "${m.key}" key column (headers: ${c('dim', headers.join(', '))}) — skipped`);
+  const kCols = keyCols(m);
+  const kLabel = keyLabel(m);
+  const firstWins = m.dupPolicy === 'first-wins';
+  tableRule(m.label, `${m.csv} ⇄ "${m.db}"${m.filter ? ` [${m.filter.prop}=${m.filter.equals}]` : ''}`);
+  const missingKeyCols = kCols.filter((k) => !headers.includes(k));
+  if (missingKeyCols.length) {
+    console.log(`    ${bad()} CSV has no "${missingKeyCols.join('", "')}" key column (headers: ${c('dim', headers.join(', '))}) — skipped`);
     return;
   }
 
-  const dbId = await resolveDbId(m.db);
+  const dbId = m.dbId ? await verifyDbId(m.dbId, m.db) : await resolveDbId(m.db);
   const pages = await queryAll(dbId);
 
-  // build notion row map keyed by the key property, plus which columns are
-  // comparable. dupKeys guards correctness: if the key repeats on either side,
-  // matching is ambiguous and we must NOT diff (the "undoubtedly linked" bar).
+  // build notion row map keyed by the key property (or joined composite), plus
+  // which columns are comparable. Duplicate keys make matching ambiguous: the
+  // default aborts the diff (the "undoubtedly linked" bar); 'first-wins' keeps
+  // the first row exactly like the deploy pipeline's lookup maps do, and each
+  // extra is classified — identical (dead row) vs CONFLICTING (deploy silently
+  // ships only the first version).
   const notby = new Map<string, { vals: Record<string, string>; status: string; name: string }>();
   const complexCols = new Set<string>(); // relation/files/... — surfaced, not diffed
   const multiSel = new Set<string>(); // multi_select cols — compared order-insensitively
   const seenProp = new Set<string>(); // headers that exist as a Notion property at all
   const dupNotion: string[] = [];
-  let notionNullKey = 0, notionBlankKey = 0;
+  const conflictNotion: string[] = [];
+  let hasStatusProp = false;
+  let notionNullKey = 0, notionBlankKey = 0, filteredOut = 0;
   for (const pg of pages) {
     const props = pg.properties || {};
-    const keyVal = propValue(props[m.key]);
-    if (keyVal === null) { notionNullKey++; continue; }   // complex/unparseable key type
-    if (keyVal === '') { notionBlankKey++; continue; }
-    const nk = norm(keyVal);
-    if (notby.has(nk)) dupNotion.push(nk);
+    // one Notion db can fan out into several filtered CSVs (e.g. Droptables by
+    // Type) — rows outside this mapping's slice are not drift, just out of scope
+    if (m.filter && norm(propValue(props[m.filter.prop]) ?? '') !== norm(m.filter.equals)) {
+      filteredOut++;
+      continue;
+    }
+    if (props['Status']) hasStatusProp = true;
+    const keyParts = kCols.map((k) => propValue(props[k]));
+    if (keyParts.some((v) => v === null)) { notionNullKey++; continue; } // complex/unparseable key type
+    if (keyParts.every((v) => v === '')) { notionBlankKey++; continue; }
+    const nk = joinKey(keyParts as string[]);
     const vals: Record<string, string> = {};
     for (const col of headers) {
       const p = props[col];
@@ -265,49 +310,92 @@ async function diffTable(m: Mapping) {
       if (pv === null) { if (p) complexCols.add(col); continue; }
       vals[col] = pv;
     }
+    if (notby.has(nk)) {
+      dupNotion.push(nk);
+      const kept = notby.get(nk)!.vals;
+      const conflicts = Object.keys(vals).some((col) => norm(kept[col] ?? '') !== norm(vals[col] ?? ''));
+      if (conflicts) conflictNotion.push(nk);
+      continue; // first-wins: keep the earlier row (matches deploy; in abort mode we abort anyway)
+    }
+    const nameProp = props['Name'] ?? props['Title']; // quests title their rows "Title"
     notby.set(nk, {
       vals,
       status: props['Status'] ? propValue(props['Status']) ?? '' : '',
-      name: props['Name'] ? propValue(props['Name']) ?? '' : '',
+      name: nameProp ? propValue(nameProp) ?? '' : '',
     });
   }
 
   const csvby = new Map<string, Record<string, string>>();
   const dupCsv: string[] = [];
+  const conflictCsv: string[] = [];
   let csvBlankKey = 0;
   for (const r of csvRows) {
-    if (!r[m.key]?.trim()) { csvBlankKey++; continue; }
-    const nk = norm(r[m.key]);
-    if (csvby.has(nk)) dupCsv.push(nk);
+    if (kCols.every((k) => !r[k]?.trim())) { csvBlankKey++; continue; }
+    const nk = joinKey(kCols.map((k) => r[k] ?? ''));
+    if (csvby.has(nk)) {
+      dupCsv.push(nk);
+      const kept = csvby.get(nk)!;
+      // classify against deploy-relevant columns only — complex cols (relations
+      // exported as row-unique notion.so URLs) would false-flag identical rows.
+      // complexCols is complete here: the notion loop above populated it.
+      const conflicts = headers.some(
+        (col) => !complexCols.has(col) && norm(kept[col] ?? '') !== norm(r[col] ?? '')
+      );
+      if (conflicts) conflictCsv.push(nk);
+      continue; // first-wins: keep the earlier row (matches deploy; in abort mode we abort anyway)
+    }
     csvby.set(nk, r);
   }
 
-  if (dupNotion.length || dupCsv.length) {
-    console.log(`    ${bad()} ${c('red', 'ABORT')} key "${m.key}" is NOT unique — csv dups: ${c('dim', '[' + [...new Set(dupCsv)].join(', ') + ']')} notion dups: ${c('dim', '[' + [...new Set(dupNotion)].join(', ') + ']')}`);
-    console.log(c('dim', '      row-matching would be ambiguous; this table needs a composite key. Not diffed.'));
+  if (!firstWins && (dupNotion.length || dupCsv.length)) {
+    console.log(`    ${bad()} ${c('red', 'ABORT')} key "${kLabel}" is NOT unique — csv dups: ${c('dim', '[' + [...new Set(dupCsv)].join(', ') + ']')} notion dups: ${c('dim', '[' + [...new Set(dupNotion)].join(', ') + ']')}`);
+    console.log(c('dim', '      row-matching would be ambiguous; this table needs a composite key or dupPolicy. Not diffed.'));
     return;
   }
+  const isLookup = firstWins && !hasStatusProp;
 
   // a CSV column with no Notion property (renamed/deleted/misspelled) must NOT be
   // silently skipped — that could show "in sync" while a required column was never
   // compared. Surface it and exclude it from the compare set.
   const noProp = notby.size ? headers.filter((h) => h !== '' && !seenProp.has(h) && !complexCols.has(h)) : [];
   const comparable = headers.filter((h) => h !== '' && !complexCols.has(h) && !noProp.includes(h));
+  const keyNote = firstWins
+    ? dupCsv.length || dupNotion.length ? 'first-wins (deploy-faithful)' : 'unique (first-wins)'
+    : 'unique';
   console.log(
-    `    ${ok()} key "${m.key}" unique   ${c('dim', '·')}   ` +
+    `    ${ok()} key "${kLabel}" ${keyNote}   ${c('dim', '·')}   ` +
     `csv ${c('bold', String(csvby.size))} ${c('dim', 'notion')} ${c('bold', String(notby.size))}   ${c('dim', '·')}   ` +
     `${c('dim', comparable.length + ' cols compared')}`
   );
+  if (m.filter) {
+    const inScope = pages.length - filteredOut;
+    if (inScope === 0 && pages.length > 0)
+      console.log(c('yellow', `      ! filter ${m.filter.prop}=${m.filter.equals} matched 0 of ${pages.length} notion rows — filter prop/value likely wrong`));
+    else console.log(c('dim', `      ⋯ filter ${m.filter.prop}=${m.filter.equals}: ${inScope} of ${pages.length} notion rows in scope`));
+  }
   if (complexCols.size) console.log(c('dim', `      ⋯ not compared (complex): ${[...complexCols].join(', ')}`));
   if (noProp.length) console.log(c('yellow', `      ! CSV columns with NO matching Notion property (never compared): ${noProp.join(', ')}`));
-  if (notionNullKey) console.log(c('yellow', `      ! ${notionNullKey} notion row(s) dropped: key "${m.key}" is a complex/unparseable type — mapping may be wrong`));
-  if (notionBlankKey || csvBlankKey) console.log(c('dim', `      ⋯ dropped blank-key rows: ${notionBlankKey} notion / ${csvBlankKey} csv`));
+  if (notionNullKey) console.log(c('yellow', `      ! ${notionNullKey} notion row(s) dropped: key "${kLabel}" is a complex/unparseable type — mapping may be wrong`));
+  if (notionBlankKey || csvBlankKey)
+    console.log(c(firstWins ? 'yellow' : 'dim', `      ${firstWins ? '!' : '⋯'} dropped blank-key rows: ${notionBlankKey} notion / ${csvBlankKey} csv${firstWins ? ' — a blank-key lookup row is UNREACHABLE by deploy (dead row)' : ''}`));
+
+  // duplicate-key report (first-wins tables only — abort mode never reaches here).
+  // identical extras mirror deploy harmlessly; a CONFLICT means the deploy pipeline
+  // silently ships only the first version — fix the source rows.
+  const deadCsv = dupCsv.filter((k) => !conflictCsv.includes(k));
+  const deadNotion = dupNotion.filter((k) => !conflictNotion.includes(k));
+  if (deadCsv.length || deadNotion.length)
+    console.log(c('dim', `      ⋯ duplicate keys (identical rows — dead, deploy uses the first): ${[...new Set([...deadCsv.map((k) => `csv:${k}`), ...deadNotion.map((k) => `notion:${k}`)])].join(', ')}`));
+  for (const k of new Set(conflictCsv))
+    console.log(`      ${bad()} ${c('red', 'CONFLICTING csv duplicate')} "${trunc(k, 48)}" — rows differ; deploy silently ships only the FIRST`);
+  for (const k of new Set(conflictNotion))
+    console.log(`      ${bad()} ${c('red', 'CONFLICTING notion duplicate')} "${trunc(k, 48)}" — rows differ; only the first is diffed/shipped`);
 
   // rows only in notion = candidates to add (annotated with deploy implication)
   const onlyNotion = [...notby.entries()].filter(([k]) => !csvby.has(k));
   if (onlyNotion.length) {
     console.log('  ' + c('cyan', `+ only in Notion · ${onlyNotion.length}`));
-    for (const [k, v] of onlyNotion) console.log(statusRow(k, v.name, v.status));
+    for (const [k, v] of onlyNotion) console.log(statusRow(k, v.name, v.status, isLookup));
   }
 
   // changed cells on matched rows
@@ -325,7 +413,7 @@ async function diffTable(m: Mapping) {
     }
     if (diffs.length) {
       changed++;
-      changedLines.push(statusRow(k, n.name, n.status));
+      changedLines.push(statusRow(k, n.name, n.status, isLookup));
       changedLines.push(...diffs);
     }
   }
