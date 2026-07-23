@@ -132,7 +132,7 @@
       "name": "reveal",
       "inputs": [
         {
-          "name": "rawCommitIDs",
+          "name": "commitIDs",
           "type": "uint256[]",
           "internalType": "uint256[]"
         }

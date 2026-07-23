@@ -1,8 +1,12 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 pragma solidity >=0.8.28;
 
+import { LibSort } from "solady/utils/LibSort.sol";
+
 /// @notice a general utility library for memory array operations
 library LibArray {
+  using LibSort for uint256[];
+
   /////////////////
   // CALCS
 
@@ -75,5 +79,15 @@ library LibArray {
     uint256[] memory result = new uint256[](size);
     for (uint256 i; i < size; i++) result[i] = arr[i];
     return result;
+  }
+
+  // verify there are no repeats in an array of commits
+  // achieves this by sorting in place, uniquifying the array and comparing start/end lengths
+  function sortAndVerifyNoRepeats(uint256[] memory ids) internal {
+    uint256 initialLength = ids.length;
+    ids.insertionSort();
+    ids.uniquifySorted();
+    uint256 finalLength = ids.length;
+    if (initialLength != finalLength) revert("LibArray: detected duplicate in array");
   }
 }

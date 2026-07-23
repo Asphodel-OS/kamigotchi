@@ -30,6 +30,8 @@ import { LibRandom } from "libraries/utils/LibRandom.sol";
 uint256 constant MAX_ROLLS_PER_REVEAL = 5000;
 
 library LibDroptable {
+  using LibString for string;
+
   /**
    * @notice creates a reveal entity for an item droptable
    *   used for all item droptables, including lootboxes.
@@ -252,7 +254,12 @@ library LibDroptable {
       itemAmounts: amounts
     });
 
-    LibEmitter.emitEvent(world, "DROPTABLE_REVEAL", _schema(), _encodeDroptableRevealEvent(eventData));
+    LibEmitter.emitEvent(
+      world,
+      "DROPTABLE_REVEAL",
+      _schema(),
+      _encodeDroptableRevealEvent(eventData)
+    );
   }
 
   struct DroptableRevealEventData {
@@ -266,17 +273,27 @@ library LibDroptable {
 
   function _schema() internal pure returns (uint8[] memory) {
     uint8[] memory schema = new uint8[](6);
-    schema[0] = uint8(LibTypes.SchemaValue.UINT256);      // commitID
-    schema[1] = uint8(LibTypes.SchemaValue.UINT256);      // holderID
-    schema[2] = uint8(LibTypes.SchemaValue.UINT256);      // dtID
-    schema[3] = uint8(LibTypes.SchemaValue.UINT256);      // timestamp
+    schema[0] = uint8(LibTypes.SchemaValue.UINT256); // commitID
+    schema[1] = uint8(LibTypes.SchemaValue.UINT256); // holderID
+    schema[2] = uint8(LibTypes.SchemaValue.UINT256); // dtID
+    schema[3] = uint8(LibTypes.SchemaValue.UINT256); // timestamp
     schema[4] = uint8(LibTypes.SchemaValue.UINT32_ARRAY); // itemIndices
-    schema[5] = uint8(LibTypes.SchemaValue.UINT256_ARRAY);// itemAmounts
+    schema[5] = uint8(LibTypes.SchemaValue.UINT256_ARRAY); // itemAmounts
     return schema;
   }
 
-  function _encodeDroptableRevealEvent(DroptableRevealEventData memory data) internal pure returns (bytes memory) {
-    return abi.encode(data.commitID, data.holderID, data.dtID, data.timestamp, data.itemIndices, data.itemAmounts);
+  function _encodeDroptableRevealEvent(
+    DroptableRevealEventData memory data
+  ) internal pure returns (bytes memory) {
+    return
+      abi.encode(
+        data.commitID,
+        data.holderID,
+        data.dtID,
+        data.timestamp,
+        data.itemIndices,
+        data.itemAmounts
+      );
   }
 
   /////////////////
