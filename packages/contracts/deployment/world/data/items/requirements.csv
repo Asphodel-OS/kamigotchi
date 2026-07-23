@@ -1,2 +1,3 @@
-﻿Items,Name,Type,Preposition,Index,Value,Key
+Items,Name,Type,Preposition,Index,Value,Key
 VIPP (https://www.notion.so/VIPP-1dc0220c388480be8ee3e867e0b42fb7?pvs=21),VIP_ROOM,ROOM,AT,64,,VIP_ROOM
+"Mana Mochi (https://www.notion.so/Mana-Mochi-1980220c3884815c9f2afb30d509c983?pvs=21), Gaokerena Mochi (https://www.notion.so/Gaokerena-Mochi-1980220c388481d3888af361904e8a91?pvs=21), Sunset Apple Mochi (https://www.notion.so/Sunset-Apple-Mochi-1980220c3884810aa6c2e1e32fc03442?pvs=21), Kami Mochi (https://www.notion.so/Kami-Mochi-1980220c388481928b78fb85fa1b6e3c?pvs=21)",MOCHI_LIMIT,MOCHI_USED,MAX,0,2,MOCHI_LIMIT
