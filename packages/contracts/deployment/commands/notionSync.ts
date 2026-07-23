@@ -61,15 +61,22 @@ function titleCard(nTables: number) {
 
 async function notion(path: string, body?: any): Promise<any> {
   for (let attempt = 0; ; attempt++) {
-    const res = await fetch(`${NOTION}${path}`, {
-      method: body ? 'POST' : 'GET',
-      headers: {
-        Authorization: `Bearer ${TOKEN}`,
-        'Notion-Version': VERSION,
-        'Content-Type': 'application/json',
-      },
-      body: body ? JSON.stringify(body) : undefined,
-    });
+    let res: Response;
+    try {
+      res = await fetch(`${NOTION}${path}`, {
+        method: body ? 'POST' : 'GET',
+        headers: {
+          Authorization: `Bearer ${TOKEN}`,
+          'Notion-Version': VERSION,
+          'Content-Type': 'application/json',
+        },
+        body: body ? JSON.stringify(body) : undefined,
+        signal: AbortSignal.timeout(20_000), // never hang on a stalled/hung response
+      });
+    } catch (e: any) {
+      if (attempt < 4) { await sleep(1000 * (attempt + 1)); continue; } // timeout / network — retry
+      throw new Error(`notion ${path}: ${e.name === 'TimeoutError' ? 'request timed out' : e.message}`);
+    }
     if (res.status === 429 && attempt < 5) {
       await sleep(1000 * (attempt + 1));
       continue;
@@ -81,15 +88,23 @@ async function notion(path: string, body?: any): Promise<any> {
 }
 
 async function resolveDbId(name: string): Promise<string> {
-  const res = await notion('/search', {
-    query: name,
-    filter: { property: 'object', value: 'database' },
-  });
-  const hit = res.results.find(
-    (r: any) => r.title?.map((t: any) => t.plain_text).join('').trim() === name
-  );
-  if (!hit) throw new Error(`database "${name}" not visible to the integration (share it, or fix the name)`);
-  return hit.id;
+  const matches: string[] = [];
+  let cursor: string | undefined;
+  do {
+    const res = await notion('/search', {
+      query: name,
+      filter: { property: 'object', value: 'database' },
+      ...(cursor ? { start_cursor: cursor } : {}),
+    });
+    for (const r of res.results)
+      if (r.title?.map((t: any) => t.plain_text).join('').trim() === name) matches.push(r.id);
+    cursor = res.has_more ? res.next_cursor : undefined;
+    if (cursor) await sleep(300);
+  } while (cursor);
+  if (!matches.length) throw new Error(`database "${name}" not visible to the integration (share it, or fix the name)`);
+  if (matches.length > 1)
+    console.log(c('yellow', `      ! ${matches.length} databases titled "${name}" — using the first; disambiguate the mapping`));
+  return matches[0];
 }
 
 // pull every row of a database (paginated)
@@ -153,17 +168,25 @@ function propValue(p: any): string | null {
   }
 }
 
-// normalize a value for order-insensitive, whitespace-tolerant, numeric compare
+// normalize a value: whitespace-tolerant, boolean-canonical, numeric-equal.
+// NB: no comma-sort here — that only applies to genuine multi-value columns
+// (normList), so prose/rich_text or order-significant lists compare verbatim.
 function norm(v: string): string {
   const s = (v ?? '').replace(/\s+/g, ' ').trim();
-  // canonicalize booleans so CSV "Yes"/"No" == Notion checkbox "true"/"false"
   const low = s.toLowerCase();
   if (low === 'yes' || low === 'true' || low === 'y') return 'true';
   if (low === 'no' || low === 'false' || low === 'n') return 'false';
   const n = Number(s);
   if (s !== '' && !Number.isNaN(n)) return String(n); // 5 == 5.0 == "5 "
-  if (s.includes(',')) return s.split(',').map((x) => x.trim()).filter(Boolean).sort().join(',');
-  return s;
+  return s; // NB: no comma-sort here — prose/positional lists compare verbatim
+}
+// order-insensitive compare, used ONLY for columns whose Notion type is a
+// set (multi_select or array rollup — propValue sorts those on the Notion side,
+// so we sort the CSV side to match). List items may contain spaces (e.g. a
+// Rewards rollup "4x Agency Reputation"), so this can't be inferred from the
+// value — it's scoped by property type in diffTable.
+function normList(v: string): string {
+  return (v ?? '').split(',').map((x) => norm(x)).filter(Boolean).sort().join(',');
 }
 
 // deploy implication of a Notion Status, per the world-data flag mechanics
@@ -220,18 +243,26 @@ async function diffTable(m: Mapping) {
   // comparable. dupKeys guards correctness: if the key repeats on either side,
   // matching is ambiguous and we must NOT diff (the "undoubtedly linked" bar).
   const notby = new Map<string, { vals: Record<string, string>; status: string; name: string }>();
-  const complexCols = new Set<string>();
+  const complexCols = new Set<string>(); // relation/files/... — surfaced, not diffed
+  const multiSel = new Set<string>(); // multi_select cols — compared order-insensitively
+  const seenProp = new Set<string>(); // headers that exist as a Notion property at all
   const dupNotion: string[] = [];
+  let notionNullKey = 0, notionBlankKey = 0;
   for (const pg of pages) {
     const props = pg.properties || {};
     const keyVal = propValue(props[m.key]);
-    if (keyVal === null || keyVal === '') continue;
+    if (keyVal === null) { notionNullKey++; continue; }   // complex/unparseable key type
+    if (keyVal === '') { notionBlankKey++; continue; }
     const nk = norm(keyVal);
     if (notby.has(nk)) dupNotion.push(nk);
     const vals: Record<string, string> = {};
     for (const col of headers) {
-      const pv = propValue(props[col]);
-      if (pv === null) { if (props[col]) complexCols.add(col); continue; }
+      const p = props[col];
+      if (p !== undefined) seenProp.add(col);
+      // set-typed columns (multi_select / array rollup) compare order-insensitively
+      if (p?.type === 'multi_select' || (p?.type === 'rollup' && p.rollup?.type === 'array')) multiSel.add(col);
+      const pv = propValue(p);
+      if (pv === null) { if (p) complexCols.add(col); continue; }
       vals[col] = pv;
     }
     notby.set(nk, {
@@ -243,8 +274,9 @@ async function diffTable(m: Mapping) {
 
   const csvby = new Map<string, Record<string, string>>();
   const dupCsv: string[] = [];
+  let csvBlankKey = 0;
   for (const r of csvRows) {
-    if (!r[m.key]?.trim()) continue;
+    if (!r[m.key]?.trim()) { csvBlankKey++; continue; }
     const nk = norm(r[m.key]);
     if (csvby.has(nk)) dupCsv.push(nk);
     csvby.set(nk, r);
@@ -256,13 +288,20 @@ async function diffTable(m: Mapping) {
     return;
   }
 
-  const comparable = headers.filter((h) => !complexCols.has(h) && h !== '');
+  // a CSV column with no Notion property (renamed/deleted/misspelled) must NOT be
+  // silently skipped — that could show "in sync" while a required column was never
+  // compared. Surface it and exclude it from the compare set.
+  const noProp = notby.size ? headers.filter((h) => h !== '' && !seenProp.has(h) && !complexCols.has(h)) : [];
+  const comparable = headers.filter((h) => h !== '' && !complexCols.has(h) && !noProp.includes(h));
   console.log(
     `    ${ok()} key "${m.key}" unique   ${c('dim', '·')}   ` +
     `csv ${c('bold', String(csvby.size))} ${c('dim', 'notion')} ${c('bold', String(notby.size))}   ${c('dim', '·')}   ` +
     `${c('dim', comparable.length + ' cols compared')}`
   );
   if (complexCols.size) console.log(c('dim', `      ⋯ not compared (complex): ${[...complexCols].join(', ')}`));
+  if (noProp.length) console.log(c('yellow', `      ! CSV columns with NO matching Notion property (never compared): ${noProp.join(', ')}`));
+  if (notionNullKey) console.log(c('yellow', `      ! ${notionNullKey} notion row(s) dropped: key "${m.key}" is a complex/unparseable type — mapping may be wrong`));
+  if (notionBlankKey || csvBlankKey) console.log(c('dim', `      ⋯ dropped blank-key rows: ${notionBlankKey} notion / ${csvBlankKey} csv`));
 
   // rows only in notion = candidates to add (annotated with deploy implication)
   const onlyNotion = [...notby.entries()].filter(([k]) => !csvby.has(k));
@@ -279,8 +318,9 @@ async function diffTable(m: Mapping) {
     if (!n) continue;
     const diffs: string[] = [];
     for (const col of comparable) {
-      if (n.vals[col] === undefined) continue; // notion lacks this property
-      if (norm(cRow[col] ?? '') !== norm(n.vals[col]))
+      if (n.vals[col] === undefined) continue; // notion lacks this property on this row
+      const cmp = (v: string) => (multiSel.has(col) ? normList(v) : norm(v));
+      if (cmp(cRow[col] ?? '') !== cmp(n.vals[col]))
         diffs.push(`      ${pad(c('dim', col), 18)} ${c('red', JSON.stringify(cRow[col] ?? ''))} ${c('dim', '→')} ${c('green', JSON.stringify(n.vals[col]))}`);
     }
     if (diffs.length) {
@@ -316,15 +356,23 @@ async function run() {
   const targets = argv.table ? MAPPINGS.filter((m) => m.label.includes(argv.table)) : MAPPINGS;
   if (!targets.length) throw new Error(`no mapping matches --table "${argv.table}"`);
   titleCard(targets.length);
+  let failures = 0;
   for (const m of targets) {
     try {
       await diffTable(m);
     } catch (e: any) {
+      failures++;
       console.log(`    ${bad()} ${c('red', m.label + ' failed')}: ${e.message}`);
     }
   }
   console.log('\n' + c('violetDim', '─'.repeat(RULE_W)));
-  console.log(c('dim', 'done · read-only · no CSV was written, nothing was deployed') + '\n');
+  if (failures) {
+    // exit non-zero so a review gate never accepts a run that skipped tables
+    console.log(c('red', `done with ${failures} table(s) FAILED — this diff is INCOMPLETE`) + '\n');
+    process.exitCode = 1;
+  } else {
+    console.log(c('dim', 'done · read-only · no CSV was written, nothing was deployed') + '\n');
+  }
 }
 
 run().catch((e) => {
