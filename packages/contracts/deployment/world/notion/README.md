@@ -20,7 +20,7 @@ pnpm world:notion:diff:prod          # same, prod env file
 Reads `NOTION_PAT` from `.env.<NODE_ENV>` (see Setup). Output per table:
 
 - `key "X": unique on both sides ✓` — matching is trustworthy (or `! ABORT` if the key repeats).
-- `+ only in Notion` — candidate rows to add, each annotated with its Status; anything not `In Game / To Deploy / Ready / Test` is flagged **design-ahead / not marked ready** (do not blindly add).
+- `+ only in Notion` / `~ changed` — each row shows `[status: X → <deploy implication>]`, per the world-data flag mechanics (runbook Procedure B): `To Deploy` → bulk-init candidate, `To Update`/`Revise Deployment` → bulk-revise candidate, `In Game` → live, `Ready`/`Test` → staged, everything else → **WIP / inert in bulk**. So you can see at a glance what applying + bulk-deploying a row would do (a `--args` deploy ignores status — you name what ships).
 - `! only in CSV` — **reverse drift**: a row in the deploy vehicle that Notion lacks. Suspicious — verify before trusting (this is how a phantom listing gets caught).
 - `~ changed` — per-cell value differences on matched rows.
 - `not compared (complex types)` — relation/files/people columns are surfaced but not diffed.

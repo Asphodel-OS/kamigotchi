@@ -136,7 +136,18 @@ function norm(v: string): string {
   return s;
 }
 
-const READY = new Set(['In Game', 'To Deploy', 'Ready', 'Test']); // rest = design-ahead / not shipping
+// deploy implication of a Notion Status, per the world-data flag mechanics
+// (runbook Procedure B "Status flags"): --args ignores status, but a BULK deploy
+// only writes these. Annotating each row with this tells the reviewer what
+// applying + bulk-deploying it would actually do.
+function deployImpl(status: string): string {
+  const s = (status || '').trim();
+  if (s === 'To Deploy') return 'bulk-init candidate';
+  if (s === 'To Update' || s === 'Revise Deployment') return 'bulk-revise candidate';
+  if (s === 'In Game') return 'live';
+  if (s === 'Ready' || s === 'Test') return 'staged (not bulk-auto)';
+  return 'WIP / inert in bulk'; // Idea / Shelved / In Progress / In Review / blank
+}
 
 function readCsv(rel: string): { headers: string[]; rows: Record<string, string>[] } {
   const raw = readFileSync(join(DATA_DIR, rel), 'utf8').replace(/^﻿/, '');
@@ -206,7 +217,7 @@ async function diffTable(m: Mapping) {
   if (onlyNotion.length) {
     console.log(`  + only in Notion (${onlyNotion.length}) — candidates to add:`);
     for (const [k, v] of onlyNotion)
-      console.log(`      ${m.key}=${k} ${v.name}  [status: ${v.status || '?'}]${READY.has(v.status) ? '' : '  <- design-ahead / not marked ready'}`);
+      console.log(`      ${m.key}=${k} ${v.name}  [status: ${v.status || '?'} → ${deployImpl(v.status)}]`);
   }
 
   // rows only in CSV = reverse drift (CSV should not hold rows Notion lacks)
@@ -228,7 +239,7 @@ async function diffTable(m: Mapping) {
     }
     if (diffs.length) {
       changed++;
-      console.log(`  ~ ${m.key}=${k} ${n.name}${READY.has(n.status) ? '' : ` [status: ${n.status}]`}`);
+      console.log(`  ~ ${m.key}=${k} ${n.name}  [status: ${n.status || '?'} → ${deployImpl(n.status)}]`);
       for (const d of diffs) console.log(`      ${d}`);
     }
   }
