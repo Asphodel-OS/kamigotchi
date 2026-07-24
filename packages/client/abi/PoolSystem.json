@@ -1,0 +1,342 @@
+{
+  "abi": [
+    {
+      "type": "constructor",
+      "inputs": [
+        {
+          "name": "_world",
+          "type": "address",
+          "internalType": "contract IWorld"
+        },
+        {
+          "name": "_components",
+          "type": "address",
+          "internalType": "address"
+        }
+      ],
+      "stateMutability": "nonpayable"
+    },
+    {
+      "type": "function",
+      "name": "addLiquidity",
+      "inputs": [
+        {
+          "name": "indexA",
+          "type": "uint32",
+          "internalType": "uint32"
+        },
+        {
+          "name": "indexB",
+          "type": "uint32",
+          "internalType": "uint32"
+        },
+        {
+          "name": "amountADesired",
+          "type": "uint256",
+          "internalType": "uint256"
+        },
+        {
+          "name": "amountBDesired",
+          "type": "uint256",
+          "internalType": "uint256"
+        },
+        {
+          "name": "amountAMin",
+          "type": "uint256",
+          "internalType": "uint256"
+        },
+        {
+          "name": "amountBMin",
+          "type": "uint256",
+          "internalType": "uint256"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "",
+          "type": "uint256",
+          "internalType": "uint256"
+        },
+        {
+          "name": "",
+          "type": "uint256",
+          "internalType": "uint256"
+        },
+        {
+          "name": "",
+          "type": "uint256",
+          "internalType": "uint256"
+        }
+      ],
+      "stateMutability": "nonpayable"
+    },
+    {
+      "type": "function",
+      "name": "cancelOwnershipHandover",
+      "inputs": [],
+      "outputs": [],
+      "stateMutability": "payable"
+    },
+    {
+      "type": "function",
+      "name": "completeOwnershipHandover",
+      "inputs": [
+        {
+          "name": "pendingOwner",
+          "type": "address",
+          "internalType": "address"
+        }
+      ],
+      "outputs": [],
+      "stateMutability": "payable"
+    },
+    {
+      "type": "function",
+      "name": "deprecate",
+      "inputs": [],
+      "outputs": [],
+      "stateMutability": "nonpayable"
+    },
+    {
+      "type": "function",
+      "name": "execute",
+      "inputs": [
+        {
+          "name": "arguments",
+          "type": "bytes",
+          "internalType": "bytes"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "",
+          "type": "bytes",
+          "internalType": "bytes"
+        }
+      ],
+      "stateMutability": "nonpayable"
+    },
+    {
+      "type": "function",
+      "name": "owner",
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "result",
+          "type": "address",
+          "internalType": "address"
+        }
+      ],
+      "stateMutability": "view"
+    },
+    {
+      "type": "function",
+      "name": "ownershipHandoverExpiresAt",
+      "inputs": [
+        {
+          "name": "pendingOwner",
+          "type": "address",
+          "internalType": "address"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "result",
+          "type": "uint256",
+          "internalType": "uint256"
+        }
+      ],
+      "stateMutability": "view"
+    },
+    {
+      "type": "function",
+      "name": "removeLiquidity",
+      "inputs": [
+        {
+          "name": "indexA",
+          "type": "uint32",
+          "internalType": "uint32"
+        },
+        {
+          "name": "indexB",
+          "type": "uint32",
+          "internalType": "uint32"
+        },
+        {
+          "name": "shares",
+          "type": "uint256",
+          "internalType": "uint256"
+        },
+        {
+          "name": "amountAMin",
+          "type": "uint256",
+          "internalType": "uint256"
+        },
+        {
+          "name": "amountBMin",
+          "type": "uint256",
+          "internalType": "uint256"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "",
+          "type": "uint256",
+          "internalType": "uint256"
+        },
+        {
+          "name": "",
+          "type": "uint256",
+          "internalType": "uint256"
+        }
+      ],
+      "stateMutability": "nonpayable"
+    },
+    {
+      "type": "function",
+      "name": "renounceOwnership",
+      "inputs": [],
+      "outputs": [],
+      "stateMutability": "payable"
+    },
+    {
+      "type": "function",
+      "name": "requestOwnershipHandover",
+      "inputs": [],
+      "outputs": [],
+      "stateMutability": "payable"
+    },
+    {
+      "type": "function",
+      "name": "swap",
+      "inputs": [
+        {
+          "name": "indexIn",
+          "type": "uint32",
+          "internalType": "uint32"
+        },
+        {
+          "name": "indexOut",
+          "type": "uint32",
+          "internalType": "uint32"
+        },
+        {
+          "name": "amountIn",
+          "type": "uint256",
+          "internalType": "uint256"
+        },
+        {
+          "name": "minAmountOut",
+          "type": "uint256",
+          "internalType": "uint256"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "amountOut",
+          "type": "uint256",
+          "internalType": "uint256"
+        }
+      ],
+      "stateMutability": "nonpayable"
+    },
+    {
+      "type": "function",
+      "name": "transferOwnership",
+      "inputs": [
+        {
+          "name": "newOwner",
+          "type": "address",
+          "internalType": "address"
+        }
+      ],
+      "outputs": [],
+      "stateMutability": "payable"
+    },
+    {
+      "type": "event",
+      "name": "OwnershipHandoverCanceled",
+      "inputs": [
+        {
+          "name": "pendingOwner",
+          "type": "address",
+          "indexed": true,
+          "internalType": "address"
+        }
+      ],
+      "anonymous": false
+    },
+    {
+      "type": "event",
+      "name": "OwnershipHandoverRequested",
+      "inputs": [
+        {
+          "name": "pendingOwner",
+          "type": "address",
+          "indexed": true,
+          "internalType": "address"
+        }
+      ],
+      "anonymous": false
+    },
+    {
+      "type": "event",
+      "name": "OwnershipTransferred",
+      "inputs": [
+        {
+          "name": "oldOwner",
+          "type": "address",
+          "indexed": true,
+          "internalType": "address"
+        },
+        {
+          "name": "newOwner",
+          "type": "address",
+          "indexed": true,
+          "internalType": "address"
+        }
+      ],
+      "anonymous": false
+    },
+    {
+      "type": "event",
+      "name": "SystemDeprecated",
+      "inputs": [],
+      "anonymous": false
+    },
+    {
+      "type": "error",
+      "name": "AlreadyInitialized",
+      "inputs": []
+    },
+    {
+      "type": "error",
+      "name": "NewOwnerIsZeroAddress",
+      "inputs": []
+    },
+    {
+      "type": "error",
+      "name": "NoHandoverRequest",
+      "inputs": []
+    },
+    {
+      "type": "error",
+      "name": "Unauthorized",
+      "inputs": []
+    }
+  ],
+  "methodIdentifiers": {
+    "addLiquidity(uint32,uint32,uint256,uint256,uint256,uint256)": "ffb80b03",
+    "cancelOwnershipHandover()": "54d1f13d",
+    "completeOwnershipHandover(address)": "f04e283e",
+    "deprecate()": "0fcc0c28",
+    "execute(bytes)": "09c5eabe",
+    "owner()": "8da5cb5b",
+    "ownershipHandoverExpiresAt(address)": "fee81cf4",
+    "removeLiquidity(uint32,uint32,uint256,uint256,uint256)": "68d6ac09",
+    "renounceOwnership()": "715018a6",
+    "requestOwnershipHandover()": "25692962",
+    "swap(uint32,uint32,uint256,uint256)": "4a4f0718",
+    "transferOwnership(address)": "f2fde38b"
+  }
+}

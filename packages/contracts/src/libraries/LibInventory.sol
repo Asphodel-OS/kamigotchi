@@ -249,6 +249,30 @@ library LibInventory {
     _incFor(comps, toID, itemIndex, amt);
   }
 
+  /// @notice transfer WITHOUT acquisition logging (ITEM_TOTAL / global ITEM_COUNT)
+  /// @dev for internal protocol moves (e.g. AMM pool <-> account) where the
+  ///      receive is not a player acquisition — logging it via _incFor would
+  ///      credit ITEM_TOTAL, corrupting earned-item leaderboards (kamiden reads
+  ///      ITEM_TOTAL[MUSU] as coin earned). also skips ITEM_COUNT churn, which
+  ///      is correct: a transfer moves supply, it does not mint or burn it.
+  function transferForNoLog(
+    IUintComp comps,
+    uint256 fromID,
+    uint256 toID,
+    uint32 itemIndex,
+    uint256 amt
+  ) internal {
+    ValueComponent valComp = ValueComponent(getAddrByID(comps, ValueCompID));
+
+    uint256 fromInv = genID(fromID, itemIndex); // must already exist
+    uint256 newFrom = valComp.safeGet(fromInv) - amt; // implicit balance check
+    if (newFrom == 0) remove(comps, fromInv);
+    else valComp.set(fromInv, newFrom);
+
+    uint256 toInv = createFor(comps, toID, itemIndex);
+    valComp.inc(toInv, amt);
+  }
+
   function transferFor(
     IUintComp comps,
     uint256 fromID,

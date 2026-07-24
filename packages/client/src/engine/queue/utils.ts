@@ -320,6 +320,67 @@ export async function sendTx(
     }
 
     if (shouldReconcileSubmissionError(e)) {
+      // the sync variant can fail without ever broadcasting — e.g. anvil
+      // accepts the method but rejects the timeout param with -32602 — so
+      // reconciliation would poll for a tx no node has
+      if (signedTx) {
+        // some nodes support the bare 1-param sync method even when they
+        // reject the timeout variant: retry it first for an instant receipt
+        try {
+          const receipt = (await (signer.provider as any).send('eth_sendRawTransactionSync', [
+            signedTx,
+          ])) as TransactionReceipt;
+          if (receipt) {
+            log.time.info('[queue] Sync retry without timeout param succeeded');
+            if (toStatusNumber((receipt as any).status) !== 1) {
+              const failure = new Error(`Transaction failed with status ${receipt.status}`);
+              (failure as any).receipt = receipt;
+              throw failure;
+            }
+            return receipt;
+          }
+          // falsy receipt: the node accepted the method but returned nothing —
+          // treat as unbroadcast and fall through to the plain rebroadcast
+          log.time.info('[queue] Sync retry returned no receipt, rebroadcasting plainly');
+        } catch (retryError: any) {
+          if (retryError?.receipt) throw retryError; // real on-chain failure
+          log.time.info('[queue] Sync retry unavailable, rebroadcasting plainly');
+        }
+        // last resort: plain broadcast of the same signed bytes, then poll.
+        // if the original send did land, the node dedupes the identical hash
+        try {
+          await (signer.provider as any).send('eth_sendRawTransaction', [signedTx]);
+          log.time.info('[queue] Rebroadcast signed tx via eth_sendRawTransaction');
+        } catch (rebroadcastError: any) {
+          if (rebroadcastError?.receipt) throw rebroadcastError; // on-chain failure surfaced
+          const msg = normalizeMessage(rebroadcastError);
+          // ONLY hash-specific duplicate responses prove THIS signed tx is
+          // already in the node. "nonce too low" is excluded on purpose — a
+          // different tx may have taken the nonce, so it does not prove this
+          // hash landed; it falls through to reconciliation like any ambiguous
+          // error (finds the receipt if it landed, times out if it didn't).
+          const alreadyKnown = ['already known', 'already imported', 'duplicate'].some((p) =>
+            msg.includes(p)
+          );
+          if (!alreadyKnown) {
+            // throw ONLY on precise deterministic tx-validation errors that can
+            // never mine. ambiguous rejections (rejected/denied/rate-limit,
+            // often gateway-level) are NOT fatal — the original submission may
+            // be mining, so they must still reach reconciliation.
+            const fatal = [
+              'insufficient funds',
+              'intrinsic gas',
+              'invalid signature',
+              'invalid chain',
+              'exceeds block gas',
+            ].some((p) => msg.includes(p));
+            if (fatal) throw rebroadcastError;
+          }
+          log.time.info(
+            `[queue] Rebroadcast ${alreadyKnown ? 'confirms tx already known' : 'inconclusive, reconciling'}: ${msg.slice(0, 80)}`
+          );
+        }
+      }
       return reconcileSubmittedTx(signer.provider, { txHash, from, nonce });
     }
 

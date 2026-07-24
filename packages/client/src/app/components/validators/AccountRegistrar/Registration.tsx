@@ -48,7 +48,7 @@ export const Registration = ({
   };
 
   const needsToBridge = () => {
-    return ethBalance < GasConstants.Empty && import.meta.env.MODE !== 'puter';
+    return ethBalance < GasConstants.Empty && import.meta.env.MODE !== 'development';
   };
 
   const catchKeys = (event: React.KeyboardEvent<HTMLInputElement>) => {

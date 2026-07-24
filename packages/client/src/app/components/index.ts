@@ -29,6 +29,7 @@ import { EmaBoardModal } from './modals/naming';
 import { NodeModal } from './modals/node';
 import { ObolModal } from './modals/obol';
 import { PartyModal } from './modals/party';
+import { PoolModal } from './modals/pool';
 import { QuestDetailsModal } from './modals/questDetails';
 import { QuestModal } from './modals/quests';
 import { RevealModal } from './modals/reveal';
@@ -212,6 +213,10 @@ export const allComponents: UIComponentWithGrid[] = [
   {
     uiComponent: MerchantModal,
     gridConfig: { colStart: 2, colEnd: 67, rowStart: 8, rowEnd: 99 },
+  },
+  {
+    uiComponent: PoolModal,
+    gridConfig: { colStart: 33, colEnd: 67, rowStart: 15, rowEnd: 85 },
   },
   {
     uiComponent: MarketplaceModal,

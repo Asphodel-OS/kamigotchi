@@ -27,7 +27,7 @@ export async function deploy(
       (initWorld || false).toString(), // Init world
       (emitter || false).toString(), // Deploy emitter
       (process.env.MULTISIG || ethers.ZeroAddress).toString(), // Multisig address
-      (process.env.NODE_ENV === 'puter').toString(), // Local mode
+      (process.env.NODE_ENV === 'local').toString(), // Local mode
       '--fork-url',
       process.env.RPC!,
       '--priority-gas-price=0',

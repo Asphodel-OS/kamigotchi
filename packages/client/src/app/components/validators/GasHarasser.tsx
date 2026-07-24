@@ -120,7 +120,7 @@ export const GasHarasser: UIComponent = {
     };
 
     const needsToBridge = () => {
-      return ownerEthBalance < GasConstants.Empty && import.meta.env.MODE !== 'puter';
+      return ownerEthBalance < GasConstants.Empty && import.meta.env.MODE !== 'development';
     };
 
     const operatorBalanceWei = operatorBalance?.value ?? 0n;
