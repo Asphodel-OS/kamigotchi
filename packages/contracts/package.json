@@ -38,6 +38,8 @@
     "world:verify:prod": "NODE_ENV=production ts-node deployment/commands/verify-world.ts",
     "world:notion:diff:test": "NODE_ENV=testing ts-node deployment/commands/notionSync.ts",
     "world:notion:diff:prod": "NODE_ENV=production ts-node deployment/commands/notionSync.ts",
+    "world:listings:health:test": "NODE_ENV=testing ts-node deployment/commands/listingHealth.ts",
+    "world:listings:health:prod": "NODE_ENV=production ts-node deployment/commands/listingHealth.ts",
     "inspect:kami:local": "NODE_ENV=local ts-node deployment/commands/inspect-kami.ts",
     "inspect:kami:test": "NODE_ENV=testing ts-node deployment/commands/inspect-kami.ts",
     "inspect:kami:prod": "NODE_ENV=production ts-node deployment/commands/inspect-kami.ts",

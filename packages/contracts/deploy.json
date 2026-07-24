@@ -364,6 +364,7 @@
         "IndexItem",
         "Balance",
         "TimeLast",
+        "TimeStart",
         "TokenAllowance",
         "Type",
         "Value"
@@ -379,6 +380,7 @@
         "Index",
         "Balance",
         "TimeLast",
+        "TimeStart",
         "Type",
         "Value"
       ]
