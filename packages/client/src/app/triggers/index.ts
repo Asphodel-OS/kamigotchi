@@ -7,6 +7,7 @@ export { triggerKamiBridgeModal } from './triggerKamiBridgeModal';
 export { triggerLeaderboardModal } from './triggerLeaderboardModal';
 export { triggerNodeModal } from './triggerNodeModal';
 export { triggerPetNamingModal } from './triggerPetNamingModal';
+export { triggerPoolModal } from './triggerPoolModal';
 export { triggerShopModal } from './triggerShopModal';
 export { triggerKamiAdoptionAgencyModal } from './triggerKamiAdoptionAgencyModal';
 export { triggerTempleOfTheWheelModal } from './triggerTempleOfTheWheelModal';

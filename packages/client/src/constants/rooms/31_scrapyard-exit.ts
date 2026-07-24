@@ -1,3 +1,4 @@
+import { triggerPoolModal } from 'app/triggers/triggerPoolModal';
 import {
   bgFountainDay,
   bgFountainEvening,
@@ -13,5 +14,11 @@ export const room31: Room = {
     key: 'cave',
     path: cave,
   },
-  objects: [],
+  objects: [
+    {
+      name: 'fountain',
+      coordinates: { x1: 40, y1: 40, x2: 88, y2: 100 },
+      onClick: () => triggerPoolModal(),
+    },
+  ],
 };
