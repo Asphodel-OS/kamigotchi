@@ -1837,3 +1837,21 @@ test-1,1000001,Test,Crafting Materials,No,,,Let there be Craft,,,Move 3 Times,"1
 test-2,1000002,Test,Lottery Loving,No,,,Stop being Kamiless,,,,20x Gacha Tickets (Test)
 test-3,1000003,Test,Crafting Materials II,No,,,More crafting materials,,Complete test-1,Give 5 Wooden Sticks,"100x Chalkberry,100x Shroom,100x Resin,100x Holy Dust,100x Scrap Metals"
 test-4,1000004,Test,Crafting Toolkit,No,,,You need equipment to make new items.,,Complete test-1,,"1x Screwdriver,1x Grinder,1x Burner"
+MIN100,2100,To Deploy,A Short Pilgrimage,No,SIDE,MINA,"MINA: ""This shabby world is lacking beauty.”
+MINA: “I've brought something to improve that.""
+MINA: ""There is now a fountain at the crossroads leading out of the junkyard.""
+MINA: ""A monument to all that flows.""
+MINA: ""Wander if you like, but be sure to find your way there.""
+MINA: ""I have something to show you.”","MINA: ""This fountain holds a share of my own power. It will never run dry.""
+MINA: ""Here, you may choose to make an offering.""
+MINA: “Currency, of course, but the waters accept many things.""
+MINA: ""And here, the waters flow back many things in return.”",Complete MIN007,Move to the Scrapyard Exit,
+MIN101,2101,To Deploy,The Fountain of All That Flows,No,SIDE,MINA,"MINA: ""The fountain's pool is really a multitude, overlapping.""
+MINA: ""Each pool holds two items.""
+MINA: ""Anyone can throw in some of one, and the waters return some of the other.""
+MINA: ""You can also make an offering of both.""
+MINA: ""This is not solely to prove your devotion.""
+MINA: ""Becoming a provider will grant you a claim to part of the whole pool.""
+MINA: “Touch the fountain here or through your Menu to get started.”","MINA: “Have you made an offering to the fountain yet?”
+MINA: “Here's something simple to get you started.”
+MINA: “Wood and stone are humble, but they provide support.”",Complete MIN100,,"10x Stone,10x Wooden Stick"
