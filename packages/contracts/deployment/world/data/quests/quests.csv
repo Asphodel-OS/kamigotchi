@@ -1748,7 +1748,7 @@ WET BONES: “I called her Lean. I think we worked in different departments.”
 WET BONES: “The isolation of the 1990s cubicle farm office design was an isolating factor in the white collar workfo-”
 MENU: “Operator, let’s get out of here. I think we got everything we can out of this guy.”
 MENU: “Please.”",Complete SQ014,Give 30 Honeydew Scale,"7x Booster Pack,6x Elders Loyalty"
-SQ116,3116,To Deploy,Lost and Found,No,SIDE,MINA,"MINA: “I want you to go visit the Lost Skeleton again to speak with him.”
+SQ116,3116,In Game,Lost and Found,No,SIDE,MINA,"MINA: “I want you to go visit the Lost Skeleton again to speak with him.”
 MINA: “Menu seems to hate him now, but he might still be useful.” 
 MENU: “I told you, he’s just a creep. A stalker.”
 MINA: “That’s useful.”
@@ -1759,7 +1759,7 @@ MINA: “See? There he goes.”
 MINA: “By the way, note the pristine quality of those ridiculous pants.”
 MINA: “This skeleton acts like a lost soul, but…”
 MINA: “In the details, this is quite a strong self-image to maintain.”",Complete SQ111,Make 5 Scavenging Rolls at Lost Skeleton,"2x Elders Loyalty,1x Booster Pack"
-SQ117,3117,To Deploy,Trash Pickers,No,SIDE,MINA,"MINA: “Go on. Now that you’ve got his attention, see what he wants.”
+SQ117,3117,In Game,Trash Pickers,No,SIDE,MINA,"MINA: “Go on. Now that you’ve got his attention, see what he wants.”
 LOST SKELETON: “You’re back, huh? I knew you wanted to be friends.”
 LOST SKELETON: “We’re not so different, huh? We want the same stuff probably.”
 LOST SKELETON: “You helped me find out some stuff about Arawn, right?”
@@ -1779,7 +1779,7 @@ MINA: “There may be a way to help him, even so.”
 MINA: “If he has further requests, you may as well entertain them for now.”
 MENU: “Are you serious? I think this guy is a lost cause.”
 MENU: “I’ll pass on any messages he has, though. If Mina really thinks I should.”",Complete SQ116,Make 70 Scavenging Rolls at Road to Labs,"2x Elders Loyalty,5x Booster Pack"
-SQ118,3118,To Deploy,Janitorial Supplies,No,SIDE,MENU,"MENU: “The creep wants something. I’ll patch him through…”
+SQ118,3118,In Game,Janitorial Supplies,No,SIDE,MENU,"MENU: “The creep wants something. I’ll patch him through…”
 LOST SKELETON: “Hey. I have a better spot to dig through trash.”
 LOST SKELETON: “I know most of those guys went through the waterfall.”
 LOST SKELETON: “I could see it from here.”
