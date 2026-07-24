@@ -53,23 +53,24 @@ contract ListingHealth is SystemCall {
       console.log("=== %s (npc %s item %s): NOT FOUND", label, npc, item);
       return;
     }
-    int32 bal = BalanceComponent(getAddrByID(components, BalanceCompID)).safeGet(id);
+    // Balance is int32 (signed): a net-negative listing must stay negative, not
+    // wrap to a huge positive through a uint cast, or the report shows a phantom surplus.
+    int256 bal = BalanceComponent(getAddrByID(components, BalanceCompID)).safeGet(id);
     uint256 target = ValueComponent(getAddrByID(components, ValueCompID)).safeGet(id);
-    int32 period = PeriodComponent(getAddrByID(components, PeriodCompID)).get(buyID);
+    uint256 period = uint256(uint32(PeriodComponent(getAddrByID(components, PeriodCompID)).get(buyID)));
     uint256 rate = RateComponent(getAddrByID(components, RateCompID)).get(buyID);
 
     console.log("=== %s (npc %s item %s)", label, npc, item);
-    console.log("  target %s | rate/period %s | periodSec %s", target, rate, uint256(uint32(period)));
-    console.log("  timeStart %s | sold %s", ts, uint256(uint32(bal)));
+    console.log("  target %s | rate/period %s | periodSec %s", target, rate, period);
+    console.log("  timeStart %s | sold (signed, below):", ts);
+    console.logInt(bal);
 
-    // deficit in milli-periods: (t - n/r) * 1000
-    uint256 elapsedMilli = ((block.timestamp - ts) * 1000) / uint256(uint32(period));
-    uint256 soldMilli = (uint256(uint32(bal)) * 1000) / rate;
-    if (elapsedMilli >= soldMilli) {
-      console.log("  DEFICIT milli-periods: %s (behind schedule)", elapsedMilli - soldMilli);
-    } else {
-      console.log("  SURPLUS milli-periods: %s (ahead of schedule)", soldMilli - elapsedMilli);
-    }
+    // deficit in milli-periods, signed: (t - n/r) * 1000. positive = behind schedule.
+    int256 elapsedMilli = int256(((block.timestamp - ts) * 1000) / period);
+    int256 soldMilli = (bal * 1000) / int256(rate);
+    int256 net = elapsedMilli - soldMilli;
+    if (net >= 0) console.log("  DEFICIT milli-periods: %s (behind schedule)", uint256(net));
+    else console.log("  SURPLUS milli-periods: %s (ahead of schedule)", uint256(-net));
 
     _probe(id, 1, rate);
     _probe(id, 100, rate);

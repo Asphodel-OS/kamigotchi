@@ -99,8 +99,8 @@ contract ListingGDAFloorTest is SetupTemplate {
     assertLe(p, 63); // and not overshooting materially
   }
 
-  // sell() settles too; a sell-only listing (no buy side) must not revert on the
-  // buy-type read inside settleGDA
+  // a fixed-sell listing (no GDA buy side) still works end-to-end: regression that
+  // the LibListing changes leave the sell path untouched
   function testSellOnlyListingUnaffected() public {
     uint32 item = CHEAP_ITEM;
     _createListing(NPC, item, MUSU_INDEX, 5);
@@ -112,6 +112,23 @@ contract ListingGDAFloorTest is SetupTemplate {
     _ListingSellSystem.executeTyped(NPC, _arr32(item), _arr32(3));
     assertEq(_getItemBal(alice, item), 0);
     assertEq(_getItemBal(alice, MUSU_INDEX), 1_000_000 + 15); // 3 × fixed 5
+  }
+
+  // a SCALED sell on a dormant (deep-deficit) GDA-buy listing prices off the
+  // floored buy price without needing settle on the sell path (calcBuyPrice clamps)
+  function testScaledSellOnDormantListingUsesFloor() public {
+    // sell price = 50% of buy price
+    vm.prank(deployer);
+    __ListingRegistrySystem.setSellScaled(NPC, ITEM, 500_000_000); // 0.5 in 1e9
+    _giveItem(alice, ITEM, 4);
+    _fastForward(30 days); // deep deficit -> buy price at floor (8)
+
+    vm.prank(alice.operator);
+    _ListingSellSystem.executeTyped(NPC, _arr32(ITEM), _arr32(4));
+    // 4 units sold back at 50% of the per-unit floor (8) = ~4*4
+    uint256 got = _getItemBal(alice, MUSU_INDEX) - 1_000_000;
+    assertGe(got, 1); // priced, not zero; floored not collapsed
+    assertLe(got, 16);
   }
 
   // without new purchases the price drifts back down from target to the floor,
@@ -154,6 +171,8 @@ contract ListingGDAFloorTest is SetupTemplate {
     _ListingBuySystem.executeTyped(npcIndex, _arr32(itemIndex), _arr32(uint32(amt)));
   }
 
+  // amounts are uint32 at the ListingBuySystem boundary (executeTyped takes uint32[]),
+  // so this cast mirrors the real on-chain type — not a truncation risk.
   function _arr32(uint32 v) internal pure returns (uint32[] memory arr) {
     arr = new uint32[](1);
     arr[0] = v;

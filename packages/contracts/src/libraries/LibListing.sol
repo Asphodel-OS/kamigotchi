@@ -79,7 +79,10 @@ library LibListing {
     uint32 itemIndex,
     uint256 amt
   ) internal returns (uint32 currencyIndex, uint256 price) {
-    settleGDA(comps, id); // SCALED sell pricing derives from the GDA buy price
+    // No settleGDA here: sells never create a floor-faucet (they raise the deficit,
+    // not lower the price for a buyer), calcBuyPrice already clamps the price it
+    // returns, and the next buy settles. Settling on sell would only add a
+    // TimeStart write (a no-op for FIXED sells) without changing any price.
     price = calcSellPrice(comps, id, amt);
     if (price == 0) revert("LibListing: invalid sell price");
     decBalance(comps, id, amt);
@@ -179,7 +182,8 @@ library LibListing {
   //////////////////
   // SETTERS
 
-  /// @notice forgive GDA backlog beyond MAX_DEFICIT_PERIODS by advancing TimeStart
+  /// @notice forgive GDA backlog beyond MAX_DEFICIT_PERIODS by advancing TimeStart.
+  /// Called on buy() only — that's the sole path that can farm the floor.
   /// @dev without this, a dormant listing's stored deficit lets unlimited volume
   /// clear at the floor price until the entire backlog is bought. Settling caps the
   /// owed backlog at MAX_DEFICIT_PERIODS × rate and makes price respond to
@@ -187,7 +191,7 @@ library LibListing {
   function settleGDA(IUintComp comps, uint256 id) internal {
     uint256 buyID = LibRegistry.genBuyID(id);
     TypeComponent typeComp = TypeComponent(getAddrByID(comps, TypeCompID));
-    // has() guard: sell() settles too, and a sell-only listing has no buy type set
+    // defensive: only GDA buy sides carry a deficit to settle (FIXED buy / unset -> skip)
     if (!typeComp.has(buyID) || !typeComp.get(buyID).eq("GDA")) return;
 
     uint256 startTs = TimeStartComponent(getAddrByID(comps, TimeStartCompID)).safeGet(id);
