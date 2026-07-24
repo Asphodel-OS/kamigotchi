@@ -15,6 +15,7 @@ import { _ListingRegistrySystem } from "./ethers-contracts/_ListingRegistrySyste
 import { _NewbieVendorRegistrySystem } from "./ethers-contracts/_NewbieVendorRegistrySystem";
 import { _NodeRegistrySystem } from "./ethers-contracts/_NodeRegistrySystem";
 import { _NPCRegistrySystem } from "./ethers-contracts/_NPCRegistrySystem";
+import { _PoolRegistrySystem } from "./ethers-contracts/_PoolRegistrySystem";
 import { _QuestRegistrySystem } from "./ethers-contracts/_QuestRegistrySystem";
 import { _RecipeRegistrySystem } from "./ethers-contracts/_RecipeRegistrySystem";
 import { _RelationshipRegistrySystem } from "./ethers-contracts/_RelationshipRegistrySystem";
@@ -80,6 +81,7 @@ import { KamiUseItemSystem } from "./ethers-contracts/KamiUseItemSystem";
 import { ListingBuySystem } from "./ethers-contracts/ListingBuySystem";
 import { ListingSellSystem } from "./ethers-contracts/ListingSellSystem";
 import { NewbieVendorBuySystem } from "./ethers-contracts/NewbieVendorBuySystem";
+import { PoolSystem } from "./ethers-contracts/PoolSystem";
 import { QuestAcceptSystem } from "./ethers-contracts/QuestAcceptSystem";
 import { QuestCompleteSystem } from "./ethers-contracts/QuestCompleteSystem";
 import { QuestDropSystem } from "./ethers-contracts/QuestDropSystem";
@@ -110,6 +112,7 @@ export type SystemTypes = {
   "system.newbievendor.registry": _NewbieVendorRegistrySystem;
   "system.node.registry": _NodeRegistrySystem;
   "system.npc.registry": _NPCRegistrySystem;
+  "system.pool.registry": _PoolRegistrySystem;
   "system.quest.registry": _QuestRegistrySystem;
   "system.recipe.registry": _RecipeRegistrySystem;
   "system.relationship.registry": _RelationshipRegistrySystem;
@@ -175,6 +178,7 @@ export type SystemTypes = {
   "system.listing.buy": ListingBuySystem;
   "system.listing.sell": ListingSellSystem;
   "system.newbievendor.buy": NewbieVendorBuySystem;
+  "system.pool": PoolSystem;
   "system.quest.accept": QuestAcceptSystem;
   "system.quest.complete": QuestCompleteSystem;
   "system.quest.drop": QuestDropSystem;

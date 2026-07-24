@@ -15,6 +15,7 @@ import _ListingRegistrySystem from "../abi/_ListingRegistrySystem.json";
 import _NewbieVendorRegistrySystem from "../abi/_NewbieVendorRegistrySystem.json";
 import _NodeRegistrySystem from "../abi/_NodeRegistrySystem.json";
 import _NPCRegistrySystem from "../abi/_NPCRegistrySystem.json";
+import _PoolRegistrySystem from "../abi/_PoolRegistrySystem.json";
 import _QuestRegistrySystem from "../abi/_QuestRegistrySystem.json";
 import _RecipeRegistrySystem from "../abi/_RecipeRegistrySystem.json";
 import _RelationshipRegistrySystem from "../abi/_RelationshipRegistrySystem.json";
@@ -80,6 +81,7 @@ import KamiUseItemSystem from "../abi/KamiUseItemSystem.json";
 import ListingBuySystem from "../abi/ListingBuySystem.json";
 import ListingSellSystem from "../abi/ListingSellSystem.json";
 import NewbieVendorBuySystem from "../abi/NewbieVendorBuySystem.json";
+import PoolSystem from "../abi/PoolSystem.json";
 import QuestAcceptSystem from "../abi/QuestAcceptSystem.json";
 import QuestCompleteSystem from "../abi/QuestCompleteSystem.json";
 import QuestDropSystem from "../abi/QuestDropSystem.json";
@@ -110,6 +112,7 @@ export const SystemAbis = {
   "system.newbievendor.registry": _NewbieVendorRegistrySystem.abi,
   "system.node.registry": _NodeRegistrySystem.abi,
   "system.npc.registry": _NPCRegistrySystem.abi,
+  "system.pool.registry": _PoolRegistrySystem.abi,
   "system.quest.registry": _QuestRegistrySystem.abi,
   "system.recipe.registry": _RecipeRegistrySystem.abi,
   "system.relationship.registry": _RelationshipRegistrySystem.abi,
@@ -175,6 +178,7 @@ export const SystemAbis = {
   "system.listing.buy": ListingBuySystem.abi,
   "system.listing.sell": ListingSellSystem.abi,
   "system.newbievendor.buy": NewbieVendorBuySystem.abi,
+  "system.pool": PoolSystem.abi,
   "system.quest.accept": QuestAcceptSystem.abi,
   "system.quest.complete": QuestCompleteSystem.abi,
   "system.quest.drop": QuestDropSystem.abi,

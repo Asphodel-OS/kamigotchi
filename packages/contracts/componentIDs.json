@@ -195,6 +195,10 @@
     "id": "component.index.kami",
     "encodedID": "0xcd6257c5a7fd5523bf675476a783746b8e1aed9c92992221af0f776ac5562b34"
   },
+  "KamiListingIndex": {
+    "id": "component.index.kami.listing",
+    "encodedID": "0xbb85cb86df63178180cd5cbe5ea0b70a78003460a2729aaac0ec4c2627bb48c6"
+  },
   "QuestIndex": {
     "id": "component.index.quest",
     "encodedID": "0x3879d04bcdb27da7a4f7f7e8a6eb6b202b0f5e22dc66fb53ce3b2fc3d9ed63d4"

@@ -3,9 +3,12 @@ import ClockIcon from './clock.png';
 import HelpIcon from './help.png';
 import InventoryIcon from './inventory.png';
 import KamiIcon from './kami.png';
+import KamiSendIcon from './kamisend_color.png';
 import ExternalIcon from './link_to_external_apps.png';
+import LpFountainIcon from './lp_fountain.png';
 import MapIcon from './map.png';
 import MoreIcon from './more.png';
+import ObolShopIcon from './obolshop_3.png';
 import OperatorIcon from './operator.png';
 import MarketplaceIcon from './marketplace.png';
 import QuestsIcon from './quests.png';
@@ -23,9 +26,12 @@ export {
   HelpIcon,
   InventoryIcon,
   KamiIcon,
+  KamiSendIcon,
+  LpFountainIcon,
   MapIcon,
   MarketplaceIcon,
   MoreIcon,
+  ObolShopIcon,
   OperatorIcon,
   QuestsIcon,
   ResetIcon,
@@ -45,9 +51,12 @@ export const MenuIcons = {
   help: HelpIcon,
   inventory: InventoryIcon,
   kami: KamiIcon,
+  kamisend_color: KamiSendIcon,
+  lp_fountain: LpFountainIcon,
   map: MapIcon,
   marketplace: MarketplaceIcon,
   more: MoreIcon,
+  obolshop_3: ObolShopIcon,
   operator: OperatorIcon,
   quests: QuestsIcon,
   reset: ResetIcon,

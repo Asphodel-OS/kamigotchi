@@ -136,6 +136,10 @@
       "writeAccess": ["EntityType", "IndexNPC", "IndexRoom", "Name"]
     },
     {
+      "name": "_PoolRegistrySystem",
+      "writeAccess": ["*"]
+    },
+    {
       "name": "_QuestRegistrySystem",
       "writeAccess": ["*"]
     },
@@ -198,7 +202,7 @@
       "name": "_TraitRegistrySystem",
       "writeAccess": ["*"]
     },
-    { "name": "_TriggerCompEventSystem", "writeAccess": ["TimeStart"], "skipEnv": ["puter", "production"] },
+    { "name": "_TriggerCompEventSystem", "writeAccess": ["TimeStart"], "skipEnv": ["local", "production"] },
     { "name": "_WorldWhitelistSystem", "writeAccess": ["HasFlag"] },
     {
       "name": "AccountUseItemSystem",
@@ -376,6 +380,18 @@
         "Balance",
         "TimeLast",
         "Type",
+        "Value"
+      ]
+    },
+    {
+      "name": "PoolSystem",
+      "writeAccess": [
+        "EntityType",
+        "IdHolder",
+        "IDOwnsInventory",
+        "IDType",
+        "IndexItem",
+        "TimeLast",
         "Value"
       ]
     },
@@ -1073,6 +1089,7 @@
     "LibKill",
     "LibListing",
     "LibNode",
+    "LibPool",
     "LibNPC",
     "LibKami",
     "LibKami721",

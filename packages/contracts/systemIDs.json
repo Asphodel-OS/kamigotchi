@@ -51,6 +51,10 @@
     "id": "system.npc.registry",
    "encodedID": "0xe2a8251732a877e834ebb611e96c38b304939d9c97ed367ea6e69a91e4b5a436"
   },
+  "_PoolRegistrySystem": {
+    "id": "system.pool.registry",
+   "encodedID": "0x63d113925ca644ce8895d2e5d16c05f06a2b77b559b6d8ff27e028b8d0284704"
+  },
   "_QuestRegistrySystem": {
     "id": "system.quest.registry",
    "encodedID": "0x40655593e868a25950fe329b42743107d2ad12ae762de5235676e5d683ec1e17"
@@ -183,6 +187,10 @@
     "id": "system.listing.sell",
    "encodedID": "0x0e59fe3ceb2e7941afae9ca62f352498ff65857afc78f41aa6817b36c1b9adb7"
   },
+  "PoolSystem": {
+    "id": "system.pool",
+   "encodedID": "0x68c5ec04f518a19369775bfb9fda213869fb9a823a421d38685895344f212055"
+  },
   "GachaBuyTicketSystem": {
     "id": "system.buy.gacha.ticket",
    "encodedID": "0xb61d92f1c7f135390a3faf281b948088dea82b4ad9f950dd3b7a6e7ed7d033b6"
@@ -287,6 +295,14 @@
     "id": "system.kamimarket.registry",
    "encodedID": "0xd76f0b2779dfea98d7da01435487fbcf33769a22af54166b777b2b7ece07e855"
   },
+  "_NewbieVendorRegistrySystem": {
+    "id": "system.newbievendor.registry",
+   "encodedID": "0x704fe26bd50ca2f372d19fbd9bd36d71674c8886e2d6e41a1f76387bed8b7dca"
+  },
+  "NewbieVendorBuySystem": {
+    "id": "system.newbievendor.buy",
+   "encodedID": "0x185a687016acc9bcd2f3bb942a1486354c17fd2615c671385ee132f745928c56"
+  },
   "KamiEquipSystem": {
     "id": "system.kami.equip",
    "encodedID": "0x8e4170213eb2771325dfb1ef73ac5bbb827d2002b20f0c90780e393e89c791a4"
@@ -350,6 +366,10 @@
   "KamiSacrificeCommitSystem": {
     "id": "system.kami.sacrifice.commit",
    "encodedID": "0x09d3a037c1f14ca3e102dd2698f2b87c700a6a86533738872cadc56eddec05d2"
+  },
+  "KamiSendSystem": {
+    "id": "system.kami.send",
+   "encodedID": "0x9d20c9eda0528b8683ef33f26acd71c89dbe7d91ae9812e8fd960696d2b657a7"
   },
   "KamiSacrificeRevealSystem": {
     "id": "system.kami.sacrifice.reveal",

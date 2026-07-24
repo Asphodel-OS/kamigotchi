@@ -14,7 +14,7 @@ import {
 import { UIComponent, useLayers } from 'app/root';
 import { useVisibility } from 'app/stores';
 import { ActionIcons } from 'assets/images/icons/actions';
-import { HelpIcon, MenuIcons } from 'assets/images/icons/menu';
+import { HelpIcon, KamiSendIcon, MenuIcons } from 'assets/images/icons/menu';
 import { KAMI_BASE_URI } from 'constants/media';
 import { EntityIndex } from 'engine/recs';
 import {
@@ -201,7 +201,7 @@ export const KamiSendModal: UIComponent = {
     return (
       <ModalWrapper
         id='kamiSend'
-        header={<ModalHeader title='KamiSend' icon={MenuIcons.kami} />}
+        header={<ModalHeader title='KamiSend' icon={KamiSendIcon} />}
         canExit
         noPadding
       >

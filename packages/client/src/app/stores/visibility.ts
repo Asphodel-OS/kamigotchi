@@ -66,6 +66,7 @@ export interface Modals {
   questDialogue: boolean;
   operatorFund: boolean;
   party: boolean;
+  pool: boolean;
   presale: boolean;
   quests: boolean;
   reveal: boolean;
@@ -101,6 +102,7 @@ export const toggleModals = (isOn: boolean): Modals => ({
   node: isOn,
   operatorFund: isOn,
   party: isOn,
+  pool: isOn,
   presale: isOn,
   quests: isOn,
   reveal: isOn,
@@ -151,6 +153,7 @@ const MODAL_ZONES: Partial<Record<keyof Modals, ScreenZone[]>> = {
   templeOfTheWheel: ['center'],
   leaderboard: ['center'],
   operatorFund: ['center'],
+  pool: ['center'],
   reveal: ['center'],
 
   // Wide: left + center (col 2-67)
@@ -253,6 +256,7 @@ export const useVisibility = create<State & Actions>((set) => {
       node: false,
       operatorFund: false,
       party: false,
+      pool: false,
       presale: false,
       quests: false,
       reveal: false,
