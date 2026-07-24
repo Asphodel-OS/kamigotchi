@@ -99,6 +99,21 @@ contract ListingGDAFloorTest is SetupTemplate {
     assertLe(p, 63); // and not overshooting materially
   }
 
+  // sell() settles too; a sell-only listing (no buy side) must not revert on the
+  // buy-type read inside settleGDA
+  function testSellOnlyListingUnaffected() public {
+    uint32 item = CHEAP_ITEM;
+    _createListing(NPC, item, MUSU_INDEX, 5);
+    vm.prank(deployer);
+    __ListingRegistrySystem.setSellFixed(NPC, item);
+    _giveItem(alice, item, 3);
+
+    vm.prank(alice.operator);
+    _ListingSellSystem.executeTyped(NPC, _arr32(item), _arr32(3));
+    assertEq(_getItemBal(alice, item), 0);
+    assertEq(_getItemBal(alice, MUSU_INDEX), 1_000_000 + 15); // 3 × fixed 5
+  }
+
   // without new purchases the price drifts back down from target to the floor,
   // halving per period, and parks there
   function testGDARedecayAfterRecovery() public {

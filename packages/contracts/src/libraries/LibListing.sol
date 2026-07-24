@@ -186,7 +186,9 @@ library LibListing {
   /// purchases immediately, bounding recovery-to-target at that same volume.
   function settleGDA(IUintComp comps, uint256 id) internal {
     uint256 buyID = LibRegistry.genBuyID(id);
-    if (!TypeComponent(getAddrByID(comps, TypeCompID)).get(buyID).eq("GDA")) return;
+    TypeComponent typeComp = TypeComponent(getAddrByID(comps, TypeCompID));
+    // has() guard: sell() settles too, and a sell-only listing has no buy type set
+    if (!typeComp.has(buyID) || !typeComp.get(buyID).eq("GDA")) return;
 
     uint256 startTs = TimeStartComponent(getAddrByID(comps, TimeStartCompID)).safeGet(id);
     uint256 period = PeriodComponent(getAddrByID(comps, PeriodCompID)).get(buyID).toUint256();
