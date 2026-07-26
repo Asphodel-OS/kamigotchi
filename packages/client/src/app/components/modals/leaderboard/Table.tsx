@@ -61,6 +61,11 @@ const Container = styled.div`
   scroll: auto;
   height: 100%;
   margin-bottom: 1vh;
+
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
 `;
 
 const Row = styled.div`

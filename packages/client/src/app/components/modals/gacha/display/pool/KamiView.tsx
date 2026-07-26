@@ -228,6 +228,11 @@ const Container = styled.div<{ isVisible: boolean }>`
   align-items: flex-start;
   justify-content: center;
   overflow-y: auto;
+
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
 `;
 
 // Helper function for not blocking renders on large computations

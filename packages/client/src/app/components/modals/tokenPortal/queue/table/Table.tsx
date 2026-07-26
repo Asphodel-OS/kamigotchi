@@ -158,4 +158,9 @@ const Container = styled.div`
   justify-content: center;
   align-items: center;
   overflow-y: auto;
+
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
 `;

@@ -76,6 +76,11 @@ const Container = styled.div`
   align-items: flex-start;
 
   user-select: none;
+
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
 `;
 
 const Content = styled.div`
