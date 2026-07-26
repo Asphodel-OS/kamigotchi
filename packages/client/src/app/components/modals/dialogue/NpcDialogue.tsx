@@ -21,6 +21,7 @@ export const NpcDialogue = ({
   dialogueButtons = { BackButton: () => <></>, NextButton: () => <></>, MiddleButton: () => <></> },
   special,
   onDialogueComplete,
+  onTextAdvance,
   twoColumnText = false,
 }: {
   hasAvailableQuests?: Quest[];
@@ -37,6 +38,7 @@ export const NpcDialogue = ({
   };
   special?: { name: string; onclick: () => void };
   onDialogueComplete?: () => void;
+  onTextAdvance?: () => void;
   twoColumnText?: boolean;
 }) => {
   const columnTexts = dialogueText
@@ -54,10 +56,14 @@ export const NpcDialogue = ({
   // stable per-text key: retriggers only on text change, not on every render
   const retriggerKey = useMemo(() => `${dialogueText}:${Date.now()}`, [dialogueText]);
 
-  useEffect(() => {
+  // reset synchronously on text change: an effect would run after the child
+  // typewriter's, leaking a stale skip into the next step (it renders pre-filled)
+  const [lastKey, setLastKey] = useState(retriggerKey);
+  if (lastKey !== retriggerKey) {
+    setLastKey(retriggerKey);
     setSkipped(false);
     setDoneCount(0);
-  }, [retriggerKey, twoColumnText]);
+  }
 
   const handleMainComplete = useCallback(() => {
     setDoneCount((c) => c + 1);
@@ -68,15 +74,22 @@ export const NpcDialogue = ({
     setDoneCount((c) => c + 1);
   }, []);
 
+  // while typing a click fills the text; once done it advances like the next arrow
   const handleTextClick = () => {
-    if (!typingDone) setSkipped(true);
+    if (!typingDone) {
+      setSkipped(true);
+    } else if (onTextAdvance) {
+      playClick();
+      onTextAdvance();
+    }
   };
+  const clickable = !typingDone || !!onTextAdvance;
 
   return (
     <>
       {twoColumnText ? (
         <ParallelColumns onClick={handleTextClick}>
-          <Text color={npcColor} $typing={!typingDone}>
+          <Text color={npcColor} $clickable={clickable}>
             <TypewriterComponent
               text={leftColumnText}
               retrigger={`${retriggerKey}:L`}
@@ -84,7 +97,7 @@ export const NpcDialogue = ({
               onComplete={handleMainComplete}
             />
           </Text>
-          <Text color={npcColor} $typing={!typingDone}>
+          <Text color={npcColor} $clickable={clickable}>
             <TypewriterComponent
               text={rightColumnText}
               retrigger={`${retriggerKey}:R`}
@@ -94,7 +107,7 @@ export const NpcDialogue = ({
           </Text>
         </ParallelColumns>
       ) : (
-        <Text color={npcColor} $typing={!typingDone} onClick={handleTextClick}>
+        <Text color={npcColor} $clickable={clickable} onClick={handleTextClick}>
           <TypewriterComponent
             text={dialogueText}
             retrigger={retriggerKey}
@@ -189,7 +202,7 @@ export const NpcDialogue = ({
 
 const Text = styled.div<{
   color?: string;
-  $typing?: boolean;
+  $clickable?: boolean;
 }>`
   color: ${({ color }) => color || 'black'};
   position: relative;
@@ -206,7 +219,7 @@ const Text = styled.div<{
   white-space: pre-line;
   word-wrap: break-word;
   overflow-y: auto;
-  cursor: ${({ $typing }) => ($typing ? 'pointer' : 'auto')};
+  cursor: ${({ $clickable }) => ($clickable ? 'pointer' : 'auto')};
   transition:
     height 0.3s ease,
     visibility 0.3s ease;
@@ -280,8 +293,8 @@ const DialogueOptionButton = styled.button<{ color?: string; $fullRow?: boolean 
 const NpcSprite = styled.img`
   align-self: flex-end;
   width: auto;
-  height: 24vh;
-  max-width: 40%;
+  height: max(24vh, 15vw);
+  max-width: 48%;
   object-fit: contain;
   object-position: bottom left;
   image-rendering: pixelated;
@@ -321,7 +334,7 @@ const OptionColumn = styled.div<{ color: string }>`
   justify-content: safe center;
   align-items: flex-end;
   gap: 0.9vw;
-  padding: 0.5vw 0;
+  padding: 0.5vw 0.4vw 0.6vw 0;
   max-height: 40vh;
   overflow-y: auto;
   ::-webkit-scrollbar {

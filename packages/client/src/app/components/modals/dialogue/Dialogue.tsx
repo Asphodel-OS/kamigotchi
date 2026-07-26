@@ -326,8 +326,22 @@ export const DialogueModal: UIComponent = {
       );
     };
 
+    const canAdvance = step < dialogueLength - 1 || !!dialogueNode.npc?.nextDialogue;
+
+    // shared by the next arrow and clicks on completed dialogue text
+    const advanceDialogue = () => {
+      if (step < dialogueLength - 1) {
+        setStep(step + 1);
+        return;
+      }
+      if (dialogueNode.npc?.nextDialogue) {
+        setDialogueHistory((prev) => [...prev, dialogueIndex]);
+        setStep(0);
+        transitionDialogue(dialogueNode.npc.nextDialogue);
+      }
+    };
+
     const NextButton = () => {
-      const canAdvance = step < dialogueLength - 1 || !!dialogueNode.npc?.nextDialogue;
       const disabled = !canAdvance;
       return (
         <div
@@ -335,22 +349,7 @@ export const DialogueModal: UIComponent = {
             visibility: disabled ? 'hidden' : 'visible',
           }}
         >
-          <IconButton
-            scale={1.8}
-            img={ArrowIcons.right}
-            disabled={disabled}
-            onClick={() => {
-              if (step < dialogueLength - 1) {
-                setStep(step + 1);
-                return;
-              }
-              if (dialogueNode.npc?.nextDialogue) {
-                setDialogueHistory((prev) => [...prev, dialogueIndex]);
-                setStep(0);
-                transitionDialogue(dialogueNode.npc.nextDialogue);
-              }
-            }}
-          />
+          <IconButton scale={1.8} img={ArrowIcons.right} disabled={disabled} onClick={advanceDialogue} />
         </div>
       );
     };
@@ -416,6 +415,7 @@ export const DialogueModal: UIComponent = {
             dialogueText={getText(dialogueNode.text[step])}
             twoColumnText={dialogueIndex === 20018}
             onDialogueComplete={handleNpcDialogueComplete}
+            onTextAdvance={canAdvance ? advanceDialogue : undefined}
             dialogueOptions={dialogueOptions.map(([label, nextIndex]) => ({
               label,
               onClick: () => {
