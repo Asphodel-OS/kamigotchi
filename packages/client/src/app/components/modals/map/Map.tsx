@@ -1,15 +1,19 @@
 import { EntityID, EntityIndex } from 'engine/recs';
 import { useEffect, useState } from 'react';
 
+import styled from 'styled-components';
+
 import { getAccount as _getAccount } from 'app/cache/account';
 import { getKami as _getKami } from 'app/cache/kami';
 import { getNodeByIndex } from 'app/cache/node';
 import { getRoom as _getRoom, getRoomByIndex as _getRoomByIndex } from 'app/cache/room';
-import { ModalHeader, ModalWrapper } from 'app/components/library';
+import { IconButton, ModalWrapper, Popover, TextTooltip } from 'app/components/library';
 import { useLayers } from 'app/root/hooks';
 import { UIComponent } from 'app/root/types';
 import { useSelected, useVisibility } from 'app/stores';
 import { MapIcon } from 'assets/images/icons/menu';
+import ResetIcon from 'assets/images/icons/menu/reset.png';
+import { playClick } from 'utils/sounds';
 import {
   queryRoomAccounts as _queryRoomAccounts,
   queryAccountFromEmbedded,
@@ -92,6 +96,7 @@ export const MapModal: UIComponent = {
     const [roomMap, setRoomMap] = useState<Map<number, Room>>(new Map());
     const [zone, setZone] = useState(0);
     const [tick, setTick] = useState(Date.now());
+    const [selectedZone, setSelectedZone] = useState<number | null>(null); // null = follow player
 
     // ticking
     useEffect(() => {
@@ -100,24 +105,34 @@ export const MapModal: UIComponent = {
       return () => clearInterval(timerID);
     }, []);
 
-    // query the set of rooms whenever the zone changes
+    // opening the modal always shows the map the player is currently in;
+    // reset during render so the old zone never flashes on reopen
+    const [wasOpen, setWasOpen] = useState(mapModalOpen);
+    if (wasOpen !== mapModalOpen) {
+      setWasOpen(mapModalOpen);
+      if (mapModalOpen) setSelectedZone(null);
+    }
+
+    const currentPlayerZone = getRoomByIndex(roomIndex).location.z;
+    const displayZone = selectedZone !== null ? selectedZone : currentPlayerZone;
+    const isViewingDifferentZone = displayZone !== currentPlayerZone;
+
+    // query the set of rooms whenever the displayed zone changes
     // NOTE: roomIndex is controlled by canvas/Scene.tsx
     useEffect(() => {
       if (!mapModalOpen) return;
-      const newRoom = getRoomByIndex(roomIndex);
-      const newZone = newRoom.location.z;
-      if (zone == newZone) return;
+      if (zone == displayZone) return;
 
       const roomMap = new Map<number, Room>();
       const roomEntities = queryAllRooms();
       // Load rooms WITH exits for pathfinding to work
       const rooms = roomEntities.map((entity) => getRoom(entity));
-      const filteredRooms = rooms.filter((room) => room.location.z == newZone);
+      const filteredRooms = rooms.filter((room) => room.location.z == displayZone);
       filteredRooms.forEach((r) => roomMap.set(r.index, r));
 
-      setZone(newZone);
+      setZone(displayZone);
       setRoomMap(roomMap);
-    }, [mapModalOpen, roomIndex]);
+    }, [mapModalOpen, roomIndex, displayZone]);
 
     ///////////////////
     // ACTIONS
@@ -136,10 +151,56 @@ export const MapModal: UIComponent = {
     ///////////////////
     // RENDER
 
+    const ZONE_NAMES: { [zone: number]: string } = {
+      1: 'The Wilds',
+      3: 'The Caves',
+      4: 'The Castle',
+    };
+
+    // when exploring another map the header carries its name instead of the room's
+    const headerTitle = isViewingDifferentZone
+      ? (ZONE_NAMES[displayZone] ?? 'Map')
+      : (roomMap.get(roomIndex)?.name ?? 'Map');
+
+    // selecting the zone the player stands in returns to follow mode
+    const zoneOptions = Object.entries(ZONE_NAMES).map(([z, name]) => {
+      const zoneNum = Number(z);
+      return {
+        text: name,
+        disabled: zoneNum === displayZone,
+        onClick: () => setSelectedZone(zoneNum === currentPlayerZone ? null : zoneNum),
+      };
+    });
+
     return (
       <ModalWrapper
         id='map'
-        header={<ModalHeader title={roomMap.get(roomIndex)?.name ?? 'Map'} icon={MapIcon} />}
+        header={
+          <MapHeader>
+            <HeaderIcon src={MapIcon} alt={headerTitle} />
+            <HeaderTitle>{headerTitle}</HeaderTitle>
+            <Popover
+              content={zoneOptions.map((option, i) => (
+                <ZoneOption
+                  key={i}
+                  disabled={option.disabled}
+                  onClick={() => {
+                    if (option.disabled) return;
+                    playClick();
+                    option.onClick();
+                  }}
+                >
+                  {option.text}
+                </ZoneOption>
+              ))}
+              closeOnClick
+            >
+              <TextTooltip text={['Switch Map']}>
+                <IconButton img={ResetIcon} onClick={() => {}} noBorder scale={2.5} />
+              </TextTooltip>
+            </Popover>
+          </MapHeader>
+        }
         canExit
         noPadding
         truncate
@@ -153,6 +214,7 @@ export const MapModal: UIComponent = {
             roomIndex,
             zone,
             rooms: roomMap,
+            isViewingDifferentZone,
           }}
           state={{ tick }}
           utils={{
@@ -176,3 +238,45 @@ export const MapModal: UIComponent = {
     );
   },
 };
+
+const MapHeader = styled.div`
+  padding: 0.6vw 1vw;
+  gap: 0.7vw;
+  line-height: 1.5vw;
+
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: center;
+  justify-content: flex-start;
+  user-select: none;
+`;
+
+const HeaderIcon = styled.img`
+  height: 2vw;
+  width: auto;
+  user-drag: none;
+`;
+
+const HeaderTitle = styled.div`
+  font-size: 1.2vw;
+  color: #333;
+  text-align: left;
+  font-family: Pixel;
+  margin-right: 0.3vw;
+  line-height: 1.2vw;
+  display: flex;
+  align-items: center;
+`;
+
+const ZoneOption = styled.div<{ disabled?: boolean }>`
+  padding: 0.6vw 1.2vw;
+  font-size: 0.9vw;
+  font-family: Pixel;
+  cursor: ${({ disabled }) => (disabled ? 'not-allowed' : 'pointer')};
+  background-color: ${({ disabled }) => (disabled ? '#bbb' : '#fff')};
+  user-select: none;
+
+  &:hover {
+    background-color: ${({ disabled }) => (disabled ? '#bbb' : '#e8e8e8')};
+  }
+`;

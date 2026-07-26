@@ -33,7 +33,7 @@ const options = [
 ];
 
 export const Grid = ({
-  data: { account, accountKamis, rooms, roomIndex, zone },
+  data: { account, accountKamis, rooms, roomIndex, zone, isViewingDifferentZone = false },
   actions: { move },
   state: { tick },
   utils,
@@ -48,6 +48,7 @@ export const Grid = ({
     rooms: Map<number, Room>;
     roomIndex: number; // index of current room
     zone: number;
+    isViewingDifferentZone?: boolean;
   };
   state: { tick: number };
   utils: {
@@ -215,31 +216,37 @@ export const Grid = ({
 
     const { world, components } = network;
     const room = contextMenu.room;
+    const options = [];
 
-    const pathResult = findPath(world, components, roomIndex, room.index);
-    const staminaCost = pathResult.reachable ? calculatePathStaminaCost(pathResult.distance) : -1;
-    const canTravel =
-      room.index !== roomIndex && staminaCost >= 0 && account.stamina.total >= staminaCost;
+    // pathfinding only applies to the zone the player is standing in
+    if (!isViewingDifferentZone) {
+      const pathResult = findPath(world, components, roomIndex, room.index);
+      const staminaCost = pathResult.reachable ? calculatePathStaminaCost(pathResult.distance) : -1;
+      const canTravel =
+        room.index !== roomIndex && staminaCost >= 0 && account.stamina.total >= staminaCost;
 
-    return [
-      {
+      options.push({
         text: `Auto Travel (${staminaCost >= 0 ? staminaCost : '?'})`,
         onClick: () => handleAutoTravel(room),
         image: StaminaIcon,
         disabled: !canTravel || !pathResult.reachable || pathResult.distance <= 1,
-      },
-      {
-        text: 'Show Node',
-        onClick: () => triggerNodeModal(room.index),
-        disabled: false,
-      },
-      {
-        text: 'Cancel',
-        onClick: () => setContextMenu(null),
-        disabled: false,
-      },
-    ];
-  }, [contextMenu, network, roomIndex, account.stamina.total, handleAutoTravel]);
+      });
+    }
+
+    options.push({
+      text: 'Show Node',
+      onClick: () => triggerNodeModal(room.index),
+      disabled: false,
+    });
+
+    options.push({
+      text: 'Cancel',
+      onClick: () => setContextMenu(null),
+      disabled: false,
+    });
+
+    return options;
+  }, [contextMenu, network, roomIndex, account.stamina.total, handleAutoTravel, isViewingDifferentZone]);
 
   // populate the GridFilter details for room stats
   const { kamiCountMap, operatorCountMap, kamiAverage, operatorAverage } = useMemo(() => {
@@ -326,9 +333,12 @@ export const Grid = ({
                   <Tile
                     key={j}
                     backgroundColor={backgroundColor}
-                    onClick={() =>
-                      room.index !== 0 && !isRoomBlocked(room) && handleRoomMove(room.index)
-                    }
+                    onClick={() => {
+                      // walking a tile only applies to the zone the player is standing in
+                      if (!isViewingDifferentZone && room.index !== 0 && !isRoomBlocked(room)) {
+                        handleRoomMove(room.index);
+                      }
+                    }}
                     onContextMenu={(e) => handleRightClick(e, room)}
                     hasRoom={room.index !== 0}
                     isHighlighted={!!backgroundColor}
