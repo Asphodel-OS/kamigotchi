@@ -50,11 +50,14 @@ export const ModalWrapper = ({
   const [gridStyle, setGridStyle] = useState<React.CSSProperties>({});
   const [shouldDisplay, setShouldDisplay] = useState(false);
 
+  // keep rendering through the fade-out before hiding; closed modals are
+  // already click-transparent (Content drops pointer-events immediately)
   useEffect(() => {
     if (isVisible) {
       setShouldDisplay(true);
     } else {
-      setShouldDisplay(false);
+      const timeout = setTimeout(() => setShouldDisplay(false), 280);
+      return () => clearTimeout(timeout);
     }
   }, [isVisible]);
 
@@ -90,7 +93,14 @@ export const ModalWrapper = ({
   }, [positionOverride]);
 
   return (
-    <Wrapper id={id} isOpen={shouldDisplay} overlay={!!overlay} style={gridStyle} shuffle={shuffle}>
+    <Wrapper
+      id={id}
+      isOpen={isVisible}
+      isDisplayed={shouldDisplay}
+      overlay={!!overlay}
+      style={gridStyle}
+      shuffle={shuffle}
+    >
       <Content
         backgroundColor={backgroundColor}
         isOpen={isVisible}
@@ -131,12 +141,14 @@ const Shuffle = keyframes`
 `;
 
 // Wrapper is an invisible animated wrapper around all modals sans any frills.
+// isOpen drives the fade animations; isDisplayed lags close by the fade-out duration.
 const Wrapper = styled.div<{
   isOpen: boolean;
+  isDisplayed: boolean;
   overlay: boolean;
   shuffle: boolean;
 }>`
-  display: ${({ isOpen }) => (isOpen ? 'block' : 'none')};
+  display: ${({ isDisplayed }) => (isDisplayed ? 'block' : 'none')};
   position: ${({ overlay }) => (overlay ? 'relative' : 'static')};
   z-index: ${({ overlay }) => (overlay ? 3 : 0)};
   ${({ isOpen, shuffle }) => css`
@@ -145,7 +157,7 @@ const Wrapper = styled.div<{
             ${fadeIn} 0.5s ease-in-out
           `
         : css`
-            ${fadeOut} 0.5s ease-in-out
+            ${fadeOut} 0.3s ease-in-out forwards
           `}
       ${shuffle && css`, ${Shuffle} 0.4s ease-in-out`};
   `}
@@ -235,8 +247,6 @@ const fadeIn = keyframes`
   to { opacity: 1; }
 `;
 
-// NOTE: this is not actually used atm as we set display:none on close. This is
-// done to avoid having active, invisible buttons lingering on the UI after close.
 const fadeOut = keyframes`
   from { opacity: 1; }
   to { opacity: 0; }

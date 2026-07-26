@@ -233,11 +233,14 @@ export const Grid = ({
       });
     }
 
-    options.push({
-      text: 'Show Node',
-      onClick: () => triggerNodeModal(room.index),
-      disabled: false,
-    });
+    // rooms without a harvesting node have nothing to show
+    if (queryNodeByIndex(room.index)) {
+      options.push({
+        text: 'Show Node',
+        onClick: () => triggerNodeModal(room.index),
+        disabled: false,
+      });
+    }
 
     options.push({
       text: 'Cancel',
