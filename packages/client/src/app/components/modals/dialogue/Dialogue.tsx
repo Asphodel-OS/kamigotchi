@@ -93,6 +93,14 @@ export const DialogueModal: UIComponent = {
     const setDialogue = useSelected((s) => s.setDialogue);
 
     const [step, setStep] = useState(0);
+    // bumps only on open transitions: remounting NpcDialogue on close would
+    // visibly retype the text during the fade-out
+    const [openCount, setOpenCount] = useState(0);
+    const [prevOpen, setPrevOpen] = useState(dialogueModalOpen);
+    if (prevOpen !== dialogueModalOpen) {
+      setPrevOpen(dialogueModalOpen);
+      if (dialogueModalOpen) setOpenCount((c) => c + 1);
+    }
     const [dialogueHistory, setDialogueHistory] = useState<number[]>([]);
     const [availableQuests, setAvailableQuests] = useState<Quest[]>([]);
     const [ongoingQuests, setOngoingQuests] = useState<Quest[]>([]);
@@ -127,17 +135,19 @@ export const DialogueModal: UIComponent = {
     /////////////////
     // SUBSCRIPTIONS
 
-    // reset the step to 0 whenever the dialogue modal is toggled
+    // reset the step when the modal opens; on close only clear history so the
+    // content doesn't visibly jump back to step 0 during the fade-out
     useEffect(() => {
-      setStep(0);
-      if (!dialogueModalOpen) setDialogueHistory([]);
+      if (dialogueModalOpen) setStep(0);
+      else setDialogueHistory([]);
     }, [dialogueModalOpen]);
 
     // reset text step when changing dialogue entry
     // clear history only when dialogue root is changed externally while modal is still open
     useEffect(() => {
+      if (!dialogueModalOpen) return;
       setStep(0);
-      if (dialogueModalOpen && !internalDialogueTransitionRef.current) {
+      if (!internalDialogueTransitionRef.current) {
         setDialogueHistory([]);
       }
       internalDialogueTransitionRef.current = false;
@@ -407,7 +417,7 @@ export const DialogueModal: UIComponent = {
           truncate
         >
           <NpcDialogue
-            key={String(dialogueModalOpen)} /* remount per open so text retypes fresh */
+            key={openCount} /* remount per open so text retypes fresh */
             hasAvailableQuests={availableQuests}
             hasOngoingQuests={ongoingQuests}
             npcColor='#000000ff'
