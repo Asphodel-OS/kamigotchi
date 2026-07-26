@@ -405,6 +405,7 @@ export const DialogueModal: UIComponent = {
             position: 'fixed',
           }}
           noScroll
+          truncate
         >
           <NpcDialogue
             hasAvailableQuests={availableQuests}

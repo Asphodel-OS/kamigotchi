@@ -1,3 +1,4 @@
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
 
 import { Overlay } from 'app/components/library';
@@ -45,27 +46,60 @@ export const NpcDialogue = ({
   const leftColumnText = twoColumnText ? (columnTexts[0] ?? '') : dialogueText;
   const rightColumnText = twoColumnText ? (columnTexts[1] ?? '') : '';
 
+  // click-to-skip: interrupting fills the text instantly; done gates the cursor
+  const [skipped, setSkipped] = useState(false);
+  const [doneCount, setDoneCount] = useState(0);
+  const typingDone = doneCount >= (twoColumnText ? 2 : 1);
+
+  // stable per-text key: retriggers only on text change, not on every render
+  const retriggerKey = useMemo(() => `${dialogueText}:${Date.now()}`, [dialogueText]);
+
+  useEffect(() => {
+    setSkipped(false);
+    setDoneCount(0);
+  }, [retriggerKey, twoColumnText]);
+
+  const handleMainComplete = useCallback(() => {
+    setDoneCount((c) => c + 1);
+    onDialogueComplete?.();
+  }, [onDialogueComplete]);
+
+  const handleSideComplete = useCallback(() => {
+    setDoneCount((c) => c + 1);
+  }, []);
+
+  const handleTextClick = () => {
+    if (!typingDone) setSkipped(true);
+  };
+
   return (
     <>
       {twoColumnText ? (
-        <ParallelColumns>
-          <Text color={npcColor}>
+        <ParallelColumns onClick={handleTextClick}>
+          <Text color={npcColor} $typing={!typingDone}>
             <TypewriterComponent
               text={leftColumnText}
-              retrigger={`${leftColumnText}${Date.now()}`}
-              onComplete={onDialogueComplete}
+              retrigger={`${retriggerKey}:L`}
+              interrupted={skipped}
+              onComplete={handleMainComplete}
             />
           </Text>
-          <Text color={npcColor}>
-            <TypewriterComponent text={rightColumnText} retrigger={`${rightColumnText}${Date.now()}`} />
+          <Text color={npcColor} $typing={!typingDone}>
+            <TypewriterComponent
+              text={rightColumnText}
+              retrigger={`${retriggerKey}:R`}
+              interrupted={skipped}
+              onComplete={handleSideComplete}
+            />
           </Text>
         </ParallelColumns>
       ) : (
-        <Text color={npcColor}>
+        <Text color={npcColor} $typing={!typingDone} onClick={handleTextClick}>
           <TypewriterComponent
             text={dialogueText}
-            retrigger={`${dialogueText}${Date.now()}`}
-            onComplete={onDialogueComplete}
+            retrigger={retriggerKey}
+            interrupted={skipped}
+            onComplete={handleMainComplete}
           />
         </Text>
       )}
@@ -155,6 +189,7 @@ export const NpcDialogue = ({
 
 const Text = styled.div<{
   color?: string;
+  $typing?: boolean;
 }>`
   color: ${({ color }) => color || 'black'};
   position: relative;
@@ -162,6 +197,7 @@ const Text = styled.div<{
   width: 100%;
   padding: 0vw 1vw;
   flex-grow: 1;
+  min-height: 8vh;
   flex-flow: column nowrap;
   justify-content: flex-start;
   top: 0;
@@ -170,7 +206,7 @@ const Text = styled.div<{
   white-space: pre-line;
   word-wrap: break-word;
   overflow-y: auto;
-  cursor: auto;
+  cursor: ${({ $typing }) => ($typing ? 'pointer' : 'auto')};
   transition:
     height 0.3s ease,
     visibility 0.3s ease;
@@ -245,11 +281,9 @@ const DialogueOptionButton = styled.button<{ color?: string; $fullRow?: boolean 
 `;
 
 const NpcSprite = styled.img`
-  position: absolute;
-  left: 0;
-  bottom: -4%;
+  align-self: flex-end;
   width: auto;
-  height: 100%;
+  height: 24vh;
   max-width: 40%;
   object-fit: contain;
   object-position: bottom left;
@@ -272,25 +306,24 @@ const Bottom = styled.div<{ hasQuests: boolean }>`
   position: relative;
   display: flex;
   flex-flow: row nowrap;
+  align-items: flex-end;
   border-top: solid grey 0.15vw;
-  height: ${({ hasQuests }) => (hasQuests ? '60%' : '40%')};
-  transition: height 0.3s ease;
+  flex-shrink: 0;
+  min-height: ${({ hasQuests }) => (hasQuests ? '16vh' : '12vh')};
+  transition: min-height 0.3s ease;
 `;
 
 const OptionColumn = styled.div<{ color: string }>`
-  margin-top: 0.5vw;
-  position: absolute;
-  right: 0;
-  top: 0;
+  flex: 1;
+  align-self: stretch;
   display: flex;
   flex-flow: column;
-  width: 100%;
-  height: 100%;
-  justify-content: flex-start;
+  justify-content: center;
+  justify-content: safe center;
   align-items: flex-end;
   gap: 0.9vw;
-  padding-top: 1vw;
-  padding-right: 1vw;
+  padding: 1vw 1vw 1vw 0;
+  max-height: 40vh;
   overflow-y: auto;
   ::-webkit-scrollbar {
     background: transparent;

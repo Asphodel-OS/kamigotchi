@@ -1,32 +1,61 @@
-import { useEffect, useRef, useState, type ReactNode } from 'react';
+import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import styled from 'styled-components';
 
-const boldName = (text: string, key: number | string) => (
-  <strong style={{ color: 'inherit' }} key={key}>
-    {text}
-  </strong>
-);
 const SPEAKER_TAG_AT_START = /^([A-Z][A-Z0-9 ]{1,24})(?=:)/;
 const SPEAKER_TAG_GLOBAL = /([A-Z][A-Z0-9 ]{1,24})(?=:)/g;
 
-const renderSpeakerTags = (text: string): ReactNode[] => {
-  const result: ReactNode[] = [];
+type Segment = { bold: boolean; content: string };
+
+// split text into plain runs and bolded speaker tags
+const segmentText = (text: string): Segment[] => {
+  const segments: Segment[] = [];
   let cursor = 0;
-  let key = 0;
 
   for (const match of text.matchAll(SPEAKER_TAG_GLOBAL)) {
     const index = match.index ?? 0;
     const speaker = match[1];
-
-    if (index > cursor) result.push(text.slice(cursor, index));
-    result.push(boldName(speaker, key));
-
-    key += 1;
+    if (index > cursor) segments.push({ bold: false, content: text.slice(cursor, index) });
+    segments.push({ bold: true, content: speaker });
     cursor = index + speaker.length;
   }
 
-  if (cursor < text.length) result.push(text.slice(cursor));
-  return result;
+  if (cursor < text.length) segments.push({ bold: false, content: text.slice(cursor) });
+  return segments;
+};
+
+// render the full text with characters beyond revealCount kept in the DOM but
+// invisible: word wrapping is computed against the complete text, so lines
+// never reflow mid-reveal and the container holds its final size from the start
+const renderSegments = (segments: Segment[], revealCount: number): ReactNode[] => {
+  const parts: ReactNode[] = [];
+  let offset = 0;
+
+  segments.forEach((segment, i) => {
+    const visibleCount = Math.max(0, Math.min(segment.content.length, revealCount - offset));
+    const visible = segment.content.slice(0, visibleCount);
+    const hidden = segment.content.slice(visibleCount);
+
+    if (segment.bold) {
+      // hidden part stays inside the strong so reserved width matches the final render
+      parts.push(
+        <strong style={{ color: 'inherit' }} key={i}>
+          {visible}
+          {hidden && <span style={{ visibility: 'hidden' }}>{hidden}</span>}
+        </strong>
+      );
+    } else {
+      if (visible) parts.push(<span key={`${i}v`}>{visible}</span>);
+      if (hidden)
+        parts.push(
+          <span key={`${i}h`} style={{ visibility: 'hidden' }}>
+            {hidden}
+          </span>
+        );
+    }
+    offset += segment.content.length;
+  });
+
+  return parts;
 };
 
 export const useTypewriter = (
@@ -37,11 +66,12 @@ export const useTypewriter = (
   interrupted?: boolean,
   onComplete?: () => void
 ) => {
-  const [displayedText, setDisplayedText] = useState<ReactNode[]>([]);
+  const [revealCount, setRevealCount] = useState(0);
   const indexRef = useRef(0);
+  const segments = useMemo(() => segmentText(text), [text]);
 
   useEffect(() => {
-    setDisplayedText([]);
+    setRevealCount(0);
     indexRef.current = 0;
   }, [retrigger]);
 
@@ -49,8 +79,8 @@ export const useTypewriter = (
     if (!text) return;
 
     if (interrupted) {
-      setDisplayedText(renderSpeakerTags(text));
       indexRef.current = text.length;
+      setRevealCount(text.length);
       onComplete?.();
       return;
     }
@@ -62,16 +92,11 @@ export const useTypewriter = (
         return;
       }
 
+      // speaker tags reveal in one beat, regular text char by char
       const remaining = text.substring(indexRef.current);
-      const speakerMatch = remaining.match(SPEAKER_TAG_AT_START);
-      const speaker = speakerMatch?.[1];
-      if (speaker) {
-        setDisplayedText((prev) => [...prev, boldName(speaker, indexRef.current)]);
-        indexRef.current += speaker.length;
-      } else {
-        setDisplayedText((prev) => [...prev, remaining[0]]);
-        indexRef.current += 1;
-      }
+      const speaker = remaining.match(SPEAKER_TAG_AT_START)?.[1];
+      indexRef.current += speaker ? speaker.length : 1;
+      setRevealCount(indexRef.current);
 
       if (onUpdate) onUpdate();
     }, speed);
@@ -79,14 +104,14 @@ export const useTypewriter = (
     return () => clearInterval(interval);
   }, [text, speed, retrigger, onUpdate, interrupted, onComplete]);
 
-  return displayedText;
+  return useMemo(() => renderSegments(segments, revealCount), [segments, revealCount]);
 };
 
 // all in one block
 const SingleLineTypewriter = ({
   text = '',
   retrigger,
-  speed = 30,
+  speed = 20,
   onUpdate,
   interrupted = false,
   onComplete,
@@ -114,7 +139,7 @@ const SingleLineTypewriter = ({
 const MultiLineTypewriter = ({
   text = '',
   retrigger,
-  speed = 30,
+  speed = 20,
   onUpdate,
   onAllLinesComplete,
 }: {
@@ -189,7 +214,7 @@ const MultiLineTypewriter = ({
 export const TypewriterComponent = ({
   text = '',
   retrigger,
-  speed = 30,
+  speed = 20,
   onUpdate,
   interrupted = false,
   onComplete,
