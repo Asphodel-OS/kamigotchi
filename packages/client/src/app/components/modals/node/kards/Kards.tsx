@@ -145,8 +145,15 @@ const Container = styled.div`
   gap: 0.3vw;
   scrollbar-gutter: stable;
 
-  scrollbar-width: none;
+  scrollbar-width: thin;
+  scrollbar-color: #b6b6b6 transparent;
   &::-webkit-scrollbar {
-    display: none;
+    width: 0.3vw;
+    background: transparent;
+  }
+  &::-webkit-scrollbar-thumb {
+    background-color: #b6b6b6;
+    border-radius: 0.3vw;
+    background-clip: padding-box;
   }
 `;

@@ -22,6 +22,7 @@ export const ModalWrapper = ({
   shuffle = false,
   truncate,
   noScroll,
+  showScrollBar,
 }: {
   canExit?: boolean;
   children: React.ReactNode;
@@ -44,6 +45,7 @@ export const ModalWrapper = ({
   shuffle?: boolean;
   truncate?: boolean;
   noScroll?: boolean;
+  showScrollBar?: boolean; // slim scrollbar for modals with long content
 }) => {
   const isVisible = useVisibility((s) => s.modals[id]);
   const setModals = useVisibility((s) => s.setModals);
@@ -117,6 +119,7 @@ export const ModalWrapper = ({
           scrollBarColor={scrollBarColor}
           noScroll={noScroll}
           noPadding={noPadding}
+          showScrollBar={showScrollBar}
           // data-scroll-container='true'
           // data-modal-id={id}
         >
@@ -229,6 +232,7 @@ const Children = styled.div<{
   noPadding?: boolean;
   scrollBarColor?: string;
   noScroll?: boolean;
+  showScrollBar?: boolean;
 }>`
   position: relative;
   overflow: ${({ noScroll }) => (noScroll ? 'hidden' : 'auto')};
@@ -238,8 +242,25 @@ const Children = styled.div<{
   display: flex;
   flex-flow: column nowrap;
   padding: ${({ noPadding }) => (noPadding ? `0` : `.6vw`)};
-  scrollbar-width: none;
-  &::-webkit-scrollbar { display: none; }
+  ${({ showScrollBar }) =>
+    showScrollBar
+      ? `
+    scrollbar-width: thin;
+    scrollbar-color: #b6b6b6 transparent;
+    &::-webkit-scrollbar {
+      width: 0.3vw;
+      background: transparent;
+    }
+    &::-webkit-scrollbar-thumb {
+      background-color: #b6b6b6;
+      border-radius: 0.3vw;
+      background-clip: padding-box;
+    }
+  `
+      : `
+    scrollbar-width: none;
+    &::-webkit-scrollbar { display: none; }
+  `}
 `;
 
 const fadeIn = keyframes`
