@@ -13,6 +13,7 @@ import { UIComponent } from 'app/root/types';
 import { useSelected, useVisibility } from 'app/stores';
 import { MapIcon } from 'assets/images/icons/menu';
 import ResetIcon from 'assets/images/icons/menu/reset.png';
+import { SEXTANT_INDEX } from 'constants/items';
 import { playClick } from 'utils/sounds';
 import {
   queryRoomAccounts as _queryRoomAccounts,
@@ -20,6 +21,7 @@ import {
   queryAccountKamis,
 } from 'network/shapes/Account';
 import { Allo, parseAllos as _parseAllos } from 'network/shapes/Allo';
+import { getItemBalance } from 'network/shapes/Item';
 import { getKamiLocation as _getKamiLocation } from 'network/shapes/Kami';
 import {
   queryNodeByIndex as _queryNodeByIndex,
@@ -53,6 +55,7 @@ export const MapModal: UIComponent = {
         parseAllos,
         queryScavInstance,
         getValue,
+        getSextantBalance,
       },
     } = (() => {
       const { network } = layers;
@@ -85,6 +88,8 @@ export const MapModal: UIComponent = {
           queryScavInstance: (index: number, holderID: EntityID) =>
             _queryScavInstance(world, 'NODE', index, holderID),
           getValue: (entity: EntityIndex) => _getValue(components, entity),
+          getSextantBalance: () =>
+            getItemBalance(world, components, world.entities[accountEntity], SEXTANT_INDEX),
         },
       };
     })();
@@ -151,10 +156,11 @@ export const MapModal: UIComponent = {
     ///////////////////
     // RENDER
 
+    // zone 4's name is concealed on purpose: lore stays hidden even with access
     const ZONE_NAMES: { [zone: number]: string } = {
       1: 'Lost Woods',
       3: 'Sanctuary Caves',
-      4: 'Caer Golud',
+      4: '??????',
     };
 
     // when exploring another map the header carries its name instead of the room's
@@ -162,15 +168,21 @@ export const MapModal: UIComponent = {
       ? (ZONE_NAMES[displayZone] ?? 'Map')
       : (roomMap.get(roomIndex)?.name ?? 'Map');
 
+    // zone 4 stays out of the dropdown until the player carries the Aetheric Sextant
+    const zoneVisible = (zone: number) =>
+      zone !== 4 || currentPlayerZone === 4 || getSextantBalance() > 0;
+
     // selecting the zone the player stands in returns to follow mode
-    const zoneOptions = Object.entries(ZONE_NAMES).map(([z, name]) => {
-      const zoneNum = Number(z);
-      return {
-        text: name,
-        disabled: zoneNum === displayZone,
-        onClick: () => setSelectedZone(zoneNum === currentPlayerZone ? null : zoneNum),
-      };
-    });
+    const zoneOptions = Object.entries(ZONE_NAMES)
+      .filter(([z]) => zoneVisible(Number(z)))
+      .map(([z, name]) => {
+        const zoneNum = Number(z);
+        return {
+          text: name,
+          disabled: zoneNum === displayZone,
+          onClick: () => setSelectedZone(zoneNum === currentPlayerZone ? null : zoneNum),
+        };
+      });
 
     return (
       <ModalWrapper
