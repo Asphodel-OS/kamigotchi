@@ -152,9 +152,9 @@ export const MapModal: UIComponent = {
     // RENDER
 
     const ZONE_NAMES: { [zone: number]: string } = {
-      1: 'The Wilds',
-      3: 'The Caves',
-      4: 'The Castle',
+      1: 'Lost Woods',
+      3: 'Sanctuary Caves',
+      4: 'Caer Golud',
     };
 
     // when exploring another map the header carries its name instead of the room's
