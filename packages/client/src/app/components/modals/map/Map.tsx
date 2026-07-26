@@ -196,6 +196,7 @@ export const MapModal: UIComponent = {
               closeOnClick
             >
               <TextTooltip text={['Switch Map']}>
+                {/* empty handler keeps the click sound; Popover owns the toggle */}
                 <IconButton img={ResetIcon} onClick={() => {}} noBorder scale={2.5} />
               </TextTooltip>
             </Popover>

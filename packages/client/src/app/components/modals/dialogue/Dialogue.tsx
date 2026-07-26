@@ -407,6 +407,7 @@ export const DialogueModal: UIComponent = {
           truncate
         >
           <NpcDialogue
+            key={String(dialogueModalOpen)} /* remount per open so text retypes fresh */
             hasAvailableQuests={availableQuests}
             hasOngoingQuests={ongoingQuests}
             npcColor='#000000ff'

@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useState } from 'react';
 import styled from 'styled-components';
 
 import { Overlay } from 'app/components/library';
@@ -53,14 +53,11 @@ export const NpcDialogue = ({
   const [doneCount, setDoneCount] = useState(0);
   const typingDone = doneCount >= (twoColumnText ? 2 : 1);
 
-  // stable per-text key: retriggers only on text change, not on every render
-  const retriggerKey = useMemo(() => `${dialogueText}:${Date.now()}`, [dialogueText]);
-
   // reset synchronously on text change: an effect would run after the child
   // typewriter's, leaking a stale skip into the next step (it renders pre-filled)
-  const [lastKey, setLastKey] = useState(retriggerKey);
-  if (lastKey !== retriggerKey) {
-    setLastKey(retriggerKey);
+  const [lastText, setLastText] = useState(dialogueText);
+  if (lastText !== dialogueText) {
+    setLastText(dialogueText);
     setSkipped(false);
     setDoneCount(0);
   }
@@ -92,7 +89,7 @@ export const NpcDialogue = ({
           <Text color={npcColor} $clickable={clickable}>
             <TypewriterComponent
               text={leftColumnText}
-              retrigger={`${retriggerKey}:L`}
+              retrigger={`${dialogueText}:L`}
               interrupted={skipped}
               onComplete={handleMainComplete}
             />
@@ -100,7 +97,7 @@ export const NpcDialogue = ({
           <Text color={npcColor} $clickable={clickable}>
             <TypewriterComponent
               text={rightColumnText}
-              retrigger={`${retriggerKey}:R`}
+              retrigger={`${dialogueText}:R`}
               interrupted={skipped}
               onComplete={handleSideComplete}
             />
@@ -110,7 +107,7 @@ export const NpcDialogue = ({
         <Text color={npcColor} $clickable={clickable} onClick={handleTextClick}>
           <TypewriterComponent
             text={dialogueText}
-            retrigger={retriggerKey}
+            retrigger={dialogueText}
             interrupted={skipped}
             onComplete={handleMainComplete}
           />
@@ -252,7 +249,6 @@ const NavigationRow = styled.div`
   gap: 0.4vw;
   padding: 0.4vw 1.2vw 0.7vw;
   flex-shrink: 0;
-  z-index: 6;
 `;
 
 const DialogueOptionsSection = styled.div`
