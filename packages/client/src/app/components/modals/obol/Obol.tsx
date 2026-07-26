@@ -11,6 +11,7 @@ import { OBOL_INDEX } from 'constants/items';
 import { queryAccountFromEmbedded } from 'network/shapes/Account';
 import { getItemBalance } from 'network/shapes/Item';
 import { didActionSucceed } from 'network/utils';
+import { playClick } from 'utils/sounds';
 
 const obolsPerEgg = 5;
 const arrowButtons = [
@@ -144,6 +145,7 @@ export const ObolModal: UIComponent = {
             <Button
               disabled={isDisabled || eggsQuantity * obolsPerEgg > getObolsBalance()}
               onClick={() => {
+                playClick();
                 craft(10001, eggsQuantity);
               }}
             >
@@ -151,6 +153,7 @@ export const ObolModal: UIComponent = {
             </Button>
             <Button
               onClick={() => {
+                playClick();
                 setModals({ lootBox: false });
               }}
             >
