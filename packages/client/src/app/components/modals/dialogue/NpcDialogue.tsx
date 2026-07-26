@@ -103,7 +103,7 @@ export const NpcDialogue = ({
           />
         </Text>
       )}
-      <Overlay bottom={1} left={1.5}>
+      <Overlay bottom={1.3} left={1.8}>
         <NpcName>{npcName}</NpcName>
       </Overlay>
       {dialogueOptions.length > 0 ? (
@@ -129,14 +129,14 @@ export const NpcDialogue = ({
           </DialogueOptionsRow>
         </DialogueOptionsSection>
       ) : null}
+      {dialogueButtons && (
+        <NavigationRow>
+          {dialogueButtons.BackButton()}
+          {dialogueButtons.MiddleButton()}
+          {dialogueButtons.NextButton()}
+        </NavigationRow>
+      )}
       <Bottom hasQuests={hasAvailableQuests.length > 0 || hasOngoingQuests.length > 0}>
-        {dialogueButtons && (
-          <NavigationRow>
-            {dialogueButtons.BackButton()}
-            {dialogueButtons.MiddleButton()}
-            {dialogueButtons.NextButton()}
-          </NavigationRow>
-        )}
         {npcImage ? <NpcSprite src={npcImage} /> : null}
         <OptionColumn color={npcColor}>
           {special && (
@@ -195,7 +195,7 @@ const Text = styled.div<{
   position: relative;
   text-align: justify;
   width: 100%;
-  padding: 0vw 1vw;
+  padding: 0.9vw 1.2vw 0.4vw;
   flex-grow: 1;
   min-height: 8vh;
   flex-flow: column nowrap;
@@ -232,22 +232,19 @@ const ParallelColumns = styled.div`
 `;
 
 const NavigationRow = styled.div`
-  position: absolute;
-  right: 2%;
-  top: -2vw;
   display: flex;
   flex-flow: row nowrap;
   justify-content: flex-end;
   align-items: center;
-  gap: 0.3vw;
+  gap: 0.4vw;
+  padding: 0.4vw 1.2vw 0.7vw;
+  flex-shrink: 0;
   z-index: 6;
 `;
 
 const DialogueOptionsSection = styled.div`
   width: 100%;
-  padding: 0 0.6vw 0.2vw 0.6vw;
-  margin-top: -0.15vw;
-  margin-bottom: 2vw;
+  padding: 0.2vw 1.2vw 0.3vw;
 `;
 
 const DialogueOptionsRow = styled.div`
@@ -307,8 +304,10 @@ const Bottom = styled.div<{ hasQuests: boolean }>`
   display: flex;
   flex-flow: row nowrap;
   align-items: flex-end;
+  gap: 1vw;
   border-top: solid grey 0.15vw;
   flex-shrink: 0;
+  padding: 1vw 1.2vw 1.2vw;
   min-height: ${({ hasQuests }) => (hasQuests ? '16vh' : '12vh')};
   transition: min-height 0.3s ease;
 `;
@@ -322,7 +321,7 @@ const OptionColumn = styled.div<{ color: string }>`
   justify-content: safe center;
   align-items: flex-end;
   gap: 0.9vw;
-  padding: 1vw 1vw 1vw 0;
+  padding: 0.5vw 0;
   max-height: 40vh;
   overflow-y: auto;
   ::-webkit-scrollbar {
