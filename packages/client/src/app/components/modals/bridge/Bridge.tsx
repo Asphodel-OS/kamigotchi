@@ -23,6 +23,7 @@ import {
   buildBridgeRouteRequest,
   fetchBridgeMsgs,
   fetchBridgeRoute,
+  fetchRoutableSourceChainIds,
   getBridgeServiceStatus,
   getNativeBalance,
   getSourceTransactionStatus,
@@ -98,6 +99,9 @@ export const BridgeModal: UIComponent = {
     const [shouldResetOnNextOpen, setShouldResetOnNextOpen] = useState(false);
     // polling gave up but the bridge may still land — offers a manual re-check
     const [pollTimedOut, setPollTimedOut] = useState(false);
+    // chains the router can actually route from right now (null = not probed
+    // yet, treat as all-routable). initia de-lists sources server-side
+    const [routableChainIds, setRoutableChainIds] = useState<Set<string> | null>(null);
     const phaseRef = useRef<BridgePhase>('idle');
     const previousWalletChainIdRef = useRef<string | null>(null);
     const closedDuringWalletPromptRef = useRef(false);
@@ -282,7 +286,19 @@ export const BridgeModal: UIComponent = {
       });
 
       appendUpdate('status', `Preparing route:\n**${sourceChain.label}** → **Yominet**...`);
-      const route = await fetchBridgeRoute(routeRequest);
+      let route;
+      try {
+        route = await fetchBridgeRoute(routeRequest);
+      } catch (error) {
+        if (signal.aborted) throw createBridgeAbortError();
+        if (error instanceof Error && error.message.includes('Route not found')) {
+          failBridge(
+            `No bridge route from **${sourceChain.label}** to Yominet right now — try Ethereum Mainnet.`
+          );
+          return null;
+        }
+        throw error;
+      }
       if (signal.aborted) throw createBridgeAbortError();
       const requiredChainAddresses = route.required_chain_addresses ?? [];
       const amountOut = typeof route.amount_out === 'string' ? route.amount_out : amountInWei;
@@ -641,6 +657,26 @@ export const BridgeModal: UIComponent = {
       }
     }, [isOpen, shouldResetOnNextOpen]);
 
+    // probe which source chains the router can currently route from, and
+    // steer the selection off a de-listed chain
+    useEffect(() => {
+      if (!isOpen) return;
+      let stale = false;
+      fetchRoutableSourceChainIds(SOURCE_CHAIN_OPTIONS).then((ids) => {
+        if (!stale) setRoutableChainIds(ids);
+      });
+      return () => {
+        stale = true;
+      };
+    }, [isOpen]);
+    useEffect(() => {
+      if (!routableChainIds || routableChainIds.has(sourceChain.chainId)) return;
+      const fallback = SOURCE_CHAIN_OPTIONS.find(
+        (o) => routableChainIds.has(o.chainId) && !DISABLED_SOURCE_CHAIN_IDS.has(o.chainId)
+      );
+      if (fallback && phaseRef.current === 'idle') setSourceChain(fallback);
+    }, [routableChainIds, sourceChain.chainId]);
+
     useEffect(() => {
       if (!isOpen) return;
       refreshBalances();
@@ -719,6 +755,7 @@ export const BridgeModal: UIComponent = {
           <Content>
             <BridgeForm
               sourceChain={sourceChain}
+              routableChainIds={routableChainIds}
               amount={amount}
               parsedAmount={parsedAmount}
               sourceBalance={sourceBalance}

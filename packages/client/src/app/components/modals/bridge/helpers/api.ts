@@ -114,6 +114,34 @@ async function postRouterApi<T>(path: RouterApiPath, body: Record<string, unknow
   return response.json() as Promise<T>;
 }
 
+/// chain ids whose native asset the router can currently route. the router
+/// de-lists sources server-side by marking the asset hidden (e.g. arbitrum
+/// and base natives as of 2026-07) — probing live means the picker heals
+/// itself when initia re-enables a route. fails open so a flaky probe never
+/// bricks the picker.
+export async function fetchRoutableSourceChainIds(
+  options: { chainId: string; denom: string }[]
+): Promise<Set<string>> {
+  const all = new Set(options.map((o) => o.chainId));
+  try {
+    const ids = options.map((o) => o.chainId).join(',');
+    const response = await fetch(`${ROUTER_API_BASE_URL}/assets?chain_ids=${ids}`);
+    if (!response.ok) return all;
+    const data = (await response.json()) as {
+      chain_to_assets_map?: Record<string, { assets?: { denom?: string; hidden?: boolean }[] }>;
+    };
+    const routable = new Set<string>();
+    for (const option of options) {
+      const assets = data.chain_to_assets_map?.[option.chainId]?.assets ?? [];
+      const native = assets.find((a) => a.denom === option.denom);
+      if (native && !native.hidden) routable.add(option.chainId);
+    }
+    return routable.size > 0 ? routable : all;
+  } catch {
+    return all;
+  }
+}
+
 export async function fetchBridgeRoute(body: BridgeRouteRequest): Promise<BridgeRouteResponse> {
   const route = await postRouterApi<BridgeRouteResponse>('route', body);
   if (!route || typeof route !== 'object' || !Array.isArray(route.operations)) {
