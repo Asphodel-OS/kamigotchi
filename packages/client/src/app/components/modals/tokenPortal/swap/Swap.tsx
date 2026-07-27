@@ -79,8 +79,13 @@ export const Swap = ({
   const triggerAction = () => {
     if (blocked) return;
     if (mode === 'DEPOSIT') {
-      if (needsApproval) approve(selected, depositUnits / rate);
-      else deposit(selected, receiveItems, depositUnits);
+      if (needsApproval) {
+        // keep the typed amount: the user approved exactly this deposit and
+        // the button flips to 'deposit' once the allowance lands
+        approve(selected, depositUnits / rate);
+        return;
+      }
+      deposit(selected, receiveItems, depositUnits);
     } else {
       withdraw(selected, amt);
     }
