@@ -54,6 +54,9 @@ export const KamiAdoptionAgency: UIComponent = {
     const [completedAdoptionsByAddress, setCompletedAdoptionsByAddress] = useState<
       Record<string, boolean>
     >({});
+    // bumped to re-read the vendor pool — world/components are stable refs,
+    // so a memo keyed on them alone would show stale stock forever
+    const [stockTick, setStockTick] = useState(0);
 
     // close the modal when the player moves to a different room (movement is
     // possible while open — e.g. the map modal occupies a different zone).
@@ -71,9 +74,17 @@ export const KamiAdoptionAgency: UIComponent = {
       }, 1000);
       return () => clearInterval(timerID);
     }, [isModalOpen, accountEntity, world, components, setModals]);
+    // refresh the stock while the modal is open — catches other players'
+    // adoptions and pool rotations, not just our own purchase
+    useEffect(() => {
+      if (!isModalOpen) return;
+      setStockTick((t) => t + 1); // fresh read on every open
+      const timerID = setInterval(() => setStockTick((t) => t + 1), 2000);
+      return () => clearInterval(timerID);
+    }, [isModalOpen]);
     const displayedKamis = useMemo(() => {
       return getDisplayedKamiEntities().map((entity) => getKami(entity));
-    }, [world, components]);
+    }, [world, components, stockTick]);
     const ownerApi = apis.get(selectedAddress);
     const hasCompletedAdoption = useMemo(
       () => (selectedAddress ? !!completedAdoptionsByAddress[selectedAddress] : false),
@@ -147,6 +158,7 @@ export const KamiAdoptionAgency: UIComponent = {
           const didComplete = await didActionSucceed(actions.Action, transaction);
           if (didComplete && selectedAddress) {
             setCompletedAdoptionsByAddress((prev) => ({ ...prev, [selectedAddress]: true }));
+            setStockTick((t) => t + 1); // drop the adopted kami from the shelf
             refetchPrice();
           }
         } finally {
