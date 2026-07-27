@@ -65,6 +65,9 @@ type BridgeServiceStatus = {
 
 export type BridgeOpenerOptions = {
   routeRequest?: Partial<BridgeRouteRequest>;
+  // set by triggerBridgeModal when the caller explicitly passed amount_in;
+  // the built routeRequest always carries a default amount otherwise
+  explicitAmountIn?: boolean;
 };
 
 export function isBridgeOpenDetail(value: unknown): value is BridgeOpenerOptions {

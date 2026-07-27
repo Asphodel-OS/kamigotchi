@@ -1,7 +1,13 @@
 import { useWallets } from '@privy-io/react-auth';
 import { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
-import { formatEther, parseEther } from 'viem';
+import { formatEther, parseEther, type Abi } from 'viem';
+import { useReadContract } from 'wagmi';
+
+import NewbieVendorBuySystem from 'abi/NewbieVendorBuySystem.json';
+import { useLayers } from 'app/root/hooks';
+import { getSystemAddr } from 'network/shapes/utils';
+import { parseBigIntSafe } from 'utils/numbers';
 
 import { ModalHeader, ModalWrapper } from 'app/components/library';
 import { UIComponent } from 'app/root/types';
@@ -48,12 +54,20 @@ import {
   waitForWalletChain,
 } from './helpers/utils';
 
+const NEWBIE_VENDOR_BUY_SYSTEM_ID = 'system.newbievendor.buy';
+// headroom on top of Zevana's live price so the operator wallet can be funded
+// for a first session (~300+ moves) — targets a ~0.01 total default
+const PREFILL_OPERATOR_GAS_HEADROOM = 3_000_000_000_000_000n; // 0.003 ETH
+const PREFILL_ROUNDING_STEP = 100_000_000_000_000n; // round default up to 0.0001
+
 export const BridgeModal: UIComponent = {
   id: 'BridgeModal',
   Render: () => {
     /////////////////
     // PREPARATION
 
+    const { network } = useLayers();
+    const { world, components } = network;
     const isOpen = useVisibility((s) => s.modals.bridge);
     const setBridgeProcessActive = useVisibility((s) => s.setBridgeProcessActive);
     const selectedAddress = useNetwork((s) => s.selectedAddress);
@@ -65,6 +79,9 @@ export const BridgeModal: UIComponent = {
         SOURCE_CHAIN_OPTIONS[0]
     );
     const [amount, setAmount] = useState('0.001');
+    // tracks whether the amount came from the user (or an explicit route
+    // prefill) — the Zevana-price default must never clobber those
+    const amountTouchedRef = useRef(false);
 
     const [sourceBalance, setSourceBalance] = useState<bigint>(0n);
     const [yomiBalance, setYomiBalance] = useState<bigint>(0n);
@@ -456,9 +473,12 @@ export const BridgeModal: UIComponent = {
           if (requestedChain && !DISABLED_SOURCE_CHAIN_IDS.has(requestedChain.chainId)) {
             setSourceChain(requestedChain);
           }
-          if (routeRequest.amount_in) {
+          // the built routeRequest always carries a default amount_in — only
+          // honor it when the caller explicitly passed one
+          if (routeRequest.amount_in && details.explicitAmountIn) {
             try {
               setAmount(formatEther(BigInt(routeRequest.amount_in)));
+              amountTouchedRef.current = true;
             } catch {
               // ignore malformed prefills
             }
@@ -469,6 +489,31 @@ export const BridgeModal: UIComponent = {
       window.addEventListener(BRIDGE_OPEN_REQUEST_EVENT, handleOpen);
       return () => window.removeEventListener(BRIDGE_OPEN_REQUEST_EVENT, handleOpen);
     }, []);
+
+    // default the amount to Zevana's live price + operator gas headroom
+    // (~0.01 total). purely a prefill: anything the user (or a route
+    // request) typed wins, and mid-bridge the amount is never changed
+    const vendorSystemAddress = getSystemAddr(world, components, NEWBIE_VENDOR_BUY_SYSTEM_ID);
+    const vendorSystemKnown = !!vendorSystemAddress && vendorSystemAddress !== DEAD_ADDRESS;
+    const { data: vendorPriceData } = useReadContract({
+      address: vendorSystemAddress,
+      abi: NewbieVendorBuySystem.abi as Abi,
+      functionName: 'calcPrice',
+      query: { enabled: isOpen && vendorSystemKnown },
+    });
+    // a fresh open takes the live default again — edits only stick for the
+    // session the modal is open
+    useEffect(() => {
+      if (!isOpen) amountTouchedRef.current = false;
+    }, [isOpen]);
+    useEffect(() => {
+      if (amountTouchedRef.current || phaseRef.current !== 'idle') return;
+      const price = parseBigIntSafe(vendorPriceData);
+      if (price === undefined) return;
+      const total = price + PREFILL_OPERATOR_GAS_HEADROOM;
+      const rounded = ((total + PREFILL_ROUNDING_STEP - 1n) / PREFILL_ROUNDING_STEP) * PREFILL_ROUNDING_STEP;
+      setAmount(formatEther(rounded));
+    }, [vendorPriceData]);
 
     useEffect(() => {
       if (!accountReady) return;
@@ -596,7 +641,10 @@ export const BridgeModal: UIComponent = {
               isBridging={isBridging}
               accountReady={accountReady}
               hasSufficientSourceBalance={hasSufficientSourceBalance}
-              onAmountChange={setAmount}
+              onAmountChange={(value) => {
+                amountTouchedRef.current = true;
+                setAmount(value);
+              }}
               onSourceChainChange={setSourceChain}
               onSubmit={startBridge}
             />
