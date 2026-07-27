@@ -16,6 +16,7 @@ import { Zones } from 'constants/zones';
 import { Allo } from 'network/shapes/Allo';
 import { BaseKami } from 'network/shapes/Kami/types';
 import { Node } from 'network/shapes/Node';
+import { getQuest, queryOngoingQuests } from 'network/shapes/Quest';
 import { calculatePathStaminaCost, findPath, NullRoom, Room } from 'network/shapes/Room';
 import { DetailedEntity } from 'network/shapes/utils';
 import { playClick } from 'utils/sounds';
@@ -136,6 +137,24 @@ export const Grid = ({
     return map;
   }, [accountKamis]);
 
+  // rooms targeted by ongoing quest objectives — the map should show where to go
+  const questTargetMap = useMemo(() => {
+    const map = new Map<number, string[]>();
+    if (!account?.id) return map;
+    const { world, components } = network;
+    queryOngoingQuests(components, account.id).forEach((entity) => {
+      const quest = getQuest(world, components, entity);
+      if (quest.complete) return;
+      quest.objectives.forEach((obj) => {
+        if (obj.target?.type !== 'ROOM' || !obj.target.index) return;
+        const names = map.get(obj.target.index) ?? [];
+        if (!names.includes(quest.name)) names.push(quest.name);
+        map.set(obj.target.index, names);
+      });
+    });
+    return map;
+  }, [network, account?.id, tick]);
+
   /////////////////
   // INTERACTION
 
@@ -205,6 +224,7 @@ export const Grid = ({
   const getTileColor = (room: Room) => {
     if (!room.index) return;
     if (room.index === roomIndex) return 'rgba(51,187,51,0.9)';
+    if (questTargetMap.has(room.index)) return 'rgba(255,196,0,0.7)'; // quest target
     if (!currExit(room)) return;
     return isRoomBlocked(room) ? 'rgba(0,0,0,0.3)' : 'rgba(255,136,85,0.6)';
   };
@@ -319,7 +339,11 @@ export const Grid = ({
                         ]
                       : []
                   }
-                  title={`${room.name}${isRoomBlocked(room) ? ' (blocked)' : ''}`}
+                  title={`${room.name}${isRoomBlocked(room) ? ' (blocked)' : ''}${
+                    questTargetMap.has(room.index)
+                      ? ` — ❗ ${questTargetMap.get(room.index)!.join(', ')}`
+                      : ''
+                  }`}
                   maxWidth={25}
                   grow
                 >
@@ -334,6 +358,9 @@ export const Grid = ({
                     isHighlighted={!!backgroundColor}
                     onMouseEnter={() => updateRoomStats(room.index)}
                   >
+                    {questTargetMap.has(room.index) && room.index !== roomIndex && (
+                      <QuestMarker>!</QuestMarker>
+                    )}
                     <GridFilter
                       data={{
                         optionSelected: mode[0],
@@ -391,7 +418,35 @@ const Row = styled.div`
   flex-grow: 1;
 `;
 
+const QuestMarker = styled.span`
+  position: absolute;
+  top: -0.1vw;
+  right: 0.05vw;
+  color: #ffc400;
+  font-size: 0.9vw;
+  font-weight: 900;
+  text-shadow:
+    -0.05vw -0.05vw 0 #000,
+    0.05vw -0.05vw 0 #000,
+    -0.05vw 0.05vw 0 #000,
+    0.05vw 0.05vw 0 #000;
+  animation: questPulse 1.2s ease-in-out infinite;
+  pointer-events: none;
+  z-index: 2;
+
+  @keyframes questPulse {
+    0%,
+    100% {
+      transform: scale(1);
+    }
+    50% {
+      transform: scale(1.35);
+    }
+  }
+`;
+
 const Tile = styled.div<{ hasRoom: boolean; isHighlighted: boolean; backgroundColor: any }>`
+  position: relative;
   border-left: 0.01vw solid rgba(0, 0, 0, 0.2);
   border-bottom: 0.01vw solid rgba(0, 0, 0, 0.2);
   background-color: ${({ backgroundColor }) => backgroundColor};
