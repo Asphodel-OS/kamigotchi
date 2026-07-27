@@ -144,4 +144,16 @@ const Container = styled.div`
   overflow-y: auto;
   gap: 0.3vw;
   scrollbar-gutter: stable;
+
+  scrollbar-width: thin;
+  scrollbar-color: #b6b6b6 transparent;
+  &::-webkit-scrollbar {
+    width: 0.3vw;
+    background: transparent;
+  }
+  &::-webkit-scrollbar-thumb {
+    background-color: #b6b6b6;
+    border-radius: 0.3vw;
+    background-clip: padding-box;
+  }
 `;

@@ -543,6 +543,11 @@ const ResultsList = styled.div`
   border-bottom: none;
   border-radius: 0.4vw 0.4vw 0 0;
   z-index: 9999;
+
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
 `;
 
 const ResultItem = styled.div`

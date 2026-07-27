@@ -9,8 +9,6 @@ import { Table } from './table/Table';
 export const Queue = ({
   actions,
   data,
-
-  isVisible,
   utils,
 }: {
   actions: {
@@ -23,8 +21,6 @@ export const Queue = ({
     config: Configs;
     account: Account;
   };
-
-  isVisible: boolean;
   utils: {
     getItemByIndex: (index: number) => Item;
     getAccountByID: (id: EntityID) => Account;
@@ -34,21 +30,22 @@ export const Queue = ({
   // DISPLAY
 
   return (
-    <Container isVisible={isVisible}>
+    <Container>
       <Table actions={actions} data={data} utils={utils} />
     </Container>
   );
 };
 
-const Container = styled.div<{ isVisible: boolean }>`
+const Container = styled.div`
   position: relative;
-  display: ${({ isVisible }) => (isVisible ? 'flex' : 'none')};
-  border-top: 0.15vw solid black;
+  display: flex;
+  border: 0.12vw solid #ddd;
+  border-radius: 0.6vw;
   width: 100%;
 
   flex-flow: column nowrap;
-  justify-content: center;
+  justify-content: flex-start;
   align-items: center;
 
-  overflow-y: hidden;
+  overflow: hidden;
 `;

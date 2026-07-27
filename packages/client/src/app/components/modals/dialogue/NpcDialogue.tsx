@@ -1,3 +1,4 @@
+import { useCallback, useState } from 'react';
 import styled from 'styled-components';
 
 import { Overlay } from 'app/components/library';
@@ -20,7 +21,9 @@ export const NpcDialogue = ({
   dialogueButtons = { BackButton: () => <></>, NextButton: () => <></>, MiddleButton: () => <></> },
   special,
   onDialogueComplete,
+  onTextAdvance,
   twoColumnText = false,
+  textKey,
 }: {
   hasAvailableQuests?: Quest[];
   hasOngoingQuests?: Quest[];
@@ -36,8 +39,11 @@ export const NpcDialogue = ({
   };
   special?: { name: string; onclick: () => void };
   onDialogueComplete?: () => void;
+  onTextAdvance?: () => void;
   twoColumnText?: boolean;
+  textKey?: string; // step identity; keys resets so same-text transitions still retype
 }) => {
+  const resetKey = textKey ?? dialogueText;
   const columnTexts = dialogueText
     .split('\n')
     .map((line) => line.trim())
@@ -45,31 +51,78 @@ export const NpcDialogue = ({
   const leftColumnText = twoColumnText ? (columnTexts[0] ?? '') : dialogueText;
   const rightColumnText = twoColumnText ? (columnTexts[1] ?? '') : '';
 
+  // click-to-skip: interrupting fills the text instantly; done gates the cursor.
+  // empty columns never fire onComplete, so only count the ones that render text
+  const [skipped, setSkipped] = useState(false);
+  const [doneCount, setDoneCount] = useState(0);
+  const typingTarget = twoColumnText
+    ? (leftColumnText ? 1 : 0) + (rightColumnText ? 1 : 0)
+    : dialogueText
+      ? 1
+      : 0;
+  const typingDone = doneCount >= typingTarget;
+
+  // reset synchronously on step change: an effect would run after the child
+  // typewriter's, leaking a stale skip into the next step (it renders pre-filled)
+  const [lastKey, setLastKey] = useState(resetKey);
+  if (lastKey !== resetKey) {
+    setLastKey(resetKey);
+    setSkipped(false);
+    setDoneCount(0);
+  }
+
+  const handleMainComplete = useCallback(() => {
+    setDoneCount((c) => c + 1);
+    onDialogueComplete?.();
+  }, [onDialogueComplete]);
+
+  const handleSideComplete = useCallback(() => {
+    setDoneCount((c) => c + 1);
+  }, []);
+
+  // while typing a click fills the text; once done it advances like the next arrow
+  const handleTextClick = () => {
+    if (!typingDone) {
+      setSkipped(true);
+    } else if (onTextAdvance) {
+      playClick();
+      onTextAdvance();
+    }
+  };
+  const clickable = !typingDone || !!onTextAdvance;
+
   return (
     <>
       {twoColumnText ? (
-        <ParallelColumns>
-          <Text color={npcColor}>
+        <ParallelColumns onClick={handleTextClick}>
+          <Text color={npcColor} $clickable={clickable}>
             <TypewriterComponent
               text={leftColumnText}
-              retrigger={`${leftColumnText}${Date.now()}`}
-              onComplete={onDialogueComplete}
+              retrigger={`${resetKey}:L`}
+              interrupted={skipped}
+              onComplete={handleMainComplete}
             />
           </Text>
-          <Text color={npcColor}>
-            <TypewriterComponent text={rightColumnText} retrigger={`${rightColumnText}${Date.now()}`} />
+          <Text color={npcColor} $clickable={clickable}>
+            <TypewriterComponent
+              text={rightColumnText}
+              retrigger={`${resetKey}:R`}
+              interrupted={skipped}
+              onComplete={handleSideComplete}
+            />
           </Text>
         </ParallelColumns>
       ) : (
-        <Text color={npcColor}>
+        <Text color={npcColor} $clickable={clickable} onClick={handleTextClick}>
           <TypewriterComponent
             text={dialogueText}
-            retrigger={`${dialogueText}${Date.now()}`}
-            onComplete={onDialogueComplete}
+            retrigger={resetKey}
+            interrupted={skipped}
+            onComplete={handleMainComplete}
           />
         </Text>
       )}
-      <Overlay bottom={1} left={1.5}>
+      <Overlay bottom={1.3} left={1.8}>
         <NpcName>{npcName}</NpcName>
       </Overlay>
       {dialogueOptions.length > 0 ? (
@@ -95,14 +148,14 @@ export const NpcDialogue = ({
           </DialogueOptionsRow>
         </DialogueOptionsSection>
       ) : null}
+      {dialogueButtons && (
+        <NavigationRow>
+          {dialogueButtons.BackButton()}
+          {dialogueButtons.MiddleButton()}
+          {dialogueButtons.NextButton()}
+        </NavigationRow>
+      )}
       <Bottom hasQuests={hasAvailableQuests.length > 0 || hasOngoingQuests.length > 0}>
-        {dialogueButtons && (
-          <NavigationRow>
-            {dialogueButtons.BackButton()}
-            {dialogueButtons.MiddleButton()}
-            {dialogueButtons.NextButton()}
-          </NavigationRow>
-        )}
         {npcImage ? <NpcSprite src={npcImage} /> : null}
         <OptionColumn color={npcColor}>
           {special && (
@@ -155,13 +208,15 @@ export const NpcDialogue = ({
 
 const Text = styled.div<{
   color?: string;
+  $clickable?: boolean;
 }>`
   color: ${({ color }) => color || 'black'};
   position: relative;
   text-align: justify;
   width: 100%;
-  padding: 0vw 1vw;
+  padding: 0.9vw 1.2vw 0.4vw;
   flex-grow: 1;
+  min-height: 8vh;
   flex-flow: column nowrap;
   justify-content: flex-start;
   top: 0;
@@ -170,7 +225,7 @@ const Text = styled.div<{
   white-space: pre-line;
   word-wrap: break-word;
   overflow-y: auto;
-  cursor: auto;
+  cursor: ${({ $clickable }) => ($clickable ? 'pointer' : 'auto')};
   transition:
     height 0.3s ease,
     visibility 0.3s ease;
@@ -196,22 +251,18 @@ const ParallelColumns = styled.div`
 `;
 
 const NavigationRow = styled.div`
-  position: absolute;
-  right: 2%;
-  top: -2vw;
   display: flex;
   flex-flow: row nowrap;
   justify-content: flex-end;
   align-items: center;
-  gap: 0.3vw;
-  z-index: 6;
+  gap: 0.4vw;
+  padding: 0.4vw 1.2vw 0.7vw;
+  flex-shrink: 0;
 `;
 
 const DialogueOptionsSection = styled.div`
   width: 100%;
-  padding: 0 0.6vw 0.2vw 0.6vw;
-  margin-top: -0.15vw;
-  margin-bottom: 2vw;
+  padding: 0.2vw 1.2vw 0.3vw;
 `;
 
 const DialogueOptionsRow = styled.div`
@@ -245,12 +296,10 @@ const DialogueOptionButton = styled.button<{ color?: string; $fullRow?: boolean 
 `;
 
 const NpcSprite = styled.img`
-  position: absolute;
-  left: 0;
-  bottom: -4%;
+  align-self: flex-end;
   width: auto;
-  height: 100%;
-  max-width: 40%;
+  height: max(24vh, 15vw);
+  max-width: 48%;
   object-fit: contain;
   object-position: bottom left;
   image-rendering: pixelated;
@@ -272,25 +321,26 @@ const Bottom = styled.div<{ hasQuests: boolean }>`
   position: relative;
   display: flex;
   flex-flow: row nowrap;
+  align-items: flex-end;
+  gap: 1vw;
   border-top: solid grey 0.15vw;
-  height: ${({ hasQuests }) => (hasQuests ? '60%' : '40%')};
-  transition: height 0.3s ease;
+  flex-shrink: 0;
+  padding: 1vw 1.2vw 1.2vw;
+  min-height: ${({ hasQuests }) => (hasQuests ? '16vh' : '12vh')};
+  transition: min-height 0.3s ease;
 `;
 
 const OptionColumn = styled.div<{ color: string }>`
-  margin-top: 0.5vw;
-  position: absolute;
-  right: 0;
-  top: 0;
+  flex: 1;
+  align-self: stretch;
   display: flex;
   flex-flow: column;
-  width: 100%;
-  height: 100%;
-  justify-content: flex-start;
+  justify-content: center;
+  justify-content: safe center;
   align-items: flex-end;
   gap: 0.9vw;
-  padding-top: 1vw;
-  padding-right: 1vw;
+  padding: 0.5vw 0.4vw 0.6vw 0;
+  max-height: 40vh;
   overflow-y: auto;
   ::-webkit-scrollbar {
     background: transparent;

@@ -302,6 +302,7 @@ export const PartyModal: UIComponent = {
         canExit
         truncate
         noPadding
+        showScrollBar
       >
         <Toolbar
           actions={{

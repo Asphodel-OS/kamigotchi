@@ -176,10 +176,9 @@ const PopoverContent = styled.div.attrs<{
   isVisible?: boolean;
   popoverPosition: { x: number; y: number };
   maxHeight?: number;
-}>(({ isVisible, popoverPosition, maxHeight }) => ({
+}>(({ popoverPosition, maxHeight }) => ({
   style: {
     maxHeight: maxHeight ? `${maxHeight}vh` : '22vh',
-    visibility: isVisible ? 'visible' : 'hidden',
     top: popoverPosition?.y,
     left: popoverPosition?.x,
   },
@@ -201,6 +200,14 @@ const PopoverContent = styled.div.attrs<{
   font-size: 0.6vw;
   white-space: normal;
   overflow-wrap: break-word;
+
+  /* fade open/closed; visibility flips after the fade so layout stays put */
+  opacity: ${({ isVisible }) => (isVisible ? 1 : 0)};
+  visibility: ${({ isVisible }) => (isVisible ? 'visible' : 'hidden')};
+  pointer-events: ${({ isVisible }) => (isVisible ? 'auto' : 'none')};
+  transition:
+    opacity 0.2s ease-in-out,
+    visibility 0s linear ${({ isVisible }) => (isVisible ? '0s' : '0.2s')};
 
   scrollbar-width: none;
   &::-webkit-scrollbar { display: none; }

@@ -163,6 +163,11 @@ const Container = styled.div<{ isVisible: boolean }>`
   align-items: stretch;
 
   overflow-y: scroll;
+
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
 `;
 
 const Section = styled.div`

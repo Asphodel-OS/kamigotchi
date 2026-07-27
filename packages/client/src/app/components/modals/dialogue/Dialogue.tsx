@@ -93,6 +93,14 @@ export const DialogueModal: UIComponent = {
     const setDialogue = useSelected((s) => s.setDialogue);
 
     const [step, setStep] = useState(0);
+    // bumps only on open transitions: remounting NpcDialogue on close would
+    // visibly retype the text during the fade-out
+    const [openCount, setOpenCount] = useState(0);
+    const [prevOpen, setPrevOpen] = useState(dialogueModalOpen);
+    if (prevOpen !== dialogueModalOpen) {
+      setPrevOpen(dialogueModalOpen);
+      if (dialogueModalOpen) setOpenCount((c) => c + 1);
+    }
     const [dialogueHistory, setDialogueHistory] = useState<number[]>([]);
     const [availableQuests, setAvailableQuests] = useState<Quest[]>([]);
     const [ongoingQuests, setOngoingQuests] = useState<Quest[]>([]);
@@ -127,17 +135,19 @@ export const DialogueModal: UIComponent = {
     /////////////////
     // SUBSCRIPTIONS
 
-    // reset the step to 0 whenever the dialogue modal is toggled
+    // reset the step when the modal opens; on close only clear history so the
+    // content doesn't visibly jump back to step 0 during the fade-out
     useEffect(() => {
-      setStep(0);
-      if (!dialogueModalOpen) setDialogueHistory([]);
+      if (dialogueModalOpen) setStep(0);
+      else setDialogueHistory([]);
     }, [dialogueModalOpen]);
 
     // reset text step when changing dialogue entry
     // clear history only when dialogue root is changed externally while modal is still open
     useEffect(() => {
+      if (!dialogueModalOpen) return;
       setStep(0);
-      if (dialogueModalOpen && !internalDialogueTransitionRef.current) {
+      if (!internalDialogueTransitionRef.current) {
         setDialogueHistory([]);
       }
       internalDialogueTransitionRef.current = false;
@@ -326,8 +336,22 @@ export const DialogueModal: UIComponent = {
       );
     };
 
+    const canAdvance = step < dialogueLength - 1 || !!dialogueNode.npc?.nextDialogue;
+
+    // shared by the next arrow and clicks on completed dialogue text
+    const advanceDialogue = () => {
+      if (step < dialogueLength - 1) {
+        setStep(step + 1);
+        return;
+      }
+      if (dialogueNode.npc?.nextDialogue) {
+        setDialogueHistory((prev) => [...prev, dialogueIndex]);
+        setStep(0);
+        transitionDialogue(dialogueNode.npc.nextDialogue);
+      }
+    };
+
     const NextButton = () => {
-      const canAdvance = step < dialogueLength - 1 || !!dialogueNode.npc?.nextDialogue;
       const disabled = !canAdvance;
       return (
         <div
@@ -335,22 +359,7 @@ export const DialogueModal: UIComponent = {
             visibility: disabled ? 'hidden' : 'visible',
           }}
         >
-          <IconButton
-            scale={1.8}
-            img={ArrowIcons.right}
-            disabled={disabled}
-            onClick={() => {
-              if (step < dialogueLength - 1) {
-                setStep(step + 1);
-                return;
-              }
-              if (dialogueNode.npc?.nextDialogue) {
-                setDialogueHistory((prev) => [...prev, dialogueIndex]);
-                setStep(0);
-                transitionDialogue(dialogueNode.npc.nextDialogue);
-              }
-            }}
-          />
+          <IconButton scale={1.8} img={ArrowIcons.right} disabled={disabled} onClick={advanceDialogue} />
         </div>
       );
     };
@@ -405,16 +414,20 @@ export const DialogueModal: UIComponent = {
             position: 'fixed',
           }}
           noScroll
+          truncate
         >
           <NpcDialogue
+            key={openCount} /* remount per open so text retypes fresh */
             hasAvailableQuests={availableQuests}
             hasOngoingQuests={ongoingQuests}
             npcColor='#000000ff'
             npcName={npc.name}
             npcImage={npc.mood || npc.img}
             dialogueText={getText(dialogueNode.text[step])}
+            textKey={`${dialogueIndex}:${step}`}
             twoColumnText={dialogueIndex === 20018}
             onDialogueComplete={handleNpcDialogueComplete}
+            onTextAdvance={canAdvance ? advanceDialogue : undefined}
             dialogueOptions={dialogueOptions.map(([label, nextIndex]) => ({
               label,
               onClick: () => {

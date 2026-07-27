@@ -553,6 +553,11 @@ const Wrapper = styled.div`
   overflow-y: auto;
   overflow-x: hidden;
   font-size: 0.6vw;
+
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
 `;
 
 const Buttons = styled.div`
