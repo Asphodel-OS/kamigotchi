@@ -86,6 +86,7 @@ export const BridgeModal: UIComponent = {
     const previousWalletChainIdRef = useRef<string | null>(null);
     const closedDuringWalletPromptRef = useRef(false);
     const bridgeAbortRef = useRef<AbortController>(new AbortController());
+    const autoAdvanceTimerRef = useRef<number | null>(null);
 
     const setUpdates = (value: BridgeUpdateEntry[] | ((prev: BridgeUpdateEntry[]) => BridgeUpdateEntry[])) => {
       const next = typeof value === 'function' ? value(updatesRef.current) : value;
@@ -135,7 +136,15 @@ export const BridgeModal: UIComponent = {
       clearBridgePolling();
     };
 
+    const cancelAutoAdvance = () => {
+      if (autoAdvanceTimerRef.current !== null) {
+        window.clearTimeout(autoAdvanceTimerRef.current);
+        autoAdvanceTimerRef.current = null;
+      }
+    };
+
     const clearBridgeState = (bridging: boolean) => {
+      cancelAutoAdvance();
       bridgeAbortRef.current.abort();
       bridgeAbortRef.current = new AbortController();
       resetBridgeUiState();
@@ -361,7 +370,9 @@ export const BridgeModal: UIComponent = {
     // (topping up mid-game) keep the modal open
     const scheduleAutoAdvance = () => {
       if (queryAccountFromEmbedded(network)) return;
-      window.setTimeout(() => {
+      cancelAutoAdvance();
+      autoAdvanceTimerRef.current = window.setTimeout(() => {
+        autoAdvanceTimerRef.current = null;
         // callers reset phase to idle right after completion; anything else
         // means a new bridge attempt started during the delay
         if (phaseRef.current !== 'idle') return;
@@ -446,6 +457,7 @@ export const BridgeModal: UIComponent = {
     };
 
     const handleBridgeModalClose = () => {
+      cancelAutoAdvance(); // a manual close during the celebration wins
       if (!isOpen || phaseRef.current === 'idle') return true;
       if (phaseRef.current === 'awaitingApproval') {
         closedDuringWalletPromptRef.current = true;
