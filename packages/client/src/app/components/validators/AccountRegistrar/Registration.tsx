@@ -44,6 +44,14 @@ export const Registration = ({
   const [autoCreate, setAutoCreate] = useState(() => localStorage.getItem(storageKey) !== null);
   const autoFiringRef = useRef(false);
 
+  // re-sync staged state when the selected wallet changes without a remount —
+  // one wallet's staged name must never register under another wallet
+  useEffect(() => {
+    const staged = localStorage.getItem(storageKey);
+    setName(staged ?? '');
+    setAutoCreate(staged !== null);
+  }, [address.selected]);
+
   const isNameTaken = (username: string) => {
     return NameCache.has(username);
   };
@@ -76,25 +84,22 @@ export const Registration = ({
     triggerBridgeModal();
   };
 
-  const disarmAutoCreate = () => {
-    localStorage.removeItem(storageKey);
-    setAutoCreate(false);
-  };
-
   // fire the staged creation once funds arrive (the owner wallet still
-  // prompts for the signature — this just saves the player the babysitting)
+  // prompts for the signature — this just saves the player the babysitting).
+  // one-shot: a rejected signature keeps the staged name (in storage) so
+  // nothing is lost, but doesn't re-prompt until the player acts or reloads
   useEffect(() => {
     if (!autoCreate || autoFiringRef.current) return;
     if (needsToBridge()) return;
     if (getError()) return;
     autoFiringRef.current = true;
-    disarmAutoCreate();
+    setAutoCreate(false);
     handleAccountCreation().finally(() => {
       autoFiringRef.current = false;
     });
   }, [ethBalance, autoCreate, name]);
 
-  const handleAccountCreation = async () => {
+  const handleAccountCreation = async (): Promise<boolean> => {
     playSignup();
     utils.toggleFixtures(true);
 
@@ -108,8 +113,10 @@ export const Registration = ({
       OperatorCache.clear();
       NameCache.clear();
       localStorage.removeItem(storageKey); // staged name no longer needed
+      return true;
     } catch (e) {
       console.error('ERROR CREATING ACCOUNT:', e);
+      return false;
     }
   };
 
