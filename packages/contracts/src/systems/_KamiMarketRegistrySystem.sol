@@ -6,6 +6,8 @@ import { IWorld } from "solecs/interfaces/IWorld.sol";
 
 import { AuthRoles } from "libraries/utils/AuthRoles.sol";
 import { LibConfig } from "libraries/LibConfig.sol";
+import { LibEntityType } from "libraries/utils/LibEntityType.sol";
+import { LibKamiMarket } from "libraries/LibKamiMarket.sol";
 
 uint256 constant ID = uint256(keccak256("system.kamimarket.registry"));
 
@@ -23,6 +25,22 @@ contract _KamiMarketRegistrySystem is System, AuthRoles {
     require(rate[0] > 0, "KamiMarketRegistry: precision must be > 0");
     require(rate[1] <= 10 ** rate[0], "KamiMarketRegistry: fee rate > 100%");
     LibConfig.setArray(components, "KAMI_MARKET_FEE_RATE", rate);
+  }
+
+  /// @notice Rebuild the active-listing index (backfill after upgrade, or repair)
+  /// @dev accepts only ACTIVE KAMI_LISTING entities; overwrites wholesale
+  function rebuildListingIndex(uint256[] memory ids) public onlyAdmin(components) {
+    for (uint256 i; i < ids.length; i++) {
+      require(
+        LibEntityType.isShape(components, ids[i], "KAMI_LISTING"),
+        "KamiMarketRegistry: not a listing"
+      );
+      require(
+        LibKamiMarket.isOrderActive(components, ids[i]),
+        "KamiMarketRegistry: not active"
+      );
+    }
+    LibKamiMarket.setListingIndex(components, ids);
   }
 
   /// @notice Set the fee recipient address

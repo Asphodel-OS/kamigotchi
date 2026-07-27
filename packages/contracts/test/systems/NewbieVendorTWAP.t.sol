@@ -327,21 +327,17 @@ contract NewbieVendorTWAPTest is SetupTemplate {
     assertTrue(LibFlag.has(components, charlie.id, "NEWBIE_VENDOR_PURCHASED"));
   }
 
-  function testVendorBuyUsesTWAPPrice() public {
-    // Set up: sale at 0.02 ETH after 1h
+  /// @dev pricing is floor-derived now (see NewbieVendorFloorPrice.t.sol);
+  ///      this checks a buy with excess msg.value still settles fine
+  function testVendorBuyAcceptsExcessValue() public {
+    // a filled sale leaves no active listings — price falls back to min
     (, uint32 kamiIndex1) = _createStakedKami(alice);
     uint256 orderID1 = _listKami(alice, kamiIndex1, 0.02 ether);
 
     _fastForward(3600);
     vm.deal(bob.owner, 10 ether);
     _buyKami(bob, orderID1, 0.02 ether);
-    // cumulative = 0.01*3600 = 36e18, lastPrice = 0.02
-
-    // Warp another hour (no sale, but lastPrice = 0.02 continues accumulating)
     _fastForward(3600);
-    // Now: liveCumulative = 0.01*3600 + 0.02*3600 = 108e18
-    // windowTime = 7200
-    // TWAP = 108e18 / 7200 = 0.015 ether
 
     // Mint kami for alice (who is also the vendor address)
     uint256 kamiID = _mintKami(alice);
@@ -352,12 +348,10 @@ contract NewbieVendorTWAPTest is SetupTemplate {
     vm.prank(deployer);
     __NewbieVendorRegistrySystem.setPool(pool);
 
-    uint256 expectedPrice = 0.015 ether;
-
-    // Charlie buys at TWAP price
+    // Charlie sends more than the (min) price — excess is refunded
     vm.deal(charlie.owner, 1 ether);
     vm.prank(charlie.owner);
-    _NewbieVendorBuySystem.executeTyped{value: expectedPrice}(kamiIndex);
+    _NewbieVendorBuySystem.executeTyped{value: 0.015 ether}(kamiIndex);
 
     assertTrue(LibFlag.has(components, charlie.id, "NEWBIE_VENDOR_PURCHASED"));
   }

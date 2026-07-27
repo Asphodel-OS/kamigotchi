@@ -16,6 +16,7 @@ import { StateComponent, ID as StateCompID } from "components/StateComponent.sol
 import { TimeEndComponent, ID as TimeEndCompID } from "components/TimeEndComponent.sol";
 import { TimeStartComponent, ID as TimeStartCompID } from "components/TimeStartComponent.sol";
 import { ValueComponent, ID as ValueCompID } from "components/ValueComponent.sol";
+import { ValuesComponent, ID as ValuesCompID } from "components/ValuesComponent.sol";
 import { ID as EntityTypeCompID } from "components/EntityTypeComponent.sol";
 
 import { IComponent } from "solecs/interfaces/IComponent.sol";
@@ -33,6 +34,10 @@ import { LibKami } from "libraries/LibKami.sol";
 import { LibCooldown } from "libraries/utils/LibCooldown.sol";
 
 import { KamiMarketVault } from "tokens/KamiMarketVault.sol";
+
+/// @dev holds uint256[] of listing IDs not yet filled/cancelled — feeds
+///      floor-derived pricing (newbie vendor); expired entries filtered on read
+uint256 constant ACTIVE_LISTING_INDEX_ENTITY = uint256(keccak256("kami.market.listing.index"));
 
 /// @title  Library for Kami Marketplace orderbook
 /// @notice Handles listings (ETH), offers (WETH), and collection offers (WETH)
@@ -60,6 +65,8 @@ library LibKamiMarket {
     ValueComponent(getAddrByID(comps, ValueCompID)).set(id, price);
     TimeStartComponent(getAddrByID(comps, TimeStartCompID)).set(id, block.timestamp);
     if (expiry > 0) TimeEndComponent(getAddrByID(comps, TimeEndCompID)).set(id, expiry);
+
+    _indexAddListing(comps, id);
   }
 
   /// @notice Create a specific offer entity (WETH, approval-based)
@@ -272,6 +279,53 @@ library LibKamiMarket {
   }
 
   /////////////////
+  // LISTING INDEX
+
+  /// @notice All listing IDs not yet filled/cancelled (may include expired ones)
+  function getListingIndex(IUintComp comps) internal view returns (uint256[] memory) {
+    ValuesComponent comp = ValuesComponent(getAddrByID(comps, ValuesCompID));
+    if (!comp.has(ACTIVE_LISTING_INDEX_ENTITY)) return new uint256[](0);
+    return comp.get(ACTIVE_LISTING_INDEX_ENTITY);
+  }
+
+  /// @notice Overwrite the listing index wholesale (admin backfill/repair)
+  function setListingIndex(IUintComp comps, uint256[] memory ids) internal {
+    ValuesComponent(getAddrByID(comps, ValuesCompID)).set(ACTIVE_LISTING_INDEX_ENTITY, ids);
+  }
+
+  /// @notice Whether an order is in ACTIVE state
+  function isOrderActive(IUintComp comps, uint256 id) internal view returns (bool) {
+    return getCompByID(comps, StateCompID).eqString(id, "ACTIVE");
+  }
+
+  /// @notice Whether an order has an expiry in the past
+  function isOrderExpired(IUintComp comps, uint256 id) internal view returns (bool) {
+    TimeEndComponent timeEndComp = TimeEndComponent(getAddrByID(comps, TimeEndCompID));
+    return timeEndComp.has(id) && block.timestamp > timeEndComp.get(id);
+  }
+
+  function _indexAddListing(IUintComp comps, uint256 id) internal {
+    uint256[] memory cur = getListingIndex(comps);
+    uint256[] memory next = new uint256[](cur.length + 1);
+    for (uint256 i; i < cur.length; i++) next[i] = cur[i];
+    next[cur.length] = id;
+    setListingIndex(comps, next);
+  }
+
+  /// @dev tolerant: no-op when id is absent (offers, pre-index listings)
+  function _indexRemoveListing(IUintComp comps, uint256 id) internal {
+    uint256[] memory cur = getListingIndex(comps);
+    for (uint256 i; i < cur.length; i++) {
+      if (cur[i] != id) continue;
+      uint256[] memory next = new uint256[](cur.length - 1);
+      for (uint256 j; j < i; j++) next[j] = cur[j];
+      for (uint256 j = i + 1; j < cur.length; j++) next[j - 1] = cur[j];
+      setListingIndex(comps, next);
+      return;
+    }
+  }
+
+  /////////////////
   // CLEANUP
 
   function _markFilled(IUintComp comps, uint256 id) internal {
@@ -286,6 +340,8 @@ library LibKamiMarket {
 
   /// @notice Remove indexed/queryable components after order is settled
   function _cleanup(IUintComp comps, uint256 id) internal {
+    _indexRemoveListing(comps, id); // no-op for offers
+
     IDOwnsKamiOrderComponent(getAddrByID(comps, IDOwnsKamiOrderCompID)).remove(id);
 
     // conditionally remove optional components

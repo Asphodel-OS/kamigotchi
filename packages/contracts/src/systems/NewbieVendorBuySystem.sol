@@ -20,14 +20,18 @@ import { LibSoulbound } from "libraries/LibSoulbound.sol";
 uint256 constant ID = uint256(keccak256("system.newbievendor.buy"));
 
 uint256 constant VENDOR_ENTITY = uint256(keccak256("newbie.vendor"));
-uint256 constant TWAP_ENTITY = uint256(keccak256("newbie.vendor.twap"));
 uint256 constant DEFAULT_MIN_PRICE = 0.005 ether;
+uint256 constant BOTTOM_LISTINGS_COUNT = 10;
+uint256 constant FLOOR_PREMIUM_BPS = 11_000; // 110% of the marketplace floor
 
-/// @notice Newbie Kami Vendor — buy one kami at TWAP price (one-time per player)
-/// @dev Price is derived from a TWAP oracle fed by marketplace sales (LibTWAP).
-///      Returns max(twapPrice, minPrice). The vendor holds kamis staked in-game.
-///      Admin sets a pool of kami indices; the first 3 are displayed for sale.
-///      When one is bought, the next from the pool fills in.
+/// @notice Newbie Kami Vendor — buy one kami at market-floor price (one-time per player)
+/// @dev Price tracks the marketplace: 110% of the average of the 10 cheapest
+///      active listings (vendor's own excluded), clamped below by minPrice.
+///      The clamp bounds manipulation via fake cheap listings — worst case the
+///      vendor sells at the admin-set floor, one kami per <24h-old account.
+///      The vendor holds kamis staked in-game. Admin sets a pool of kami
+///      indices; the first 3 are displayed for sale. When one is bought, the
+///      next from the pool fills in.
 contract NewbieVendorBuySystem is System {
   constructor(IWorld _world, address _components) System(_world, _components) {}
 
@@ -138,35 +142,53 @@ contract NewbieVendorBuySystem is System {
     }
   }
 
-  /// @notice Compute vendor price from TWAP oracle, floored at minimum price
-  /// @return price max(twapPrice, minPrice)
+  /// @notice Compute vendor price from the marketplace floor
+  /// @return price max(110% of avg(10 cheapest active listings), minPrice)
   function calcPrice() public view returns (uint256 price) {
     uint256 minPrice = LibConfig.get(components, "NEWBIE_VENDOR_MIN_PRICE");
     if (minPrice == 0) minPrice = DEFAULT_MIN_PRICE;
 
-    ValuesComponent valuesComp = ValuesComponent(getAddrByID(components, ValuesCompID));
-    if (!valuesComp.has(TWAP_ENTITY)) return minPrice;
+    uint256 floorAvg = _avgBottomListings();
+    if (floorAvg == 0) return minPrice; // no eligible listings
 
-    uint256[] memory data = valuesComp.get(TWAP_ENTITY);
-    if (data.length != 5) return minPrice;
+    price = (floorAvg * FLOOR_PREMIUM_BPS) / 10_000;
+    if (price < minPrice) price = minPrice;
+  }
 
-    uint256 cumulativePriceSeconds = data[0];
-    uint256 lastPrice = data[1];
-    uint256 lastUpdateTime = data[2];
-    uint256 snapshotCumulative = data[3];
-    uint256 snapshotTimestamp = data[4];
+  /// @notice Average price of the cheapest BOTTOM_LISTINGS_COUNT active,
+  ///         unexpired marketplace listings, excluding the vendor's own
+  function _avgBottomListings() internal view returns (uint256) {
+    uint256[] memory ids = LibKamiMarket.getListingIndex(components);
+    if (ids.length == 0) return 0;
 
-    uint256 windowTime = block.timestamp - snapshotTimestamp;
-    if (windowTime == 0) {
-      // just after snapshot — use lastPrice
-      return lastPrice > minPrice ? lastPrice : minPrice;
+    uint256 vendorAccID = uint256(
+      uint160(LibConfig.getAddress(components, "NEWBIE_VENDOR_ADDRESS"))
+    );
+
+    uint256[] memory lowest = new uint256[](BOTTOM_LISTINGS_COUNT);
+    uint256 count;
+    for (uint256 i; i < ids.length; i++) {
+      uint256 id = ids[i];
+      if (!LibKamiMarket.isOrderActive(components, id)) continue;
+      if (LibKamiMarket.isOrderExpired(components, id)) continue;
+      if (LibKamiMarket.getOwner(components, id) == vendorAccID) continue;
+
+      uint256 p = LibKamiMarket.getPrice(components, id);
+      if (count < BOTTOM_LISTINGS_COUNT) {
+        lowest[count++] = p;
+      } else {
+        uint256 maxIdx;
+        for (uint256 j = 1; j < BOTTOM_LISTINGS_COUNT; j++) {
+          if (lowest[j] > lowest[maxIdx]) maxIdx = j;
+        }
+        if (p < lowest[maxIdx]) lowest[maxIdx] = p;
+      }
     }
+    if (count == 0) return 0;
 
-    // extend cumulative to now
-    uint256 liveCumulative = cumulativePriceSeconds + lastPrice * (block.timestamp - lastUpdateTime);
-    uint256 twapPrice = (liveCumulative - snapshotCumulative) / windowTime;
-
-    return twapPrice > minPrice ? twapPrice : minPrice;
+    uint256 sum;
+    for (uint256 i; i < count; i++) sum += lowest[i];
+    return sum / count;
   }
 
   function _emitBuy(uint256 accID, uint32 kamiIndex, uint256 price) internal {

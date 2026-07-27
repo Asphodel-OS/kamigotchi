@@ -1,0 +1,251 @@
+// SPDX-License-Identifier: AGPL-3.0-only
+pragma solidity >=0.8.28;
+
+import "tests/utils/SetupTemplate.t.sol";
+import { KamiMarketVault } from "tokens/KamiMarketVault.sol";
+import { OpenMintable } from "tokens/OpenMintable.sol";
+import { LibFlag } from "libraries/LibFlag.sol";
+import { LibKami } from "libraries/LibKami.sol";
+import { LibKami721 } from "libraries/LibKami721.sol";
+
+/// @notice Tests for Newbie Vendor floor-derived pricing:
+///         calcPrice = max(110% of avg(10 cheapest active listings), minPrice)
+///         with the vendor's own and expired listings excluded.
+contract NewbieVendorFloorPriceTest is SetupTemplate {
+  uint256 constant MIN_PRICE = 0.005 ether;
+
+  KamiMarketVault vault;
+  OpenMintable weth;
+  address treasury;
+
+  function setUp() public override {
+    super.setUp();
+    vm.roll(_currBlock++);
+
+    weth = new OpenMintable("Wrapped Ether", "WETH");
+    vault = new KamiMarketVault(address(weth), address(LibKami721.getContract(components)), deployer);
+    treasury = address(0xFEE);
+
+    vm.startPrank(deployer);
+
+    // Vendor: alice's owner wallet holds the vendor stock
+    __NewbieVendorRegistrySystem.setEnabled(true);
+    __NewbieVendorRegistrySystem.setVendorAddress(alice.owner);
+    __NewbieVendorRegistrySystem.setCycleDuration(172800);
+    __NewbieVendorRegistrySystem.setMinPrice(MIN_PRICE);
+
+    // Marketplace
+    vault.authorizeCaller(address(_KamiMarketAcceptOfferSystem));
+    __KamiMarketRegistrySystem.setVault(address(vault));
+    __KamiMarketRegistrySystem.setFeeRecipient(treasury);
+    __KamiMarketRegistrySystem.setEnabled(true);
+    __KamiMarketRegistrySystem.setPurchaseCooldown(3600);
+
+    // 0% fee for simpler price math
+    uint32[8] memory feeRate;
+    feeRate[0] = 4;
+    feeRate[1] = 0;
+    __KamiMarketRegistrySystem.setFeeRate(feeRate);
+
+    vm.stopPrank();
+  }
+
+  /////////////////
+  // HELPERS
+
+  function _createStakedKami(PlayerAccount memory acc) internal returns (uint256 kamiID, uint32 kamiIndex) {
+    kamiID = _mintKami(acc);
+    kamiIndex = LibKami.getIndex(components, kamiID);
+  }
+
+  function _listKami(
+    PlayerAccount memory acc,
+    uint32 kamiIndex,
+    uint256 price
+  ) internal returns (uint256 orderID) {
+    return _listKamiWithExpiry(acc, kamiIndex, price, 0);
+  }
+
+  function _listKamiWithExpiry(
+    PlayerAccount memory acc,
+    uint32 kamiIndex,
+    uint256 price,
+    uint256 expiry
+  ) internal returns (uint256 orderID) {
+    vm.startPrank(acc.operator);
+    orderID = abi.decode(_KamiMarketListSystem.executeTyped(kamiIndex, price, expiry), (uint256));
+    vm.stopPrank();
+  }
+
+  function _buyKami(PlayerAccount memory acc, uint256 listingID, uint256 value) internal {
+    uint256[] memory ids = new uint256[](1);
+    ids[0] = listingID;
+    vm.deal(acc.owner, value + 1 ether);
+    vm.startPrank(acc.owner);
+    _KamiMarketBuySystem.executeTyped{ value: value }(ids);
+    vm.stopPrank();
+  }
+
+  function _cancelListing(PlayerAccount memory acc, uint256 orderID) internal {
+    vm.startPrank(acc.operator);
+    _KamiMarketCancelSystem.executeTyped(orderID);
+    vm.stopPrank();
+  }
+
+  /// @notice list `count` of bob's kamis at the given prices
+  function _listMany(uint256[] memory prices) internal returns (uint256[] memory orderIDs) {
+    orderIDs = new uint256[](prices.length);
+    for (uint256 i; i < prices.length; i++) {
+      (, uint32 kamiIndex) = _createStakedKami(bob);
+      orderIDs[i] = _listKami(bob, kamiIndex, prices[i]);
+    }
+  }
+
+  /// @notice put one of alice's (vendor's) kamis in the display pool
+  function _stockVendor() internal returns (uint32 kamiIndex) {
+    uint256 kamiID = _mintKami(alice);
+    kamiIndex = LibKami.getIndex(components, kamiID);
+    uint256[] memory pool = new uint256[](1);
+    pool[0] = uint256(kamiIndex);
+    vm.prank(deployer);
+    __NewbieVendorRegistrySystem.setPool(pool);
+  }
+
+  /////////////////
+  // PRICING
+
+  function testPriceIsMinWithNoListings() public view {
+    assertEq(_NewbieVendorBuySystem.calcPrice(), MIN_PRICE);
+  }
+
+  function testPriceTracksListingAverage() public {
+    uint256[] memory prices = new uint256[](2);
+    prices[0] = 0.02 ether;
+    prices[1] = 0.03 ether;
+    _listMany(prices);
+
+    // avg(0.02, 0.03) = 0.025; * 110% = 0.0275
+    assertEq(_NewbieVendorBuySystem.calcPrice(), 0.0275 ether);
+  }
+
+  function testPriceUsesBottomTenOnly() public {
+    // 12 listings at 0.01..0.12 — the two most expensive are ignored
+    uint256[] memory prices = new uint256[](12);
+    for (uint256 i; i < 12; i++) prices[i] = (i + 1) * 0.01 ether;
+    _listMany(prices);
+
+    // avg(0.01..0.10) = 0.055; * 110% = 0.0605
+    assertEq(_NewbieVendorBuySystem.calcPrice(), 0.0605 ether);
+  }
+
+  function testDustListingClampsAtMinPrice() public {
+    uint256[] memory prices = new uint256[](1);
+    prices[0] = 1; // 1 wei manipulation attempt
+    _listMany(prices);
+
+    assertEq(_NewbieVendorBuySystem.calcPrice(), MIN_PRICE);
+  }
+
+  function testVendorOwnListingsExcluded() public {
+    // the vendor (alice) listing cheap must not drag her own price down
+    (, uint32 kamiIndex) = _createStakedKami(alice);
+    _listKami(alice, kamiIndex, 0.001 ether);
+
+    assertEq(_NewbieVendorBuySystem.calcPrice(), MIN_PRICE);
+  }
+
+  function testFilledAndCancelledListingsDropOut() public {
+    uint256[] memory prices = new uint256[](2);
+    prices[0] = 0.02 ether;
+    prices[1] = 0.04 ether;
+    uint256[] memory orderIDs = _listMany(prices);
+
+    assertEq(_NewbieVendorBuySystem.calcPrice(), 0.033 ether); // avg 0.03 * 110%
+
+    _buyKami(charlie, orderIDs[0], 0.02 ether);
+    assertEq(_NewbieVendorBuySystem.calcPrice(), 0.044 ether); // only 0.04 left
+
+    _cancelListing(bob, orderIDs[1]);
+    assertEq(_NewbieVendorBuySystem.calcPrice(), MIN_PRICE); // index empty
+  }
+
+  function testExpiredListingsExcluded() public {
+    (, uint32 kamiIndex) = _createStakedKami(bob);
+    _listKamiWithExpiry(bob, kamiIndex, 0.02 ether, block.timestamp + 100);
+
+    assertEq(_NewbieVendorBuySystem.calcPrice(), 0.022 ether);
+
+    _fastForward(200);
+    assertEq(_NewbieVendorBuySystem.calcPrice(), MIN_PRICE);
+  }
+
+  /////////////////
+  // BUY FLOW
+
+  function testVendorBuyChargesFloorPrice() public {
+    uint256[] memory prices = new uint256[](1);
+    prices[0] = 0.02 ether;
+    _listMany(prices);
+    uint32 kamiIndex = _stockVendor();
+
+    uint256 expectedPrice = 0.022 ether;
+    assertEq(_NewbieVendorBuySystem.calcPrice(), expectedPrice);
+
+    vm.deal(charlie.owner, 1 ether);
+    vm.startPrank(charlie.owner);
+    vm.expectRevert("NewbieVendor: insufficient ETH");
+    _NewbieVendorBuySystem.executeTyped{ value: expectedPrice - 1 }(kamiIndex);
+
+    _NewbieVendorBuySystem.executeTyped{ value: expectedPrice }(kamiIndex);
+    vm.stopPrank();
+
+    assertTrue(LibFlag.has(components, charlie.id, "NEWBIE_VENDOR_PURCHASED"));
+  }
+
+  /////////////////
+  // ADMIN INDEX REBUILD
+
+  function testRebuildListingIndex() public {
+    uint256[] memory prices = new uint256[](2);
+    prices[0] = 0.02 ether;
+    prices[1] = 0.03 ether;
+    uint256[] memory orderIDs = _listMany(prices);
+
+    // wipe → price falls back to min
+    vm.prank(deployer);
+    __KamiMarketRegistrySystem.rebuildListingIndex(new uint256[](0));
+    assertEq(_NewbieVendorBuySystem.calcPrice(), MIN_PRICE);
+
+    // restore → tracks listings again
+    vm.prank(deployer);
+    __KamiMarketRegistrySystem.rebuildListingIndex(orderIDs);
+    assertEq(_NewbieVendorBuySystem.calcPrice(), 0.0275 ether);
+  }
+
+  function testRebuildListingIndexRejectsInactive() public {
+    uint256[] memory prices = new uint256[](1);
+    prices[0] = 0.02 ether;
+    uint256[] memory orderIDs = _listMany(prices);
+
+    _buyKami(charlie, orderIDs[0], 0.02 ether); // now FILLED
+
+    vm.prank(deployer);
+    vm.expectRevert("KamiMarketRegistry: not active");
+    __KamiMarketRegistrySystem.rebuildListingIndex(orderIDs);
+  }
+
+  function testRebuildListingIndexRejectsNonListing() public {
+    uint256[] memory ids = new uint256[](1);
+    ids[0] = 12345; // arbitrary non-listing entity
+
+    vm.prank(deployer);
+    vm.expectRevert("KamiMarketRegistry: not a listing");
+    __KamiMarketRegistrySystem.rebuildListingIndex(ids);
+  }
+
+  function testRebuildListingIndexOnlyAdmin() public {
+    vm.prank(bob.owner);
+    vm.expectRevert();
+    __KamiMarketRegistrySystem.rebuildListingIndex(new uint256[](0));
+  }
+}
