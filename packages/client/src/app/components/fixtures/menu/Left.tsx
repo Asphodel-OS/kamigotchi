@@ -2,7 +2,7 @@ import styled from 'styled-components';
 
 import { useLayers } from 'app/root/hooks';
 import { UIComponent } from 'app/root/types';
-import { useSelected, useVisibility } from 'app/stores';
+import { useAccount, useSelected, useVisibility } from 'app/stores';
 import { queryNodeByIndex } from 'network/shapes/Node';
 import {
   AccountMenuButton,
@@ -19,6 +19,9 @@ export const LeftMenuFixture: UIComponent = {
   Render: () => {
     const layers = useLayers();
     const menuVisible = useVisibility((s) => s.fixtures.menu);
+    // every button here is dead pre-account — hide until registration completes
+    const accountValidations = useAccount((s) => s.validations);
+    const accountReady = accountValidations.accountChecked && accountValidations.accountExists;
 
     /////////////////
     // PREPARATION
@@ -34,7 +37,7 @@ export const LeftMenuFixture: UIComponent = {
     // RENDER
 
     return (
-      <Wrapper style={{ display: menuVisible ? 'flex' : 'none' }}>
+      <Wrapper style={{ display: menuVisible && accountReady ? 'flex' : 'none' }}>
         <AccountMenuButton />
         <PartyMenuButton />
         <MapMenuButton />

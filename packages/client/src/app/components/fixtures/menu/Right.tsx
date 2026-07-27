@@ -1,5 +1,5 @@
 import { UIComponent } from 'app/root/types';
-import { useVisibility } from 'app/stores';
+import { useAccount, useVisibility } from 'app/stores';
 import styled from 'styled-components';
 import {
   ChatMenuButton,
@@ -15,9 +15,14 @@ export const RightMenuFixture: UIComponent = {
   id: 'RightMenuFixture',
   Render: () => {
     const menuVisible = useVisibility((s) => s.fixtures.menu);
+    // pre-account, every button here is a no-op except More (Settings/Bridge/
+    // Help live inside) — hide the rest until registration completes
+    const accountValidations = useAccount((s) => s.validations);
+    const accountReady = accountValidations.accountChecked && accountValidations.accountExists;
+    const showFull = menuVisible && accountReady;
     return (
       <>
-        <Wrapper style={{ display: menuVisible ? 'flex' : 'none' }}>
+        <Wrapper style={{ display: showFull ? 'flex' : 'none' }}>
           <KamiSwapMenuButton />
           <TradingMenuButton />
           <CraftMenuButton />
@@ -26,7 +31,7 @@ export const RightMenuFixture: UIComponent = {
           <ChatMenuButton />
           <MoreMenuButton />
         </Wrapper>
-        <Wrapper style={{ display: menuVisible ? 'none' : 'flex' }}>
+        <Wrapper style={{ display: showFull ? 'none' : 'flex' }}>
           <MoreMenuButton />
         </Wrapper>
       </>
