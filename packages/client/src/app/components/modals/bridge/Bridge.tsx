@@ -12,6 +12,7 @@ import { parseBigIntSafe } from 'utils/numbers';
 import { ModalHeader, ModalWrapper } from 'app/components/library';
 import { UIComponent } from 'app/root/types';
 import { useNetwork, useVisibility } from 'app/stores';
+import { queryAccountFromEmbedded } from 'network/shapes/Account';
 import { getEvmWalletProvider, getInjectedWallet } from 'app/utils';
 import { MenuIcons } from 'assets/images/icons/menu';
 import { DEAD_ADDRESS } from 'constants/addresses';
@@ -59,6 +60,9 @@ const NEWBIE_VENDOR_BUY_SYSTEM_ID = 'system.newbievendor.buy';
 // for a first session (~300+ moves) — targets a ~0.01 total default
 const PREFILL_OPERATOR_GAS_HEADROOM = 3_000_000_000_000_000n; // 0.003 ETH
 const PREFILL_ROUNDING_STEP = 100_000_000_000_000n; // round default up to 0.0001
+// how long the "Bridge Complete" celebration stays up before the modal
+// auto-advances a new player to the registration screen
+const AUTO_ADVANCE_DELAY_MS = 2500;
 
 export const BridgeModal: UIComponent = {
   id: 'BridgeModal',
@@ -69,6 +73,7 @@ export const BridgeModal: UIComponent = {
     const { network } = useLayers();
     const { world, components } = network;
     const isOpen = useVisibility((s) => s.modals.bridge);
+    const setModals = useVisibility((s) => s.setModals);
     const setBridgeProcessActive = useVisibility((s) => s.setBridgeProcessActive);
     const selectedAddress = useNetwork((s) => s.selectedAddress);
     const { wallets } = useWallets();
@@ -95,6 +100,7 @@ export const BridgeModal: UIComponent = {
     const previousWalletChainIdRef = useRef<string | null>(null);
     const closedDuringWalletPromptRef = useRef(false);
     const bridgeAbortRef = useRef<AbortController>(new AbortController());
+    const autoAdvanceTimerRef = useRef<number | null>(null);
 
     const setUpdates = (value: BridgeUpdateEntry[] | ((prev: BridgeUpdateEntry[]) => BridgeUpdateEntry[])) => {
       const next = typeof value === 'function' ? value(updatesRef.current) : value;
@@ -144,7 +150,15 @@ export const BridgeModal: UIComponent = {
       clearBridgePolling();
     };
 
+    const cancelAutoAdvance = () => {
+      if (autoAdvanceTimerRef.current !== null) {
+        window.clearTimeout(autoAdvanceTimerRef.current);
+        autoAdvanceTimerRef.current = null;
+      }
+    };
+
     const clearBridgeState = (bridging: boolean) => {
+      cancelAutoAdvance();
       bridgeAbortRef.current.abort();
       bridgeAbortRef.current = new AbortController();
       resetBridgeUiState();
@@ -365,6 +379,24 @@ export const BridgeModal: UIComponent = {
       if (persisted) saveBridgePolling({ ...persisted, updates: updatesRef.current, completed: true });
     };
 
+    // after a successful bridge, advance a new player to the registration
+    // screen instead of leaving them parked on the modal. existing accounts
+    // (topping up mid-game) keep the modal open
+    const scheduleAutoAdvance = () => {
+      if (queryAccountFromEmbedded(network)) return;
+      cancelAutoAdvance();
+      autoAdvanceTimerRef.current = window.setTimeout(() => {
+        autoAdvanceTimerRef.current = null;
+        // callers reset phase to idle right after completion; anything else
+        // means a new bridge attempt started during the delay
+        if (phaseRef.current !== 'idle') return;
+        if (queryAccountFromEmbedded(network)) return;
+        setShouldResetOnNextOpen(true);
+        setBridgeProcessActive(false);
+        setModals({ bridge: false });
+      }, AUTO_ADVANCE_DELAY_MS);
+    };
+
     const waitForBridgeCompletion = async (
       pollingSourceChain: EVMChainOption,
       yominetStartBlock: number,
@@ -417,6 +449,7 @@ export const BridgeModal: UIComponent = {
           appendUpdate('success', `**Yominet** Tx: ${receivedOnYominet}`, `${DefaultChain.blockExplorers?.default.url}/tx/${receivedOnYominet}`);
           appendUpdate('celebrate', 'Bridge Complete Congratulations');
           persistCompletion();
+          scheduleAutoAdvance();
           return;
         }
       }
@@ -438,6 +471,7 @@ export const BridgeModal: UIComponent = {
     };
 
     const handleBridgeModalClose = () => {
+      cancelAutoAdvance(); // a manual close during the celebration wins
       if (!isOpen || phaseRef.current === 'idle') return true;
       if (phaseRef.current === 'awaitingApproval') {
         closedDuringWalletPromptRef.current = true;
