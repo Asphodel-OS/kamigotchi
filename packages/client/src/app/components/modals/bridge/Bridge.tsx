@@ -502,9 +502,15 @@ export const BridgeModal: UIComponent = {
         BigInt(persisted.expectedAmountOut),
         persisted.sourceTxHash,
         bridgeAbortRef.current.signal
-      ).finally(() => {
-        setBridgePhase('idle');
-      });
+      )
+        .catch(() => {
+          // transient RPC failure — keep the recovery path available
+          appendUpdate('meta', 'Could not check right now. Try again in a moment.');
+          setPollTimedOut(true);
+        })
+        .finally(() => {
+          setBridgePhase('idle');
+        });
     };
 
     const handleBridgeModalClose = () => {
@@ -619,9 +625,14 @@ export const BridgeModal: UIComponent = {
         BigInt(persisted.expectedAmountOut),
         persisted.sourceTxHash,
         bridgeAbortRef.current.signal
-      ).finally(() => {
-        setBridgePhase('idle');
-      });
+      )
+        .catch(() => {
+          // transient RPC failure on the resumed poll — surface the retry path
+          setPollTimedOut(true);
+        })
+        .finally(() => {
+          setBridgePhase('idle');
+        });
     }, [selectedAddress]);
 
     useEffect(() => {
