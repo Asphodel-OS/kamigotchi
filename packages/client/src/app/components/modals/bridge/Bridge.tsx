@@ -541,13 +541,16 @@ export const BridgeModal: UIComponent = {
       if (!isOpen) amountTouchedRef.current = false;
     }, [isOpen]);
     useEffect(() => {
+      // isOpen dep: reopening must re-apply the default even when the cached
+      // price is unchanged (the touched ref was just reset on close)
+      if (!isOpen) return;
       if (amountTouchedRef.current || phaseRef.current !== 'idle') return;
       const price = parseBigIntSafe(vendorPriceData);
       if (price === undefined) return;
       const total = price + PREFILL_OPERATOR_GAS_HEADROOM;
       const rounded = ((total + PREFILL_ROUNDING_STEP - 1n) / PREFILL_ROUNDING_STEP) * PREFILL_ROUNDING_STEP;
       setAmount(formatEther(rounded));
-    }, [vendorPriceData]);
+    }, [vendorPriceData, isOpen]);
 
     useEffect(() => {
       if (!accountReady) return;
