@@ -473,7 +473,9 @@ export const BridgeModal: UIComponent = {
           if (requestedChain && !DISABLED_SOURCE_CHAIN_IDS.has(requestedChain.chainId)) {
             setSourceChain(requestedChain);
           }
-          if (routeRequest.amount_in) {
+          // the built routeRequest always carries a default amount_in — only
+          // honor it when the caller explicitly passed one
+          if (routeRequest.amount_in && details.explicitAmountIn) {
             try {
               setAmount(formatEther(BigInt(routeRequest.amount_in)));
               amountTouchedRef.current = true;

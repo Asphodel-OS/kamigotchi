@@ -2,7 +2,6 @@ import InfoIcon from '@mui/icons-material/Info';
 import { EntityID } from 'engine/recs';
 import { useState } from 'react';
 import styled from 'styled-components';
-import { parseEther } from 'viem';
 
 import { IconButton, TextTooltip } from 'app/components/library';
 import { triggerBridgeModal } from 'app/triggers';
@@ -15,8 +14,6 @@ import { abbreviateAddress } from 'utils/address';
 import { playSignup } from 'utils/sounds';
 import { Description, Row } from './components';
 import { Section } from './components/shared';
-
-const REGISTRATION_BRIDGE_AMOUNT_WEI = parseEther(GasConstants.Empty.toString()).toString();
 
 export const Registration = ({
   address,
@@ -139,13 +136,9 @@ export const Registration = ({
               <IconButton
                 scale={3}
                 img={MenuIcons.kami}
-                onClick={() =>
-                  triggerBridgeModal({
-                    routeRequest: {
-                      amount_in: REGISTRATION_BRIDGE_AMOUNT_WEI,
-                    },
-                  })
-                }
+                // no amount prefill — the bridge modal defaults to Zevana's
+                // live price + operator gas headroom
+                onClick={() => triggerBridgeModal()}
                 text='Bridge ETH to Yominet'
               />
             </Description>
