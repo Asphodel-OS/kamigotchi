@@ -1,6 +1,6 @@
 import InfoIcon from '@mui/icons-material/Info';
 import { EntityID } from 'engine/recs';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 
 import { IconButton, TextTooltip } from 'app/components/library';
@@ -14,6 +14,9 @@ import { abbreviateAddress } from 'utils/address';
 import { playSignup } from 'utils/sounds';
 import { Description, Row } from './components';
 import { Section } from './components/shared';
+
+// staged username survives the multi-minute bridge wait (and reloads)
+const STAGED_NAME_PREFIX = 'kami:stagedUsername:';
 
 export const Registration = ({
   address,
@@ -34,7 +37,12 @@ export const Registration = ({
 }) => {
   const ethBalance = useTokens((s) => s.eth.balance);
 
-  const [name, setName] = useState('');
+  const storageKey = `${STAGED_NAME_PREFIX}${address.selected}`;
+  const [name, setName] = useState(() => localStorage.getItem(storageKey) ?? '');
+  // armed = the player staged their name during the bridge wait; the account
+  // is created automatically (wallet still prompts) once ETH lands
+  const [autoCreate, setAutoCreate] = useState(() => localStorage.getItem(storageKey) !== null);
+  const autoFiringRef = useRef(false);
 
   const isNameTaken = (username: string) => {
     return NameCache.has(username);
@@ -57,7 +65,34 @@ export const Registration = ({
   const handleNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const truncated = event.target.value.slice(0, 16);
     setName(truncated);
+    if (autoCreate) localStorage.setItem(storageKey, truncated); // keep stage in sync
   };
+
+  // stage the name and kick the bridge off — creation fires when ETH lands
+  const armAutoCreate = () => {
+    if (getError()) return;
+    localStorage.setItem(storageKey, name);
+    setAutoCreate(true);
+    triggerBridgeModal();
+  };
+
+  const disarmAutoCreate = () => {
+    localStorage.removeItem(storageKey);
+    setAutoCreate(false);
+  };
+
+  // fire the staged creation once funds arrive (the owner wallet still
+  // prompts for the signature — this just saves the player the babysitting)
+  useEffect(() => {
+    if (!autoCreate || autoFiringRef.current) return;
+    if (needsToBridge()) return;
+    if (getError()) return;
+    autoFiringRef.current = true;
+    disarmAutoCreate();
+    handleAccountCreation().finally(() => {
+      autoFiringRef.current = false;
+    });
+  }, [ethBalance, autoCreate, name]);
 
   const handleAccountCreation = async () => {
     playSignup();
@@ -72,6 +107,7 @@ export const Registration = ({
       // picks up the freshly created account on the next render cycle.
       OperatorCache.clear();
       NameCache.clear();
+      localStorage.removeItem(storageKey); // staged name no longer needed
     } catch (e) {
       console.error('ERROR CREATING ACCOUNT:', e);
     }
@@ -131,17 +167,41 @@ export const Registration = ({
         <BridgeFlow>
           <Section padding={0.6}>
             <Description size={0.88}>
-              You need to bridge Ether to Yominet before you can play. This funds the tiny amount of
-              gas needed to create your account.
-              <IconButton
-                scale={3}
-                img={MenuIcons.kami}
-                // no amount prefill — the bridge modal defaults to Zevana's
-                // live price + operator gas headroom
-                onClick={() => triggerBridgeModal()}
-                text='Bridge ETH to Yominet'
-              />
+              You need to bridge Ether to Yominet before you can play. Pick your username now — your
+              account is created automatically the moment your ETH arrives.
             </Description>
+            <InputActionRow>
+              <Input
+                type='string'
+                value={name}
+                onChange={(e) => handleNameChange(e)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' && !getError() && !autoCreate) armAutoCreate();
+                }}
+                placeholder='choose your username'
+                style={{ pointerEvents: 'auto' }}
+              />
+              <IconButton
+                scale={2.4}
+                text={autoCreate ? 'Waiting for ETH...' : 'Create once ETH arrives'}
+                disabled={!!getError() || autoCreate}
+                onClick={armAutoCreate}
+              />
+            </InputActionRow>
+            <Text role='status' aria-live='polite'>
+              {getError() ??
+                (autoCreate
+                  ? 'Name staged! Your account will be created automatically when your ETH lands.'
+                  : '')}
+            </Text>
+            <IconButton
+              scale={3}
+              img={MenuIcons.kami}
+              // no amount prefill — the bridge modal defaults to Zevana's
+              // live price + operator gas headroom
+              onClick={() => triggerBridgeModal()}
+              text='Bridge ETH to Yominet'
+            />
             <DocsLink type='button' onClick={openDocs}>
               What is this?
             </DocsLink>
