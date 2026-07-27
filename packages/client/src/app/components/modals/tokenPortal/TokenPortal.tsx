@@ -5,9 +5,10 @@ import { v4 as uuid } from 'uuid';
 import { getAccount as _getAccount, getAccountByID } from 'app/cache/account';
 import { getPortalConfig } from 'app/cache/config';
 import { getItem as _getItem, getItemByIndex as _getItemByIndex } from 'app/cache/item';
-import { EmptyText, HelpChip, ModalWrapper } from 'app/components/library';
+import { EmptyText, HelpChip, IconButton, ModalWrapper } from 'app/components/library';
 import { UIComponent, useLayers } from 'app/root';
 import { useNetwork, useVisibility } from 'app/stores';
+import { TriggerIcons } from 'assets/images/icons/triggers';
 import { TokenIcons } from 'assets/images/tokens';
 import { getKamidenClient } from 'clients/kamiden';
 import { PortalReceipt, TokenPortalRequest } from 'clients/kamiden/proto';
@@ -25,6 +26,7 @@ import { getResultWithdraw, openBaselineLink } from './utils';
 
 // kamiswap (marketplace) tab pastels: blue for deposit, orange for withdraw
 const DEPOSIT_BLUE = '#E0EEFF';
+const GREEN = '#C2F0C2';
 const WITHDRAW_ORANGE = '#FFF0E0';
 
 const KamidenClient = getKamidenClient();
@@ -252,7 +254,6 @@ export const TokenPortalModal: UIComponent = {
         canExit
         overlay
         truncate
-        showScrollBar
       >
         {!accountEntity ? (
           <EmptyText text={['Failed to Connect Account']} size={1} />
@@ -287,12 +288,19 @@ export const TokenPortalModal: UIComponent = {
               state={{ mode, selected }}
             />
             <BottomRow>
-              <PillButton onClick={toggleQueue}>
-                {showQueue ? 'Hide Queue' : 'Queue'}
-              </PillButton>
-              <PillButton onClick={() => openBaselineLink(selected.token?.address ?? '')}>
-                Purchase $ONYX
-              </PillButton>
+              <BuyWrapper>
+                <IconButton
+                  fullWidth
+                  scale={2.2}
+                  color={GREEN}
+                  text='Purchase $ONYX'
+                  onClick={() => openBaselineLink(selected.token?.address ?? '')}
+                />
+              </BuyWrapper>
+              <IconButton
+                img={showQueue ? TriggerIcons.eyeOpen : TriggerIcons.eyeClosed}
+                onClick={toggleQueue}
+              />
             </BottomRow>
             {showQueue && (
               <Queue
@@ -380,21 +388,6 @@ const BottomRow = styled.div`
   gap: 0.6vw;
 `;
 
-const PillButton = styled.button`
-  border: 0.12vw solid #ccc;
-  border-radius: 0.5vw;
-  background: #fafafa;
-  color: #555;
-  padding: 0.4vw 0.9vw;
-  font-family: Pixel;
-  font-size: 0.75vw;
-  cursor: pointer;
-  pointer-events: auto;
-  transition:
-    background 0.12s,
-    border-color 0.12s;
-  &:hover {
-    background: #e8f0fe;
-    border-color: #a0c0e8;
-  }
+const BuyWrapper = styled.div`
+  flex: 1;
 `;

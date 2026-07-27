@@ -160,15 +160,8 @@ const Container = styled.div`
   align-items: center;
   overflow-y: auto;
 
-  scrollbar-width: thin;
-  scrollbar-color: #b6b6b6 transparent;
+  scrollbar-width: none;
   &::-webkit-scrollbar {
-    width: 0.3vw;
-    background: transparent;
-  }
-  &::-webkit-scrollbar-thumb {
-    background-color: #b6b6b6;
-    border-radius: 0.3vw;
-    background-clip: padding-box;
+    display: none;
   }
 `;

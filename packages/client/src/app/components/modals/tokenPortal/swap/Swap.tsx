@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
 import { PortalConfigs } from 'app/cache/config';
@@ -45,7 +45,9 @@ export const Swap = ({
   // hardcoded for now to just onyx
   const { allowance: onyxAllowance, balance: onyxBalance } = useTokens((s) => s.onyx);
 
+  // DEPOSIT: whole $ONYX paid in. WITHDRAW: item units withdrawn.
   const [amt, setAmt] = useState<number>(0);
+  useEffect(() => setAmt(0), [mode]);
 
   /////////////////
   // INTERPRETATION
@@ -53,23 +55,24 @@ export const Swap = ({
   const rate = getSwapRate(selected); // item units per 1 token
   const scale = selected.token?.scale ?? 0;
   const itemBalance = getInventoryBalance(inventory, selected.index);
-  const tokenBalanceUnits = Math.trunc(onyxBalance * rate); // wallet balance in item units
 
-  // deposit: the largest receivable amount whose taxed cost fits the wallet.
-  // getNeededDeposit = floor((amt+flat)/(1-rate)) <= wallet units
-  const maxDeposit = Math.max(
+  // deposit: most items receivable within the $ONYX typed in.
+  // getNeededDeposit rounds, so walk down until the charge fits
+  const unitsIn = amt * rate;
+  let receiveItems = Math.max(
     0,
-    Math.floor(tokenBalanceUnits * (1 - config.tax.import.rate)) - config.tax.import.flat
+    Math.floor(unitsIn * (1 - config.tax.import.rate)) - config.tax.import.flat
   );
-  const maxAmt = mode === 'DEPOSIT' ? maxDeposit : itemBalance;
+  while (receiveItems > 0 && getNeededDeposit(config, receiveItems) > unitsIn) receiveItems--;
+  const depositUnits = getNeededDeposit(config, receiveItems); // exact units charged
 
-  const neededUnits = getNeededDeposit(config, amt); // item units the deposit consumes
   const receivedUnits = getResultWithdraw(config, amt); // item units a withdrawal pays out
-  const tokenAmt = (mode === 'DEPOSIT' ? neededUnits : receivedUnits) / rate;
 
-  const needsApproval = mode === 'DEPOSIT' && neededUnits / rate > onyxAllowance;
+  const maxAmt = mode === 'DEPOSIT' ? Math.floor(onyxBalance) : itemBalance;
+  const needsApproval = mode === 'DEPOSIT' && depositUnits / rate > onyxAllowance;
   const insufficient = amt > maxAmt;
-  const zeroOutput = mode === 'WITHDRAW' && amt > 0 && receivedUnits <= 0;
+  const zeroOutput =
+    amt > 0 && (mode === 'DEPOSIT' ? receiveItems <= 0 : receivedUnits <= 0);
   const blocked = amt <= 0 || insufficient || zeroOutput;
 
   /////////////////
@@ -78,8 +81,8 @@ export const Swap = ({
   const triggerAction = () => {
     if (blocked) return;
     if (mode === 'DEPOSIT') {
-      if (needsApproval) approve(selected, neededUnits / rate);
-      else deposit(selected, amt, neededUnits);
+      if (needsApproval) approve(selected, depositUnits / rate);
+      else deposit(selected, receiveItems, depositUnits);
     } else {
       withdraw(selected, amt);
     }
@@ -88,8 +91,6 @@ export const Swap = ({
 
   /////////////////
   // DISPLAY
-
-  const delayDays = (config.delay ?? 0) / 86400;
 
   const actionText = () => {
     if (insufficient) return mode === 'DEPOSIT' ? 'insufficient $ONYX' : 'insufficient balance';
@@ -104,22 +105,32 @@ export const Swap = ({
         <Text size={0.95}>
           {mode === 'DEPOSIT' ? `You're receiving (in-game)` : `You're withdrawing (in-game)`}
         </Text>
-        <MaxLabel
-          onClick={() => {
-            playClick();
-            setAmt(maxAmt);
-          }}
-          title='fill max'
-        >
-          {mode === 'DEPOSIT' ? `max: ${maxAmt}` : `balance: ${itemBalance}`}
-        </MaxLabel>
+        {mode === 'WITHDRAW' ? (
+          <MaxLabel
+            onClick={() => {
+              playClick();
+              setAmt(maxAmt);
+            }}
+            title='fill max'
+          >
+            balance: {itemBalance}
+          </MaxLabel>
+        ) : (
+          <Text size={0.75} color='#999'>
+            balance: {itemBalance}
+          </Text>
+        )}
       </HeadRow>
       <TradeCard>
         <ItemBlockBox>
           <BigSprite src={selected.image} alt={selected.name} />
           <ItemName>{selected.name}</ItemName>
         </ItemBlockBox>
-        <AmountBox value={amt} set={setAmt} max={maxAmt} />
+        {mode === 'WITHDRAW' ? (
+          <AmountBox value={amt} set={setAmt} max={maxAmt} />
+        ) : (
+          <OutputField>{amt > 0 ? `${receiveItems}` : '0'}</OutputField>
+        )}
       </TradeCard>
     </SideBlock>
   );
@@ -130,16 +141,34 @@ export const Swap = ({
         <Text size={0.95}>
           {mode === 'DEPOSIT' ? `You're paying (wallet)` : `You're receiving (wallet)`}
         </Text>
-        <Text size={0.75} color='#999'>
-          wallet: {onyxBalance.toFixed(scale > 0 ? 2 : 0)} $ONYX
-        </Text>
+        {mode === 'DEPOSIT' ? (
+          <MaxLabel
+            onClick={() => {
+              playClick();
+              setAmt(maxAmt);
+            }}
+            title='fill max'
+          >
+            wallet: {onyxBalance.toFixed(scale > 0 ? 2 : 0)} $ONYX
+          </MaxLabel>
+        ) : (
+          <Text size={0.75} color='#999'>
+            wallet: {onyxBalance.toFixed(scale > 0 ? 2 : 0)} $ONYX
+          </Text>
+        )}
       </HeadRow>
       <TradeCard>
         <ItemBlockBox>
           <BigSprite src={TokenIcons.onyx} alt='$ONYX' />
           <ItemName>$ONYX</ItemName>
         </ItemBlockBox>
-        <OutputField>{amt > 0 ? `~${tokenAmt.toFixed(scale)}` : '0'}</OutputField>
+        {mode === 'DEPOSIT' ? (
+          <AmountBox value={amt} set={setAmt} max={maxAmt} />
+        ) : (
+          <OutputField>
+            {amt > 0 ? `~${(receivedUnits / rate).toFixed(scale)}` : '0'}
+          </OutputField>
+        )}
       </TradeCard>
     </SideBlock>
   );
@@ -159,11 +188,6 @@ export const Swap = ({
       )}
 
       <Info>
-        {mode === 'WITHDRAW' && (
-          <Text size={0.72} color='#888'>
-            withdrawals unlock after ~{delayDays.toFixed(0)}d · claim from the queue below
-          </Text>
-        )}
         {mode === 'DEPOSIT' && needsApproval && amt > 0 && (
           <Text size={0.72} color='#888'>
             approval required before depositing
@@ -171,7 +195,7 @@ export const Swap = ({
         )}
         {zeroOutput && (
           <Text size={0.72} color='#b23b3b'>
-            ⚠ amount too small: taxes consume the entire withdrawal
+            ⚠ amount too small: taxes consume it entirely
           </Text>
         )}
       </Info>
