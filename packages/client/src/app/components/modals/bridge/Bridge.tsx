@@ -492,12 +492,18 @@ export const BridgeModal: UIComponent = {
     // (~0.01 total). purely a prefill: anything the user (or a route
     // request) typed wins, and mid-bridge the amount is never changed
     const vendorSystemAddress = getSystemAddr(world, components, NEWBIE_VENDOR_BUY_SYSTEM_ID);
+    const vendorSystemKnown = !!vendorSystemAddress && vendorSystemAddress !== DEAD_ADDRESS;
     const { data: vendorPriceData } = useReadContract({
       address: vendorSystemAddress,
       abi: NewbieVendorBuySystem.abi as Abi,
       functionName: 'calcPrice',
-      query: { enabled: isOpen && !!vendorSystemAddress },
+      query: { enabled: isOpen && vendorSystemKnown },
     });
+    // a fresh open takes the live default again — edits only stick for the
+    // session the modal is open
+    useEffect(() => {
+      if (!isOpen) amountTouchedRef.current = false;
+    }, [isOpen]);
     useEffect(() => {
       if (amountTouchedRef.current || phaseRef.current !== 'idle') return;
       const price = parseBigIntSafe(vendorPriceData);
