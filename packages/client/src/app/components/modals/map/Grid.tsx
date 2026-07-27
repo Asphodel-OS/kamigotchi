@@ -221,10 +221,11 @@ export const Grid = ({
   };
 
   // get the color of a room tile
+  // (quest targets deliberately get no tint — the pulsing ! marker carries it,
+  // a color wash fights the pixel art underneath)
   const getTileColor = (room: Room) => {
     if (!room.index) return;
     if (room.index === roomIndex) return 'rgba(51,187,51,0.9)';
-    if (questTargetMap.has(room.index)) return 'rgba(255,196,0,0.7)'; // quest target
     if (!currExit(room)) return;
     return isRoomBlocked(room) ? 'rgba(0,0,0,0.3)' : 'rgba(255,136,85,0.6)';
   };
@@ -359,7 +360,12 @@ export const Grid = ({
                     onMouseEnter={() => updateRoomStats(room.index)}
                   >
                     {questTargetMap.has(room.index) && room.index !== roomIndex && (
-                      <QuestMarker>!</QuestMarker>
+                      <QuestMarker>
+                        !
+                        {questTargetMap.get(room.index)!.length > 1
+                          ? `×${questTargetMap.get(room.index)!.length}`
+                          : ''}
+                      </QuestMarker>
                     )}
                     <GridFilter
                       data={{
@@ -420,27 +426,30 @@ const Row = styled.div`
 
 const QuestMarker = styled.span`
   position: absolute;
-  top: -0.1vw;
-  right: 0.05vw;
-  color: #ffc400;
-  font-size: 0.9vw;
+  top: -0.35vw;
+  left: 50%;
+  transform: translateX(-50%);
+  color: #ffcc33;
+  font-size: 1.3vw;
   font-weight: 900;
+  line-height: 1;
   text-shadow:
-    -0.05vw -0.05vw 0 #000,
-    0.05vw -0.05vw 0 #000,
-    -0.05vw 0.05vw 0 #000,
-    0.05vw 0.05vw 0 #000;
-  animation: questPulse 1.2s ease-in-out infinite;
+    -0.08vw -0.08vw 0 #000,
+    0.08vw -0.08vw 0 #000,
+    -0.08vw 0.08vw 0 #000,
+    0.08vw 0.08vw 0 #000,
+    0 0.12vw 0 #000;
+  animation: questBounce 1.1s ease-in-out infinite;
   pointer-events: none;
   z-index: 2;
 
-  @keyframes questPulse {
+  @keyframes questBounce {
     0%,
     100% {
-      transform: scale(1);
+      transform: translateX(-50%) translateY(0);
     }
     50% {
-      transform: scale(1.35);
+      transform: translateX(-50%) translateY(-0.18vw);
     }
   }
 `;
