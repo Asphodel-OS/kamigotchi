@@ -21,14 +21,17 @@ uint256 constant ID = uint256(keccak256("system.newbievendor.buy"));
 
 uint256 constant VENDOR_ENTITY = uint256(keccak256("newbie.vendor"));
 uint256 constant DEFAULT_MIN_PRICE = 0.005 ether;
-uint256 constant BOTTOM_LISTINGS_COUNT = 10;
 uint256 constant FLOOR_PREMIUM_BPS = 11_000; // 110% of the marketplace floor
+// listings priced above this are decorative, not market signal — skipping
+// them also keeps the premium math overflow-safe
+uint256 constant MAX_CONSIDERED_PRICE = 1_000_000 ether;
 
 /// @notice Newbie Kami Vendor — buy one kami at market-floor price (one-time per player)
-/// @dev Price tracks the marketplace: 110% of the average of the 10 cheapest
-///      active listings (vendor's own excluded), clamped below by minPrice.
-///      The clamp bounds manipulation via fake cheap listings — worst case the
-///      vendor sells at the admin-set floor, one kami per <24h-old account.
+/// @dev Price tracks the marketplace: 110% of the cheapest active listing
+///      (vendor's own excluded), clamped below by minPrice. A cheap listing is
+///      itself a real buyable offer, so faking one risks selling at that price;
+///      residual list/cancel timing games are bounded by the clamp — worst case
+///      the vendor sells at the admin-set floor, one kami per <24h-old account.
 ///      The vendor holds kamis staked in-game. Admin sets a pool of kami
 ///      indices; the first 3 are displayed for sale. When one is bought, the
 ///      next from the pool fills in.
@@ -143,21 +146,21 @@ contract NewbieVendorBuySystem is System {
   }
 
   /// @notice Compute vendor price from the marketplace floor
-  /// @return price max(110% of avg(10 cheapest active listings), minPrice)
+  /// @return price max(110% of the cheapest active listing, minPrice)
   function calcPrice() public view returns (uint256 price) {
     uint256 minPrice = LibConfig.get(components, "NEWBIE_VENDOR_MIN_PRICE");
     if (minPrice == 0) minPrice = DEFAULT_MIN_PRICE;
 
-    uint256 floorAvg = _avgBottomListings();
-    if (floorAvg == 0) return minPrice; // no eligible listings
+    uint256 floor = _cheapestListing();
+    if (floor == 0) return minPrice; // no eligible listings
 
-    price = (floorAvg * FLOOR_PREMIUM_BPS) / 10_000;
+    price = (floor * FLOOR_PREMIUM_BPS) / 10_000;
     if (price < minPrice) price = minPrice;
   }
 
-  /// @notice Average price of the cheapest BOTTOM_LISTINGS_COUNT active,
-  ///         unexpired marketplace listings, excluding the vendor's own
-  function _avgBottomListings() internal view returns (uint256) {
+  /// @notice Price of the cheapest active, unexpired marketplace listing,
+  ///         excluding the vendor's own; 0 when none are eligible
+  function _cheapestListing() internal view returns (uint256 cheapest) {
     uint256[] memory ids = LibKamiMarket.getListingIndex(components);
     if (ids.length == 0) return 0;
 
@@ -165,8 +168,6 @@ contract NewbieVendorBuySystem is System {
       uint160(LibConfig.getAddress(components, "NEWBIE_VENDOR_ADDRESS"))
     );
 
-    uint256[] memory lowest = new uint256[](BOTTOM_LISTINGS_COUNT);
-    uint256 count;
     for (uint256 i; i < ids.length; i++) {
       uint256 id = ids[i];
       if (!LibKamiMarket.isOrderActive(components, id)) continue;
@@ -174,21 +175,9 @@ contract NewbieVendorBuySystem is System {
       if (LibKamiMarket.getOwner(components, id) == vendorAccID) continue;
 
       uint256 p = LibKamiMarket.getPrice(components, id);
-      if (count < BOTTOM_LISTINGS_COUNT) {
-        lowest[count++] = p;
-      } else {
-        uint256 maxIdx;
-        for (uint256 j = 1; j < BOTTOM_LISTINGS_COUNT; j++) {
-          if (lowest[j] > lowest[maxIdx]) maxIdx = j;
-        }
-        if (p < lowest[maxIdx]) lowest[maxIdx] = p;
-      }
+      if (p > MAX_CONSIDERED_PRICE) continue;
+      if (cheapest == 0 || p < cheapest) cheapest = p;
     }
-    if (count == 0) return 0;
-
-    uint256 sum;
-    for (uint256 i; i < count; i++) sum += lowest[i];
-    return sum / count;
   }
 
   function _emitBuy(uint256 accID, uint32 kamiIndex, uint256 price) internal {

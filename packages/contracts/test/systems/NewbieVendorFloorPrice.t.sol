@@ -118,24 +118,23 @@ contract NewbieVendorFloorPriceTest is SetupTemplate {
     assertEq(_NewbieVendorBuySystem.calcPrice(), MIN_PRICE);
   }
 
-  function testPriceTracksListingAverage() public {
+  function testPriceTracksCheapestListing() public {
     uint256[] memory prices = new uint256[](2);
     prices[0] = 0.02 ether;
     prices[1] = 0.03 ether;
     _listMany(prices);
 
-    // avg(0.02, 0.03) = 0.025; * 110% = 0.0275
-    assertEq(_NewbieVendorBuySystem.calcPrice(), 0.0275 ether);
+    // cheapest 0.02 * 110% = 0.022
+    assertEq(_NewbieVendorBuySystem.calcPrice(), 0.022 ether);
   }
 
-  function testPriceUsesBottomTenOnly() public {
-    // 12 listings at 0.01..0.12 — the two most expensive are ignored
+  function testPriceUsesCheapestOfMany() public {
     uint256[] memory prices = new uint256[](12);
     for (uint256 i; i < 12; i++) prices[i] = (i + 1) * 0.01 ether;
     _listMany(prices);
 
-    // avg(0.01..0.10) = 0.055; * 110% = 0.0605
-    assertEq(_NewbieVendorBuySystem.calcPrice(), 0.0605 ether);
+    // cheapest 0.01 * 110% = 0.011
+    assertEq(_NewbieVendorBuySystem.calcPrice(), 0.011 ether);
   }
 
   function testDustListingClampsAtMinPrice() public {
@@ -144,6 +143,17 @@ contract NewbieVendorFloorPriceTest is SetupTemplate {
     _listMany(prices);
 
     assertEq(_NewbieVendorBuySystem.calcPrice(), MIN_PRICE);
+  }
+
+  function testAbsurdListingPriceIgnored() public {
+    // a max-price listing must not overflow calcPrice or skew it — it gets
+    // skipped entirely (review finding)
+    uint256[] memory prices = new uint256[](2);
+    prices[0] = type(uint256).max;
+    prices[1] = 0.02 ether;
+    _listMany(prices);
+
+    assertEq(_NewbieVendorBuySystem.calcPrice(), 0.022 ether); // only the real one counts
   }
 
   function testVendorOwnListingsExcluded() public {
@@ -160,7 +170,7 @@ contract NewbieVendorFloorPriceTest is SetupTemplate {
     prices[1] = 0.04 ether;
     uint256[] memory orderIDs = _listMany(prices);
 
-    assertEq(_NewbieVendorBuySystem.calcPrice(), 0.033 ether); // avg 0.03 * 110%
+    assertEq(_NewbieVendorBuySystem.calcPrice(), 0.022 ether); // cheapest 0.02 * 110%
 
     _buyKami(charlie, orderIDs[0], 0.02 ether);
     assertEq(_NewbieVendorBuySystem.calcPrice(), 0.044 ether); // only 0.04 left
@@ -219,7 +229,7 @@ contract NewbieVendorFloorPriceTest is SetupTemplate {
     // restore → tracks listings again
     vm.prank(deployer);
     __KamiMarketRegistrySystem.rebuildListingIndex(orderIDs);
-    assertEq(_NewbieVendorBuySystem.calcPrice(), 0.0275 ether);
+    assertEq(_NewbieVendorBuySystem.calcPrice(), 0.022 ether);
   }
 
   function testRebuildListingIndexRejectsInactive() public {
@@ -241,6 +251,20 @@ contract NewbieVendorFloorPriceTest is SetupTemplate {
     vm.prank(deployer);
     vm.expectRevert("KamiMarketRegistry: not a listing");
     __KamiMarketRegistrySystem.rebuildListingIndex(ids);
+  }
+
+  function testRebuildListingIndexRejectsDuplicates() public {
+    uint256[] memory prices = new uint256[](1);
+    prices[0] = 0.02 ether;
+    uint256[] memory orderIDs = _listMany(prices);
+
+    uint256[] memory dup = new uint256[](2);
+    dup[0] = orderIDs[0];
+    dup[1] = orderIDs[0];
+
+    vm.prank(deployer);
+    vm.expectRevert("KamiMarketRegistry: duplicate id");
+    __KamiMarketRegistrySystem.rebuildListingIndex(dup);
   }
 
   function testRebuildListingIndexOnlyAdmin() public {
