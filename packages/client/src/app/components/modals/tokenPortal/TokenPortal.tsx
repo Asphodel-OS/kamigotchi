@@ -5,7 +5,7 @@ import { v4 as uuid } from 'uuid';
 import { getAccount as _getAccount, getAccountByID } from 'app/cache/account';
 import { getPortalConfig } from 'app/cache/config';
 import { getItem as _getItem, getItemByIndex as _getItemByIndex } from 'app/cache/item';
-import { EmptyText, HelpChip, ModalHeader, ModalWrapper } from 'app/components/library';
+import { EmptyText, HelpChip, ModalWrapper } from 'app/components/library';
 import { UIComponent, useLayers } from 'app/root';
 import { useNetwork, useVisibility } from 'app/stores';
 import { TokenIcons } from 'assets/images/tokens';
@@ -17,13 +17,15 @@ import { Account, NullAccount, queryAccountFromEmbedded } from 'network/shapes/A
 import { Item, NullItem, queryItems } from 'network/shapes/Item';
 import { getCompAddr } from 'network/shapes/utils';
 import { playClick } from 'utils/sounds';
-import { HELP_TEXT } from './constants';
+import { getHelpText } from './constants';
 import { Queue } from './queue';
 import { Swap } from './swap';
 import { Mode } from './swap/types';
 import { getResultWithdraw, openBaselineLink } from './utils';
 
-type Tab = Mode | 'QUEUE';
+// kamiswap (marketplace) tab pastels: blue for deposit, orange for withdraw
+const DEPOSIT_BLUE = '#E0EEFF';
+const WITHDRAW_ORANGE = '#FFF0E0';
 
 const KamidenClient = getKamidenClient();
 
@@ -73,7 +75,8 @@ export const TokenPortalModal: UIComponent = {
     const [selected, setSelected] = useState<Item>(NullItem); // selected item for import/export
     const [myReceipts, setMyReceipts] = useState<PortalReceipt[]>([]);
     const [othersReceipts, setOthersReceipts] = useState<PortalReceipt[]>([]);
-    const [tab, setTab] = useState<Tab>('DEPOSIT');
+    const [mode, setMode] = useState<Mode>('DEPOSIT');
+    const [showQueue, setShowQueue] = useState<boolean>(false);
     const [tick, setTick] = useState(Date.now());
 
     /////////////////
@@ -226,15 +229,26 @@ export const TokenPortalModal: UIComponent = {
     /////////////////
     // DISPLAY
 
-    const switchTab = (t: Tab) => {
+    const switchMode = (m: Mode) => {
       playClick();
-      setTab(t);
+      setMode(m);
+    };
+
+    const toggleQueue = () => {
+      playClick();
+      setShowQueue(!showQueue);
     };
 
     return (
       <ModalWrapper
         id='tokenPortal'
-        header={<ModalHeader title='Token Portal' icon={TokenIcons.onyx} />}
+        header={
+          <PortalHeader>
+            <HeaderIcon src={TokenIcons.onyx} alt='Token Portal' />
+            <HeaderTitle>Token Portal</HeaderTitle>
+            <HelpChip tooltip={{ text: getHelpText(config), size: 0.6 }} size={1.2} />
+          </PortalHeader>
+        }
         canExit
         overlay
         truncate
@@ -244,28 +258,43 @@ export const TokenPortalModal: UIComponent = {
           <EmptyText text={['Failed to Connect Account']} size={1} />
         ) : (
           <Container>
-            <TopRow>
-              <HelpChip tooltip={{ text: HELP_TEXT, size: 0.6 }} size={1.2} />
-              <BuyButton onClick={() => openBaselineLink(selected.token?.address ?? '')}>
-                Purchase $ONYX ↗
-              </BuyButton>
-            </TopRow>
             <Tabs>
-              <TabButton onClick={() => switchTab('DEPOSIT')} disabled={tab === 'DEPOSIT'}>
+              <TabButton
+                $color={DEPOSIT_BLUE}
+                $active={mode === 'DEPOSIT'}
+                onClick={() => switchMode('DEPOSIT')}
+                disabled={mode === 'DEPOSIT'}
+              >
                 Deposit
               </TabButton>
-              <TabButton onClick={() => switchTab('WITHDRAW')} disabled={tab === 'WITHDRAW'}>
-                Withdraw
-              </TabButton>
               <TabButton
-                onClick={() => switchTab('QUEUE')}
-                disabled={tab === 'QUEUE'}
+                $color={WITHDRAW_ORANGE}
+                $active={mode === 'WITHDRAW'}
+                onClick={() => switchMode('WITHDRAW')}
+                disabled={mode === 'WITHDRAW'}
                 style={{ borderRight: 'none' }}
               >
-                Queue
+                Withdraw
               </TabButton>
             </Tabs>
-            {tab === 'QUEUE' ? (
+            <Swap
+              actions={{
+                approve: approveTx,
+                deposit: depositTx,
+                withdraw: withdrawTx,
+              }}
+              data={{ config, inventory: account.inventories ?? [] }}
+              state={{ mode, selected }}
+            />
+            <BottomRow>
+              <PillButton onClick={toggleQueue}>
+                {showQueue ? 'Hide Queue' : 'Queue'}
+              </PillButton>
+              <PillButton onClick={() => openBaselineLink(selected.token?.address ?? '')}>
+                Purchase $ONYX
+              </PillButton>
+            </BottomRow>
+            {showQueue && (
               <Queue
                 actions={{
                   claim: claimTx,
@@ -273,16 +302,6 @@ export const TokenPortalModal: UIComponent = {
                 }}
                 data={{ myReceipts, othersReceipts, config, account }}
                 utils={utils}
-              />
-            ) : (
-              <Swap
-                actions={{
-                  approve: approveTx,
-                  deposit: depositTx,
-                  withdraw: withdrawTx,
-                }}
-                data={{ config, inventory: account.inventories ?? [] }}
-                state={{ mode: tab, options, selected, setSelected }}
               />
             )}
           </Container>
@@ -301,30 +320,28 @@ const Container = styled.div`
   gap: 1vh;
 `;
 
-const TopRow = styled.div`
+const PortalHeader = styled.div`
+  padding: 0.6vw 1vw;
+  gap: 0.7vw;
+  line-height: 1.5vw;
+
   display: flex;
-  justify-content: space-between;
+  flex-flow: row nowrap;
   align-items: center;
-  gap: 0.6vw;
+  justify-content: flex-start;
+  user-select: none;
 `;
 
-const BuyButton = styled.button`
-  border: 0.1vw solid #9c9;
-  border-radius: 0.4vw;
-  background: #eefaee;
-  color: #383;
-  padding: 0.3vw 0.6vw;
+const HeaderIcon = styled.img`
+  height: 2vw;
+  width: auto;
+  user-drag: none;
+`;
+
+const HeaderTitle = styled.div`
+  font-size: 1.2vw;
+  color: #333;
   font-family: Pixel;
-  font-size: 0.7vw;
-  cursor: pointer;
-  pointer-events: auto;
-  transition:
-    background 0.12s,
-    border-color 0.12s;
-  &:hover {
-    background: #dff5df;
-    border-color: #6b6;
-  }
 `;
 
 const Tabs = styled.div`
@@ -336,7 +353,7 @@ const Tabs = styled.div`
   flex-flow: row nowrap;
 `;
 
-const TabButton = styled.button`
+const TabButton = styled.button<{ $color: string; $active: boolean }>`
   border: none;
   border-right: solid black 0.15vw;
   padding: 0.5vw;
@@ -346,12 +363,38 @@ const TabButton = styled.button`
   font-size: 0.9vw;
   text-align: center;
   cursor: pointer;
+  background-color: ${({ $active, $color }) => ($active ? $color : 'white')};
   &:hover {
-    background-color: #ddd;
+    background-color: ${({ $color }) => $color}88;
   }
   &:disabled {
-    background-color: #b2b2b2;
     cursor: default;
     pointer-events: none;
+  }
+`;
+
+const BottomRow = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.6vw;
+`;
+
+const PillButton = styled.button`
+  border: 0.12vw solid #ccc;
+  border-radius: 0.5vw;
+  background: #fafafa;
+  color: #555;
+  padding: 0.4vw 0.9vw;
+  font-family: Pixel;
+  font-size: 0.75vw;
+  cursor: pointer;
+  pointer-events: auto;
+  transition:
+    background 0.12s,
+    border-color 0.12s;
+  &:hover {
+    background: #e8f0fe;
+    border-color: #a0c0e8;
   }
 `;

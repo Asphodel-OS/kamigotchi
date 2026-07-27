@@ -3,7 +3,7 @@ import styled from 'styled-components';
 
 import { PortalConfigs } from 'app/cache/config';
 import { getInventoryBalance } from 'app/cache/inventory';
-import { Popover, StepButton, Text } from 'app/components/library';
+import { StepButton, Text } from 'app/components/library';
 import { IconButton } from 'app/components/library/buttons';
 import { useTokens } from 'app/stores';
 import { TokenIcons } from 'assets/images/tokens';
@@ -36,14 +36,12 @@ export const Swap = ({
   };
   state: {
     mode: Mode;
-    options: Item[];
     selected: Item;
-    setSelected: (item: Item) => void;
   };
 }) => {
   const { approve, deposit, withdraw } = actions;
   const { config, inventory } = data;
-  const { mode, options, selected, setSelected } = state;
+  const { mode, selected } = state;
   // hardcoded for now to just onyx
   const { allowance: onyxAllowance, balance: onyxBalance } = useTokens((s) => s.onyx);
 
@@ -91,7 +89,6 @@ export const Swap = ({
   /////////////////
   // DISPLAY
 
-  const taxCfg = mode === 'DEPOSIT' ? config.tax.import : config.tax.export;
   const delayDays = (config.delay ?? 0) / 86400;
 
   const actionText = () => {
@@ -100,37 +97,6 @@ export const Swap = ({
     if (mode === 'DEPOSIT') return needsApproval ? `approve $ONYX` : 'deposit';
     return 'withdraw';
   };
-
-  const renderPicker = () => (
-    <Popover
-      fullWidth
-      content={
-        <PickerList>
-          {options.map((item) => (
-            <PickerItem
-              key={item.index}
-              onClick={() => {
-                playClick();
-                setSelected(item);
-                setAmt(0);
-              }}
-            >
-              <Sprite src={item.image} />
-              <Text size={0.85}>{item.name}</Text>
-            </PickerItem>
-          ))}
-        </PickerList>
-      }
-    >
-      <PickerTrigger onClick={() => playClick()}>
-        <PickerLabel>
-          <Sprite src={selected.image} />
-          <Text size={1}>{selected.name}</Text>
-        </PickerLabel>
-        <Caret>▾</Caret>
-      </PickerTrigger>
-    </Popover>
-  );
 
   const itemCard = (
     <SideBlock>
@@ -180,7 +146,6 @@ export const Swap = ({
 
   return (
     <Section>
-      {renderPicker()}
       {mode === 'DEPOSIT' ? (
         <>
           {tokenCard}
@@ -194,13 +159,9 @@ export const Swap = ({
       )}
 
       <Info>
-        <Text size={0.72} color='#888'>
-          rate 1 $ONYX = {rate} {selected.name} · {mode === 'DEPOSIT' ? 'import' : 'export'} tax{' '}
-          {taxCfg.rate * 100}% + {taxCfg.flat} flat
-        </Text>
         {mode === 'WITHDRAW' && (
           <Text size={0.72} color='#888'>
-            withdrawals unlock after ~{delayDays.toFixed(0)}d · claim from the Queue tab
+            withdrawals unlock after ~{delayDays.toFixed(0)}d · claim from the queue below
           </Text>
         )}
         {mode === 'DEPOSIT' && needsApproval && amt > 0 && (
@@ -425,61 +386,3 @@ const MaxChip = styled.button`
   }
 `;
 
-/////////////////
-// PICKER
-
-const PickerTrigger = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 0.6vw;
-  width: 100%;
-  border: 0.15vw solid black;
-  border-radius: 0.5vw;
-  background: #fff;
-  padding: 0.4vw 0.8vw;
-  cursor: pointer;
-  pointer-events: auto;
-  &:hover {
-    background: #f2f2f2;
-  }
-`;
-
-const PickerLabel = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 0.5vw;
-`;
-
-const Caret = styled.div`
-  font-size: 0.8vw;
-  color: #666;
-`;
-
-const Sprite = styled.img`
-  width: 1.6vw;
-  height: 1.6vw;
-  image-rendering: pixelated;
-  user-drag: none;
-`;
-
-const PickerList = styled.div`
-  display: flex;
-  flex-direction: column;
-  background: #fff;
-  border: 0.15vw solid black;
-  border-radius: 0.5vw;
-  overflow: hidden;
-`;
-
-const PickerItem = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 0.5vw;
-  padding: 0.5vw 0.8vw;
-  cursor: pointer;
-  pointer-events: auto;
-  &:hover {
-    background: #f2f2f2;
-  }
-`;
