@@ -424,6 +424,7 @@ export const DialogueModal: UIComponent = {
             npcName={npc.name}
             npcImage={npc.mood || npc.img}
             dialogueText={getText(dialogueNode.text[step])}
+            textKey={`${dialogueIndex}:${step}`}
             twoColumnText={dialogueIndex === 20018}
             onDialogueComplete={handleNpcDialogueComplete}
             onTextAdvance={canAdvance ? advanceDialogue : undefined}

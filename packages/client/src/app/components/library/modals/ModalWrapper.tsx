@@ -154,6 +154,8 @@ const Wrapper = styled.div<{
   display: ${({ isDisplayed }) => (isDisplayed ? 'block' : 'none')};
   position: ${({ overlay }) => (overlay ? 'relative' : 'static')};
   z-index: ${({ overlay }) => (overlay ? 3 : 0)};
+  /* fading-out modals must not eat clicks; Content drops pointer-events too */
+  pointer-events: ${({ isOpen }) => (isOpen ? 'auto' : 'none')};
   ${({ isOpen, shuffle }) => css`
     animation: ${isOpen
         ? css`

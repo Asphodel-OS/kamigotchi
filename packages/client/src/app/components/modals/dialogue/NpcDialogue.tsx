@@ -23,6 +23,7 @@ export const NpcDialogue = ({
   onDialogueComplete,
   onTextAdvance,
   twoColumnText = false,
+  textKey,
 }: {
   hasAvailableQuests?: Quest[];
   hasOngoingQuests?: Quest[];
@@ -40,7 +41,9 @@ export const NpcDialogue = ({
   onDialogueComplete?: () => void;
   onTextAdvance?: () => void;
   twoColumnText?: boolean;
+  textKey?: string; // step identity; keys resets so same-text transitions still retype
 }) => {
+  const resetKey = textKey ?? dialogueText;
   const columnTexts = dialogueText
     .split('\n')
     .map((line) => line.trim())
@@ -48,16 +51,22 @@ export const NpcDialogue = ({
   const leftColumnText = twoColumnText ? (columnTexts[0] ?? '') : dialogueText;
   const rightColumnText = twoColumnText ? (columnTexts[1] ?? '') : '';
 
-  // click-to-skip: interrupting fills the text instantly; done gates the cursor
+  // click-to-skip: interrupting fills the text instantly; done gates the cursor.
+  // empty columns never fire onComplete, so only count the ones that render text
   const [skipped, setSkipped] = useState(false);
   const [doneCount, setDoneCount] = useState(0);
-  const typingDone = doneCount >= (twoColumnText ? 2 : 1);
+  const typingTarget = twoColumnText
+    ? (leftColumnText ? 1 : 0) + (rightColumnText ? 1 : 0)
+    : dialogueText
+      ? 1
+      : 0;
+  const typingDone = doneCount >= typingTarget;
 
-  // reset synchronously on text change: an effect would run after the child
+  // reset synchronously on step change: an effect would run after the child
   // typewriter's, leaking a stale skip into the next step (it renders pre-filled)
-  const [lastText, setLastText] = useState(dialogueText);
-  if (lastText !== dialogueText) {
-    setLastText(dialogueText);
+  const [lastKey, setLastKey] = useState(resetKey);
+  if (lastKey !== resetKey) {
+    setLastKey(resetKey);
     setSkipped(false);
     setDoneCount(0);
   }
@@ -89,7 +98,7 @@ export const NpcDialogue = ({
           <Text color={npcColor} $clickable={clickable}>
             <TypewriterComponent
               text={leftColumnText}
-              retrigger={`${dialogueText}:L`}
+              retrigger={`${resetKey}:L`}
               interrupted={skipped}
               onComplete={handleMainComplete}
             />
@@ -97,7 +106,7 @@ export const NpcDialogue = ({
           <Text color={npcColor} $clickable={clickable}>
             <TypewriterComponent
               text={rightColumnText}
-              retrigger={`${dialogueText}:R`}
+              retrigger={`${resetKey}:R`}
               interrupted={skipped}
               onComplete={handleSideComplete}
             />
@@ -107,7 +116,7 @@ export const NpcDialogue = ({
         <Text color={npcColor} $clickable={clickable} onClick={handleTextClick}>
           <TypewriterComponent
             text={dialogueText}
-            retrigger={dialogueText}
+            retrigger={resetKey}
             interrupted={skipped}
             onComplete={handleMainComplete}
           />

@@ -79,9 +79,13 @@ export const useTypewriter = (
     if (!text) return;
 
     if (interrupted) {
-      indexRef.current = text.length;
-      setRevealCount(text.length);
-      onComplete?.();
+      // skip if already fully revealed: a late interrupt (e.g. a shared skip
+      // flag across columns) must not re-fire completion
+      if (indexRef.current < text.length) {
+        indexRef.current = text.length;
+        setRevealCount(text.length);
+        onComplete?.();
+      }
       return;
     }
 
