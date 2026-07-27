@@ -430,13 +430,19 @@ const QuestMarker = styled.span`
   left: 50%;
   transform: translate(-50%, -50%);
   color: #ffcc33;
-  font-size: 1.2vw;
+  font-size: 1.5vw;
   font-weight: 900;
   line-height: 1;
-  padding: 0.12vw 0.3vw;
-  background-color: rgba(0, 0, 0, 0.72);
-  border: 0.09vw solid #ffcc33;
-  border-radius: 0.35vw;
+  text-shadow:
+    -0.09vw 0 0 #000,
+    0.09vw 0 0 #000,
+    0 -0.09vw 0 #000,
+    0 0.09vw 0 #000,
+    -0.09vw -0.09vw 0 #000,
+    0.09vw -0.09vw 0 #000,
+    -0.09vw 0.09vw 0 #000,
+    0.09vw 0.09vw 0 #000,
+    0 0.16vw 0 #000;
   animation: questBounce 1.1s ease-in-out infinite;
   pointer-events: none;
   z-index: 2;
