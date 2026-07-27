@@ -426,19 +426,17 @@ const Row = styled.div`
 
 const QuestMarker = styled.span`
   position: absolute;
-  top: -0.35vw;
+  top: 50%;
   left: 50%;
-  transform: translateX(-50%);
+  transform: translate(-50%, -50%);
   color: #ffcc33;
-  font-size: 1.3vw;
+  font-size: 1.2vw;
   font-weight: 900;
   line-height: 1;
-  text-shadow:
-    -0.08vw -0.08vw 0 #000,
-    0.08vw -0.08vw 0 #000,
-    -0.08vw 0.08vw 0 #000,
-    0.08vw 0.08vw 0 #000,
-    0 0.12vw 0 #000;
+  padding: 0.12vw 0.3vw;
+  background-color: rgba(0, 0, 0, 0.72);
+  border: 0.09vw solid #ffcc33;
+  border-radius: 0.35vw;
   animation: questBounce 1.1s ease-in-out infinite;
   pointer-events: none;
   z-index: 2;
@@ -446,10 +444,10 @@ const QuestMarker = styled.span`
   @keyframes questBounce {
     0%,
     100% {
-      transform: translateX(-50%) translateY(0);
+      transform: translate(-50%, -50%) translateY(0);
     }
     50% {
-      transform: translateX(-50%) translateY(-0.18vw);
+      transform: translate(-50%, -50%) translateY(-0.16vw);
     }
   }
 `;
