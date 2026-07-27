@@ -81,12 +81,6 @@ export const KamiAdoptionAgency: UIComponent = {
     }, [isModalOpen, accountEntity, world, components, setModals]);
     // refresh the stock while the modal is open — catches other players'
     // adoptions and pool rotations, not just our own purchase
-    useEffect(() => {
-      if (!isModalOpen) return;
-      setStockTick((t) => t + 1); // fresh read on every open
-      const timerID = setInterval(() => setStockTick((t) => t + 1), 2000);
-      return () => clearInterval(timerID);
-    }, [isModalOpen]);
     const displayedKamis = useMemo(() => {
       return getDisplayedKamiEntities().map((entity) => getKami(entity));
     }, [world, components, stockTick]);
@@ -108,6 +102,18 @@ export const KamiAdoptionAgency: UIComponent = {
       functionName: 'calcPrice',
       query: { enabled: isModalOpen && !!systemAddress },
     });
+    // refresh the stock + live price while the modal is open — catches other
+    // players' adoptions, pool rotations, and price moves (shortfall accuracy)
+    useEffect(() => {
+      if (!isModalOpen) return;
+      setStockTick((t) => t + 1); // fresh read on every open
+      const timerID = setInterval(() => {
+        setStockTick((t) => t + 1);
+        refetchPrice();
+      }, 2000);
+      return () => clearInterval(timerID);
+    }, [isModalOpen, refetchPrice]);
+
     const priceWei = useMemo(() => parseBigIntSafe(priceData), [priceData]);
     const priceLabel = useMemo(() => formatEthPriceLabel(priceData, 5), [priceData]);
 

@@ -388,8 +388,12 @@ export const BridgeModal: UIComponent = {
     const scheduleAutoAdvance = () => {
       if (queryAccountFromEmbedded(network)) return;
       cancelAutoAdvance();
+      // bind the timer to the wallet it was scheduled for — a completion for
+      // wallet A must never close a modal wallet B opened during the delay
+      const sessionAddress = selectedAddress;
       autoAdvanceTimerRef.current = window.setTimeout(() => {
         autoAdvanceTimerRef.current = null;
+        if (useNetwork.getState().selectedAddress !== sessionAddress) return;
         // callers reset phase to idle right after completion; anything else
         // means a new bridge attempt started during the delay
         if (phaseRef.current !== 'idle') return;
@@ -498,9 +502,15 @@ export const BridgeModal: UIComponent = {
         BigInt(persisted.expectedAmountOut),
         persisted.sourceTxHash,
         bridgeAbortRef.current.signal
-      ).finally(() => {
-        setBridgePhase('idle');
-      });
+      )
+        .catch(() => {
+          // transient RPC failure — keep the recovery path available
+          appendUpdate('meta', 'Could not check right now. Try again in a moment.');
+          setPollTimedOut(true);
+        })
+        .finally(() => {
+          setBridgePhase('idle');
+        });
     };
 
     const handleBridgeModalClose = () => {
@@ -615,9 +625,14 @@ export const BridgeModal: UIComponent = {
         BigInt(persisted.expectedAmountOut),
         persisted.sourceTxHash,
         bridgeAbortRef.current.signal
-      ).finally(() => {
-        setBridgePhase('idle');
-      });
+      )
+        .catch(() => {
+          // transient RPC failure on the resumed poll — surface the retry path
+          setPollTimedOut(true);
+        })
+        .finally(() => {
+          setBridgePhase('idle');
+        });
     }, [selectedAddress]);
 
     useEffect(() => {
