@@ -13,6 +13,8 @@ import {
 
 type BridgeFormProps = {
   sourceChain: EVMChainOption;
+  // chains the router can currently route from; null = not probed (all enabled)
+  routableChainIds: Set<string> | null;
   amount: string;
   parsedAmount: bigint | null;
   sourceBalance: bigint;
@@ -40,6 +42,7 @@ const getDisabledReason = (
 
 export const BridgeForm = ({
   sourceChain,
+  routableChainIds,
   amount,
   parsedAmount,
   sourceBalance,
@@ -73,12 +76,15 @@ export const BridgeForm = ({
         fullWidth
         scale={2.2}
         disabled={isBridging}
-        options={SOURCE_CHAIN_OPTIONS.map((option) => ({
-          text: option.label,
-          image: SOURCE_CHAIN_ICON_BY_CHAIN_ID[option.chainId],
-          disabled: DISABLED_SOURCE_CHAIN_IDS.has(option.chainId),
-          onClick: () => onSourceChainChange(option),
-        }))}
+        options={SOURCE_CHAIN_OPTIONS.map((option) => {
+          const unroutable = routableChainIds !== null && !routableChainIds.has(option.chainId);
+          return {
+            text: unroutable ? `${option.label} (unavailable)` : option.label,
+            image: SOURCE_CHAIN_ICON_BY_CHAIN_ID[option.chainId],
+            disabled: DISABLED_SOURCE_CHAIN_IDS.has(option.chainId) || unroutable,
+            onClick: () => onSourceChainChange(option),
+          };
+        })}
       />
       <Label>Destination Chain</Label>
       <DestinationText>Yominet</DestinationText>
