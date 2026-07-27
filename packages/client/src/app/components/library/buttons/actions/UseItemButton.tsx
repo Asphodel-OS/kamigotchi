@@ -37,10 +37,10 @@ export const UseItemButton = (
 
   let disabled = !!tooltip;
   if (!disabled) {
-    tooltip = `Feed Kami`;
+    tooltip = `Use Item`;
     options = getOptions(world, components, kami, account, triggerAction, false);
     if (options.length === 0) {
-      tooltip = `No items to feed`;
+      tooltip = `No usable items`;
       disabled = true;
     }
   }
