@@ -57,7 +57,13 @@ export const SOURCE_CHAIN_OPTIONS: EVMChainOption[] = [
   },
 ];
 
-export const DISABLED_SOURCE_CHAIN_IDS = new Set(['10']);
+// 42161/8453 (2026-07): Initia's router de-listed arbitrum/base native ETH
+// (assets marked hidden; only USDC routes from those chains — verified against
+// router-api and Skip's global API). Our modal bridges ETH, so they're hard-
+// disabled until re-listed. The live routability probe (fetchRoutableSourceChainIds)
+// stays as a second layer and will show them enabled-again the release after
+// this set is pruned.
+export const DISABLED_SOURCE_CHAIN_IDS = new Set(['10', '42161', '8453']);
 
 ////////////////
 // DISPLAY
