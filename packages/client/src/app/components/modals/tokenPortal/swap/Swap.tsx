@@ -11,9 +11,8 @@ import { playClick } from 'utils/sounds';
 import { getNeededDeposit, getResultWithdraw, getSwapRate } from '../utils';
 import { Mode } from './types';
 
-// pastel action colors, shared with the FundOperator and Pool modals
+// pastel action color, shared with the FundOperator and Pool modals
 const GREEN = '#C2F0C2';
-const RED = '#F8D6D6';
 
 // floor to a safe non-negative integer. guards negatives / non-finite so a bad
 // amount can never reach the tx builders
@@ -176,7 +175,7 @@ export const Swap = ({
       </Info>
 
       <ActionButton
-        $color={blocked ? RED : GREEN}
+        $color={GREEN}
         disabled={blocked}
         onClick={() => {
           playClick();
@@ -262,8 +261,7 @@ const ActionButton = styled.button<{ $color: string }>`
   background: ${({ $color }) => $color};
   padding: 0.6vw;
   font-family: Pixel;
-  font-size: 1vw;
-  font-weight: bold;
+  font-size: 0.9vw;
   color: black;
   cursor: pointer;
   pointer-events: auto;
@@ -271,9 +269,9 @@ const ActionButton = styled.button<{ $color: string }>`
     filter: brightness(0.95);
   }
   &:disabled {
+    background: #bbb;
     cursor: default;
     pointer-events: none;
-    opacity: 0.7;
   }
 `;
 
