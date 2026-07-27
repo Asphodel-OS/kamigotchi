@@ -236,10 +236,8 @@ export const TokenPortalModal: UIComponent = {
       setMode(m);
     };
 
-    const toggleQueue = () => {
-      playClick();
-      setShowQueue(!showQueue);
-    };
+    // IconButton plays the click sound itself
+    const toggleQueue = () => setShowQueue(!showQueue);
 
     return (
       <ModalWrapper
@@ -287,6 +285,7 @@ export const TokenPortalModal: UIComponent = {
               data={{ config, inventory: account.inventories ?? [] }}
               state={{ mode, selected }}
             />
+            <Rule />
             <BottomRow>
               <BuyWrapper>
                 <IconButton
@@ -379,6 +378,10 @@ const TabButton = styled.button<{ $color: string; $active: boolean }>`
     cursor: default;
     pointer-events: none;
   }
+`;
+
+const Rule = styled.div`
+  border-top: 0.12vw solid #e0e0e0;
 `;
 
 const BottomRow = styled.div`

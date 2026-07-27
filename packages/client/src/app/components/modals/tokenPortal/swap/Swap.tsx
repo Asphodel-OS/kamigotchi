@@ -4,7 +4,6 @@ import styled from 'styled-components';
 import { PortalConfigs } from 'app/cache/config';
 import { getInventoryBalance } from 'app/cache/inventory';
 import { StepButton, Text } from 'app/components/library';
-import { IconButton } from 'app/components/library/buttons';
 import { useTokens } from 'app/stores';
 import { TokenIcons } from 'assets/images/tokens';
 import { Inventory, Item } from 'network/shapes';
@@ -105,21 +104,9 @@ export const Swap = ({
         <Text size={0.95}>
           {mode === 'DEPOSIT' ? `You're receiving (in-game)` : `You're withdrawing (in-game)`}
         </Text>
-        {mode === 'WITHDRAW' ? (
-          <MaxLabel
-            onClick={() => {
-              playClick();
-              setAmt(maxAmt);
-            }}
-            title='fill max'
-          >
-            balance: {itemBalance}
-          </MaxLabel>
-        ) : (
-          <Text size={0.75} color='#999'>
-            balance: {itemBalance}
-          </Text>
-        )}
+        <Text size={0.75} color='#999'>
+          balance: {itemBalance}
+        </Text>
       </HeadRow>
       <TradeCard>
         <ItemBlockBox>
@@ -141,21 +128,9 @@ export const Swap = ({
         <Text size={0.95}>
           {mode === 'DEPOSIT' ? `You're paying (wallet)` : `You're receiving (wallet)`}
         </Text>
-        {mode === 'DEPOSIT' ? (
-          <MaxLabel
-            onClick={() => {
-              playClick();
-              setAmt(maxAmt);
-            }}
-            title='fill max'
-          >
-            wallet: {onyxBalance.toFixed(scale > 0 ? 2 : 0)} $ONYX
-          </MaxLabel>
-        ) : (
-          <Text size={0.75} color='#999'>
-            wallet: {onyxBalance.toFixed(scale > 0 ? 2 : 0)} $ONYX
-          </Text>
-        )}
+        <Text size={0.75} color='#999'>
+          wallet: {onyxBalance.toFixed(scale > 0 ? 2 : 0)} $ONYX
+        </Text>
       </HeadRow>
       <TradeCard>
         <ItemBlockBox>
@@ -200,14 +175,16 @@ export const Swap = ({
         )}
       </Info>
 
-      <IconButton
-        fullWidth
-        scale={2.6}
-        color={blocked ? RED : GREEN}
+      <ActionButton
+        $color={blocked ? RED : GREEN}
         disabled={blocked}
-        onClick={triggerAction}
-        text={actionText()}
-      />
+        onClick={() => {
+          playClick();
+          triggerAction();
+        }}
+      >
+        {actionText()}
+      </ActionButton>
     </Section>
   );
 };
@@ -278,15 +255,25 @@ const HeadRow = styled.div`
   padding: 0 0.2vw;
 `;
 
-const MaxLabel = styled.div`
+const ActionButton = styled.button<{ $color: string }>`
+  width: 100%;
+  border: 0.15vw solid black;
+  border-radius: 0.45vw;
+  background: ${({ $color }) => $color};
+  padding: 0.6vw;
   font-family: Pixel;
-  font-size: 0.75vw;
-  color: #999;
+  font-size: 1vw;
+  font-weight: bold;
+  color: black;
   cursor: pointer;
   pointer-events: auto;
   &:hover {
-    color: #333;
-    text-decoration: underline;
+    filter: brightness(0.95);
+  }
+  &:disabled {
+    cursor: default;
+    pointer-events: none;
+    opacity: 0.7;
   }
 `;
 

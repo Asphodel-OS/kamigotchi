@@ -294,15 +294,9 @@ export const PoolModal: UIComponent = {
           <SideBlock>
             <HeadRow>
               <Text size={0.95}>You're selling</Text>
-              <MaxLabel
-                onClick={() => {
-                  playClick();
-                  setSwapInput(balance);
-                }}
-                title='fill max'
-              >
+              <Text size={0.75} color='#999'>
                 balance: {balance}
-              </MaxLabel>
+              </Text>
             </HeadRow>
             <TradeCard>
               <ItemBlock item={swapIn} />
@@ -400,15 +394,9 @@ export const PoolModal: UIComponent = {
           <SideBlock>
             <HeadRow>
               <Text size={0.95}>Add liquidity</Text>
-              <MaxLabel
-                onClick={() => {
-                  playClick();
-                  setAddAmountA(maxAddA);
-                }}
-                title='fill max'
-              >
+              <Text size={0.75} color='#999'>
                 balance: {balA}
-              </MaxLabel>
+              </Text>
             </HeadRow>
             <TradeCard>
               <ItemBlock item={pool.itemA} />
@@ -440,15 +428,9 @@ export const PoolModal: UIComponent = {
               <SideBlock>
                 <HeadRow>
                   <Text size={0.95}>Remove liquidity</Text>
-                  <MaxLabel
-                    onClick={() => {
-                      playClick();
-                      setRemoveShares(playerShares);
-                    }}
-                    title='fill max'
-                  >
+                  <Text size={0.75} color='#999'>
                     shares: {playerShares}
-                  </MaxLabel>
+                  </Text>
                 </HeadRow>
                 <TradeCard>
                   <Text size={0.95}>shares</Text>
@@ -652,19 +634,6 @@ const HeadRow = styled.div`
   align-items: center;
   gap: 0.6vw;
   padding: 0 0.2vw;
-`;
-
-// clickable balance/shares readout that fills the paired input to its max
-const MaxLabel = styled.div`
-  font-family: Pixel;
-  font-size: 0.75vw;
-  color: #999;
-  cursor: pointer;
-  pointer-events: auto;
-  &:hover {
-    color: #333;
-    text-decoration: underline;
-  }
 `;
 
 const TradeCard = styled.div`
