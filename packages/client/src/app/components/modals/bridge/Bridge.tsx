@@ -4,8 +4,10 @@ import styled from 'styled-components';
 import { formatEther, parseEther } from 'viem';
 
 import { ModalHeader, ModalWrapper } from 'app/components/library';
+import { useLayers } from 'app/root/hooks';
 import { UIComponent } from 'app/root/types';
 import { useNetwork, useVisibility } from 'app/stores';
+import { queryAccountFromEmbedded } from 'network/shapes/Account';
 import { getEvmWalletProvider, getInjectedWallet } from 'app/utils';
 import { MenuIcons } from 'assets/images/icons/menu';
 import { DEAD_ADDRESS } from 'constants/addresses';
@@ -48,13 +50,19 @@ import {
   waitForWalletChain,
 } from './helpers/utils';
 
+// how long the "Bridge Complete" celebration stays up before the modal
+// auto-advances a new player to the registration screen
+const AUTO_ADVANCE_DELAY_MS = 2500;
+
 export const BridgeModal: UIComponent = {
   id: 'BridgeModal',
   Render: () => {
     /////////////////
     // PREPARATION
 
+    const { network } = useLayers();
     const isOpen = useVisibility((s) => s.modals.bridge);
+    const setModals = useVisibility((s) => s.setModals);
     const setBridgeProcessActive = useVisibility((s) => s.setBridgeProcessActive);
     const selectedAddress = useNetwork((s) => s.selectedAddress);
     const { wallets } = useWallets();
@@ -348,6 +356,22 @@ export const BridgeModal: UIComponent = {
       if (persisted) saveBridgePolling({ ...persisted, updates: updatesRef.current, completed: true });
     };
 
+    // after a successful bridge, advance a new player to the registration
+    // screen instead of leaving them parked on the modal. existing accounts
+    // (topping up mid-game) keep the modal open
+    const scheduleAutoAdvance = () => {
+      if (queryAccountFromEmbedded(network)) return;
+      window.setTimeout(() => {
+        // callers reset phase to idle right after completion; anything else
+        // means a new bridge attempt started during the delay
+        if (phaseRef.current !== 'idle') return;
+        if (queryAccountFromEmbedded(network)) return;
+        setShouldResetOnNextOpen(true);
+        setBridgeProcessActive(false);
+        setModals({ bridge: false });
+      }, AUTO_ADVANCE_DELAY_MS);
+    };
+
     const waitForBridgeCompletion = async (
       pollingSourceChain: EVMChainOption,
       yominetStartBlock: number,
@@ -400,6 +424,7 @@ export const BridgeModal: UIComponent = {
           appendUpdate('success', `**Yominet** Tx: ${receivedOnYominet}`, `${DefaultChain.blockExplorers?.default.url}/tx/${receivedOnYominet}`);
           appendUpdate('celebrate', 'Bridge Complete Congratulations');
           persistCompletion();
+          scheduleAutoAdvance();
           return;
         }
       }
