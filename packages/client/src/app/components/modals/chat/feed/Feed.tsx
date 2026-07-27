@@ -14,6 +14,11 @@ import {
   KamiCast as CastEvent,
   getKamidenClient,
   HarvestEnd as HarvestEndEvent,
+  KamiMarketAccept as AcceptEvent,
+  KamiMarketBuy as BuyEvent,
+  KamiMarketCancel as CancelEvent,
+  KamiMarketList as ListEvent,
+  KamiMarketOffer as OfferEvent,
   Message as KamiMessage,
   Kill as KillEvent,
   Movement as MovementEvent,
@@ -44,6 +49,7 @@ export const Feed = ({
   utils: {
     getAccount: (entityIndex: EntityIndex) => Account;
     getKami: (entityIndex: EntityIndex) => Kami;
+    getKamiByIndex: (index: number) => Kami;
     getEntityIndex: (entity: EntityID) => EntityIndex;
     getRoomByIndex: (nodeIndex: number) => Room;
     getItemByIndex: (itemIndex: number) => Item;
@@ -59,7 +65,8 @@ export const Feed = ({
     };
   };
 }) => {
-  const { getAccount, getEntityIndex, getKami, getRoomByIndex, getItemByIndex } = utils;
+  const { getAccount, getEntityIndex, getKami, getKamiByIndex, getRoomByIndex, getItemByIndex } =
+    utils;
   const selectAccount = useSelected((s) => s.setAccount);
   const selectedAccount = useSelected((s) => s.accountIndex);
   const selectKami = useSelected((s) => s.setKami);
@@ -201,6 +208,110 @@ export const Feed = ({
             <TextTooltip text={[room.name]}>
               <RoomIcon src={getRoomImage(room)} onClick={() => openNodeModal(room)} />
             </TextTooltip>
+          </Row>
+        );
+      });
+
+      feed.KamiMarketLists.forEach((listing: ListEvent) => {
+        const account = getAccount(getEntityIndex(formatEntityID(listing.AccountID)));
+        const kami = getKamiByIndex(listing.KamiIndex);
+
+        feedMessage.push(
+          <Row>
+            <Bold color='#333'>{getDateString(listing.Timestamp, 3)}:</Bold>
+            <Text size={0.6} onClick={() => openAccountModal(account)}>
+              {account.name}
+            </Text>
+            <Bold color='#b8860b'> listed </Bold>
+            <TextTooltip text={[kami.name]}>
+              <KamiIcon src={kami.image} onClick={() => openKamiModal(kami)} />
+            </TextTooltip>
+          </Row>
+        );
+      });
+
+      feed.KamiMarketBuys.forEach((buy: BuyEvent) => {
+        const buyer = getAccount(getEntityIndex(formatEntityID(buy.BuyerAccountID)));
+        const seller = getAccount(getEntityIndex(formatEntityID(buy.SellerAccountID)));
+        const kami = getKamiByIndex(buy.KamiIndex);
+
+        feedMessage.push(
+          <Row>
+            <Bold color='#333'>{getDateString(buy.Timestamp, 3)}:</Bold>
+            <Text size={0.6} onClick={() => openAccountModal(buyer)}>
+              {buyer.name}
+            </Text>
+            <Bold color='#006400'> bought </Bold>
+            <TextTooltip text={[kami.name]}>
+              <KamiIcon src={kami.image} onClick={() => openKamiModal(kami)} />
+            </TextTooltip>
+            from
+            <Text size={0.6} onClick={() => openAccountModal(seller)}>
+              {seller.name}
+            </Text>
+          </Row>
+        );
+      });
+
+      feed.KamiMarketOffers.forEach((offer: OfferEvent) => {
+        const account = getAccount(getEntityIndex(formatEntityID(offer.AccountID)));
+        const isSpecific = offer.KamiIndex !== 0;
+        const kami = isSpecific ? getKamiByIndex(offer.KamiIndex) : undefined;
+
+        feedMessage.push(
+          <Row>
+            <Bold color='#333'>{getDateString(offer.Timestamp, 3)}:</Bold>
+            <Text size={0.6} onClick={() => openAccountModal(account)}>
+              {account.name}
+            </Text>
+            placed a
+            <Bold color='#006400'> bid </Bold>
+            for
+            {isSpecific && kami ? (
+              <TextTooltip text={[kami.name]}>
+                <KamiIcon src={kami.image} onClick={() => openKamiModal(kami)} />
+              </TextTooltip>
+            ) : (
+              <>{' '}{offer.Quantity} kamis</>
+            )}
+          </Row>
+        );
+      });
+
+      feed.KamiMarketAccepts.forEach((accept: AcceptEvent) => {
+        const seller = getAccount(getEntityIndex(formatEntityID(accept.SellerAccountID)));
+        const buyer = getAccount(getEntityIndex(formatEntityID(accept.BuyerAccountID)));
+        const kami = getKamiByIndex(accept.KamiIndex);
+
+        feedMessage.push(
+          <Row>
+            <Bold color='#333'>{getDateString(accept.Timestamp, 3)}:</Bold>
+            <Text size={0.6} onClick={() => openAccountModal(seller)}>
+              {seller.name}
+            </Text>
+            <Bold color='#33a58f'> sold </Bold>
+            <TextTooltip text={[kami.name]}>
+              <KamiIcon src={kami.image} onClick={() => openKamiModal(kami)} />
+            </TextTooltip>
+            to
+            <Text size={0.6} onClick={() => openAccountModal(buyer)}>
+              {buyer.name}
+            </Text>
+          </Row>
+        );
+      });
+
+      feed.KamiMarketCancels.forEach((cancel: CancelEvent) => {
+        const account = getAccount(getEntityIndex(formatEntityID(cancel.AccountID)));
+
+        feedMessage.push(
+          <Row>
+            <Bold color='#333'>{getDateString(cancel.Timestamp, 3)}:</Bold>
+            <Text size={0.6} onClick={() => openAccountModal(account)}>
+              {account.name}
+            </Text>
+            <Bold color='#666'> cancelled </Bold>
+            a listing
           </Row>
         );
       });

@@ -2,6 +2,8 @@ import { AccountMenuButton } from './Account';
 import { ChatMenuButton } from './Chat';
 import { CraftMenuButton } from './Crafting';
 import { InventoryMenuButton } from './Inventory';
+import { KamiSwapMenuButton } from './KamiSwap';
+import { TradingMenuButton } from './Marketplace';
 import { MapMenuButton } from './Map';
 import { MoreMenuButton } from './More';
 import { NodeMenuButton } from './Node';
@@ -16,6 +18,7 @@ export {
   ChatMenuButton,
   CraftMenuButton,
   InventoryMenuButton,
+  KamiSwapMenuButton,
   MapMenuButton,
   MoreMenuButton,
   NodeMenuButton,
@@ -24,4 +27,5 @@ export {
   QuestMenuButton,
   StudioMenuButton,
   SudoMenuButton,
+  TradingMenuButton,
 };

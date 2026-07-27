@@ -39,8 +39,8 @@ export const LeftMenuFixture: UIComponent = {
         <PartyMenuButton />
         <MapMenuButton />
         <NodeMenuButton disabled={!nodeEntity} />
-        <OnyxMenuButton />
         <SudoMenuButton />
+        <OnyxMenuButton />
         <StudioMenuButton />
       </Wrapper>
     );
@@ -52,4 +52,6 @@ const Wrapper = styled.div`
   align-items: center;
   justify-content: flex-start;
   gap: 0.6vh;
+  position: relative;
+  z-index: 10;
 `;

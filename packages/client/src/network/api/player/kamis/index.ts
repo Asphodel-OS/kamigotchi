@@ -5,6 +5,7 @@ import { equipmentAPI } from './equipment';
 import { harvestsAPI } from './harvests';
 import { itemsAPI } from './items';
 import { onyxAPI } from './onyx';
+import { kamiSendAPI } from './send';
 import { skillsAPI } from './skills';
 
 export const kamisAPI = (systems: SystemQueue<any>) => {
@@ -37,6 +38,7 @@ export const kamisAPI = (systems: SystemQueue<any>) => {
     onyx: onyxAPI(systems),
     harvest: harvestsAPI(systems),
     item: itemsAPI(systems),
+    send: kamiSendAPI(systems),
     skill: skillsAPI(systems),
   };
 };

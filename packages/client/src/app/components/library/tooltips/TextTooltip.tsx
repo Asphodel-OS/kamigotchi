@@ -23,6 +23,7 @@ export const TextTooltip = ({
   color,
   fullWidth,
   cursor,
+  persistOnClick,
 }: {
   text: string[] | React.ReactNode[];
   title?: string;
@@ -36,6 +37,7 @@ export const TextTooltip = ({
   color?: string;
   fullWidth?: boolean;
   cursor?: string;
+  persistOnClick?: boolean;
 }) => {
   return (
     <Tooltip
@@ -46,6 +48,7 @@ export const TextTooltip = ({
       fullWidth={fullWidth}
       color={color}
       cursor={cursor}
+      persistOnClick={persistOnClick}
       isDisabled={text.every((entry) => entry === '' || entry === null)}
       content={
         <>

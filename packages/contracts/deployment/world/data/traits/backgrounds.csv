@@ -20,10 +20,10 @@ Background%203e7cd62360dd4f33afd483b2f3e0b7f7/bg_red.png,17,Red!,7,4,0,4,0,0,D14
 Background%203e7cd62360dd4f33afd483b2f3e0b7f7/bg_rust.png,18,Rust,9,2,10,1,0,0,BD685B,Common,300
 Background%203e7cd62360dd4f33afd483b2f3e0b7f7/bg_white.png,19,White!,7,4,0,0,0,4,F7F2ED,Rare,300
 Background%203e7cd62360dd4f33afd483b2f3e0b7f7/bg_yellow.png,20,Yellow,9,2,0,1,1,0,FFF981,Common,300
-Background%203e7cd62360dd4f33afd483b2f3e0b7f7/bg_butterfly_0000.png,21,Butterfly,4,7,0,0,7,0,,,
-Background%203e7cd62360dd4f33afd483b2f3e0b7f7/bg_maze.png,22,Maze,4,7,0,3,4,0,,,
-Background%203e7cd62360dd4f33afd483b2f3e0b7f7/bg_nature_1.png,23,Nature 1,4,7,30,0,2,2,,,
-Background%203e7cd62360dd4f33afd483b2f3e0b7f7/bg_nature_2.png,24,Nature 2,4,7,30,2,0,2,,,
-Background%203e7cd62360dd4f33afd483b2f3e0b7f7/bg_nature_3.png,25,Nature 3,4,7,30,2,2,0,,,
-Background%203e7cd62360dd4f33afd483b2f3e0b7f7/bg_textbook.png,26,Textbook,4,7,20,0,0,5,,,
-Background%203e7cd62360dd4f33afd483b2f3e0b7f7/bg_graveyard_0000.png,27,Graveyard,4,7,0,7,0,0,,,
+Background%203e7cd62360dd4f33afd483b2f3e0b7f7/bg_butterfly_0000.png,21,Butterfly,4,7,0,0,7,0,,Legendary,
+Background%203e7cd62360dd4f33afd483b2f3e0b7f7/bg_maze.png,22,Maze,4,7,0,3,4,0,,Legendary,
+Background%203e7cd62360dd4f33afd483b2f3e0b7f7/bg_nature_1.png,23,Nature 1,4,7,30,0,2,2,,Legendary,
+Background%203e7cd62360dd4f33afd483b2f3e0b7f7/bg_nature_2.png,24,Nature 2,4,7,30,2,0,2,,Legendary,
+Background%203e7cd62360dd4f33afd483b2f3e0b7f7/bg_nature_3.png,25,Nature 3,4,7,30,2,2,0,,Legendary,
+Background%203e7cd62360dd4f33afd483b2f3e0b7f7/bg_textbook.png,26,Textbook,4,7,20,0,0,5,,Legendary,
+Background%203e7cd62360dd4f33afd483b2f3e0b7f7/bg_graveyard_0000.png,27,Graveyard,4,7,0,7,0,0,,Legendary,

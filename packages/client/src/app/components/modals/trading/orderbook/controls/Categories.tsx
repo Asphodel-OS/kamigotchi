@@ -82,7 +82,7 @@ export const Categories = ({
 
 const Container = styled.div`
   border-right: 0.15vw solid black;
-  width: 40%;
+  width: 30%;
   gap: 0.3vw;
 
   display: flex;
@@ -90,7 +90,9 @@ const Container = styled.div`
   justify-content: flex-start;
   align-items: center;
 
-  overflow-y: scroll;
+  overflow-y: auto;
+  scrollbar-width: none;
+  &::-webkit-scrollbar { display: none; }
 `;
 
 const TitleBar = styled.div`
@@ -101,7 +103,7 @@ const TitleBar = styled.div`
 
   width: 100%;
   padding: 0.45vw 0.6vw;
-  font-size: 0.9vw;
+  font-size: 0.7vw;
   opacity: 0.9;
 
   display: flex;

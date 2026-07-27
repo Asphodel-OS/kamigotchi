@@ -1,7 +1,7 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import styled from 'styled-components';
 
-import { getAccount as _getAccount } from 'app/cache/account';
+import { getAccount as _getAccount, getAccountKamis as _getAccountKamis } from 'app/cache/account';
 import { getRoomByIndex } from 'app/cache/room';
 import { ActionButton, IconButton, ModalWrapper } from 'app/components/library';
 import { useLayers } from 'app/root/hooks';
@@ -29,6 +29,8 @@ import { getBalance } from 'network/shapes/utils';
 import { useComponentEntities } from 'network/utils/hooks';
 import { NpcDialogue } from './NpcDialogue';
 
+const NEWBIE_VENDOR_MAX_ACCOUNT_AGE_SECONDS = 24 * 60 * 60;
+
 // TODO: maybe in the future
 // have another dialogue modal
 // just for npcs?
@@ -36,6 +38,9 @@ export const DialogueModal: UIComponent = {
   id: 'DialogueModal',
   Render: () => {
     const layers = useLayers();
+
+    /////////////////
+    // PREPARATION
 
     const {
       network,
@@ -61,6 +66,7 @@ export const DialogueModal: UIComponent = {
           getBase: (entity: EntityIndex) => getBaseQuest(world, components, entity),
           populate: (base: BaseQuest) => populateQuest(world, components, base),
           getAccount: (entity: EntityIndex) => _getAccount(world, components, entity, accRefresh),
+          getAccountKamis: (entity: EntityIndex) => _getAccountKamis(world, components, entity),
           queryOngoing: (accountId: EntityID) => queryOngoingQuests(components, accountId),
           queryCompleted: (account: Account) => queryCompletedQuests(components, account.id),
           filterByAvailable: (
@@ -73,56 +79,77 @@ export const DialogueModal: UIComponent = {
       };
     })();
 
+    /////////////////
+    // INSTANTIATIONS
+
     const { actions, components, world } = network;
-    const { IsRegistry, OwnsQuestID, IsComplete } = components;
+    const { IsRegistry, OwnsQuestID, IsComplete, OwnsKamiID } = components;
     const { queryRegistry, queryOngoing, getBase, populate, filterByAvailable, queryCompleted } =
       utils;
 
     const dialogueModalOpen = useVisibility((s) => s.modals.dialogue);
     const setModals = useVisibility((s) => s.setModals);
     const dialogueIndex = useSelected((s) => s.dialogueIndex);
+    const setDialogue = useSelected((s) => s.setDialogue);
 
-    const [dialogueNode, setDialogueNode] = useState({
-      text: [''],
-    } as DialogueNode);
-    const [dialogueLength, setDialogueLength] = useState(0);
     const [step, setStep] = useState(0);
-    const [npc, setNpc] = useState({
-      name: '',
-      img: '',
-      color: '',
-      special: { name: '', onclick: () => {} },
-    });
+    const [dialogueHistory, setDialogueHistory] = useState<number[]>([]);
     const [availableQuests, setAvailableQuests] = useState<Quest[]>([]);
     const [ongoingQuests, setOngoingQuests] = useState<Quest[]>([]);
     const [account, setAccount] = useState<Account>(NullAccount);
-
-    /////////////////
-    // SUBSCRIPTION
-
-    // reset the step to 0 whenever the dialogue modal is toggled
-    useEffect(() => setStep(0), [dialogueModalOpen]);
-
-    // set the current dialogue node when the dialogue index changes
-    useEffect(() => {
-      setStep(0);
-      setDialogueNode(dialogues[dialogueIndex]);
-      setDialogueLength(dialogues[dialogueIndex].text.length);
-      const npcData = dialogues[dialogueIndex].npc;
-      setNpc({
+    const [hasAnyKamis, setHasAnyKamis] = useState(false);
+    const endDialogueTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+    const internalDialogueTransitionRef = useRef(false);
+    const dialogueNode = useMemo<DialogueNode>(
+      () => dialogues[dialogueIndex] ?? dialogues[0],
+      [dialogueIndex]
+    );
+    const dialogueLength = dialogueNode.text.length;
+    const npc = useMemo(() => {
+      const npcData = dialogueNode.npc;
+      return {
         name: npcData?.name ?? '',
         img: npcData?.img ?? '',
         color: npcData?.color ?? '#cc88ff',
-        special: npcData?.special ?? { name: '', onclick: () => {} },
-      });
-    }, [dialogueIndex]);
+        mood: npcData?.mood ?? '',
+        special: npcData?.special ?? { name: '', onclick: () => void 0 },
+      };
+    }, [dialogueNode.npc]);
+    const dialogueOptions = useMemo(
+      () => (dialogueNode.next ? Array.from(dialogueNode.next.entries()) : []),
+      [dialogueNode.next]
+    );
+    const registryEntities = useComponentEntities(IsRegistry) || [];
+    const ownsQuestEntities = useComponentEntities(OwnsQuestID) || [];
+    const isCompleteEntities = useComponentEntities(IsComplete) || [];
+    const ownsKamiEntities = useComponentEntities(OwnsKamiID) || [];
 
-    // update account data when the modal opens
+    /////////////////
+    // SUBSCRIPTIONS
+
+    // reset the step to 0 whenever the dialogue modal is toggled
+    useEffect(() => {
+      setStep(0);
+      if (!dialogueModalOpen) setDialogueHistory([]);
+    }, [dialogueModalOpen]);
+
+    // reset text step when changing dialogue entry
+    // clear history only when dialogue root is changed externally while modal is still open
+    useEffect(() => {
+      setStep(0);
+      if (dialogueModalOpen && !internalDialogueTransitionRef.current) {
+        setDialogueHistory([]);
+      }
+      internalDialogueTransitionRef.current = false;
+    }, [dialogueIndex, dialogueModalOpen]);
+
+    // update account data when the modal opens and when kami ownership changes
     useEffect(() => {
       if (!dialogueModalOpen) return;
       const account = utils.getAccount(accEntity);
       setAccount(account);
-    }, [dialogueModalOpen, accEntity]);
+      setHasAnyKamis(utils.getAccountKamis(accEntity).length > 0);
+    }, [dialogueModalOpen, accEntity, ownsKamiEntities]);
 
     useEffect(() => {
       if (npc.name.length > 0 && dialogueModalOpen) {
@@ -134,10 +161,6 @@ export const DialogueModal: UIComponent = {
         });
       }
     }, [dialogueModalOpen, npc.name.length, setModals]);
-
-    const registryEntities = useComponentEntities(IsRegistry) || [];
-    const ownsQuestEntities = useComponentEntities(OwnsQuestID) || [];
-    const isCompleteEntities = useComponentEntities(IsComplete) || [];
 
     const registry = useMemo(() => {
       return queryRegistry().map((entity) => getBase(entity));
@@ -175,7 +198,24 @@ export const DialogueModal: UIComponent = {
       completed,
       npc.name,
     ]);
-    //////////////////
+
+    useEffect(() => {
+      if (endDialogueTimeoutRef.current) {
+        clearTimeout(endDialogueTimeoutRef.current);
+        endDialogueTimeoutRef.current = null;
+      }
+    }, [dialogueIndex, dialogueModalOpen, step]);
+
+    useEffect(() => {
+      return () => {
+        if (endDialogueTimeoutRef.current) {
+          clearTimeout(endDialogueTimeoutRef.current);
+          endDialogueTimeoutRef.current = null;
+        }
+      };
+    }, []);
+
+    /////////////////
     // INTERPRETATION
 
     const isDisabled = (action: ActionParam) => {
@@ -194,16 +234,46 @@ export const DialogueModal: UIComponent = {
 
     const getArgs = () => {
       if (!dialogueNode.args) return [];
-      const result: any[] = [];
+      const result: number[] = [];
       dialogueNode.args.forEach((param) => {
         result.push(getBalance(world, components, accEntity, param.index, param.type));
       });
 
       return result;
     };
+    const shouldShowNpcSpecial = useMemo(() => {
+      if (!npc.special.name) return false;
+      if (npc.special.name !== 'Kami Adoption Agency') return true;
+      if (hasAnyKamis) return false;
+      const now = Math.floor(Date.now() / 1000);
+      return now - account.time.creation <= NEWBIE_VENDOR_MAX_ACCOUNT_AGE_SECONDS;
+    }, [account.time.creation, hasAnyKamis, npc.special.name]);
+    const userQualifiesForAdoptionAgency = useMemo(() => {
+      if (hasAnyKamis) return false;
+      const now = Math.floor(Date.now() / 1000);
+      return now - account.time.creation <= NEWBIE_VENDOR_MAX_ACCOUNT_AGE_SECONDS;
+    }, [account.time.creation, hasAnyKamis]);
 
-    //////////////////
+    /////////////////
     // ACTIONS
+
+    useEffect(() => {
+      if (!dialogueModalOpen) return;
+      if (dialogueIndex !== 30001) return;
+      if (!userQualifiesForAdoptionAgency) return;
+      setModals({ kamiAdoptionAgency: true });
+    }, [dialogueIndex, dialogueModalOpen, setModals, userQualifiesForAdoptionAgency]);
+
+    const handleNpcDialogueComplete = useCallback(() => {
+      if (!dialogueModalOpen) return;
+      if (!dialogueNode.npc?.endDialogue) return;
+      if (step !== dialogueLength - 1) return;
+
+      if (endDialogueTimeoutRef.current) clearTimeout(endDialogueTimeoutRef.current);
+      endDialogueTimeoutRef.current = setTimeout(() => {
+        setModals({ dialogue: false });
+      }, 3000);
+    }, [dialogueLength, dialogueModalOpen, dialogueNode.npc?.endDialogue, setModals, step]);
 
     const getAction = (type: string, input?: number) => {
       if (type === 'move') return move(input ?? 0);
@@ -225,25 +295,40 @@ export const DialogueModal: UIComponent = {
       });
     };
 
-    //////////////////
+    const transitionDialogue = (nextDialogueIndex: number) => {
+      internalDialogueTransitionRef.current = true;
+      setDialogue(nextDialogueIndex);
+    };
+
+    /////////////////
     // DISPLAY
 
     const BackButton = () => {
-      const disabled = step === 0;
+      const disabled = step === 0 && dialogueHistory.length === 0;
       return (
         <div style={{ visibility: disabled ? 'hidden' : 'visible' }}>
           <IconButton
             scale={1.8}
             img={ArrowIcons.left}
             disabled={disabled}
-            onClick={() => setStep(step - 1)}
+            onClick={() => {
+              if (step > 0) {
+                setStep(step - 1);
+                return;
+              }
+              const previousDialogue = dialogueHistory[dialogueHistory.length - 1];
+              if (previousDialogue === undefined) return;
+              setDialogueHistory((prev) => prev.slice(0, -1));
+              transitionDialogue(previousDialogue);
+            }}
           />
         </div>
       );
     };
 
     const NextButton = () => {
-      const disabled = step === dialogueLength - 1;
+      const canAdvance = step < dialogueLength - 1 || !!dialogueNode.npc?.nextDialogue;
+      const disabled = !canAdvance;
       return (
         <div
           style={{
@@ -254,43 +339,56 @@ export const DialogueModal: UIComponent = {
             scale={1.8}
             img={ArrowIcons.right}
             disabled={disabled}
-            onClick={() => setStep(step + 1)}
+            onClick={() => {
+              if (step < dialogueLength - 1) {
+                setStep(step + 1);
+                return;
+              }
+              if (dialogueNode.npc?.nextDialogue) {
+                setDialogueHistory((prev) => [...prev, dialogueIndex]);
+                setStep(0);
+                transitionDialogue(dialogueNode.npc.nextDialogue);
+              }
+            }}
           />
         </div>
       );
     };
     const MiddleButton = () => {
       if (!dialogueNode.action) return <div />;
-      let action: ActionParam;
-      let show = false;
 
-      // split by step if action is an array
+      let actions: ActionParam[];
+
       if ('label' in dialogueNode.action) {
-        // only on last step
-        action = dialogueNode.action;
-        show = step !== dialogueLength - 1 && !!action;
+        // single action: show on last step only
+        if (step !== dialogueLength - 1) return <div />;
+        actions = [dialogueNode.action];
       } else {
-        // per step
-        action = dialogueNode.action[step];
-        show = action === undefined;
+        // per-step array
+        const entry = dialogueNode.action[step];
+        if (entry === undefined) return <div />;
+        actions = Array.isArray(entry) ? entry : [entry];
       }
 
-      if (show) return <div />;
-
       return (
-        <ActionButton
-          text={action.label}
-          disabled={isDisabled(action)}
-          onClick={() => {
-            action.onClick?.();
-            getAction(action.type, action.input);
-          }}
-        />
+        <div style={{ display: 'flex', gap: '0.5vw' }}>
+          {actions.map((action, i) => (
+            <ActionButton
+              key={i}
+              text={action.label}
+              disabled={isDisabled(action)}
+              onClick={() => {
+                action.onClick?.();
+                getAction(action.type, action.input);
+              }}
+            />
+          ))}
+        </div>
       );
     };
 
-    //////////////////
-    // NPCS DIALOGUES
+    /////////////////
+    // RENDER
 
     if (npc.name.length > 0) {
       return (
@@ -303,7 +401,7 @@ export const DialogueModal: UIComponent = {
             colStart: 66,
             colEnd: 99,
             rowStart: 7,
-            rowEnd: 90,
+            rowEnd: 84,
             position: 'fixed',
           }}
           noScroll
@@ -313,14 +411,24 @@ export const DialogueModal: UIComponent = {
             hasOngoingQuests={ongoingQuests}
             npcColor='#000000ff'
             npcName={npc.name}
-            npcImage={npc.img}
+            npcImage={npc.mood || npc.img}
             dialogueText={getText(dialogueNode.text[step])}
+            twoColumnText={dialogueIndex === 20018}
+            onDialogueComplete={handleNpcDialogueComplete}
+            dialogueOptions={dialogueOptions.map(([label, nextIndex]) => ({
+              label,
+              onClick: () => {
+                setDialogueHistory((prev) => [...prev, dialogueIndex]);
+                setStep(0);
+                transitionDialogue(nextIndex);
+              },
+            }))}
             dialogueButtons={{
               BackButton: BackButton,
               NextButton: NextButton,
               MiddleButton: MiddleButton,
             }}
-            special={npc.special.name ? npc.special : undefined}
+            special={shouldShowNpcSpecial ? npc.special : undefined}
           />
         </ModalWrapper>
       );

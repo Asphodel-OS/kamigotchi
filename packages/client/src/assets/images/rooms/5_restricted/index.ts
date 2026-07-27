@@ -1,7 +1,7 @@
 import bgOriginal from './backgrounds/original.png';
-import bgPlaytestDay from './backgrounds/playtest-a.png';
-import bgPlaytestEvening from './backgrounds/playtest-b.png';
-import bgPlaytestNight from './backgrounds/playtest-c.png';
+import bgPlaytestDay from './backgrounds/room5a_rob.png';
+import bgPlaytestEvening from './backgrounds/room5b_rob.png';
+import bgPlaytestNight from './backgrounds/room5c_rob.png';
 
 import objectCompanyBuilding from './objects/company-building.png';
 import objectTrashBag from './objects/trash-bag.png';

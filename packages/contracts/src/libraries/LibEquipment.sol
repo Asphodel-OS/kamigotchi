@@ -45,7 +45,7 @@ library LibEquipment {
   using LibString for string;
 
   string constant ENTITY_TYPE = "EQUIPMENT";
-  string constant END_TYPE_PREFIX = "ON_UNEQUIP_";
+  string constant END_TYPE_PREFIX = "UPON_UNEQUIP_";
 
   // Equipment capacity: base limit on total equipment an entity can have equipped
   uint256 constant DEFAULT_CAPACITY = 1;
@@ -136,22 +136,9 @@ library LibEquipment {
     uint256 inventoryID,
     string memory slot
   ) internal returns (uint32 itemIndex) {
-    // Get equipment instance
     uint256 equipID = getEquipped(components, holderID, slot);
     require(equipID != 0, "Equipment: slot empty");
-
-    // Get item index before removing
-    itemIndex = IndexItemComponent(getAddrByID(components, IndexItemCompID)).get(equipID);
-
-    // Clear bonuses for this slot
-    string memory endType = genEndType(slot);
-    LibBonus.unassignBy(components, endType, holderID);
-
-    // Remove equipment instance
-    removeInstance(components, equipID);
-
-    // Return item to inventory
-    LibInventory.incFor(components, inventoryID, itemIndex, 1);
+    itemIndex = _unequipByID(components, equipID, holderID, inventoryID);
   }
 
   /////////////////
@@ -235,6 +222,36 @@ library LibEquipment {
     uint256 refID = LibReference.genID("EQUIP", refAnchor);
     uint256 alloAnchor = LibItem.genAlloAnchor(refID);
     return LibAllo.genID(alloAnchor, "BONUS", 1);
+  }
+
+  /////////////////
+  // BULK OPERATIONS
+
+  /// @notice Force-unequip all items from a holder, returning items to inventory
+  /// @dev Used by marketplace/transfer flows to ensure no equipment persists through ownership changes
+  function unequipAll(
+    IUintComp components,
+    uint256 holderID,
+    uint256 inventoryID
+  ) internal {
+    uint256[] memory equipIDs = getAllEquipped(components, holderID);
+    for (uint256 i; i < equipIDs.length; i++) {
+      _unequipByID(components, equipIDs[i], holderID, inventoryID);
+    }
+  }
+
+  /// @notice Shared unequip logic: clear bonuses, remove instance, return item
+  function _unequipByID(
+    IUintComp components,
+    uint256 equipID,
+    uint256 holderID,
+    uint256 inventoryID
+  ) private returns (uint32 itemIndex) {
+    itemIndex = IndexItemComponent(getAddrByID(components, IndexItemCompID)).get(equipID);
+    string memory slot = ForComponent(getAddrByID(components, ForCompID)).get(equipID);
+    LibBonus.unassignBy(components, genEndType(slot), holderID);
+    removeInstance(components, equipID);
+    LibInventory.incFor(components, inventoryID, itemIndex, 1);
   }
 
   /////////////////

@@ -16,17 +16,25 @@ uint256 constant ID = uint256(keccak256("system.erc20.portal"));
 /** @dev
  * A special system, uses local storage as the source of truth to avoid depending
  * on item registries. Not meant to be upgraded frequently, but can be if needed.
+ * If redeploying, token items must be re-initialized through initItem().
  */
 contract TokenPortalSystem is System, AuthRoles {
   // store item's token address/conversion rate locally, no dependence on registries
   mapping(uint32 => address) public itemAddrs;
   mapping(uint32 => int32) public itemScales;
+  bool public isEnabled;
 
   constructor(IWorld _world, address _components) System(_world, _components) {}
 
+  /// @notice enable or disable the token portal
+  modifier onlyEnabled() {
+    require(isEnabled, "Token Portal: disabled");
+    _; // Execute the rest of the function
+  }
+
   /// @notice deposit ERC20 tokens into the game world through the token portal
   /// @dev conversion scale is determined by itemScales
-  function deposit(uint32 itemIndex, uint256 itemAmt) public {
+  function deposit(uint32 itemIndex, uint256 itemAmt) public onlyEnabled {
     uint256 accID = LibAccount.getByOwner(components, msg.sender);
 
     // checks before action
@@ -41,12 +49,15 @@ contract TokenPortalSystem is System, AuthRoles {
 
   /// @notice initialize a (ERC20) token withdrawal from the game world
   /// @dev creates a Withdrawal Receipt entity with delayed settlement
-  function withdraw(uint32 itemIndex, uint256 itemAmt) public returns (uint256 receiptID) {
+  function withdraw(
+    uint32 itemIndex,
+    uint256 itemAmt
+  ) public onlyEnabled returns (uint256 receiptID) {
     uint256 accID = LibAccount.getByOwner(components, msg.sender);
 
     // checks
-    address tokenAddr = itemAddrs[itemIndex];
-    require(tokenAddr != address(0), "Token Portal: item not registered");
+    address tokenAddress = itemAddrs[itemIndex];
+    require(tokenAddress != address(0), "Token Portal: item not registered");
 
     // reduces items, creates withdrawal receipt
     int32 scale = itemScales[itemIndex];
@@ -56,7 +67,7 @@ contract TokenPortalSystem is System, AuthRoles {
       accID,
       itemIndex,
       itemAmt,
-      tokenAddr,
+      tokenAddress,
       scale
     );
     LibAccount.updateLastTs(components, accID);
@@ -65,24 +76,27 @@ contract TokenPortalSystem is System, AuthRoles {
   /// @notice execute a pending Withdrawal Receipt; must be owner
   /// @dev data logging may be wrong if itemScales entry is deleted,
   /// but token amounts and claim flow should resolve correctly
-  function claim(uint256 receiptID) public {
+  function claim(uint256 receiptID) public onlyEnabled {
     uint256 accID = LibAccount.getByOwner(components, msg.sender);
     LibTokenPortal.verifyReceiptOwner(components, accID, receiptID);
     LibDisabled.verifyEnabled(components, receiptID);
     LibTokenPortal.verifyTimeEnd(components, receiptID);
 
+    // checks
     uint32 itemIndex = LibItem.getIndex(components, receiptID);
     require(itemIndex != 0, "Item Registry: item not registered");
+    address tokenAddress = itemAddrs[itemIndex]; // token address as known by Portal (overrides Receipt)
+    require(tokenAddress != address(0), "Token Portal: item not registered");
 
     int32 scale = itemScales[itemIndex];
-    LibTokenPortal.claim(world, components, receiptID, scale);
+    LibTokenPortal.claim(world, components, receiptID, tokenAddress, scale);
     LibAccount.updateLastTs(components, accID);
   }
 
   /// @notice cancel a pending Withdrawal Receipt; must be owner
   /// @dev data logging may be wrong if itemScales entry is deleted,
   /// but token amounts and claim flow should resolve correctly
-  function cancel(uint256 receiptID) public {
+  function cancel(uint256 receiptID) public onlyEnabled {
     uint256 accID = LibAccount.getByOwner(components, msg.sender);
     LibTokenPortal.verifyReceiptOwner(components, accID, receiptID);
     LibDisabled.verifyEnabled(components, receiptID);
@@ -117,6 +131,11 @@ contract TokenPortalSystem is System, AuthRoles {
     LibTokenPortal.cancel(world, components, receiptID, scale);
   }
 
+  /// @notice toggle the Portal functionality on or off, as Owner only
+  function adminToggleEnabled(bool enabled) public onlyOwner {
+    isEnabled = enabled;
+  }
+
   //////////////////
   // REGISTRY
 
@@ -136,7 +155,7 @@ contract TokenPortalSystem is System, AuthRoles {
   }
 
   /// @notice add an item to the token portal by populating its address and conversion scale
-  /// @dev item needs to be added through the ItemRegistrySystem first
+  /// @dev item must be registered through the ItemRegistrySystem first as standard item
   function setItem(uint32 index, address tokenAddr, int32 scale) public onlyOwner {
     uint256 id = LibItem.getByIndex(components, index);
     if (id == 0) revert("TokenPortal: item does not exist");

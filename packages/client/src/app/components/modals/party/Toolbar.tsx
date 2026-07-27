@@ -78,7 +78,7 @@ export const Toolbar = ({
   useEffect(() => {
     if (!isModalOpen) return;
 
-    const base = view === 'external' ? wildKamis : kamis;
+    const base = view === 'external' ? wildKamis : kamis.filter((k) => k.state !== 'LISTED');
     const sorted = [...base];
 
     switch (sort) {
@@ -128,7 +128,7 @@ export const Toolbar = ({
     }
 
     setDisplayedKamis(sorted);
-  }, [isModalOpen, wildKamis.length, kamis.length, view, sort, tick]);
+  }, [isModalOpen, wildKamis.length, kamis.length, view, sort]);
 
   // updates the list of action options based on state updates
   useEffect(() => {
@@ -169,10 +169,10 @@ export const Toolbar = ({
   // player has no kami in world
   // or player has kami in the wild
   const toggleView = () => {
-    const showExternal = kamis.length === 0 || wildKamis.length > 0;
-    if (view === 'external') setView('collapsed');
-    else if (view === 'collapsed') setView('expanded');
-    else setView(showExternal ? 'external' : 'collapsed');
+    const hasExternal = wildKamis.length > 0 || kamis.some((k) => k.state === 'LISTED');
+    if (view === 'expanded') setView('collapsed');
+    else if (view === 'collapsed') setView(hasExternal ? 'external' : 'expanded');
+    else setView('expanded');
   };
 
   /////////////////
@@ -225,7 +225,7 @@ export const Toolbar = ({
   return (
     <Container>
       <Section>
-        <TextTooltip text={[`${view}`]}>
+        <TextTooltip text={[`${view}`]} persistOnClick>
           <IconButton img={ViewIcons[view]} onClick={() => toggleView()} radius={0.6} />
         </TextTooltip>
         <IconListButton img={SortIcons[sort]} text={sort} options={SortOptions} radius={0.6} />

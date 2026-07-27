@@ -1,22 +1,28 @@
 import { IconListButton } from 'app/components/library';
-import { ExternalIcon, SudoIcon, Whispo } from 'assets/images/icons/menu';
-
-const KAMI_ADDR = '0x5d4376b62fa8ac16dfabe6a9861e11c33a48c677';
+import { ExternalIcon, Whispo } from 'assets/images/icons/menu';
+import KamiStatsIcon from 'assets/images/icons/menu/kamistats.png';
+import KamiWikiIcon from 'assets/images/icons/menu/kamiwiki.png';
 
 export const SudoMenuButton = () => {
-  const openSudoLink = () => {
-    window.open(`https://sudoswap.xyz/#/browse/yominet/buy/${KAMI_ADDR}`, '_blank', 'noopener');
-  };
   const openKamibotsLink = () => {
     window.open(`https://www.kamibots.xyz`, '_blank', 'noopener');
+  };
+
+  const openKamiWikiLink = () => {
+    window.open(`https://kamiwiki.xyz/`, '_blank', 'noopener');
+  };
+
+  const openKamiStatsLink = () => {
+    window.open(`https://kamistats.com/`, '_blank', 'noopener');
   };
 
   return (
     <IconListButton
       img={ExternalIcon}
       options={[
-        { text: 'Sudoswap', image: SudoIcon, onClick: openSudoLink },
         { text: 'KamiBots', image: Whispo, onClick: openKamibotsLink },
+        { text: 'KamiWiki', image: KamiWikiIcon, onClick: openKamiWikiLink },
+        { text: 'KamiStats', image: KamiStatsIcon, onClick: openKamiStatsLink },
       ]}
       scale={4.5}
       scaleOrientation='vh'

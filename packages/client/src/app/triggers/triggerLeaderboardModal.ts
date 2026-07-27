@@ -4,7 +4,6 @@ import { playClick } from 'utils/sounds';
 
 export const triggerLeaderboardModal = (index?: LeaderboardKey) => {
   const { modals } = useVisibility.getState();
-  const { leaderboardKey } = useSelected.getState();
   playClick();
 
   if (!index) index = 'default';

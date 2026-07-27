@@ -9,9 +9,7 @@ import { getAddrByID, getCompByID } from "solecs/utils.sol";
 import { BlockRevealComponent as BlockRevComponent, ID as BlockRevealCompID } from "components/BlockRevealComponent.sol";
 import { IdHolderComponent, ID as IdHolderCompID } from "components/IdHolderComponent.sol";
 import { TypeComponent, ID as TypeCompID } from "components/TypeComponent.sol";
-
 import { LibComp } from "libraries/utils/LibComp.sol";
-import { LibRandom } from "libraries/utils/LibRandom.sol";
 
 /** @notice library for commit/reveal patters
  * Commits are designed to be extended upon depending on its use, but have a minimum shape
@@ -95,6 +93,12 @@ library LibCommit {
   /// @notice bypasses component registry to extract seed
   function extractSeedDirect(BlockRevComponent blockComp, uint256 id) internal returns (uint256) {
     return hashSeed(blockComp.extract(id), id);
+  }
+
+  /// @notice reads (without extracting) the seed for a commit, so a commit can
+  /// be revealed across multiple chunks that reuse the same reveal block
+  function seedDirect(BlockRevComponent blockComp, uint256 id) internal view returns (uint256) {
+    return hashSeed(blockComp.get(id), id);
   }
 
   function extractSeeds(

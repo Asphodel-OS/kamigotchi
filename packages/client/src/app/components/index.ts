@@ -8,6 +8,7 @@ import { NotificationFixture } from './fixtures/notifications';
 import { ActionQueue } from './fixtures/queue';
 
 import { AccountModal } from './modals/account';
+import { BridgeModal } from './modals/bridge';
 import { ChatModal } from './modals/chat';
 import { CraftingModal } from './modals/crafting';
 import { DialogueModal } from './modals/dialogue';
@@ -17,20 +18,24 @@ import { GoalModal } from './modals/goals';
 import { HelpModal } from './modals/help';
 import { InventoryModal } from './modals/inventory';
 import { KamiModal } from './modals/kami';
+import { KamiAdoptionAgency } from './modals/kamiAdoptionAgency';
 import { KamiPortalModal } from './modals/kamiPortal';
+import { KamiSendModal } from './modals/kamiSend';
 import { LeaderboardModal } from './modals/leaderboard';
 import { MapModal } from './modals/map';
+import { MarketplaceModal } from './modals/marketplace';
 import { MerchantModal } from './modals/merchant';
 import { EmaBoardModal } from './modals/naming';
 import { NodeModal } from './modals/node';
 import { ObolModal } from './modals/obol';
 import { PartyModal } from './modals/party';
-import { TempleOfTheWheel } from './modals/templeOfTheWheel';
+import { PoolModal } from './modals/pool';
 import { QuestDetailsModal } from './modals/questDetails';
 import { QuestModal } from './modals/quests';
 import { RevealModal } from './modals/reveal';
 import { SettingsModal } from './modals/settings';
 import { AnimationStudio } from './modals/studio/AnimationStudio';
+import { TempleOfTheWheel } from './modals/templeOfTheWheel';
 import { TokenPortalModal } from './modals/tokenPortal';
 import { TradingModal } from './modals/trading';
 import {
@@ -112,8 +117,12 @@ export const allComponents: UIComponentWithGrid[] = [
     gridConfig: { colStart: 67, colEnd: 100, rowStart: 8, rowEnd: 75 },
   },
   {
+    uiComponent: BridgeModal,
+    gridConfig: { colStart: 33, colEnd: 71, rowStart: 20, rowEnd: 80 },
+  },
+  {
     uiComponent: CraftingModal,
-    gridConfig: { colStart: 33, colEnd: 67, rowStart: 3, rowEnd: 99 },
+    gridConfig: { colStart: 33, colEnd: 67, rowStart: 8, rowEnd: 99 },
   },
   {
     uiComponent: InventoryModal,
@@ -125,7 +134,7 @@ export const allComponents: UIComponentWithGrid[] = [
   },
   {
     uiComponent: NodeModal,
-    gridConfig: { colStart: 33, colEnd: 67, rowStart: 3, rowEnd: 99 },
+    gridConfig: { colStart: 33, colEnd: 67, rowStart: 8, rowEnd: 99 },
   },
   {
     uiComponent: PartyModal,
@@ -133,6 +142,10 @@ export const allComponents: UIComponentWithGrid[] = [
   },
   {
     uiComponent: QuestModal,
+    gridConfig: { colStart: 67, colEnd: 100, rowStart: 8, rowEnd: 75 },
+  },
+  {
+    uiComponent: KamiSendModal,
     gridConfig: { colStart: 67, colEnd: 100, rowStart: 8, rowEnd: 75 },
   },
   {
@@ -174,10 +187,6 @@ export const allComponents: UIComponentWithGrid[] = [
     gridConfig: { colStart: 25, colEnd: 75, rowStart: 8, rowEnd: 75 },
   },
   {
-    uiComponent: KamiModal,
-    gridConfig: { colStart: 11, colEnd: 67, rowStart: 8, rowEnd: 99 },
-  },
-  {
     uiComponent: LeaderboardModal,
     gridConfig: { colStart: 32, colEnd: 70, rowStart: 20, rowEnd: 78 },
   },
@@ -190,6 +199,10 @@ export const allComponents: UIComponentWithGrid[] = [
     gridConfig: { colStart: 36, colEnd: 65, rowStart: 20, rowEnd: 80 },
   },
   {
+    uiComponent: KamiAdoptionAgency,
+    gridConfig: { colStart: 33, colEnd: 67, rowStart: 8, rowEnd: 99 },
+  },
+  {
     uiComponent: RevealModal,
     gridConfig: { colStart: 30, colEnd: 70, rowStart: 30, rowEnd: 75 },
   },
@@ -200,6 +213,20 @@ export const allComponents: UIComponentWithGrid[] = [
   {
     uiComponent: MerchantModal,
     gridConfig: { colStart: 2, colEnd: 67, rowStart: 8, rowEnd: 99 },
+  },
+  {
+    uiComponent: PoolModal,
+    gridConfig: { colStart: 33, colEnd: 67, rowStart: 15, rowEnd: 85 },
+  },
+  {
+    uiComponent: MarketplaceModal,
+    gridConfig: { colStart: 2, colEnd: 67, rowStart: 8, rowEnd: 99 },
+  },
+
+  // detail overlay — renders last so it paints on top of all other modals
+  {
+    uiComponent: KamiModal,
+    gridConfig: { colStart: 11, colEnd: 67, rowStart: 8, rowEnd: 99 },
   },
 
   // dev-only

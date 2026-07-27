@@ -49,8 +49,21 @@ export function portalAPI(generateCallData: GenerateCallData, compiledCalls: str
     compiledCalls.push(callData);
   }
 
+  // turn the portal off or on
+  async function toggleEnabled(enabled: boolean) {
+    const callData = generateCallData(
+      'system.erc20.portal',
+      [enabled],
+      'adminToggleEnabled',
+      undefined,
+      '800000'
+    );
+    compiledCalls.push(callData);
+  }
+
   return {
     token: {
+      toggleEnabled: toggleEnabled,
       init: initItems,
       set: setItem,
       unset: unsetItem,

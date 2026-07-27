@@ -25,6 +25,18 @@ import { LibData } from "libraries/LibData.sol";
 import { LibInventory } from "libraries/LibInventory.sol";
 import { LibListingRegistry as LibRegistry } from "libraries/LibListingRegistry.sol";
 
+// hard bound on how far a GDA listing can run behind its sales schedule. Clamping
+// the deficit exponent gives an implicit price floor of target × decay^K and,
+// paired with settleGDA's state-side forgiveness, bounds recovery to K periods of
+// purchases. Without a bound, an oversupplied listing decays toward zero and the
+// exact batch integral lets the whole backlog clear at dust prices.
+uint256 constant MAX_DEFICIT_PERIODS = 3;
+
+// hard bound on batch size, in periods of supply. The batch integral compounds
+// decay^(-q/rate); past ~190 periods it overflows prb-math's SD59x18 and reverts
+// with a raw math error. Bound it explicitly with a legible message instead.
+uint256 constant MAX_BATCH_PERIODS = 100;
+
 /** @notice
  * LibListing handles all operations interacting with Listings
  * The Buy Side and Sell Side pricing can be defined in a handful of ways:
@@ -48,6 +60,7 @@ library LibListing {
     uint32 itemIndex,
     uint256 amt
   ) internal returns (uint32 currencyIndex, uint256 price) {
+    settleGDA(comps, id);
     price = calcBuyPrice(comps, id, amt);
     if (price == 0) revert("LibListing: invalid buy price");
     incBalance(comps, id, amt);
@@ -66,6 +79,10 @@ library LibListing {
     uint32 itemIndex,
     uint256 amt
   ) internal returns (uint32 currencyIndex, uint256 price) {
+    // No settleGDA here: sells never create a floor-faucet (they raise the deficit,
+    // not lower the price for a buyer), calcBuyPrice already clamps the price it
+    // returns, and the next buy settles. Settling on sell would only add a
+    // TimeStart write (a no-op for FIXED sells) without changing any price.
     price = calcSellPrice(comps, id, amt);
     if (price == 0) revert("LibListing: invalid sell price");
     decBalance(comps, id, amt);
@@ -120,9 +137,19 @@ library LibListing {
         BalanceComponent(getAddrByID(comps, BalanceCompID)).safeGet(id).toUint256(),
         amt
       );
+      require(amt <= params.rate * MAX_BATCH_PERIODS, "LibListing: batch too large");
+
+      // deficit clamp: price floor of target × decay^MAX_DEFICIT_PERIODS. View-side
+      // only; buy/sell settle the stored deficit to the same bound (settleGDA), so
+      // displayed and charged prices always agree. Applied here, NOT in LibGDA:
+      // auctions share that library and want unbounded decay.
+      uint256 cap = gdaCapSeconds(params.prevSold, params.period, params.rate);
+      if (block.timestamp - params.startTs > cap) params.startTs = block.timestamp - cap;
+
       int256 costWad = LibGDA.calc(params);
       require(costWad > 0, "LibListing: non-positive GDA cost");
-      return (uint256(costWad) + 1e18 - 1) / 1e18; // round up
+      price = (uint256(costWad) + 1e18 - 1) / 1e18; // round up
+      return price < amt ? amt : price; // at least 1 currency per unit
     } else revert("LibListing: invalid buy type");
   }
 
@@ -143,8 +170,39 @@ library LibListing {
     } else revert("LibListing: invalid sell type");
   }
 
+  /// @notice schedule-seconds covered by sales, plus the clamp allowance
+  function gdaCapSeconds(
+    uint256 prevSold,
+    uint256 period,
+    uint256 rate
+  ) internal pure returns (uint256) {
+    return (prevSold * period) / rate + MAX_DEFICIT_PERIODS * period;
+  }
+
   //////////////////
   // SETTERS
+
+  /// @notice forgive GDA backlog beyond MAX_DEFICIT_PERIODS by advancing TimeStart.
+  /// Called on buy() only — that's the sole path that can farm the floor.
+  /// @dev without this, a dormant listing's stored deficit lets unlimited volume
+  /// clear at the floor price until the entire backlog is bought. Settling caps the
+  /// owed backlog at MAX_DEFICIT_PERIODS × rate and makes price respond to
+  /// purchases immediately, bounding recovery-to-target at that same volume.
+  function settleGDA(IUintComp comps, uint256 id) internal {
+    uint256 buyID = LibRegistry.genBuyID(id);
+    TypeComponent typeComp = TypeComponent(getAddrByID(comps, TypeCompID));
+    // defensive: only GDA buy sides carry a deficit to settle (FIXED buy / unset -> skip)
+    if (!typeComp.has(buyID) || !typeComp.get(buyID).eq("GDA")) return;
+
+    uint256 startTs = TimeStartComponent(getAddrByID(comps, TimeStartCompID)).safeGet(id);
+    uint256 period = PeriodComponent(getAddrByID(comps, PeriodCompID)).get(buyID).toUint256();
+    uint256 rate = RateComponent(getAddrByID(comps, RateCompID)).get(buyID);
+    uint256 prevSold = BalanceComponent(getAddrByID(comps, BalanceCompID)).safeGet(id).toUint256();
+
+    uint256 cap = gdaCapSeconds(prevSold, period, rate);
+    if (block.timestamp - startTs > cap)
+      TimeStartComponent(getAddrByID(comps, TimeStartCompID)).set(id, block.timestamp - cap);
+  }
 
   /// @notice increase the balance of a listing by certain amount
   /// @dev how balance is interpreted depends on the type of listing

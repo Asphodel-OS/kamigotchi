@@ -59,13 +59,15 @@ function processReveal(
   const holderID = formatEntityID(reveal.HolderID);
   if (holderID !== accountID) return;
 
-  if (reveal.ItemIndices.length !== reveal.ItemAmounts.length) {
-    log.warn(`${config.logPrefix}: misaligned arrays`, { commitID: reveal.CommitID });
-    return;
-  }
+  const len = Math.min(reveal.ItemIndices.length, reveal.ItemAmounts.length);
+  reveal.ItemIndices = reveal.ItemIndices.slice(0, len);
+  reveal.ItemAmounts = reveal.ItemAmounts.slice(0, len);
 
+  // a large commit drains over multiple reveal txs sharing a CommitID, each
+  // emitting its own feed event. key the notif per event (block timestamp) so
+  // every chunk gets a banner, while re-deliveries of the same event still dedup
   const commitID = formatEntityID(reveal.CommitID);
-  const notifId = `${config.notifPrefix}-${commitID}` as EntityID;
+  const notifId = `${config.notifPrefix}-${commitID}-${reveal.Timestamp}` as EntityID;
   if (notifications.has(notifId)) return;
 
   const results = parseRevealResults(world, components, reveal);

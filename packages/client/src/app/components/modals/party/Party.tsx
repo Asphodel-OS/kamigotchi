@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
-import { erc721Abi } from 'viem';
-import { useReadContracts, useWatchBlockNumber, useWriteContract } from 'wagmi';
+import { useReadContracts, useWatchBlockNumber } from 'wagmi';
 
 import {
   AccountOptions,
@@ -38,7 +37,6 @@ import {
 } from 'network/shapes/Kami';
 import { Node, NullNode, passesNodeReqs as _passesNodeReqs } from 'network/shapes/Node';
 import { KamiList } from './kamis/KamiList';
-import { SendBar } from './SendBar';
 import { Toolbar } from './Toolbar';
 import { Sort, View } from './types';
 
@@ -112,7 +110,6 @@ export const PartyModal: UIComponent = {
     const { getNode, getAccount, queryAllAccounts } = utils;
     const { getKami, getWorldKamis, queryKamiByIndex, passesNodeReqs } = utils;
 
-    const { writeContract } = useWriteContract();
     const selectedAddress = useNetwork((s) => s.selectedAddress);
     const ownerAPIs = useNetwork((s) => s.apis);
     const nodeIndex = useSelected((s) => s.nodeIndex);
@@ -219,8 +216,10 @@ export const PartyModal: UIComponent = {
     useEffect(() => {
       if (!initialized || viewInitialized) return;
 
-      // only run once: if no world kamis but has wild kamis, switch to external
-      if (wildKamis.length > 0 && kamis.length === 0) {
+      // if expanded/collapsed views would be empty, switch to external
+      const nonListedWorldKamis = kamis.filter((k) => k.state !== 'LISTED');
+      const hasExternalContent = wildKamis.length > 0 || kamis.some((k) => k.state === 'LISTED');
+      if (nonListedWorldKamis.length === 0 && hasExternalContent) {
         setView('external');
       }
       setViewInitialized(true);
@@ -228,16 +227,6 @@ export const PartyModal: UIComponent = {
 
     /////////////////
     // ACTIONS
-
-    // send a kami NFT to another player
-    const send = (kami: Kami, to: Account) => {
-      writeContract({
-        abi: erc721Abi,
-        address: kamiNFTAddress,
-        functionName: 'safeTransferFrom',
-        args: [account.ownerAddress, to.ownerAddress, BigInt(kami.index)],
-      });
-    };
 
     // import a kami from the wild to the world
     const stake = (kamis: Kami[]) => {
@@ -332,13 +321,6 @@ export const PartyModal: UIComponent = {
           display={display}
           state={{ displayedKamis, tick }}
           utils={utils}
-        />
-        <SendBar
-          actions={{ sendKami: (k: Kami, a: Account) => send(k, a) }}
-          controls={{ sort, view }}
-          data={{ accounts }}
-          state={{ kamis: displayedKamis }}
-          isVisible={isModalOpen && view === 'external'}
         />
       </ModalWrapper>
     );

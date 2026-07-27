@@ -10,9 +10,12 @@ import _FactionRegistrySystem from "../../../out/_FactionRegistrySystem.sol/_Fac
 import _GoalRegistrySystem from "../../../out/_GoalRegistrySystem.sol/_GoalRegistrySystem.json";
 import _HarvestAdminSystem from "../../../out/_HarvestAdminSystem.sol/_HarvestAdminSystem.json";
 import _ItemRegistrySystem from "../../../out/_ItemRegistrySystem.sol/_ItemRegistrySystem.json";
+import _KamiMarketRegistrySystem from "../../../out/_KamiMarketRegistrySystem.sol/_KamiMarketRegistrySystem.json";
 import _ListingRegistrySystem from "../../../out/_ListingRegistrySystem.sol/_ListingRegistrySystem.json";
+import _NewbieVendorRegistrySystem from "../../../out/_NewbieVendorRegistrySystem.sol/_NewbieVendorRegistrySystem.json";
 import _NodeRegistrySystem from "../../../out/_NodeRegistrySystem.sol/_NodeRegistrySystem.json";
 import _NPCRegistrySystem from "../../../out/_NPCRegistrySystem.sol/_NPCRegistrySystem.json";
+import _PoolRegistrySystem from "../../../out/_PoolRegistrySystem.sol/_PoolRegistrySystem.json";
 import _QuestRegistrySystem from "../../../out/_QuestRegistrySystem.sol/_QuestRegistrySystem.json";
 import _RecipeRegistrySystem from "../../../out/_RecipeRegistrySystem.sol/_RecipeRegistrySystem.json";
 import _RelationshipRegistrySystem from "../../../out/_RelationshipRegistrySystem.sol/_RelationshipRegistrySystem.json";
@@ -61,16 +64,24 @@ import KamiGachaMintSystem from "../../../out/KamiGachaMintSystem.sol/KamiGachaM
 import KamiGachaRerollSystem from "../../../out/KamiGachaRerollSystem.sol/KamiGachaRerollSystem.json";
 import KamiGachaRevealSystem from "../../../out/KamiGachaRevealSystem.sol/KamiGachaRevealSystem.json";
 import KamiLevelSystem from "../../../out/KamiLevelSystem.sol/KamiLevelSystem.json";
+import KamiMarketAcceptOfferSystem from "../../../out/KamiMarketAcceptOfferSystem.sol/KamiMarketAcceptOfferSystem.json";
+import KamiMarketBuySystem from "../../../out/KamiMarketBuySystem.sol/KamiMarketBuySystem.json";
+import KamiMarketCancelSystem from "../../../out/KamiMarketCancelSystem.sol/KamiMarketCancelSystem.json";
+import KamiMarketListSystem from "../../../out/KamiMarketListSystem.sol/KamiMarketListSystem.json";
+import KamiMarketOfferSystem from "../../../out/KamiMarketOfferSystem.sol/KamiMarketOfferSystem.json";
 import KamiNameSystem from "../../../out/KamiNameSystem.sol/KamiNameSystem.json";
 import KamiOnyxRenameSystem from "../../../out/KamiOnyxRenameSystem.sol/KamiOnyxRenameSystem.json";
 import KamiOnyxRespecSystem from "../../../out/KamiOnyxRespecSystem.sol/KamiOnyxRespecSystem.json";
 import KamiOnyxReviveSystem from "../../../out/KamiOnyxReviveSystem.sol/KamiOnyxReviveSystem.json";
 import KamiSacrificeCommitSystem from "../../../out/KamiSacrificeCommitSystem.sol/KamiSacrificeCommitSystem.json";
 import KamiSacrificeRevealSystem from "../../../out/KamiSacrificeRevealSystem.sol/KamiSacrificeRevealSystem.json";
+import KamiSendSystem from "../../../out/KamiSendSystem.sol/KamiSendSystem.json";
 import KamiUnequipSystem from "../../../out/KamiUnequipSystem.sol/KamiUnequipSystem.json";
 import KamiUseItemSystem from "../../../out/KamiUseItemSystem.sol/KamiUseItemSystem.json";
 import ListingBuySystem from "../../../out/ListingBuySystem.sol/ListingBuySystem.json";
 import ListingSellSystem from "../../../out/ListingSellSystem.sol/ListingSellSystem.json";
+import NewbieVendorBuySystem from "../../../out/NewbieVendorBuySystem.sol/NewbieVendorBuySystem.json";
+import PoolSystem from "../../../out/PoolSystem.sol/PoolSystem.json";
 import QuestAcceptSystem from "../../../out/QuestAcceptSystem.sol/QuestAcceptSystem.json";
 import QuestCompleteSystem from "../../../out/QuestCompleteSystem.sol/QuestCompleteSystem.json";
 import QuestDropSystem from "../../../out/QuestDropSystem.sol/QuestDropSystem.json";
@@ -96,9 +107,12 @@ export const SystemBytecodes = {
   "system.goal.registry": _GoalRegistrySystem,
   "system.harvest.admin": _HarvestAdminSystem,
   "system.item.registry": _ItemRegistrySystem,
+  "system.kamimarket.registry": _KamiMarketRegistrySystem,
   "system.listing.registry": _ListingRegistrySystem,
+  "system.newbievendor.registry": _NewbieVendorRegistrySystem,
   "system.node.registry": _NodeRegistrySystem,
   "system.npc.registry": _NPCRegistrySystem,
+  "system.pool.registry": _PoolRegistrySystem,
   "system.quest.registry": _QuestRegistrySystem,
   "system.recipe.registry": _RecipeRegistrySystem,
   "system.relationship.registry": _RelationshipRegistrySystem,
@@ -147,16 +161,24 @@ export const SystemBytecodes = {
   "system.kami.gacha.reroll": KamiGachaRerollSystem,
   "system.kami.gacha.reveal": KamiGachaRevealSystem,
   "system.kami.level": KamiLevelSystem,
+  "system.kamimarket.acceptoffer": KamiMarketAcceptOfferSystem,
+  "system.kamimarket.buy": KamiMarketBuySystem,
+  "system.kamimarket.cancel": KamiMarketCancelSystem,
+  "system.kamimarket.list": KamiMarketListSystem,
+  "system.kamimarket.offer": KamiMarketOfferSystem,
   "system.kami.name": KamiNameSystem,
   "system.kami.onyx.rename": KamiOnyxRenameSystem,
   "system.kami.onyx.respec": KamiOnyxRespecSystem,
   "system.kami.onyx.revive": KamiOnyxReviveSystem,
   "system.kami.sacrifice.commit": KamiSacrificeCommitSystem,
   "system.kami.sacrifice.reveal": KamiSacrificeRevealSystem,
+  "system.kami.send": KamiSendSystem,
   "system.kami.unequip": KamiUnequipSystem,
   "system.kami.use.item": KamiUseItemSystem,
   "system.listing.buy": ListingBuySystem,
   "system.listing.sell": ListingSellSystem,
+  "system.newbievendor.buy": NewbieVendorBuySystem,
+  "system.pool": PoolSystem,
   "system.quest.accept": QuestAcceptSystem,
   "system.quest.complete": QuestCompleteSystem,
   "system.quest.drop": QuestDropSystem,

@@ -28,6 +28,7 @@ export interface TokenPortalSystemInterface extends Interface {
     nameOrSignature:
       | "adminCancel"
       | "adminPause"
+      | "adminToggleEnabled"
       | "adminUnpause"
       | "cancel"
       | "cancelOwnershipHandover"
@@ -37,6 +38,7 @@ export interface TokenPortalSystemInterface extends Interface {
       | "deprecate"
       | "execute"
       | "initItem"
+      | "isEnabled"
       | "itemAddrs"
       | "itemScales"
       | "owner"
@@ -66,6 +68,10 @@ export interface TokenPortalSystemInterface extends Interface {
     values: [BigNumberish]
   ): string;
   encodeFunctionData(
+    functionFragment: "adminToggleEnabled",
+    values: [boolean]
+  ): string;
+  encodeFunctionData(
     functionFragment: "adminUnpause",
     values: [BigNumberish]
   ): string;
@@ -92,6 +98,7 @@ export interface TokenPortalSystemInterface extends Interface {
     functionFragment: "initItem",
     values: [BigNumberish]
   ): string;
+  encodeFunctionData(functionFragment: "isEnabled", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "itemAddrs",
     values: [BigNumberish]
@@ -136,6 +143,10 @@ export interface TokenPortalSystemInterface extends Interface {
   ): Result;
   decodeFunctionResult(functionFragment: "adminPause", data: BytesLike): Result;
   decodeFunctionResult(
+    functionFragment: "adminToggleEnabled",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "adminUnpause",
     data: BytesLike
   ): Result;
@@ -153,6 +164,7 @@ export interface TokenPortalSystemInterface extends Interface {
   decodeFunctionResult(functionFragment: "deprecate", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "execute", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "initItem", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "isEnabled", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "itemAddrs", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "itemScales", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
@@ -279,6 +291,12 @@ export interface TokenPortalSystem extends BaseContract {
     "nonpayable"
   >;
 
+  adminToggleEnabled: TypedContractMethod<
+    [enabled: boolean],
+    [void],
+    "nonpayable"
+  >;
+
   adminUnpause: TypedContractMethod<
     [receiptID: BigNumberish],
     [void],
@@ -308,6 +326,8 @@ export interface TokenPortalSystem extends BaseContract {
   execute: TypedContractMethod<[arguments: BytesLike], [string], "nonpayable">;
 
   initItem: TypedContractMethod<[index: BigNumberish], [void], "nonpayable">;
+
+  isEnabled: TypedContractMethod<[], [boolean], "view">;
 
   itemAddrs: TypedContractMethod<[arg0: BigNumberish], [string], "view">;
 
@@ -356,6 +376,9 @@ export interface TokenPortalSystem extends BaseContract {
     nameOrSignature: "adminPause"
   ): TypedContractMethod<[receiptID: BigNumberish], [void], "nonpayable">;
   getFunction(
+    nameOrSignature: "adminToggleEnabled"
+  ): TypedContractMethod<[enabled: boolean], [void], "nonpayable">;
+  getFunction(
     nameOrSignature: "adminUnpause"
   ): TypedContractMethod<[receiptID: BigNumberish], [void], "nonpayable">;
   getFunction(
@@ -386,6 +409,9 @@ export interface TokenPortalSystem extends BaseContract {
   getFunction(
     nameOrSignature: "initItem"
   ): TypedContractMethod<[index: BigNumberish], [void], "nonpayable">;
+  getFunction(
+    nameOrSignature: "isEnabled"
+  ): TypedContractMethod<[], [boolean], "view">;
   getFunction(
     nameOrSignature: "itemAddrs"
   ): TypedContractMethod<[arg0: BigNumberish], [string], "view">;

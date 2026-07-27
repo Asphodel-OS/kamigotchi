@@ -398,6 +398,31 @@ export function createAdminAPI(compiledCalls: string[]) {
   //   compiledCalls.push(callData);
   // }
 
+  /////////////////
+  // NEWBIE VENDOR
+
+  function vendorInitTWAP(initialPriceWei: number) {
+    const callData = generateCallData(
+      'system.newbievendor.registry',
+      [initialPriceWei],
+      'initTWAP',
+      undefined,
+      '800000'
+    );
+    compiledCalls.push(callData);
+  }
+
+  function vendorSetCycleDuration(duration: number) {
+    const callData = generateCallData(
+      'system.newbievendor.registry',
+      [duration],
+      'setCycleDuration',
+      undefined,
+      '800000'
+    );
+    compiledCalls.push(callData);
+  }
+
   ////////////////
   // SETUP (testing)
 
@@ -413,7 +438,7 @@ export function createAdminAPI(compiledCalls: string[]) {
   }
 
   ////////////////
-  // SETUP (puter)
+  // SETUP (local)
 
   function initAccounts() {
     const callData = generateCallData('system.local.setup', [], 'initAccounts');
@@ -501,6 +526,10 @@ export function createAdminAPI(compiledCalls: string[]) {
     room: roomAPI(generateCallData, compiledCalls),
     sacrifice: sacrificeAPI(generateCallData, compiledCalls),
     trade: tradeAPI(generateCallData, compiledCalls),
+    vendor: {
+      initTWAP: vendorInitTWAP,
+      setCycleDuration: vendorSetCycleDuration,
+    },
     setup: {
       local: {
         initAccounts: initAccounts,

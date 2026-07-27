@@ -3,38 +3,43 @@ import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { useLocalStorage } from 'usehooks-ts';
 
-import { useSelected, useVisibility } from 'app/stores';
+import { useAccount, useNetwork, useSelected, useVisibility } from 'app/stores';
 import { radiateFx } from 'app/styles/effects';
 import { triggerDialogueModal } from 'app/triggers/triggerDialogueModal';
-import { cave } from 'assets/sound/ost';
+import { arrivalRemaster, cave } from 'assets/sound/ost';
 import { rooms } from 'constants/rooms';
 import { RoomAsset } from 'constants/rooms/types';
 import { getCurrPhase } from 'utils/time';
 
 const RoomsBgm: Map<string, Howl> = new Map<string, Howl>();
 const defaultBgm = { key: 'cave', path: cave };
+const preAuthBgm = { key: 'arrivalRemaster', path: arrivalRemaster };
 
 // painting of the room alongside any clickable objects
 export const Room = ({ index }: { index: number }) => {
   const tradingModalOpen = useVisibility((s) => s.modals.trading);
   const setModals = useVisibility((s) => s.setModals);
   const setNode = useSelected((s) => s.setNode);
+  const authenticated = useNetwork((s) => s.validations.authenticated);
+  const accountExists = useAccount((s) => s.validations.accountExists);
   const [room, setRoom] = useState(rooms[0]);
   const [bgm, setBgm] = useState<Howl>();
   const [settings] = useLocalStorage('settings', { volume: { fx: 0.5, bgm: 0.5 } });
   const bgmVolume = settings.volume.bgm;
+  const useArrivalMusic = !authenticated || !accountExists;
 
   // Set the new room when the index changes. If the new room has new music,
   // stop the old bgm and play the new one. Global howler audio is controlled
   // in the Volume Settings modal. This recreates any new music from scratch,
   // but ideally we should keep all played tracks in a state map for reuse.
   useEffect(() => {
-    if (index == room.index) return;
     const newRoom = rooms[index];
     let music = newRoom.music;
-    if (!music) {
+    if (useArrivalMusic) music = preAuthBgm;
+    else if (!music) {
       music = defaultBgm;
     }
+
     // if prev music is the same, or starting new room with default music
     if (music.path !== room.music?.path || !newRoom.music) {
       if (!RoomsBgm.has(music.path)) {
@@ -51,7 +56,7 @@ export const Room = ({ index }: { index: number }) => {
     setRoom(newRoom);
     setNode(index);
     closeModals();
-  }, [index]);
+  }, [index, useArrivalMusic]);
 
   /* TODO: when the time comes to have multiple tracks per room,
   remember to turn each room music object into an array of objects,

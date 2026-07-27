@@ -6,42 +6,57 @@
 ,10000x MUSU (Test),ITEM,1,10000
 ,20x Gacha Tickets (Test),ITEM,10,20
 ,100x Stick,ITEM,1001,100
+,1x Stone,ITEM,1002,1
 ,100x Stone,ITEM,1002,100
 ,50x Plastic Bottle,ITEM,1003,50
 ,100x Pine Cones,ITEM,1004,100
 ,100x Scrap Metals,ITEM,1005,100
 ,10x Glass Jar,ITEM,1006,10
 ,100x Shroom,ITEM,1013,100
+,5x Chalkberry,ITEM,1014,5
 ,100x Chalkberry,ITEM,1014,100
+,10x Otherworld Coin,ITEM,1019,10
 ,1x Irradiated Root,ITEM,1021,1
+,7500x Sanguineous Powder,ITEM,1113,7500
 ,1x Ingot,ITEM,1303,1
 ,1x Essence of Sight,ITEM,6003,1
 ,10 Revives,ITEM,11001,10
-,1x “Melkarth’s Heroic Awakening” Spell Card,ITEM,11002,1
-,"3x ""Melkarth's Heroic Awakening"" Spell Card",ITEM,11002,3
+,1x ”Melkarth’s Heroic Awakening” Spell Card,ITEM,11002,1
+,3x ”Melkarth's Heroic Awakening” Spell Card,ITEM,11002,3
+,5x ”Melkarth's Heroic Awakening” spell card,ITEM,11002,5
+,2x Holy Dust,ITEM,11011,2
 ,100x Holy Dust,ITEM,11011,100
 ,1x XP Candy (Small),ITEM,11201,1
 ,1x XP Candy (Medium),ITEM,11202,1
 ,1x “Cultivation I” Spell Card,ITEM,11211,1
-,2 “Cultivation I” Spell Card,ITEM,11211,2
+,2x “Cultivation I” Spell Card,ITEM,11211,2
+,3x “Cultivation I“ Spell Card,ITEM,11211,3
 ,1x “Cultivation II” Spell Card,ITEM,11212,1
+,3x “Cultivation II“ Spell Card,ITEM,11212,3
 ,2x “Cultivation III” Spell Card,ITEM,11213,2
 ,,ITEM,11301,25
+,1x Cheeseburger,ITEM,11302,1
 ,100x Burgers,ITEM,11302,100
 ,1x “Paeon’s Field of Flowers” Spell Card,ITEM,11305,1
 ,2x “Paeon’s Field of Flowers” Spell Card,ITEM,11305,2
 ,100x Resin,ITEM,11311,100
+,3x Honeydew Scale,ITEM,11312,3
+,1x Hostility Potion,ITEM,11410,1
+,1x Sarcophagus Honey,ITEM,11502,1
 ,1x Booster Pack,ITEM,21004,1
 ,2x Booster Pack,ITEM,21004,2
+,3x Booster Pack,ITEM,21004,3
 ,5x Booster Pack,ITEM,21004,5
-,"1x ""Neith’s River of Life"" Spell Card",ITEM,21204,1
+,7x Booster Pack,ITEM,21004,7
+,1x ”Neith’s River of Life” Spell Card,ITEM,21204,1
 ,2x “Neith’s River of Life” Spell Card,ITEM,21204,2
 ,3x “Neith’s River of Life” Spell Card,ITEM,21204,3
+,Ring of Spirits,ITEM,22802,1
 ,1x Grinder,ITEM,23100,1
 ,1x Burner,ITEM,23101,1
 ,1x Screwdriver,ITEM,23102,1
 ,1x Pyramid Engine (Soulbound),ITEM,100005,1
-,"""KW Maps"" Data Chip",ITEM,100006,1
+,”KW Maps” Data Chip,ITEM,100006,1
 ,1x Unmarked Data Chip,ITEM,100007,1
 ,2x Agency Reputation,REPUTATION,1,2
 ,4x Agency Reputation,REPUTATION,1,4
@@ -50,3 +65,5 @@
 ,4x Elders Loyalty,REPUTATION,2,4
 ,6x Elders Loyalty,REPUTATION,2,6
 ,4x Nursery Dedication,REPUTATION,3,4
+,10x Wooden Stick,ITEM,1001,10
+,10x Stone,ITEM,1002,10

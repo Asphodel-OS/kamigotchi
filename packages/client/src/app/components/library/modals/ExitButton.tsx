@@ -6,18 +6,20 @@ import { playClick } from 'utils/sounds';
 // ExitButton is a rendering of an exit button, which closes the modal it's on
 export const ExitButton = ({
   divName,
-  position,
   isValidator,
+  onClose,
 }: {
   divName: string;
-  position?: string;
   isValidator?: boolean;
+  onClose?: () => boolean | void;
 }) => {
   const setModals = useVisibility((s) => s.setModals);
   const setValidators = useVisibility((s) => s.setValidators);
 
   // closes the modal this exit button is on
   const handleClose = () => {
+    const shouldClose = onClose?.();
+    if (shouldClose === false) return;
     playClick();
     isValidator ? setValidators({ [divName]: false }) : setModals({ [divName]: false });
   };

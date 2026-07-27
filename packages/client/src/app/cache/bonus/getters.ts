@@ -8,6 +8,26 @@ const AnchorToInstances = new Map<EntityID, EntityIndex[]>();
 
 const QueryUpdateTs = new Map<EntityID, number>();
 
+// End types that are queried for temp bonuses
+const TEMP_BONUS_END_TYPES = [
+  'UPON_HARVEST_ACTION',
+  'UPON_LIQUIDATION',
+  'UPON_DEATH',
+  'UPON_KILL_OR_KILLED',
+] as const;
+
+// Invalidate the temp bonuses query cache for a specific holder entity.
+// Call this after actions that add/remove bonuses on a Kami (e.g., cast items)
+// so the next getTempBonuses call will query fresh data.
+export const invalidateTempBonusesCache = (world: World, holder: EntityIndex) => {
+  const holderID = world.entities[holder];
+  for (const endType of TEMP_BONUS_END_TYPES) {
+    const queryID = genBonusEndAnchor(endType, holderID);
+    QueryUpdateTs.delete(queryID);
+    AnchorToInstances.delete(queryID);
+  }
+};
+
 const EQUIPMENT_SLOTS = ['Head_Slot', 'Body_Slot', 'Hands_Slot', 'Passport_slot', 'Kami_Pet_Slot'];
 
 export const getTemp = (
@@ -26,6 +46,7 @@ export const getTemp = (
 
   return [
     ...getForEndType(world, components, 'UPON_HARVEST_ACTION', holder, update),
+    ...getForEndType(world, components, 'UPON_COOLDOWN_SET', holder, update),
     ...getForEndType(world, components, 'UPON_LIQUIDATION', holder, update),
     ...getForEndType(world, components, 'UPON_DEATH', holder, update),
     ...getForEndType(world, components, 'UPON_KILL_OR_KILLED', holder, update),

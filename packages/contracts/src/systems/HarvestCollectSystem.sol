@@ -25,14 +25,6 @@ contract HarvestCollectSystem is System {
     uint256 accID = LibAccount.getByOperator(components, msg.sender);
     uint256 kamiID = LibHarvest.getKami(components, id);
 
-    // (ach) temporary blocker for temple of the wheel
-    if (LibKami.getRoom(components, kamiID) == 19) {
-      require(
-        LibAccount.getIndex(components, accID) == 833,
-        "you aren't even supposed to be here.."
-      );
-    }
-
     // standard checks (ownership, cooldown, state)
     LibHarvest.verifyIsHarvest(components, id);
     LibKami.verifyAccount(components, kamiID, accID);
@@ -94,6 +86,7 @@ contract HarvestCollectSystem is System {
     uint256 output = LibHarvest.claim(components, id, accID);
     LibExperience.inc(components, kamiID, output);
     LibKami.resetCooldown(components, kamiID);
+    LibBonus.resetUponCooldownSet(components, kamiID);
 
     // scavenge
     uint256 nodeID = LibHarvest.getNode(components, id);

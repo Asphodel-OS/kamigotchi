@@ -1,0 +1,1 @@
+export { KamiAdoptionAgency } from './KamiAdoptionAgency';

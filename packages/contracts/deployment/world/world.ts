@@ -28,9 +28,8 @@ import {
   initListings,
   initMintConfigs,
   initNodes,
-  initNpcs,
   initNPCDroptables,
-  reviseNpcs,
+  initNpcs,
   initPortalConfigs,
   initPortalTokens,
   initQuests,
@@ -51,6 +50,7 @@ import {
   reviseListings,
   reviseNodes,
   reviseNodeScavenges,
+  reviseNpcs,
   reviseQuests,
   reviseRecipes,
   reviseRooms,
@@ -60,6 +60,7 @@ import {
   unsetPortalTokens,
 } from './state';
 import { disableItems, enableItems } from './state/items';
+import { togglePortal } from './state/portal';
 import { disableQuests, enableQuests } from './state/quests/quests';
 import { cancelTrades, completeTrades } from './state/trades';
 
@@ -134,9 +135,12 @@ export class WorldState {
       disable: (indices: number[]) => this.genCalls((api) => disableItems(api, indices)),
     } as SubFunc,
     listings: {
-      init: (indices?: number[], npcIndices?: number[]) => this.genCalls((api) => initListings(api, indices, undefined, npcIndices)),
-      delete: (indices?: number[], npcIndices?: number[]) => this.genCalls((api) => deleteListings(api, indices || [], npcIndices)),
-      revise: (indices?: number[], npcIndices?: number[]) => this.genCalls((api) => reviseListings(api, indices, npcIndices)),
+      init: (indices?: number[], npcIndices?: number[]) =>
+        this.genCalls((api) => initListings(api, indices, undefined, npcIndices)),
+      delete: (indices?: number[], npcIndices?: number[]) =>
+        this.genCalls((api) => deleteListings(api, indices || [], npcIndices)),
+      revise: (indices?: number[], npcIndices?: number[]) =>
+        this.genCalls((api) => reviseListings(api, indices, npcIndices)),
     },
     npcs: {
       init: (indices?: number[]) => this.genCalls((api) => initNpcs(api, indices)),
@@ -155,6 +159,8 @@ export class WorldState {
       init: () => this.genCalls((api) => initGachaPool(api, 333)),
     } as SubFunc,
     portal: {
+      disable: () => this.genCalls((api) => togglePortal(api, false)),
+      enable: () => this.genCalls((api) => togglePortal(api, true)),
       init: (indices: number[]) => this.genCalls((api) => initPortalTokens(api, indices)),
       set: (indices: number[]) => this.genCalls((api) => setPortalTokens(api, indices)),
       unset: (indices: number[]) => this.genCalls((api) => unsetPortalTokens(api, indices)),

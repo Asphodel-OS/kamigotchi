@@ -238,7 +238,7 @@ export interface KamiGachaRevealSystem extends BaseContract {
   requestOwnershipHandover: TypedContractMethod<[], [void], "payable">;
 
   reveal: TypedContractMethod<
-    [rawCommitIDs: BigNumberish[]],
+    [commitIDs: BigNumberish[]],
     [bigint[]],
     "nonpayable"
   >;
@@ -282,11 +282,7 @@ export interface KamiGachaRevealSystem extends BaseContract {
   ): TypedContractMethod<[], [void], "payable">;
   getFunction(
     nameOrSignature: "reveal"
-  ): TypedContractMethod<
-    [rawCommitIDs: BigNumberish[]],
-    [bigint[]],
-    "nonpayable"
-  >;
+  ): TypedContractMethod<[commitIDs: BigNumberish[]], [bigint[]], "nonpayable">;
   getFunction(
     nameOrSignature: "transferOwnership"
   ): TypedContractMethod<[newOwner: AddressLike], [void], "payable">;

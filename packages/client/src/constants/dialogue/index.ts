@@ -47,6 +47,7 @@ import dialogues87 from './87_sacrarium';
 import dialogues88 from './88_treasure-hoard';
 import dialogues89 from './89_trophies-of-the-hunt';
 import dialogues90 from './90_scenic-view';
+import { getAllNpcDialogues } from './npcsCsvHandler';
 
 import { DialogueNode } from './types';
 
@@ -60,6 +61,7 @@ const dialogues00: DialogueNode[] = [
     ],
   },
 ];
+const npcDialogues = getAllNpcDialogues();
 
 // aggregated array of all dialogue nodes
 const dialogueList = dialogues00.concat(
@@ -114,6 +116,8 @@ const dialogueList = dialogues00.concat(
   dialogues88,
   dialogues89,
   dialogues90
+).concat(
+  npcDialogues
 );
 
 // aggregated map of all dialogue nodes, referenced by index

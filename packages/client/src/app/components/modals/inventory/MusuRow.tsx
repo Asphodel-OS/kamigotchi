@@ -2,9 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 
 import { IconButton, TextTooltip } from 'app/components/library';
-import { useVisibility } from 'app/stores';
 import { ArrowIcons } from 'assets/images/icons/arrows';
-import { TradeIcon } from 'assets/images/icons/menu';
 import { ItemImages } from 'assets/images/items';
 import { Mode } from './types';
 
@@ -23,7 +21,6 @@ export const MusuRow = ({
     setShuffle: (suffle: boolean) => void;
   };
 }) => {
-  const { modals, setModals } = useVisibility();
   const { musu, obols } = data;
   const { mode, setMode, setShuffle } = state;
 
@@ -81,25 +78,6 @@ export const MusuRow = ({
   return (
     <Container key='musu'>
       <Icons>
-        <TextTooltip
-          text={[
-            'View the Kamigotchi World Orderbook\n\n',
-            'You must be in a designated Trade room',
-            'to interact with outstanding Orders.',
-          ]}
-          direction='row'
-        >
-          <IconButton
-            img={TradeIcon}
-            onClick={() => setModals({ ...modals, trading: !modals.trading })}
-            radius={0.9}
-          />
-        </TextTooltip>
-        <IconButton
-          img={ItemImages.obol}
-          onClick={() => setModals({ ...modals, lootBox: !modals.lootBox })}
-          radius={0.9}
-        />
         <TextTooltip
           text={mode === 'TRANSFER' ? ['Back to Inventory'] : ['Send Item']}
           direction='row'

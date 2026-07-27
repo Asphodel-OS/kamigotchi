@@ -699,6 +699,7 @@ export const Offers = ({
 const Container = styled.div`
   position: relative;
   height: 100%;
+  min-height: 0;
   width: 100%;
 
   display: flex;
@@ -737,7 +738,8 @@ const TableWrap = styled.div`
   overflow-x: hidden;
   padding: 0;
   z-index: 0;
-  scrollbar-color: auto;
+  scrollbar-width: none;
+  &::-webkit-scrollbar { display: none; }
 `;
 
 const Table = styled.table<{ $withStatus?: boolean; $manageMode?: boolean }>`
@@ -778,8 +780,10 @@ const HeaderRow = styled.tr`
   z-index: 1;
   & > th {
     text-align: left;
-    padding: 0.6vw 0.9vw;
+    padding: 1vw 0.9vw;
     border-bottom: 0.12vw solid black;
+    white-space: nowrap;
+    font-size: 0.7vw;
   }
 `;
 

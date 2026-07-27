@@ -25,9 +25,13 @@ export const OperatorUpdater: UIComponent = {
     const { toggleModals } = useVisibility();
     const { validators, setValidators } = useVisibility();
 
+    const DEAD_ADDRESS = '0x000000000000000000000000000000000000dEaD';
+
     // run the primary check(s) for this validator, track in store for easy access
     useEffect(() => {
       if (!validations.accountExists) return;
+      // Don't evaluate until account data is actually populated (not the dead default).
+      if (!kamiAccount.operatorAddress || kamiAccount.operatorAddress === DEAD_ADDRESS) return;
       const operatorMatches = addressesMatch(kamiAccount.operatorAddress, burnerAddress);
       if (operatorMatches == validations.operatorMatches) return; // no change
       setValidations({ ...validations, operatorMatches });
@@ -85,9 +89,15 @@ export const OperatorUpdater: UIComponent = {
     /////////////////
     // DISPLAY
 
+    const handleSkip = () => {
+      setValidations({ ...validations, operatorMatches: true });
+    };
+
     return (
       <ValidatorWrapper
-        id='operator-updater'
+        id='operatorUpdater'
+        canExit
+        onExit={handleSkip}
         divName='operatorUpdater'
         title='Update Operator'
         errorPrimary='Connected Burner != Account Operator'
