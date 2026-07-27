@@ -96,6 +96,8 @@ export const BridgeModal: UIComponent = {
     const [updates, _setUpdates] = useState<BridgeUpdateEntry[]>([]);
     const updatesRef = useRef<BridgeUpdateEntry[]>([]);
     const [shouldResetOnNextOpen, setShouldResetOnNextOpen] = useState(false);
+    // polling gave up but the bridge may still land — offers a manual re-check
+    const [pollTimedOut, setPollTimedOut] = useState(false);
     const phaseRef = useRef<BridgePhase>('idle');
     const previousWalletChainIdRef = useRef<string | null>(null);
     const closedDuringWalletPromptRef = useRef(false);
@@ -144,6 +146,7 @@ export const BridgeModal: UIComponent = {
     const resetBridgeUiState = () => {
       setUpdates([]);
       setShouldResetOnNextOpen(false);
+      setPollTimedOut(false);
       setBridgePhase('idle');
       previousWalletChainIdRef.current = null;
       closedDuringWalletPromptRef.current = false;
@@ -454,20 +457,50 @@ export const BridgeModal: UIComponent = {
         }
       }
 
+      // NOT persisted as completed: the transfer may still land — polling
+      // auto-resumes on reload, and the Check Again button re-checks in place
       if (sourceTransactionStatus === 'success') {
         appendUpdate(
-          'error',
-          `Source transaction confirmed on ${pollingSourceChain.label}, but no matching Yominet transfer has been observed yet. Please check again shortly.`
+          'meta',
+          `Source transaction confirmed on ${pollingSourceChain.label} — the Yominet transfer just hasn't been observed yet. It usually lands within minutes; hit Check Again below or come back later.`
         );
-        persistCompletion();
+        setPollTimedOut(true);
         return;
       }
 
       appendUpdate(
-        'error',
-        `Source transaction is still pending on ${pollingSourceChain.label}. Please check your wallet or explorer and try again shortly.`
+        'meta',
+        `Source transaction is still pending on ${pollingSourceChain.label}. Hit Check Again below once it confirms, or come back later.`
       );
-      persistCompletion();
+      setPollTimedOut(true);
+    };
+
+    // re-enter polling from the persisted bridge state (used by the Check
+    // Again button after a poll timeout)
+    const retryPolling = () => {
+      if (phaseRef.current !== 'idle') return;
+      const persisted = loadBridgePolling();
+      if (!persisted || persisted.selectedAddress !== selectedAddress) return;
+      const chain = SOURCE_CHAIN_OPTIONS.find((o) => o.chainId === persisted.sourceChainId);
+      if (
+        !chain ||
+        typeof persisted.expectedAmountOut !== 'string' ||
+        typeof persisted.yominetStartBlock !== 'number'
+      ) {
+        return;
+      }
+      setPollTimedOut(false);
+      appendUpdate('status', 'Checking for the Yominet transfer...');
+      setBridgePhase('submitted');
+      waitForBridgeCompletion(
+        chain,
+        persisted.yominetStartBlock,
+        BigInt(persisted.expectedAmountOut),
+        persisted.sourceTxHash,
+        bridgeAbortRef.current.signal
+      ).finally(() => {
+        setBridgePhase('idle');
+      });
     };
 
     const handleBridgeModalClose = () => {
@@ -686,6 +719,11 @@ export const BridgeModal: UIComponent = {
               onSubmit={startBridge}
             />
             <BridgeUpdates updates={updates} isOpen={isOpen} />
+            {pollTimedOut && !isBridging && (
+              <CheckAgainButton type='button' onClick={retryPolling}>
+                Check again
+              </CheckAgainButton>
+            )}
           </Content>
         </ModalWrapper>
       </BridgeOverlay>
@@ -696,6 +734,21 @@ const BridgeOverlay = styled.div`
   position: relative;
   z-index: 1000;
   height: 100%;
+`;
+
+const CheckAgainButton = styled.button`
+  align-self: center;
+  margin-top: 0.4vw;
+  padding: 0.35vw 1vw;
+  border: 0.15vw solid #000000;
+  border-radius: 0.5vw;
+  background-color: #d6e4f8;
+  font-size: 0.8vw;
+  font-weight: bold;
+  cursor: pointer;
+  &:hover {
+    background-color: #c2d8f5;
+  }
 `;
 
 const Content = styled.div`

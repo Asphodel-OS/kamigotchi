@@ -79,6 +79,7 @@ export const MIN_BRIDGE_AMOUNT = 1_000_000_000_000n; // 0.000001 ETH
 
 export const POLL_INTERVAL_MS = 15_000;
 export const DEGRADED_POLL_INTERVAL_MS = 45_000;
-export const POLL_MAX_ATTEMPTS = 40;
+// 80 x 15s = 20 minutes — relays regularly exceed the old 10-minute window
+export const POLL_MAX_ATTEMPTS = 80;
 export const STATUS_RECHECK_EVERY_ATTEMPTS = 4;
 
