@@ -154,13 +154,21 @@ export const Table = ({
 const Container = styled.div`
   position: relative;
   width: 100%;
+  max-height: 42vh;
   flex-flow: column nowrap;
-  justify-content: center;
+  justify-content: flex-start;
   align-items: center;
   overflow-y: auto;
 
-  scrollbar-width: none;
+  scrollbar-width: thin;
+  scrollbar-color: #b6b6b6 transparent;
   &::-webkit-scrollbar {
-    display: none;
+    width: 0.3vw;
+    background: transparent;
+  }
+  &::-webkit-scrollbar-thumb {
+    background-color: #b6b6b6;
+    border-radius: 0.3vw;
+    background-clip: padding-box;
   }
 `;

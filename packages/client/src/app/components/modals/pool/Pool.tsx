@@ -485,6 +485,7 @@ export const PoolModal: UIComponent = {
         id='pool'
         header={<ModalHeader title='Item Pools' icon={LpFountainIcon} />}
         canExit
+        showScrollBar
       >
         <Container>
           {renderPicker()}
