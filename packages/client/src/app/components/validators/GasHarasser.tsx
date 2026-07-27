@@ -19,10 +19,10 @@ import { playFund, playSuccess } from 'utils/sounds';
 const MIN_FUND_ETH = 0.00001;
 const ETH_INPUT_REGEX = /^\d*\.?\d{0,7}$/;
 
+// default tiers deliberately top out at Low (0.001, ~300+ moves) — a bigger
+// default eats the owner's kami budget during onboarding. soft default only;
+// the player can type any amount. keep in sync with FundOperator.tsx
 const FUND_TIERS = [
-  GasConstants.Full,    // 0.01
-  GasConstants.Half,    // 0.005
-  GasConstants.Quarter, // 0.0025
   GasConstants.Low,     // 0.001
   GasConstants.Warning, // 0.0001
 ];
