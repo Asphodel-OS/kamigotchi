@@ -300,6 +300,40 @@ library LibPool {
     );
   }
 
+  /// @notice emit the pool's post-action reserves and LP supply
+  /// @dev emits absolute state, never deltas. reserves can be inflated out of band
+  ///      (ItemTransferSystem and harvest tax both accept an arbitrary target id), so
+  ///      reading state here is what lets the next call self-correct rather than
+  ///      compound the drift. never accept these values from the caller.
+  function logSync(
+    IWorld world,
+    IUintComp comps,
+    uint256 poolID,
+    uint32 indexA,
+    uint32 indexB
+  ) public {
+    (uint32 lo, uint32 hi) = LibRegistry.sortIndices(indexA, indexB);
+    LibEmitter.emitEvent(world, "POOL_SYNC", syncEventSchema(), _encodeSync(comps, poolID, lo, hi));
+  }
+
+  function _encodeSync(
+    IUintComp comps,
+    uint256 poolID,
+    uint32 lo,
+    uint32 hi
+  ) internal view returns (bytes memory) {
+    IUintComp valComp = IUintComp(getAddrByID(comps, ValueCompID));
+    return
+      abi.encode(
+        poolID,
+        lo,
+        hi,
+        valComp.safeGet(LibInventory.genID(poolID, lo)),
+        valComp.safeGet(LibInventory.genID(poolID, hi)),
+        valComp.safeGet(poolID)
+      );
+  }
+
   function swapEventSchema() internal pure returns (uint8[] memory) {
     uint8[] memory _schema = new uint8[](6);
     _schema[0] = uint8(LibTypes.SchemaValue.UINT256); // accID
@@ -318,6 +352,17 @@ library LibPool {
     _schema[2] = uint8(LibTypes.SchemaValue.UINT256); // amtA
     _schema[3] = uint8(LibTypes.SchemaValue.UINT256); // amtB
     _schema[4] = uint8(LibTypes.SchemaValue.UINT256); // shares
+    return _schema;
+  }
+
+  function syncEventSchema() internal pure returns (uint8[] memory) {
+    uint8[] memory _schema = new uint8[](6);
+    _schema[0] = uint8(LibTypes.SchemaValue.UINT256); // poolID
+    _schema[1] = uint8(LibTypes.SchemaValue.UINT32); // indexA
+    _schema[2] = uint8(LibTypes.SchemaValue.UINT32); // indexB
+    _schema[3] = uint8(LibTypes.SchemaValue.UINT256); // reserveA
+    _schema[4] = uint8(LibTypes.SchemaValue.UINT256); // reserveB
+    _schema[5] = uint8(LibTypes.SchemaValue.UINT256); // totalSupply
     return _schema;
   }
 

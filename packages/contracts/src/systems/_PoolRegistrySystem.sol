@@ -59,6 +59,7 @@ contract _PoolRegistrySystem is System, AuthRoles {
     LibInventory.transferForNoLog(components, seeder, id, indexA, amtA); // reverts if short
     LibInventory.transferForNoLog(components, seeder, id, indexB, amtB);
     LibPool.mintShares(components, id, id, LibPool.calcInitialLiquidity(amtA, amtB));
+    LibPool.logSync(world, components, id, indexA, indexB);
   }
 
   /// @notice deepen reserves (boosts LP value) from the caller's own inventory
@@ -73,6 +74,7 @@ contract _PoolRegistrySystem is System, AuthRoles {
     uint256 seeder = uint256(uint160(msg.sender));
     if (amtA > 0) LibInventory.transferForNoLog(components, seeder, id, indexA, amtA);
     if (amtB > 0) LibInventory.transferForNoLog(components, seeder, id, indexB, amtB);
+    if (amtA > 0 || amtB > 0) LibPool.logSync(world, components, id, indexA, indexB);
   }
 
   function setFee(uint32 indexA, uint32 indexB, uint256 feeBps) public onlyAdmin(components) {
@@ -115,6 +117,9 @@ contract _PoolRegistrySystem is System, AuthRoles {
     if (reserveLo > 0) LibInventory.transferForNoLog(components, id, recipient, lo, reserveLo);
     if (reserveHi > 0) LibInventory.transferForNoLog(components, id, recipient, hi, reserveHi);
 
+    // terminal (0,0,0) row closing the pool's series — reserves and supply are
+    // both drained by here. consumers key on it to detect id reuse on recreate
+    LibPool.logSync(world, components, id, lo, hi);
     LibPoolRegistry.remove(components, id);
   }
 
