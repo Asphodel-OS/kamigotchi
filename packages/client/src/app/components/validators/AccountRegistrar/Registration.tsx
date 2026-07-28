@@ -90,6 +90,11 @@ export const Registration = ({
   // nothing is lost, but doesn't re-prompt until the player acts or reloads
   useEffect(() => {
     if (!autoCreate || autoFiringRef.current) return;
+    // wallet-switch race guard: for one render after a switch, state still
+    // holds the previous wallet's staged name while storageKey already points
+    // at the new wallet — only fire when the stage on disk for the currently
+    // selected wallet matches what we're about to register
+    if (localStorage.getItem(storageKey) !== name) return;
     if (needsToBridge()) return;
     if (getError()) return;
     autoFiringRef.current = true;

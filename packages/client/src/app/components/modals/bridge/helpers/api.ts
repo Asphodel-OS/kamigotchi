@@ -130,13 +130,17 @@ export async function fetchRoutableSourceChainIds(
     const data = (await response.json()) as {
       chain_to_assets_map?: Record<string, { assets?: { denom?: string; hidden?: boolean }[] }>;
     };
+    // fail open only on transport/shape failures — a successful response
+    // saying every asset is hidden is an answer, not an outage
+    const chainToAssetsMap = data.chain_to_assets_map;
+    if (!chainToAssetsMap) return all;
     const routable = new Set<string>();
     for (const option of options) {
-      const assets = data.chain_to_assets_map?.[option.chainId]?.assets ?? [];
+      const assets = chainToAssetsMap[option.chainId]?.assets ?? [];
       const native = assets.find((a) => a.denom === option.denom);
       if (native && !native.hidden) routable.add(option.chainId);
     }
-    return routable.size > 0 ? routable : all;
+    return routable;
   } catch {
     return all;
   }

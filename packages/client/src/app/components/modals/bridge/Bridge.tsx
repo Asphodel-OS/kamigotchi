@@ -725,8 +725,14 @@ export const BridgeModal: UIComponent = {
       } catch (error) {
         if (signal.aborted) return;
         if (!isBridgeAbortError(error)) {
-          appendUpdate('error', error instanceof Error ? error.message : 'Bridge failed');
-          if (phaseRef.current !== 'submitted') {
+          if (phaseRef.current === 'submitted') {
+            // the tx already went out and polling state is persisted — a
+            // transient poll failure here must surface the same recovery
+            // path as the resumed poll, not read as a failed bridge
+            appendUpdate('meta', 'Could not check right now. Try again in a moment.');
+            setPollTimedOut(true);
+          } else {
+            appendUpdate('error', error instanceof Error ? error.message : 'Bridge failed');
             setShouldResetOnNextOpen(true);
           }
         }
