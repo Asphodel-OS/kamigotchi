@@ -215,6 +215,11 @@ const Container = styled.div`
   justify-content: center;
 
   overflow: scroll;
+
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
 `;
 
 const Title = styled.div`

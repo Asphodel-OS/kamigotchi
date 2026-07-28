@@ -295,6 +295,17 @@ library LibItem {
     }
   }
 
+  /// @notice check if an item's for-shape matches either of two accepted shapes
+  function verifyForShapeOr(
+    IUintComp components,
+    uint32 index,
+    string memory a,
+    string memory b
+  ) public view {
+    string memory shape = LibFor.get(components, genID(index));
+    if (!shape.eq(a) && !shape.eq(b)) revert(string.concat("not for ", a, " or ", b));
+  }
+
   /// @dev requirements looks at conditions outside of the item itself, e.g. kami/account
   function verifyRequirements(
     IUintComp components,

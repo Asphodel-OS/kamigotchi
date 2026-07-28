@@ -173,6 +173,11 @@ const Container = styled.div`
   flex-flow: column nowrap;
   justify-content: flex-start;
   overflow-y: auto;
+
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
 `;
 
 const ImageSection = styled.div`

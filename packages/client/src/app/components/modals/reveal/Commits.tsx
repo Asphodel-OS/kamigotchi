@@ -95,6 +95,11 @@ const Container = styled.div`
   overflow-y: scroll;
 
   gap: 0.6vh 0.4vw;
+
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
 `;
 
 const CellContainer = styled.div`

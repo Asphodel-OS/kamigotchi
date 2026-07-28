@@ -89,6 +89,11 @@ const Content = styled.div`
   flex-flow: column nowrap;
   justify-content: flex-start;
   overflow-y: auto;
+
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
 `;
 
 const Row = styled.div<{ locked: boolean }>`

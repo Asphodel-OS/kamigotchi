@@ -113,6 +113,11 @@ const Items = styled.div`
   overflow-x: hidden;
   scrollbar-gutter: stable;
   scrollbar-color: transparent transparent;
+
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
 `;
 
 const Checkout = styled.div`

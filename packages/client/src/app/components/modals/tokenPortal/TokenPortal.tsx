@@ -1,18 +1,11 @@
 import { useEffect, useState } from 'react';
+import styled from 'styled-components';
 import { v4 as uuid } from 'uuid';
 
 import { getAccount as _getAccount, getAccountByID } from 'app/cache/account';
 import { getPortalConfig } from 'app/cache/config';
 import { getItem as _getItem, getItemByIndex as _getItemByIndex } from 'app/cache/item';
-import {
-  EmptyText,
-  HelpChip,
-  IconButton,
-  ModalHeader,
-  ModalWrapper,
-  Overlay,
-  Text,
-} from 'app/components/library';
+import { EmptyText, HelpChip, IconButton, ModalWrapper } from 'app/components/library';
 import { UIComponent, useLayers } from 'app/root';
 import { useNetwork, useVisibility } from 'app/stores';
 import { TriggerIcons } from 'assets/images/icons/triggers';
@@ -24,10 +17,17 @@ import { EntityID, EntityIndex } from 'engine/recs';
 import { Account, NullAccount, queryAccountFromEmbedded } from 'network/shapes/Account';
 import { Item, NullItem, queryItems } from 'network/shapes/Item';
 import { getCompAddr } from 'network/shapes/utils';
-import { HELP_TEXT } from './constants';
+import { playClick } from 'utils/sounds';
+import { getHelpText } from './constants';
 import { Queue } from './queue';
 import { Swap } from './swap';
+import { Mode } from './swap/types';
 import { getResultWithdraw, openBaselineLink } from './utils';
+
+// kamiswap (marketplace) tab pastels: blue for deposit, orange for withdraw
+const DEPOSIT_BLUE = '#E0EEFF';
+const GREEN = '#C2F0C2';
+const WITHDRAW_ORANGE = '#FFF0E0';
 
 const KamidenClient = getKamidenClient();
 
@@ -77,6 +77,7 @@ export const TokenPortalModal: UIComponent = {
     const [selected, setSelected] = useState<Item>(NullItem); // selected item for import/export
     const [myReceipts, setMyReceipts] = useState<PortalReceipt[]>([]);
     const [othersReceipts, setOthersReceipts] = useState<PortalReceipt[]>([]);
+    const [mode, setMode] = useState<Mode>('DEPOSIT');
     const [showQueue, setShowQueue] = useState<boolean>(false);
     const [tick, setTick] = useState(Date.now());
 
@@ -230,56 +231,166 @@ export const TokenPortalModal: UIComponent = {
     /////////////////
     // DISPLAY
 
+    const switchMode = (m: Mode) => {
+      playClick();
+      setMode(m);
+    };
+
+    // IconButton plays the click sound itself
+    const toggleQueue = () => setShowQueue(!showQueue);
+
     return (
       <ModalWrapper
         id='tokenPortal'
-        header={<ModalHeader title='Token Portal' icon={TokenIcons.onyx} />}
+        header={
+          <PortalHeader>
+            <HeaderIcon src={TokenIcons.onyx} alt='Token Portal' />
+            <HeaderTitle>Token Portal</HeaderTitle>
+            <HelpChip tooltip={{ text: getHelpText(config), size: 0.6 }} size={1.2} />
+          </PortalHeader>
+        }
         canExit
         overlay
-        noPadding
         truncate
       >
-        <Overlay left={0.6} top={0.6}>
-          <HelpChip tooltip={{ text: HELP_TEXT, size: 0.6 }} size={1.2} />
-        </Overlay>
-        <Overlay right={0.6} top={0.6}>
-          <Text
-            size={0.6}
-            color='#3b3'
-            onClick={() => openBaselineLink(selected.token?.address ?? '')}
-          >
-            Purchase $ONYX
-          </Text>
-        </Overlay>
         {!accountEntity ? (
           <EmptyText text={['Failed to Connect Account']} size={1} />
         ) : (
-          <Swap
-            actions={{
-              approve: approveTx,
-              deposit: depositTx,
-              withdraw: withdrawTx,
-            }}
-            data={{ config, inventory: account.inventories ?? [] }}
-            state={{ options, selected, setSelected }}
-          />
+          <Container>
+            <Tabs>
+              <TabButton
+                $color={DEPOSIT_BLUE}
+                $active={mode === 'DEPOSIT'}
+                onClick={() => switchMode('DEPOSIT')}
+                disabled={mode === 'DEPOSIT'}
+              >
+                Deposit
+              </TabButton>
+              <TabButton
+                $color={WITHDRAW_ORANGE}
+                $active={mode === 'WITHDRAW'}
+                onClick={() => switchMode('WITHDRAW')}
+                disabled={mode === 'WITHDRAW'}
+                style={{ borderRight: 'none' }}
+              >
+                Withdraw
+              </TabButton>
+            </Tabs>
+            <Swap
+              actions={{
+                approve: approveTx,
+                deposit: depositTx,
+                withdraw: withdrawTx,
+              }}
+              data={{ config, inventory: account.inventories ?? [] }}
+              state={{ mode, selected }}
+            />
+            <Rule />
+            <BottomRow>
+              <BuyWrapper>
+                <IconButton
+                  fullWidth
+                  scale={2.2}
+                  color={GREEN}
+                  text='Purchase $ONYX'
+                  onClick={() => openBaselineLink(selected.token?.address ?? '')}
+                />
+              </BuyWrapper>
+              <IconButton
+                img={showQueue ? TriggerIcons.eyeOpen : TriggerIcons.eyeClosed}
+                onClick={toggleQueue}
+              />
+            </BottomRow>
+            {showQueue && (
+              <Queue
+                actions={{
+                  claim: claimTx,
+                  cancel: cancelTx,
+                }}
+                data={{ myReceipts, othersReceipts, config, account }}
+                utils={utils}
+              />
+            )}
+          </Container>
         )}
-        <Overlay right={0.6} top={12.5}>
-          <IconButton
-            img={showQueue ? TriggerIcons.eyeOpen : TriggerIcons.eyeClosed}
-            onClick={() => setShowQueue(!showQueue)}
-          />
-        </Overlay>
-        <Queue
-          actions={{
-            claim: claimTx,
-            cancel: cancelTx,
-          }}
-          data={{ myReceipts, othersReceipts, config, account }}
-          isVisible={showQueue}
-          utils={utils}
-        />
       </ModalWrapper>
     );
   },
 };
+
+/////////////////
+// STYLES
+
+const Container = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 1vh;
+`;
+
+const PortalHeader = styled.div`
+  padding: 0.6vw 1vw;
+  gap: 0.7vw;
+  line-height: 1.5vw;
+
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: center;
+  justify-content: flex-start;
+  user-select: none;
+`;
+
+const HeaderIcon = styled.img`
+  height: 2vw;
+  width: auto;
+  user-drag: none;
+`;
+
+const HeaderTitle = styled.div`
+  font-size: 1.2vw;
+  color: #333;
+  font-family: Pixel;
+`;
+
+const Tabs = styled.div`
+  border: solid 0.15vw black;
+  border-radius: 0.3vw 0.3vw 0 0;
+  width: 100%;
+  background-color: white;
+  display: flex;
+  flex-flow: row nowrap;
+`;
+
+const TabButton = styled.button<{ $color: string; $active: boolean }>`
+  border: none;
+  border-right: solid black 0.15vw;
+  padding: 0.5vw;
+  flex: 1 1 0;
+  color: black;
+  font-family: Pixel;
+  font-size: 0.9vw;
+  text-align: center;
+  cursor: pointer;
+  background-color: ${({ $active, $color }) => ($active ? $color : 'white')};
+  &:hover {
+    background-color: ${({ $color }) => $color}88;
+  }
+  &:disabled {
+    cursor: default;
+    pointer-events: none;
+  }
+`;
+
+const Rule = styled.div`
+  border-top: 0.12vw solid #e0e0e0;
+`;
+
+const BottomRow = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.6vw;
+`;
+
+const BuyWrapper = styled.div`
+  flex: 1;
+`;

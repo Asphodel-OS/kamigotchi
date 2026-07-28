@@ -57,6 +57,11 @@ const Container = styled.div`
   overflow: auto;
   scroll: auto;
   height: 100%;
+
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
 `;
 
 const Row = styled.div`
