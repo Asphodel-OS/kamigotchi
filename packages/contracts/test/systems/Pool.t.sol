@@ -626,7 +626,10 @@ contract PoolTest is SetupTemplate {
     uint256 totalSupply;
   }
 
-  function _decodeSync(Vm.Log[] memory logs) internal pure returns (Sync memory s) {
+  // every action under test emits exactly one sync, so assert that here rather
+  // than silently decoding the first of several
+  function _decodeSync(Vm.Log[] memory logs) internal returns (Sync memory s) {
+    assertEq(_countWorldEvents(logs, "POOL_SYNC"), 1);
     (, bytes memory values) = abi.decode(_findWorldEvent(logs, "POOL_SYNC").data, (uint8[], bytes));
     (s.poolID, s.indexA, s.indexB, s.reserveA, s.reserveB, s.totalSupply) = abi.decode(
       values,
@@ -635,9 +638,8 @@ contract PoolTest is SetupTemplate {
   }
 
   // asserts a single sync was emitted and that every field matches live state
-  function _assertSyncMatchesState(Vm.Log[] memory logs, uint256 poolID) internal view {
+  function _assertSyncMatchesState(Vm.Log[] memory logs, uint256 poolID) internal {
     Sync memory s = _decodeSync(logs);
-    assertEq(_countWorldEvents(logs, "POOL_SYNC"), 1);
     assertEq(s.poolID, poolID);
     assertEq(s.indexA, ITEM_A);
     assertEq(s.indexB, ITEM_B);
