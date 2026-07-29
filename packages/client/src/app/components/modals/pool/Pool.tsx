@@ -21,6 +21,7 @@ import { Account, NullAccount, queryAccountFromEmbedded } from 'network/shapes/A
 import { Item } from 'network/shapes/Item';
 import {
   applySlippage,
+  calcAmountIn,
   calcAmountOut,
   calcRemoveAmounts,
   calcSharesMinted,
@@ -104,12 +105,15 @@ export const PoolModal: UIComponent = {
     const [tab, setTab] = useState<Tab>('swap');
     const [lastTick, setLastTick] = useState(Date.now());
 
-    // swap state: sell itemA -> receive itemB when !inverted
+    // swap state: itemA -> itemB when !inverted. in a MUSU pool the MUSU->item
+    // direction renders as BUY and swapInput denominates the item bought;
+    // everywhere else swapInput is the exact amount sold
     const [inverted, setInverted] = useState(false);
     const [swapInput, setSwapInput] = useState(0);
 
-    // liquidity state
-    const [addAmountA, setAddAmountA] = useState(0);
+    // liquidity state: addInput denominates the anchor side (the item in a
+    // MUSU pool, side A otherwise); the other side is auto-matched via quote
+    const [addInput, setAddInput] = useState(0);
     const [removeShares, setRemoveShares] = useState(0);
 
     // ticking — only while open (the modal is permanently mounted, so an
@@ -135,7 +139,7 @@ export const PoolModal: UIComponent = {
     // so a stale amount can never execute against a different pair
     useEffect(() => {
       setSwapInput(0);
-      setAddAmountA(0);
+      setAddInput(0);
       setRemoveShares(0);
       setInverted(false);
     }, [pool?.id]);
@@ -146,13 +150,40 @@ export const PoolModal: UIComponent = {
     const getItemBalance = (itemIndex: number) =>
       getInventoryBalance(account.inventories ?? [], itemIndex);
 
+    // MUSU pools get currency-native UX: the pool's "subject" is the non-MUSU
+    // item, the input always denominates the subject, and the two swap
+    // directions read as BUY (pay MUSU) / SELL (receive MUSU)
+    const musuIsA = pool?.itemA.index === MUSU_INDEX;
+    const musuIsB = pool?.itemB.index === MUSU_INDEX;
+    const isMusuPool = !!pool && musuIsA !== musuIsB;
+
     const swapIn = pool ? (inverted ? pool.itemB : pool.itemA) : undefined;
     const swapOut = pool ? (inverted ? pool.itemA : pool.itemB) : undefined;
     const reserveIn = pool ? (inverted ? pool.reserveB : pool.reserveA) : 0;
     const reserveOut = pool ? (inverted ? pool.reserveA : pool.reserveB) : 0;
-    const swapOutput = pool ? calcAmountOut(swapInput, reserveIn, reserveOut, pool.feeBps) : 0;
 
-    const addAmountB = pool ? quote(addAmountA, pool.reserveA, pool.reserveB) : 0;
+    // BUY mode = a MUSU pool swapping MUSU -> item: swapInput is the item
+    // amount WANTED (exact-out), and the MUSU cost is derived by inverting the
+    // curve. everywhere else swapInput is the exact amount paid in
+    const isBuy = isMusuPool && swapIn?.index === MUSU_INDEX;
+    const buyCost = pool && isBuy ? calcAmountIn(swapInput, reserveIn, reserveOut, pool.feeBps) : 0;
+    const swapOutput = pool ? calcAmountOut(swapInput, reserveIn, reserveOut, pool.feeBps) : 0;
+    const execIn = isBuy ? buyCost : swapInput; // amount actually sent as amtIn
+    const quotedOut = isBuy ? swapInput : swapOutput; // amount minOut protects
+
+    // liquidity anchor: the item side of a MUSU pool (players add "500 stone",
+    // MUSU pairs to it), side A otherwise
+    const anchorIsB = isMusuPool && musuIsA;
+    const addAmountA = pool
+      ? anchorIsB
+        ? quote(addInput, pool.reserveB, pool.reserveA)
+        : addInput
+      : 0;
+    const addAmountB = pool
+      ? anchorIsB
+        ? addInput
+        : quote(addInput, pool.reserveA, pool.reserveB)
+      : 0;
     const sharesMinted = pool ? calcSharesMinted(pool, addAmountA, addAmountB) : 0;
     const playerShares = pool ? getPoolShares(world, components, pool.id, account.id) : 0;
     const [removeA, removeB] = pool ? calcRemoveAmounts(pool, removeShares) : [0, 0];
@@ -161,14 +192,14 @@ export const PoolModal: UIComponent = {
     // ACTIONS
 
     const swap = () => {
-      if (!pool || !swapIn || !swapOut || swapInput <= 0) return;
-      const minOut = applySlippage(swapOutput, SLIPPAGE_BPS);
+      if (!pool || !swapIn || !swapOut || execIn <= 0 || quotedOut <= 0) return;
+      const minOut = applySlippage(quotedOut, SLIPPAGE_BPS);
       actions.add({
         action: 'PoolSwap',
-        params: [swapIn.index, swapOut.index, swapInput, minOut],
-        description: `Swapping ${swapInput} ${swapIn.name} for ~${swapOutput} ${swapOut.name}`,
+        params: [swapIn.index, swapOut.index, execIn, minOut],
+        description: `Swapping ${execIn} ${swapIn.name} for ~${quotedOut} ${swapOut.name}`,
         execute: async () => {
-          return api.player.pool.swap(swapIn.index, swapOut.index, swapInput, minOut);
+          return api.player.pool.swap(swapIn.index, swapOut.index, execIn, minOut);
         },
       });
     };
@@ -221,7 +252,7 @@ export const PoolModal: UIComponent = {
       playClick();
       setPoolID(id);
       setSwapInput(0);
-      setAddAmountA(0);
+      setAddInput(0);
       setRemoveShares(0);
     };
 
@@ -284,49 +315,97 @@ export const PoolModal: UIComponent = {
     const renderSwap = () => {
       if (!pool || !swapIn || !swapOut)
         return <EmptyText text={['No pools available.', 'Check back later!']} size={1} />;
-      const balance = getItemBalance(swapIn.index);
-      const insufficient = swapInput > balance;
-      const minOut = applySlippage(swapOutput, SLIPPAGE_BPS);
-      const tooSmall = swapOutput > 0 && minOut <= 0;
-      const blocked = pool.disabled || swapInput <= 0 || swapOutput <= 0 || insufficient || minOut <= 0;
+      const payBalance = getItemBalance(swapIn.index);
+      const insufficient = execIn > payBalance;
+      const minOut = applySlippage(quotedOut, SLIPPAGE_BPS);
+      const tooSmall = quotedOut > 0 && minOut <= 0;
+      // buy mode caps the ask at what the wallet affords AND below the item
+      // reserve (the curve can never pay out a full reserve). calcAmountIn
+      // overshoots by up to 1, so walk down until the cost actually fits
+      let maxInput = isBuy
+        ? Math.min(
+            calcAmountOut(payBalance, reserveIn, reserveOut, pool.feeBps),
+            Math.max(0, reserveOut - 1)
+          )
+        : payBalance;
+      while (
+        isBuy &&
+        maxInput > 0 &&
+        calcAmountIn(maxInput, reserveIn, reserveOut, pool.feeBps) > payBalance
+      )
+        maxInput--;
+      const unfillable = isBuy && swapInput > 0 && buyCost <= 0; // ask >= reserve
+      const blocked =
+        pool.disabled || swapInput <= 0 || execIn <= 0 || quotedOut <= 0 || insufficient || minOut <= 0;
+      // per-item price readout: what this trade actually pays/returns per unit
+      const perItem = isBuy
+        ? swapInput > 0
+          ? buyCost / swapInput
+          : 0
+        : swapInput > 0
+          ? swapOutput / swapInput
+          : 0;
+
+      const inputCard = (
+        <SideBlock>
+          <HeadRow>
+            <Text size={0.95}>{isBuy ? `You're buying` : `You're selling`}</Text>
+            {isBuy ? (
+              /* the ACTUAL enforced minimum, not a nominal %: applySlippage
+                  floors, so on small quotes the real bound is far looser than
+                  1% (a quote of 1 gives minOut 0 = unprotected) */
+              <Text size={0.75} color={tooSmall ? '#b23b3b' : '#999'}>
+                min: {minOut} {swapOut.name}
+              </Text>
+            ) : (
+              <Text size={0.75} color='#999'>
+                balance: {payBalance}
+              </Text>
+            )}
+          </HeadRow>
+          <TradeCard>
+            <ItemBlock item={isBuy ? swapOut : swapIn} />
+            <AmountBox value={swapInput} set={setSwapInput} max={maxInput} />
+          </TradeCard>
+        </SideBlock>
+      );
+
+      const outputCard = (
+        <SideBlock>
+          <HeadRow>
+            <Text size={0.95}>{isBuy ? `You're paying` : `You're receiving`}</Text>
+            {isBuy ? (
+              <Text size={0.75} color={insufficient ? '#b23b3b' : '#999'}>
+                balance: {payBalance}
+              </Text>
+            ) : (
+              <Text size={0.75} color={tooSmall ? '#b23b3b' : '#999'}>
+                min: {minOut} {swapOut.name}
+              </Text>
+            )}
+          </HeadRow>
+          <TradeCard>
+            <ItemBlock item={isBuy ? swapIn : swapOut} />
+            {/* a buy quotes the exact MUSU charged; a sell's return is a ~quote */}
+            <OutputField>{isBuy ? `${buyCost}` : `~${swapOutput}`}</OutputField>
+          </TradeCard>
+        </SideBlock>
+      );
+
       return (
         <Section>
-          <SideBlock>
-            <HeadRow>
-              <Text size={0.95}>You're selling</Text>
-              <Text size={0.75} color='#999'>
-                balance: {balance}
-              </Text>
-            </HeadRow>
-            <TradeCard>
-              <ItemBlock item={swapIn} />
-              <AmountBox value={swapInput} set={setSwapInput} max={balance} />
-            </TradeCard>
-          </SideBlock>
+          {inputCard}
 
           <FlipRow>
             <FlipButton onClick={flip}>⇅</FlipButton>
           </FlipRow>
 
-          <SideBlock>
-            <HeadRow>
-              <Text size={0.95}>You're receiving</Text>
-              {/* the ACTUAL enforced minimum, not a nominal %: applySlippage
-                  floors, so on small quotes the real bound is far looser than
-                  1% (a quote of 1 gives minOut 0 = unprotected) */}
-              <Text size={0.75} color={tooSmall ? '#b23b3b' : '#999'}>
-                min: {minOut} {swapOut.name}
-              </Text>
-            </HeadRow>
-            <TradeCard>
-              <ItemBlock item={swapOut} />
-              <OutputField>~{swapOutput}</OutputField>
-            </TradeCard>
-          </SideBlock>
+          {outputCard}
 
           <Info>
             <Text size={0.72} color='#888'>
               fee {pool.feeBps / 100}% · max slippage {SLIPPAGE_BPS / 100}%
+              {perItem > 0 ? ` · ~${fmtPrice(perItem)} ${isBuy ? swapIn.name : swapOut.name} each` : ''}
             </Text>
             {tooSmall && (
               <Text size={0.72} color='#b23b3b'>
@@ -344,11 +423,17 @@ export const PoolModal: UIComponent = {
             text={
               pool.disabled
                 ? 'pool disabled'
-                : insufficient
-                  ? 'insufficient balance'
-                  : tooSmall
-                    ? 'trade too small'
-                    : 'swap'
+                : unfillable
+                  ? 'not enough in the pool'
+                  : insufficient
+                    ? 'insufficient balance'
+                    : tooSmall
+                      ? 'trade too small'
+                      : isBuy
+                        ? 'buy'
+                        : isMusuPool
+                          ? 'sell'
+                          : 'swap'
             }
           />
         </Section>
@@ -361,11 +446,22 @@ export const PoolModal: UIComponent = {
         pool.totalSupply > 0 ? ((100 * playerShares) / pool.totalSupply).toFixed(2) : '0';
       const balA = getItemBalance(pool.itemA.index);
       const balB = getItemBalance(pool.itemB.index);
-      // adds need BOTH sides at the pool ratio: matched B = quote(A) =
-      // A·reserveB/reserveA, so A is capped by balA AND the largest A whose
-      // matched B still fits balB
-      const maxAByB = pool.reserveB > 0 ? Math.floor((balB * pool.reserveA) / pool.reserveB) : balA;
-      const maxAddA = Math.min(balA, maxAByB);
+      // the typed side is the anchor (the item in a MUSU pool, A otherwise);
+      // the other side auto-matches at the pool ratio. adds need BOTH sides,
+      // so the anchor is capped by its own balance AND the largest anchor
+      // whose matched amount still fits the other balance
+      const anchorItem = anchorIsB ? pool.itemB : pool.itemA;
+      const matchedItem = anchorIsB ? pool.itemA : pool.itemB;
+      const anchorBal = anchorIsB ? balB : balA;
+      const matchedBal = anchorIsB ? balA : balB;
+      const anchorReserve = anchorIsB ? pool.reserveB : pool.reserveA;
+      const matchedReserve = anchorIsB ? pool.reserveA : pool.reserveB;
+      const matchedAmount = anchorIsB ? addAmountA : addAmountB;
+      const maxByMatched =
+        matchedReserve > 0
+          ? Math.floor((matchedBal * anchorReserve) / matchedReserve)
+          : anchorBal;
+      const maxAdd = Math.min(anchorBal, maxByMatched);
       const addBlocked =
         pool.disabled || sharesMinted <= 0 || addAmountA > balA || addAmountB > balB;
       // a tiny position in a skewed pool can round both outputs to 0; the
@@ -395,21 +491,21 @@ export const PoolModal: UIComponent = {
             <HeadRow>
               <Text size={0.95}>Add liquidity</Text>
               <Text size={0.75} color='#999'>
-                balance: {balA}
+                balance: {anchorBal}
               </Text>
             </HeadRow>
             <TradeCard>
-              <ItemBlock item={pool.itemA} />
-              <AmountBox value={addAmountA} set={setAddAmountA} max={maxAddA} />
+              <ItemBlock item={anchorItem} />
+              <AmountBox value={addInput} set={setAddInput} max={maxAdd} />
             </TradeCard>
             <TradeCard>
-              <ItemBlock item={pool.itemB} />
-              <OutputField>+ {addAmountB}</OutputField>
+              <ItemBlock item={matchedItem} />
+              <OutputField>+ {matchedAmount}</OutputField>
             </TradeCard>
           </SideBlock>
           <Info>
             <Text size={0.72} color='#999'>
-              {pool.itemB.name} auto-matched · balance: {balB}
+              {matchedItem.name} auto-matched · balance: {matchedBal}
             </Text>
           </Info>
           <IconButton
