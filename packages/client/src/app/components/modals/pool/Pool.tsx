@@ -12,8 +12,8 @@ import {
   StepButton,
   Text,
 } from 'app/components/library';
-import { UIComponent } from 'app/root/types';
 import { useLayers } from 'app/root/hooks';
+import { UIComponent } from 'app/root/types';
 import { useVisibility } from 'app/stores';
 import { LpFountainIcon } from 'assets/images/icons/menu';
 import { MUSU_INDEX } from 'constants/items';
@@ -30,7 +30,9 @@ import {
   Pool,
   quote,
 } from 'network/shapes/Pool';
-import { playClick } from 'utils/sounds';
+import { playClick, playFund } from 'utils/sounds';
+import { PoolPosition, Positions } from './Positions';
+import { fmtPrice } from './utils';
 
 const SLIPPAGE_BPS = 100; // 1% tolerance on swaps and liquidity adds
 
@@ -38,22 +40,16 @@ const SLIPPAGE_BPS = 100; // 1% tolerance on swaps and liquidity adds
 const GREEN = '#C2F0C2';
 const RED = '#F8D6D6';
 
+// pastel tab colors, shared with the Token Portal tabs
+const TAB_BLUE = '#E0EEFF';
+const TAB_ORANGE = '#FFF0E0';
+
+type View = 'world' | 'positions';
 type Tab = 'swap' | 'liquidity';
 
 // floor to a safe non-negative integer. guards negatives / non-finite so a bad
 // amount ("1e999" -> Infinity) can never reach BigInt() downstream
 const safeAmt = (v: number) => (!Number.isFinite(v) || v < 0 ? 0 : Math.floor(v));
-
-// price readout: whole numbers render without thousands separators (a comma
-// could be misread as a decimal point); below 100 we clamp to 2 decimals
-// (trailing zeros trimmed). a nonzero price that rounds to 0 shows "<0.01" so a
-// cheap item never reads as free
-const fmtPrice = (n: number) => {
-  if (!Number.isFinite(n) || n <= 0) return '0';
-  if (n >= 100) return String(Math.round(n));
-  const rounded = Number(n.toFixed(2));
-  return rounded === 0 ? '<0.01' : rounded.toString();
-};
 
 // the pool's headline market price. MUSU pools always price the other item in
 // MUSU (MUSU is index 1, so it always sorts to itemA when present) regardless of
@@ -102,6 +98,7 @@ export const PoolModal: UIComponent = {
     const [account, setAccount] = useState<Account>(NullAccount);
     const [pools, setPools] = useState<Pool[]>([]);
     const [poolID, setPoolID] = useState<string>('');
+    const [view, setView] = useState<View>('world');
     const [tab, setTab] = useState<Tab>('swap');
     const [lastTick, setLastTick] = useState(Date.now());
 
@@ -188,11 +185,25 @@ export const PoolModal: UIComponent = {
     const playerShares = pool ? getPoolShares(world, components, pool.id, account.id) : 0;
     const [removeA, removeB] = pool ? calcRemoveAmounts(pool, removeShares) : [0, 0];
 
+    // the player's stake across every pool, for the MY POSITIONS view
+    const positions: PoolPosition[] = useMemo(
+      () =>
+        pools.flatMap((p) => {
+          const shares = getPoolShares(world, components, p.id, account.id);
+          if (shares <= 0) return [];
+          const [amountA, amountB] = calcRemoveAmounts(p, shares);
+          const sharePct = p.totalSupply > 0 ? (100 * shares) / p.totalSupply : 0;
+          return [{ pool: p, shares, sharePct, amountA, amountB }];
+        }),
+      [pools, account.id]
+    );
+
     /////////////////
     // ACTIONS
 
     const swap = () => {
       if (!pool || !swapIn || !swapOut || execIn <= 0 || quotedOut <= 0) return;
+      playFund();
       const minOut = applySlippage(quotedOut, SLIPPAGE_BPS);
       actions.add({
         action: 'PoolSwap',
@@ -206,6 +217,7 @@ export const PoolModal: UIComponent = {
 
     const addLiquidity = () => {
       if (!pool || addAmountA <= 0 || addAmountB <= 0) return;
+      playFund();
       const minA = applySlippage(addAmountA, SLIPPAGE_BPS);
       const minB = applySlippage(addAmountB, SLIPPAGE_BPS);
       actions.add({
@@ -227,6 +239,7 @@ export const PoolModal: UIComponent = {
 
     const removeLiquidity = () => {
       if (!pool || removeShares <= 0) return;
+      playFund();
       const minA = applySlippage(removeA, SLIPPAGE_BPS);
       const minB = applySlippage(removeB, SLIPPAGE_BPS);
       actions.add({
@@ -261,6 +274,22 @@ export const PoolModal: UIComponent = {
       setTab(t);
     };
 
+    const switchView = (v: View) => {
+      playClick();
+      setView(v);
+    };
+
+    // jump from a position card to its pool's liquidity controls. no
+    // playClick here: the card's manage IconButton already plays it
+    const managePosition = (id: string) => {
+      setPoolID(id);
+      setSwapInput(0);
+      setAddInput(0);
+      setRemoveShares(0);
+      setView('world');
+      setTab('liquidity');
+    };
+
     const flip = () => {
       playClick();
       setInverted(!inverted); // reset: the amount re-denominates to the other item
@@ -273,6 +302,7 @@ export const PoolModal: UIComponent = {
     const renderPicker = () => (
       <Popover
         fullWidth
+        maxHeight={42}
         content={
           <PickerList>
             {pools.map((p) => (
@@ -336,7 +366,12 @@ export const PoolModal: UIComponent = {
         maxInput--;
       const unfillable = isBuy && swapInput > 0 && buyCost <= 0; // ask >= reserve
       const blocked =
-        pool.disabled || swapInput <= 0 || execIn <= 0 || quotedOut <= 0 || insufficient || minOut <= 0;
+        pool.disabled ||
+        swapInput <= 0 ||
+        execIn <= 0 ||
+        quotedOut <= 0 ||
+        insufficient ||
+        minOut <= 0;
       // per-item price readout: what this trade actually pays/returns per unit
       const perItem = isBuy
         ? swapInput > 0
@@ -405,7 +440,9 @@ export const PoolModal: UIComponent = {
           <Info>
             <Text size={0.72} color='#888'>
               fee {pool.feeBps / 100}% · max slippage {SLIPPAGE_BPS / 100}%
-              {perItem > 0 ? ` · ~${fmtPrice(perItem)} ${isBuy ? swapIn.name : swapOut.name} each` : ''}
+              {perItem > 0
+                ? ` · ~${fmtPrice(perItem)} ${isBuy ? swapIn.name : swapOut.name} each`
+                : ''}
             </Text>
             {tooSmall && (
               <Text size={0.72} color='#b23b3b'>
@@ -458,9 +495,7 @@ export const PoolModal: UIComponent = {
       const matchedReserve = anchorIsB ? pool.reserveA : pool.reserveB;
       const matchedAmount = anchorIsB ? addAmountA : addAmountB;
       const maxByMatched =
-        matchedReserve > 0
-          ? Math.floor((matchedBal * anchorReserve) / matchedReserve)
-          : anchorBal;
+        matchedReserve > 0 ? Math.floor((matchedBal * anchorReserve) / matchedReserve) : anchorBal;
       const maxAdd = Math.min(anchorBal, maxByMatched);
       const addBlocked =
         pool.disabled || sharesMinted <= 0 || addAmountA > balA || addAmountB > balB;
@@ -566,38 +601,70 @@ export const PoolModal: UIComponent = {
         showScrollBar
       >
         <Container>
-          {renderPicker()}
-          {priceInfo && (
-            <PriceBanner>
-              <PriceHeader>current market value</PriceHeader>
-              <PriceRow>
-                <PriceSide>
-                  <PriceNum>1</PriceNum>
-                  <PriceSprite src={priceInfo.item.image} alt={priceInfo.item.name} />
-                </PriceSide>
-                <PriceEquals>=</PriceEquals>
-                <PriceSide>
-                  <PriceNum>{fmtPrice(priceInfo.price)}</PriceNum>
-                  {priceInfo.unitImage && (
-                    <PriceSprite src={priceInfo.unitImage} alt={priceInfo.unitName} />
-                  )}
-                </PriceSide>
-              </PriceRow>
-            </PriceBanner>
-          )}
           <Tabs>
-            <TabButton onClick={() => switchTab('swap')} disabled={tab === 'swap'}>
-              Swap
+            <TabButton
+              $color={TAB_BLUE}
+              $active={view === 'world'}
+              onClick={() => switchView('world')}
+              disabled={view === 'world'}
+            >
+              World Pools
             </TabButton>
             <TabButton
-              onClick={() => switchTab('liquidity')}
-              disabled={tab === 'liquidity'}
+              $color={TAB_ORANGE}
+              $active={view === 'positions'}
+              onClick={() => switchView('positions')}
+              disabled={view === 'positions'}
               style={{ borderRight: 'none' }}
             >
-              Liquidity
+              My Positions
             </TabButton>
           </Tabs>
-          {tab === 'swap' ? renderSwap() : renderLiquidity()}
+          {view === 'positions' ? (
+            <Positions positions={positions} onManage={managePosition} />
+          ) : (
+            <>
+              {renderPicker()}
+              {priceInfo && (
+                <PriceBanner>
+                  <PriceHeader>current market value</PriceHeader>
+                  <PriceRow>
+                    <PriceSide>
+                      <PriceNum>1</PriceNum>
+                      <PriceSprite src={priceInfo.item.image} alt={priceInfo.item.name} />
+                    </PriceSide>
+                    <PriceEquals>=</PriceEquals>
+                    <PriceSide>
+                      <PriceNum>{fmtPrice(priceInfo.price)}</PriceNum>
+                      {priceInfo.unitImage && (
+                        <PriceSprite src={priceInfo.unitImage} alt={priceInfo.unitName} />
+                      )}
+                    </PriceSide>
+                  </PriceRow>
+                </PriceBanner>
+              )}
+              <Tabs>
+                <TabButton
+                  $color={TAB_BLUE}
+                  $active={tab === 'swap'}
+                  onClick={() => switchTab('swap')}
+                  disabled={tab === 'swap'}
+                >
+                  Swap
+                </TabButton>
+                <TabButton
+                  $color={TAB_ORANGE}
+                  $active={tab === 'liquidity'}
+                  onClick={() => switchTab('liquidity')}
+                  disabled={tab === 'liquidity'}
+                  style={{ borderRight: 'none' }}
+                >
+                  Liquidity
+                </TabButton>
+              </Tabs>
+              {tab === 'swap' ? renderSwap() : renderLiquidity()}
+            </>
+          )}
         </Container>
       </ModalWrapper>
     );
@@ -692,7 +759,8 @@ const Tabs = styled.div`
   flex-flow: row nowrap;
 `;
 
-const TabButton = styled.button`
+// pastel active-fill tabs, same design as the Token Portal's
+const TabButton = styled.button<{ $color: string; $active: boolean }>`
   border: none;
   border-right: solid black 0.15vw;
   padding: 0.5vw;
@@ -702,11 +770,11 @@ const TabButton = styled.button`
   font-size: 0.9vw;
   text-align: center;
   cursor: pointer;
+  background-color: ${({ $active, $color }) => ($active ? $color : 'white')};
   &:hover {
-    background-color: #ddd;
+    background-color: ${({ $color }) => $color}88;
   }
   &:disabled {
-    background-color: #b2b2b2;
     cursor: default;
     pointer-events: none;
   }
@@ -848,7 +916,9 @@ const FlipButton = styled.button`
   align-items: center;
   justify-content: center;
 
-  transition: background 0.12s, border-color 0.12s;
+  transition:
+    background 0.12s,
+    border-color 0.12s;
   &:hover {
     background: #e8f0fe;
     border-color: #a0c0e8;
@@ -878,7 +948,9 @@ const MaxChip = styled.button`
   font-size: 0.65vw;
   cursor: pointer;
   pointer-events: auto;
-  transition: background 0.12s, border-color 0.12s;
+  transition:
+    background 0.12s,
+    border-color 0.12s;
   &:hover {
     background: #e8f0fe;
     border-color: #a0c0e8;

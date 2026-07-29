@@ -2,7 +2,9 @@ import { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 
 import { IconButton, TextTooltip } from 'app/components/library';
+import { triggerPoolModal } from 'app/triggers';
 import { ArrowIcons } from 'assets/images/icons/arrows';
+import { LpFountainIcon } from 'assets/images/icons/menu';
 import { ItemImages } from 'assets/images/items';
 import { Mode } from './types';
 
@@ -88,6 +90,15 @@ export const MusuRow = ({
             radius={0.9}
           />
         </TextTooltip>
+        {mode !== 'TRANSFER' && (
+          <TextTooltip text={['Item Pools']} direction='row'>
+            <IconButton
+              img={LpFountainIcon}
+              onClick={() => triggerPoolModal({ silent: true })}
+              radius={0.9}
+            />
+          </TextTooltip>
+        )}
       </Icons>
       <TextTooltip text={['MUSU']} direction='row' fullWidth>
         <MusuSection>
