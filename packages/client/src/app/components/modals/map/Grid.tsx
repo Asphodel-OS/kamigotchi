@@ -16,7 +16,7 @@ import { Zones } from 'constants/zones';
 import { Allo } from 'network/shapes/Allo';
 import { BaseKami } from 'network/shapes/Kami/types';
 import { Node } from 'network/shapes/Node';
-import { getQuest, queryOngoingQuests } from 'network/shapes/Quest';
+import { checkQuestObjective, getQuest, queryOngoingQuests } from 'network/shapes/Quest';
 import { calculatePathStaminaCost, findPath, NullRoom, Room } from 'network/shapes/Room';
 import { DetailedEntity } from 'network/shapes/utils';
 import { playClick } from 'utils/sounds';
@@ -148,6 +148,8 @@ export const Grid = ({
       if (quest.complete) return;
       quest.objectives.forEach((obj) => {
         if (obj.target?.type !== 'ROOM' || !obj.target.index) return;
+        // a finished step of a multi-objective quest shouldn't keep its room marked
+        if (checkQuestObjective(world, components, obj, quest, account).completable) return;
         const names = map.get(obj.target.index) ?? [];
         if (!names.includes(quest.name)) names.push(quest.name);
         map.set(obj.target.index, names);
