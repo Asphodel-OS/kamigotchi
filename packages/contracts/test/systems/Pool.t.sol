@@ -3,6 +3,9 @@ pragma solidity >=0.8.28;
 
 import "tests/utils/SetupTemplate.t.sol";
 
+import { Vm } from "forge-std/Vm.sol";
+import { LibTypes } from "solecs/LibTypes.sol";
+
 import { FixedPointMathLib } from "utils/FixedPointMathLib.sol";
 import { LibData } from "libraries/LibData.sol";
 import { LibPool } from "libraries/LibPool.sol";
@@ -574,5 +577,366 @@ contract PoolTest is SetupTemplate {
     _swap(alice, ITEM_A, MUSU_INDEX, 1_000, 0);
     assertGt(_getItemBal(alice.id, MUSU_INDEX), 0); // actually received MUSU
     assertEq(LibData.get(components, alice.id, MUSU_INDEX, "ITEM_TOTAL"), before);
+  }
+
+  /////////////////
+  // POOL_SYNC
+
+  function _worldEventIndex(
+    Vm.Log[] memory logs,
+    string memory identifier
+  ) internal pure returns (uint256) {
+    bytes32 identifierHash = keccak256(bytes(identifier));
+    for (uint256 i; i < logs.length; i++) {
+      if (logs[i].topics.length > 1 && logs[i].topics[1] == identifierHash) return i;
+    }
+    revert("WorldEvent not found");
+  }
+
+  function _findWorldEvent(
+    Vm.Log[] memory logs,
+    string memory identifier
+  ) internal pure returns (Vm.Log memory) {
+    return logs[_worldEventIndex(logs, identifier)];
+  }
+
+  function _hasWorldEvent(
+    Vm.Log[] memory logs,
+    string memory identifier
+  ) internal pure returns (bool) {
+    return _countWorldEvents(logs, identifier) > 0;
+  }
+
+  function _countWorldEvents(
+    Vm.Log[] memory logs,
+    string memory identifier
+  ) internal pure returns (uint256 count) {
+    bytes32 identifierHash = keccak256(bytes(identifier));
+    for (uint256 i; i < logs.length; i++) {
+      if (logs[i].topics.length > 1 && logs[i].topics[1] == identifierHash) count++;
+    }
+  }
+
+  struct Sync {
+    uint256 poolID;
+    uint32 indexA;
+    uint32 indexB;
+    uint256 reserveA;
+    uint256 reserveB;
+    uint256 totalSupply;
+  }
+
+  // every action under test emits exactly one sync, so assert that here rather
+  // than silently decoding the first of several
+  function _decodeSync(Vm.Log[] memory logs) internal returns (Sync memory s) {
+    assertEq(_countWorldEvents(logs, "POOL_SYNC"), 1);
+    (, bytes memory values) = abi.decode(_findWorldEvent(logs, "POOL_SYNC").data, (uint8[], bytes));
+    (s.poolID, s.indexA, s.indexB, s.reserveA, s.reserveB, s.totalSupply) = abi.decode(
+      values,
+      (uint256, uint32, uint32, uint256, uint256, uint256)
+    );
+  }
+
+  // asserts a single sync was emitted and that every field matches live state
+  function _assertSyncMatchesState(Vm.Log[] memory logs, uint256 poolID) internal {
+    Sync memory s = _decodeSync(logs);
+    assertEq(s.poolID, poolID);
+    assertEq(s.indexA, ITEM_A);
+    assertEq(s.indexB, ITEM_B);
+    assertEq(s.reserveA, _getItemBal(poolID, ITEM_A));
+    assertEq(s.reserveB, _getItemBal(poolID, ITEM_B));
+    assertEq(s.totalSupply, LibPool.getTotalSupply(components, poolID));
+  }
+
+  function testSyncOnSwap() public {
+    uint256 poolID = _createPool();
+    _fundAccount(alice.index, 10_000);
+    _giveItem(alice, ITEM_A, 10_000);
+
+    vm.recordLogs();
+    _swap(alice, ITEM_A, ITEM_B, 1_000, 0);
+    _assertSyncMatchesState(vm.getRecordedLogs(), poolID);
+  }
+
+  // canonical ordering must survive reversed caller arguments
+  function testSyncOnSwapReverseArgs() public {
+    uint256 poolID = _createPool();
+    _fundAccount(alice.index, 10_000);
+    _giveItem(alice, ITEM_B, 10_000);
+
+    vm.recordLogs();
+    _swap(alice, ITEM_B, ITEM_A, 1_000, 0);
+
+    Sync memory s = _decodeSync(vm.getRecordedLogs());
+    assertEq(s.indexA, ITEM_A);
+    assertEq(s.indexB, ITEM_B);
+    assertEq(s.reserveA, _getItemBal(poolID, ITEM_A));
+    assertEq(s.reserveB, _getItemBal(poolID, ITEM_B));
+  }
+
+  // ITEM_A/ITEM_B are already sorted, so they cannot catch an inverted
+  // reserve<->index pairing. MUSU (index 1) against ITEM_A (200) can.
+  function testSyncOrientationInvertedPair() public {
+    if (LibItem.getByIndex(components, MUSU_INDEX) == 0) _createGenericItem(MUSU_INDEX);
+    // deliberately unequal so an inverted reserve<->index pairing is visible
+    uint256 musuSeed = 50_000;
+    uint256 itemSeed = 100_000;
+    _fundSeeder(MUSU_INDEX, musuSeed);
+    _fundSeeder(ITEM_A, itemSeed);
+
+    vm.recordLogs();
+    vm.prank(deployer);
+    uint256 poolID = __PoolRegistrySystem.create(ITEM_A, MUSU_INDEX, itemSeed, musuSeed, FEE_BPS);
+
+    Sync memory s = _decodeSync(vm.getRecordedLogs());
+    assertEq(s.indexA, MUSU_INDEX); // lo, despite being passed second
+    assertEq(s.indexB, ITEM_A);
+    assertEq(s.reserveA, musuSeed); // would be itemSeed if the pairing inverted
+    assertEq(s.reserveB, itemSeed);
+    assertEq(s.reserveA, _getItemBal(poolID, MUSU_INDEX));
+    assertEq(s.reserveB, _getItemBal(poolID, ITEM_A));
+  }
+
+  function testSyncOnAddLiquidity() public {
+    uint256 poolID = _createPool();
+    _giveItem(alice, ITEM_A, 10_000);
+    _giveItem(alice, ITEM_B, 10_000);
+
+    vm.recordLogs();
+    _addLiquidity(alice, 1_000, 1_000);
+    _assertSyncMatchesState(vm.getRecordedLogs(), poolID);
+  }
+
+  function testSyncOnRemoveLiquidity() public {
+    uint256 poolID = _createPool();
+    _giveItem(alice, ITEM_A, 10_000);
+    _giveItem(alice, ITEM_B, 10_000);
+    (, , uint256 shares) = _addLiquidity(alice, 1_000, 1_000);
+
+    uint256 supplyBefore = LibPool.getTotalSupply(components, poolID);
+    vm.recordLogs();
+    _removeLiquidity(alice, shares);
+
+    // getRecordedLogs() drains the buffer, so capture it once
+    Vm.Log[] memory logs = vm.getRecordedLogs();
+    assertEq(_decodeSync(logs).totalSupply, supplyBefore - shares);
+    _assertSyncMatchesState(logs, poolID);
+  }
+
+  function testSyncOnCreate() public {
+    _fundSeeder(ITEM_A, SEED_A);
+    _fundSeeder(ITEM_B, SEED_B);
+
+    vm.recordLogs();
+    vm.prank(deployer);
+    uint256 poolID = __PoolRegistrySystem.create(ITEM_A, ITEM_B, SEED_A, SEED_B, FEE_BPS);
+
+    Sync memory s = _decodeSync(vm.getRecordedLogs());
+    assertEq(s.poolID, poolID);
+    assertEq(s.reserveA, SEED_A);
+    assertEq(s.reserveB, SEED_B);
+    assertEq(s.totalSupply, FixedPointMathLib.sqrt(SEED_A * SEED_B));
+  }
+
+  // the sync must land after the pre-fund sweep, not before it
+  function testSyncOnCreateExcludesPreFund() public {
+    _fundSeeder(ITEM_A, SEED_A + 1_000_000);
+    _fundSeeder(ITEM_B, SEED_B);
+
+    uint256 preID = LibPoolRegistry.genID(ITEM_A, ITEM_B);
+    vm.startPrank(deployer);
+    LibInventory.incFor(components, preID, ITEM_A, 1_000_000); // griefer pre-fund
+    vm.stopPrank();
+
+    vm.recordLogs();
+    vm.prank(deployer);
+    __PoolRegistrySystem.create(ITEM_A, ITEM_B, SEED_A, SEED_B, FEE_BPS);
+
+    Sync memory s = _decodeSync(vm.getRecordedLogs());
+    assertEq(s.reserveA, SEED_A);
+  }
+
+  function testSyncOnDonate() public {
+    uint256 poolID = _createPool();
+    uint256 supplyBefore = LibPool.getTotalSupply(components, poolID);
+    _fundSeeder(ITEM_A, 5_000);
+    _fundSeeder(ITEM_B, 5_000);
+
+    vm.recordLogs();
+    vm.prank(deployer);
+    __PoolRegistrySystem.donate(ITEM_A, ITEM_B, 5_000, 5_000);
+
+    Sync memory s = _decodeSync(vm.getRecordedLogs());
+    assertEq(s.reserveA, SEED_A + 5_000);
+    assertEq(s.reserveB, SEED_B + 5_000);
+    assertEq(s.totalSupply, supplyBefore); // donation mints no shares
+  }
+
+  // teardown must not revert and must emit exactly one terminal row
+  function testSyncOnRemovePool() public {
+    uint256 poolID = _createPool();
+
+    vm.recordLogs();
+    vm.prank(deployer);
+    __PoolRegistrySystem.remove(ITEM_A, ITEM_B);
+
+    Vm.Log[] memory logs = vm.getRecordedLogs();
+    assertEq(_countWorldEvents(logs, "POOL_SYNC"), 1);
+
+    Sync memory s = _decodeSync(logs);
+    assertEq(s.poolID, poolID);
+    assertEq(s.indexA, ITEM_A);
+    assertEq(s.indexB, ITEM_B);
+    assertEq(s.reserveA, 0);
+    assertEq(s.reserveB, 0);
+    assertEq(s.totalSupply, 0);
+  }
+
+  // two LPs staked: a per-iteration emit inside forceExitAll would yield 3
+  function testSyncOnRemovePoolWithLPs() public {
+    _createPool();
+    _giveItem(alice, ITEM_A, 10_000);
+    _giveItem(alice, ITEM_B, 10_000);
+    _giveItem(bob, ITEM_A, 10_000);
+    _giveItem(bob, ITEM_B, 10_000);
+    _addLiquidity(alice, 1_000, 1_000);
+    _addLiquidity(bob, 2_000, 2_000);
+
+    vm.recordLogs();
+    vm.prank(deployer);
+    __PoolRegistrySystem.remove(ITEM_A, ITEM_B);
+
+    Vm.Log[] memory logs = vm.getRecordedLogs();
+    assertEq(_countWorldEvents(logs, "POOL_SYNC"), 1);
+
+    Sync memory s = _decodeSync(logs);
+    assertEq(s.reserveA, 0);
+    assertEq(s.reserveB, 0);
+    assertEq(s.totalSupply, 0);
+  }
+
+  // pool ids are recycled, so the terminator is what separates the two series
+  function testSyncRecycledPoolID() public {
+    uint256 poolID = _createPool();
+
+    vm.recordLogs();
+    vm.prank(deployer);
+    __PoolRegistrySystem.remove(ITEM_A, ITEM_B);
+    Sync memory terminal = _decodeSync(vm.getRecordedLogs());
+    assertEq(terminal.totalSupply, 0);
+
+    vm.recordLogs();
+    uint256 newID = _createPool();
+    Sync memory fresh = _decodeSync(vm.getRecordedLogs());
+
+    assertEq(newID, poolID); // same id, unrelated pool
+    assertGt(fresh.reserveA, 0);
+    assertGt(fresh.totalSupply, 0);
+  }
+
+  function testSyncTotalSupplyAcrossMintAndBurn() public {
+    uint256 poolID = _createPool();
+    _giveItem(alice, ITEM_A, 10_000);
+    _giveItem(alice, ITEM_B, 10_000);
+
+    uint256 seeded = LibPool.getTotalSupply(components, poolID);
+
+    vm.recordLogs();
+    (, , uint256 shares) = _addLiquidity(alice, 1_000, 1_000);
+    assertEq(_decodeSync(vm.getRecordedLogs()).totalSupply, seeded + shares);
+
+    vm.recordLogs();
+    _removeLiquidity(alice, shares);
+    assertEq(_decodeSync(vm.getRecordedLogs()).totalSupply, seeded);
+  }
+
+  function testSyncOnDustExit() public {
+    _fundSeeder(ITEM_A, 1_000_000);
+    _fundSeeder(ITEM_B, 1_000);
+    vm.prank(deployer);
+    uint256 poolID = __PoolRegistrySystem.create(ITEM_A, ITEM_B, 1_000_000, 1_000, FEE_BPS);
+
+    _giveItem(alice, ITEM_A, 10_000);
+    _giveItem(alice, ITEM_B, 10_000);
+    (, , uint256 shares) = _addLiquidity(alice, 1_000, 1);
+
+    vm.recordLogs();
+    _removeLiquidity(alice, shares);
+
+    Sync memory s = _decodeSync(vm.getRecordedLogs());
+    assertEq(s.reserveA, _getItemBal(poolID, ITEM_A));
+    assertEq(s.reserveB, _getItemBal(poolID, ITEM_B));
+  }
+
+  function testSyncSchemaShape() public {
+    _createPool();
+    _fundAccount(alice.index, 10_000);
+    _giveItem(alice, ITEM_A, 10_000);
+
+    vm.recordLogs();
+    _swap(alice, ITEM_A, ITEM_B, 1_000, 0);
+
+    (uint8[] memory schema, ) = abi.decode(
+      _findWorldEvent(vm.getRecordedLogs(), "POOL_SYNC").data,
+      (uint8[], bytes)
+    );
+    assertEq(schema.length, 6);
+    assertEq(schema[0], uint8(LibTypes.SchemaValue.UINT256));
+    assertEq(schema[1], uint8(LibTypes.SchemaValue.UINT32));
+    assertEq(schema[2], uint8(LibTypes.SchemaValue.UINT32));
+    assertEq(schema[3], uint8(LibTypes.SchemaValue.UINT256));
+    assertEq(schema[4], uint8(LibTypes.SchemaValue.UINT256));
+    assertEq(schema[5], uint8(LibTypes.SchemaValue.UINT256));
+  }
+
+  function testSyncFollowsSwapInSameTx() public {
+    _createPool();
+    _fundAccount(alice.index, 10_000);
+    _giveItem(alice, ITEM_A, 10_000);
+
+    vm.recordLogs();
+    _swap(alice, ITEM_A, ITEM_B, 1_000, 0);
+
+    Vm.Log[] memory logs = vm.getRecordedLogs();
+    assertGt(_worldEventIndex(logs, "POOL_SYNC"), _worldEventIndex(logs, "POOL_SWAP"));
+  }
+
+  // reserves can be inflated out of band via ItemTransferSystem. that emits no
+  // POOL_SYNC, but the next pool call must report the true balance
+  function testDonationGapSelfHeals() public {
+    uint256 poolID = _createPool();
+    _fundAccount(alice.index, 10_000); // covers TRANSFER_FEE
+    _giveItem(alice, ITEM_A, 10_000);
+
+    uint32[] memory indices = new uint32[](1);
+    uint256[] memory amts = new uint256[](1);
+    indices[0] = ITEM_A;
+    amts[0] = 5_000;
+
+    vm.recordLogs();
+    vm.prank(alice.owner);
+    _ItemTransferSystem.executeTyped(indices, amts, poolID);
+    assertFalse(_hasWorldEvent(vm.getRecordedLogs(), "POOL_SYNC"));
+    assertEq(_getItemBal(poolID, ITEM_A), SEED_A + 5_000);
+
+    vm.recordLogs();
+    _swap(alice, ITEM_A, ITEM_B, 1_000, 0);
+
+    Sync memory s = _decodeSync(vm.getRecordedLogs());
+    assertEq(s.reserveA, _getItemBal(poolID, ITEM_A)); // includes the donation
+    assertEq(s.reserveA, SEED_A + 5_000 + 1_000);
+  }
+
+  function testNoSyncOnRevertedSwap() public {
+    _createPool();
+    _fundAccount(alice.index, 10_000);
+    _giveItem(alice, ITEM_A, 10_000);
+
+    vm.recordLogs();
+    vm.prank(alice.operator);
+    vm.expectRevert("Pool: slippage exceeded");
+    _PoolSystem.swap(ITEM_A, ITEM_B, 1_000, type(uint256).max);
+
+    assertFalse(_hasWorldEvent(vm.getRecordedLogs(), "POOL_SYNC"));
   }
 }
