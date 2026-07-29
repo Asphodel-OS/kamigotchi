@@ -201,10 +201,19 @@ export const PoolModal: UIComponent = {
     /////////////////
     // ACTIONS
 
+    // buys are exact-out: minOut is the full asked amount, so a price move
+    // between quote and execution reverts rather than under-delivering what
+    // the UI said the user is buying. sells keep the 1% tolerance
+    const swapMinOut = isBuy ? quotedOut : applySlippage(quotedOut, SLIPPAGE_BPS);
+
+    // action guards mirror the UI block conditions so a race can never queue
+    // a predictably-failing tx
     const swap = () => {
-      if (!pool || !swapIn || !swapOut || execIn <= 0 || quotedOut <= 0) return;
+      if (!pool || pool.disabled || !swapIn || !swapOut) return;
+      if (execIn <= 0 || quotedOut <= 0 || swapMinOut <= 0) return;
+      if (execIn > getItemBalance(swapIn.index)) return;
       playFund();
-      const minOut = applySlippage(quotedOut, SLIPPAGE_BPS);
+      const minOut = swapMinOut;
       actions.add({
         action: 'PoolSwap',
         params: [swapIn.index, swapOut.index, execIn, minOut],
@@ -216,7 +225,9 @@ export const PoolModal: UIComponent = {
     };
 
     const addLiquidity = () => {
-      if (!pool || addAmountA <= 0 || addAmountB <= 0) return;
+      if (!pool || pool.disabled || addAmountA <= 0 || addAmountB <= 0 || sharesMinted <= 0) return;
+      if (addAmountA > getItemBalance(pool.itemA.index)) return;
+      if (addAmountB > getItemBalance(pool.itemB.index)) return;
       playFund();
       const minA = applySlippage(addAmountA, SLIPPAGE_BPS);
       const minB = applySlippage(addAmountB, SLIPPAGE_BPS);
@@ -237,8 +248,10 @@ export const PoolModal: UIComponent = {
       });
     };
 
+    // no pool.disabled gate here on purpose: LPs must be able to exit a paused pool
     const removeLiquidity = () => {
-      if (!pool || removeShares <= 0) return;
+      if (!pool || removeShares <= 0 || removeShares > playerShares) return;
+      if (removeA <= 0 && removeB <= 0) return;
       playFund();
       const minA = applySlippage(removeA, SLIPPAGE_BPS);
       const minB = applySlippage(removeB, SLIPPAGE_BPS);
@@ -347,11 +360,12 @@ export const PoolModal: UIComponent = {
         return <EmptyText text={['No pools available.', 'Check back later!']} size={1} />;
       const payBalance = getItemBalance(swapIn.index);
       const insufficient = execIn > payBalance;
-      const minOut = applySlippage(quotedOut, SLIPPAGE_BPS);
-      const tooSmall = quotedOut > 0 && minOut <= 0;
+      const minOut = swapMinOut;
+      // sell-only: a buy's minOut is the full ask, so it can never be unprotected
+      const tooSmall = !isBuy && quotedOut > 0 && minOut <= 0;
       // buy mode caps the ask at what the wallet affords AND below the item
-      // reserve (the curve can never pay out a full reserve). calcAmountIn
-      // overshoots by up to 1, so walk down until the cost actually fits
+      // reserve (the curve can never pay out a full reserve). walk down until
+      // the exact cost actually fits the balance
       let maxInput = isBuy
         ? Math.min(
             calcAmountOut(payBalance, reserveIn, reserveOut, pool.feeBps),
@@ -386,11 +400,9 @@ export const PoolModal: UIComponent = {
           <HeadRow>
             <Text size={0.95}>{isBuy ? `You're buying` : `You're selling`}</Text>
             {isBuy ? (
-              /* the ACTUAL enforced minimum, not a nominal %: applySlippage
-                  floors, so on small quotes the real bound is far looser than
-                  1% (a quote of 1 gives minOut 0 = unprotected) */
-              <Text size={0.75} color={tooSmall ? '#b23b3b' : '#999'}>
-                min: {minOut} {swapOut.name}
+              /* exact-out: the tx delivers the full ask or reverts */
+              <Text size={0.75} color='#999'>
+                exact: {minOut} {swapOut.name}
               </Text>
             ) : (
               <Text size={0.75} color='#999'>
@@ -439,7 +451,8 @@ export const PoolModal: UIComponent = {
 
           <Info>
             <Text size={0.72} color='#888'>
-              fee {pool.feeBps / 100}% · max slippage {SLIPPAGE_BPS / 100}%
+              fee {pool.feeBps / 100}%
+              {isBuy ? ' · exact amount or nothing' : ` · max slippage ${SLIPPAGE_BPS / 100}%`}
               {perItem > 0
                 ? ` · ~${fmtPrice(perItem)} ${isBuy ? swapIn.name : swapOut.name} each`
                 : ''}

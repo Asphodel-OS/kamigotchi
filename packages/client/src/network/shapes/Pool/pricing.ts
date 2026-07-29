@@ -22,8 +22,8 @@ export const calcAmountOut = (
 };
 
 // input needed for an exact output, after the swap fee: the smallest amountIn
-// whose calcAmountOut is >= amountOut at current reserves (floor + 1, so the
-// quote may overpay by at most 1 unit). 0 when the ask can't clear the reserve
+// whose calcAmountOut is >= amountOut at current reserves (ceil division —
+// exact minimum, never overpays). 0 when the ask can't clear the reserve
 export const calcAmountIn = (
   amountOut: number,
   reserveIn: number,
@@ -33,7 +33,7 @@ export const calcAmountIn = (
   if (amountOut <= 0 || reserveIn <= 0 || amountOut >= reserveOut) return 0;
   const numerator = BigInt(reserveIn) * BigInt(Math.floor(amountOut)) * BPS;
   const denominator = BigInt(reserveOut - Math.floor(amountOut)) * (BPS - BigInt(feeBps));
-  return Number(numerator / denominator + 1n);
+  return Number((numerator + denominator - 1n) / denominator);
 };
 
 // equivalent value of amountA in item B at the current reserve ratio
