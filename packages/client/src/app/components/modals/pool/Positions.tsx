@@ -1,10 +1,8 @@
 import styled from 'styled-components';
 
-import { EmptyText, IconButton, Text } from 'app/components/library';
-import { ItemImages } from 'assets/images/items';
-import { MUSU_INDEX } from 'constants/items';
+import { EmptyText, IconButton, Text, TextTooltip } from 'app/components/library';
+import { ActionIcons } from 'assets/images/icons/actions';
 import { Pool } from 'network/shapes/Pool';
-import { fmtPrice } from './utils';
 
 const GREEN = '#C2F0C2';
 
@@ -17,32 +15,6 @@ export interface PoolPosition {
   amountB: number;
 }
 
-// MUSU-denominated value of the redeemable pair when one side is MUSU: the
-// MUSU side plus the item side priced at current reserves. null for item/item
-// pools, which have no canonical currency to denominate in
-const getMusuValue = (pos: PoolPosition): number | null => {
-  const { pool, amountA, amountB } = pos;
-  const musuIsA = pool.itemA.index === MUSU_INDEX;
-  const musuIsB = pool.itemB.index === MUSU_INDEX;
-  if (musuIsA === musuIsB) return null;
-  const musuAmt = musuIsA ? amountA : amountB;
-  const itemAmt = musuIsA ? amountB : amountA;
-  const musuReserve = musuIsA ? pool.reserveA : pool.reserveB;
-  const itemReserve = musuIsA ? pool.reserveB : pool.reserveA;
-  return itemReserve > 0 ? Math.floor(musuAmt + (itemAmt * musuReserve) / itemReserve) : null;
-};
-
-// current price of the non-MUSU item in MUSU, null for item/item pools
-const getItemPrice = (pool: Pool): { name: string; price: number } | null => {
-  const musuIsA = pool.itemA.index === MUSU_INDEX;
-  const musuIsB = pool.itemB.index === MUSU_INDEX;
-  if (musuIsA === musuIsB) return null;
-  const item = musuIsA ? pool.itemB : pool.itemA;
-  const musuReserve = musuIsA ? pool.reserveA : pool.reserveB;
-  const itemReserve = musuIsA ? pool.reserveB : pool.reserveA;
-  return itemReserve > 0 ? { name: item.name, price: musuReserve / itemReserve } : null;
-};
-
 const PositionCard = ({
   position,
   onManage,
@@ -50,9 +22,7 @@ const PositionCard = ({
   position: PoolPosition;
   onManage: (poolID: string) => void;
 }) => {
-  const { pool, shares, sharePct, amountA, amountB } = position;
-  const value = getMusuValue(position);
-  const priceInfo = getItemPrice(pool);
+  const { pool, sharePct, amountA, amountB } = position;
   return (
     <Card>
       <CardHeader>
@@ -73,33 +43,21 @@ const PositionCard = ({
         <Holding>
           <HoldingSprite src={pool.itemA.image} alt={pool.itemA.name} />
           <HoldingAmount>{amountA.toLocaleString()}</HoldingAmount>
-          <HoldingName>{pool.itemA.name}</HoldingName>
         </Holding>
         <HoldingPlus>+</HoldingPlus>
         <Holding>
           <HoldingSprite src={pool.itemB.image} alt={pool.itemB.name} />
           <HoldingAmount>{amountB.toLocaleString()}</HoldingAmount>
-          <HoldingName>{pool.itemB.name}</HoldingName>
         </Holding>
+        <TextTooltip text={['Inspect Pool']} direction='row'>
+          <IconButton
+            img={ActionIcons.search}
+            color={GREEN}
+            radius={0.9}
+            onClick={() => onManage(pool.id)}
+          />
+        </TextTooltip>
       </HoldingsRow>
-      <Caption>redeemable now for {shares.toLocaleString()} shares</Caption>
-
-      <CardFooter>
-        <FooterFacts>
-          {value !== null && (
-            <Fact>
-              <FactSprite src={ItemImages.musu} alt='MUSU' />
-              <Text size={0.8}>≈ {value.toLocaleString()} MUSU</Text>
-            </Fact>
-          )}
-          {priceInfo && (
-            <Text size={0.7} color='#999'>
-              1 {priceInfo.name} = {fmtPrice(priceInfo.price)} MUSU
-            </Text>
-          )}
-        </FooterFacts>
-        <IconButton scale={1.6} color={GREEN} text='manage' onClick={() => onManage(pool.id)} />
-      </CardFooter>
     </Card>
   );
 };
@@ -195,12 +153,12 @@ const ShareChip = styled.div`
 
 const HoldingsRow = styled.div`
   display: flex;
-  align-items: stretch;
+  align-items: center;
   gap: 0.6vw;
   border: 0.12vw solid #e8e8e8;
   border-radius: 0.5vw;
   background: #fff;
-  padding: 0.6vw;
+  padding: 0.4vw 0.6vw;
 `;
 
 const Holding = styled.div`
@@ -227,53 +185,10 @@ const HoldingAmount = styled.div`
   white-space: nowrap;
 `;
 
-const HoldingName = styled.div`
-  font-family: Pixel;
-  font-size: 0.7vw;
-  color: #888;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-`;
-
 const HoldingPlus = styled.div`
   align-self: center;
   font-family: Pixel;
   font-size: 1vw;
   color: #bbb;
   flex-shrink: 0;
-`;
-
-const Caption = styled.div`
-  font-family: Pixel;
-  font-size: 0.62vw;
-  color: #aaa;
-  text-align: center;
-`;
-
-const CardFooter = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 0.6vw;
-`;
-
-const FooterFacts = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 0.3vh;
-  min-width: 0;
-`;
-
-const Fact = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 0.35vw;
-`;
-
-const FactSprite = styled.img`
-  width: 1.2vw;
-  height: 1.2vw;
-  image-rendering: pixelated;
-  user-drag: none;
 `;
