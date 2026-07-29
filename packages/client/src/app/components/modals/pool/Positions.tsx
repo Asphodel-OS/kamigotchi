@@ -39,25 +39,28 @@ const PositionCard = ({
         <ShareChip>{sharePct < 0.01 ? '<0.01' : sharePct.toFixed(2)}% of pool</ShareChip>
       </CardHeader>
 
-      <HoldingsRow>
-        <Holding>
-          <HoldingSprite src={pool.itemA.image} alt={pool.itemA.name} />
-          <HoldingAmount>{amountA.toLocaleString()}</HoldingAmount>
-        </Holding>
-        <HoldingPlus>+</HoldingPlus>
-        <Holding>
-          <HoldingSprite src={pool.itemB.image} alt={pool.itemB.name} />
-          <HoldingAmount>{amountB.toLocaleString()}</HoldingAmount>
-        </Holding>
+      <BodyRow>
+        <HoldingsRow>
+          <Holding>
+            <HoldingSprite src={pool.itemA.image} alt={pool.itemA.name} />
+            <HoldingAmount>{amountA.toLocaleString()}</HoldingAmount>
+          </Holding>
+          <HoldingPlus>+</HoldingPlus>
+          <Holding>
+            <HoldingSprite src={pool.itemB.image} alt={pool.itemB.name} />
+            <HoldingAmount>{amountB.toLocaleString()}</HoldingAmount>
+          </Holding>
+        </HoldingsRow>
         <TextTooltip text={['Inspect Pool']} direction='row'>
           <IconButton
             img={ActionIcons.search}
             color={GREEN}
             radius={0.9}
+            scale={3}
             onClick={() => onManage(pool.id)}
           />
         </TextTooltip>
-      </HoldingsRow>
+      </BodyRow>
     </Card>
   );
 };
@@ -151,7 +154,15 @@ const ShareChip = styled.div`
   color: #555;
 `;
 
+// assets box on the left, inspect button standing alone at matching height
+const BodyRow = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 0.6vw;
+`;
+
 const HoldingsRow = styled.div`
+  flex: 1;
   display: flex;
   align-items: center;
   gap: 0.6vw;
