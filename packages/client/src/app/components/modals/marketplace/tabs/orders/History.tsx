@@ -147,6 +147,11 @@ const HistoryBody = styled.div`
   flex-direction: column;
   overflow-y: auto;
   flex: 1;
+
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
 `;
 
 const Row = styled.div`

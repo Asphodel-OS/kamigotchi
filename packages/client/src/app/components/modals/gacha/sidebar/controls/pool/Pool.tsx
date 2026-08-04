@@ -50,4 +50,9 @@ const Container = styled.div<{ isVisible: boolean }>`
   width: 100%;
   display: ${({ isVisible }) => (isVisible ? 'flex' : 'none')};
   overflow-y: scroll;
+
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
 `;

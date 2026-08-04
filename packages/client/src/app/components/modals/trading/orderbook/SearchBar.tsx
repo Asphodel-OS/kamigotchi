@@ -193,6 +193,11 @@ const SuggestBox = styled.div`
   max-height: 12vw;
   overflow: auto;
   z-index: 1;
+
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
 `;
 
 const Suggest = styled.div`

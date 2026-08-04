@@ -98,6 +98,11 @@ const Container = styled.div`
   align-items: center;
 
   overflow-y: auto;
+
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
 `;
 
 const EmptyText = styled.div`

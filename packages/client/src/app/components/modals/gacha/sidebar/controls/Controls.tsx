@@ -108,4 +108,9 @@ const Container = styled.div`
   align-items: stretch;
 
   overflow-y: scroll;
+
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
 `;

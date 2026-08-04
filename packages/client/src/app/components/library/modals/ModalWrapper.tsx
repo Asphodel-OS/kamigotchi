@@ -22,6 +22,7 @@ export const ModalWrapper = ({
   shuffle = false,
   truncate,
   noScroll,
+  showScrollBar,
 }: {
   canExit?: boolean;
   children: React.ReactNode;
@@ -44,17 +45,21 @@ export const ModalWrapper = ({
   shuffle?: boolean;
   truncate?: boolean;
   noScroll?: boolean;
+  showScrollBar?: boolean; // slim scrollbar for modals with long content
 }) => {
   const isVisible = useVisibility((s) => s.modals[id]);
   const setModals = useVisibility((s) => s.setModals);
   const [gridStyle, setGridStyle] = useState<React.CSSProperties>({});
   const [shouldDisplay, setShouldDisplay] = useState(false);
 
+  // keep rendering through the fade-out before hiding; closed modals are
+  // already click-transparent (Content drops pointer-events immediately)
   useEffect(() => {
     if (isVisible) {
       setShouldDisplay(true);
     } else {
-      setShouldDisplay(false);
+      const timeout = setTimeout(() => setShouldDisplay(false), 280);
+      return () => clearTimeout(timeout);
     }
   }, [isVisible]);
 
@@ -90,7 +95,14 @@ export const ModalWrapper = ({
   }, [positionOverride]);
 
   return (
-    <Wrapper id={id} isOpen={shouldDisplay} overlay={!!overlay} style={gridStyle} shuffle={shuffle}>
+    <Wrapper
+      id={id}
+      isOpen={isVisible}
+      isDisplayed={shouldDisplay}
+      overlay={!!overlay}
+      style={gridStyle}
+      shuffle={shuffle}
+    >
       <Content
         backgroundColor={backgroundColor}
         isOpen={isVisible}
@@ -107,6 +119,7 @@ export const ModalWrapper = ({
           scrollBarColor={scrollBarColor}
           noScroll={noScroll}
           noPadding={noPadding}
+          showScrollBar={showScrollBar}
           // data-scroll-container='true'
           // data-modal-id={id}
         >
@@ -131,21 +144,25 @@ const Shuffle = keyframes`
 `;
 
 // Wrapper is an invisible animated wrapper around all modals sans any frills.
+// isOpen drives the fade animations; isDisplayed lags close by the fade-out duration.
 const Wrapper = styled.div<{
   isOpen: boolean;
+  isDisplayed: boolean;
   overlay: boolean;
   shuffle: boolean;
 }>`
-  display: ${({ isOpen }) => (isOpen ? 'block' : 'none')};
+  display: ${({ isDisplayed }) => (isDisplayed ? 'block' : 'none')};
   position: ${({ overlay }) => (overlay ? 'relative' : 'static')};
   z-index: ${({ overlay }) => (overlay ? 3 : 0)};
+  /* fading-out modals must not eat clicks; Content drops pointer-events too */
+  pointer-events: ${({ isOpen }) => (isOpen ? 'auto' : 'none')};
   ${({ isOpen, shuffle }) => css`
     animation: ${isOpen
         ? css`
             ${fadeIn} 0.5s ease-in-out
           `
         : css`
-            ${fadeOut} 0.5s ease-in-out
+            ${fadeOut} 0.3s ease-in-out forwards
           `}
       ${shuffle && css`, ${Shuffle} 0.4s ease-in-out`};
   `}
@@ -217,6 +234,7 @@ const Children = styled.div<{
   noPadding?: boolean;
   scrollBarColor?: string;
   noScroll?: boolean;
+  showScrollBar?: boolean;
 }>`
   position: relative;
   overflow: ${({ noScroll }) => (noScroll ? 'hidden' : 'auto')};
@@ -226,8 +244,25 @@ const Children = styled.div<{
   display: flex;
   flex-flow: column nowrap;
   padding: ${({ noPadding }) => (noPadding ? `0` : `.6vw`)};
-  scrollbar-width: none;
-  &::-webkit-scrollbar { display: none; }
+  ${({ showScrollBar }) =>
+    showScrollBar
+      ? `
+    scrollbar-width: thin;
+    scrollbar-color: #b6b6b6 transparent;
+    &::-webkit-scrollbar {
+      width: 0.3vw;
+      background: transparent;
+    }
+    &::-webkit-scrollbar-thumb {
+      background-color: #b6b6b6;
+      border-radius: 0.3vw;
+      background-clip: padding-box;
+    }
+  `
+      : `
+    scrollbar-width: none;
+    &::-webkit-scrollbar { display: none; }
+  `}
 `;
 
 const fadeIn = keyframes`
@@ -235,8 +270,6 @@ const fadeIn = keyframes`
   to { opacity: 1; }
 `;
 
-// NOTE: this is not actually used atm as we set display:none on close. This is
-// done to avoid having active, invisible buttons lingering on the UI after close.
 const fadeOut = keyframes`
   from { opacity: 1; }
   to { opacity: 0; }

@@ -23,8 +23,16 @@ contract KamiCastItemSystem is System {
     LibKami.verifyIsKami(components, targetID);
     LibKami.verifyRoom(components, targetID, accID);
 
+    // casting is strictly an enemy action; own kamis go through KamiUseItemSystem.
+    // this keeps a single self-use path (cooldown + bonus-reset semantics) and
+    // keeps the ENEMY_KAMI logging below truthful
+    require(!LibKami.checkAccount(components, targetID, accID), "cannot cast on own kami");
+
+    // targets must be harvesting (exposed on node); resting kamis are unreachable
+    LibKami.verifyState(components, targetID, "HARVESTING");
+
     // item checks
-    LibItem.verifyForShape(components, itemIndex, "ENEMY_KAMI");
+    LibItem.verifyForShapeOr(components, itemIndex, "ENEMY_KAMI", "ANY_KAMI");
     LibItem.verifyRequirements(components, itemIndex, "USE", targetID);
     LibItem.verifyEnabled(components, itemIndex);
 

@@ -81,7 +81,9 @@ const getOptions = (
 ) => {
   let inventories = account.inventories ?? [];
   inventories = cleanInventories(inventories);
-  inventories = filterInventories(inventories, undefined, 'KAMI');
+  const kamiItems = filterInventories(inventories, undefined, 'KAMI');
+  const anyItems = filterInventories(inventories, undefined, 'ANY_KAMI');
+  inventories = [...kamiItems, ...anyItems];
   inventories = inventories.filter(
     (inv) => !!inv.item && passesConditions(world, components, inv.item.requirements.use, kami)
   );

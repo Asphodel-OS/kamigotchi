@@ -57,4 +57,9 @@ const Description = styled.div`
   text-align: left;
   line-height: 1.2vw;
   overflow-y: scroll;
+
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
 `;

@@ -43,7 +43,7 @@ export const Factions = ({
             </TextTooltip>
             <ProgressBar
               width={15}
-              total={300}
+              total={500}
               current={faction.current}
               icon={faction.icon}
               colors={{

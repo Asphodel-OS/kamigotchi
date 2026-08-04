@@ -1,6 +1,5 @@
 import { PortalConfigs } from 'app/cache/config';
 import { Item } from 'network/shapes';
-import { playClick } from 'utils/sounds';
 
 // get the necessary deposit balance to achieve the target balance (in item units)
 export const getNeededDeposit = (config: PortalConfigs, target: number) => {
@@ -17,13 +16,11 @@ export const getResultWithdraw = (config: PortalConfigs, target: number) => {
   return Math.max(0, amt);
 };
 
-// open the link to Baseline Markets ONYX listing
-// just hardcoded for now
+// open the link to Baseline Markets ONYX listing. hardcoded for now; the
+// caller (IconButton) owns the click sound
 export const openBaselineLink = (address: string) => {
-  const urlOld = `https://legacy.baseline.markets/trade/yominet/${address}`;
-  const urlNew = `https://app.baseline.markets/tokens/1/0x80Ea38D56E262457D73c0d8dFe027AE8925821e2`;
-  https: window.open(urlNew, '_blank');
-  playClick();
+  const url = `https://app.baseline.markets/tokens/1/0x80Ea38D56E262457D73c0d8dFe027AE8925821e2`;
+  window.open(url, '_blank');
 };
 
 // get the balance conversion rate from token to item

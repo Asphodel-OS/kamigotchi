@@ -42,6 +42,7 @@ contract PoolSystem is System {
       minAmountOut
     );
     LibPool.logSwap(world, components, accID, poolID, indexIn, indexOut, amountIn, amountOut);
+    LibPool.logSync(world, components, poolID, indexIn, indexOut);
 
     // standard logging and tracking
     LibAccount.updateLastTs(components, accID);
@@ -78,6 +79,7 @@ contract PoolSystem is System {
       p
     );
     LibPool.logLiquidity(world, components, accID, poolID, true, amtA, amtB, liquidity);
+    LibPool.logSync(world, components, poolID, p.indexA, p.indexB);
 
     // standard logging and tracking
     LibAccount.updateLastTs(components, accID);
@@ -107,6 +109,7 @@ contract PoolSystem is System {
 
     (uint256 amtA, uint256 amtB) = LibPool.removeLiquidity(components, poolID, accID, p);
     LibPool.logLiquidity(world, components, accID, poolID, false, amtA, amtB, p.shares);
+    LibPool.logSync(world, components, poolID, p.indexA, p.indexB);
 
     // standard logging and tracking
     LibAccount.updateLastTs(components, accID);
