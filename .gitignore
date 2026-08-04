@@ -8,6 +8,7 @@ dist/
 .claude
 CLAUDE.md
 **/.serena
+**/.omc
 
 # local dev stack state (scripts/services)
 .local-stack/
