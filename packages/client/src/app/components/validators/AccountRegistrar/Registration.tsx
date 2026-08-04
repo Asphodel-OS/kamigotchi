@@ -36,7 +36,8 @@ export const Registration = ({
   };
   utils: {
     toggleFixtures: (toggle: boolean) => void;
-    waitForActionCompletion: (action: EntityID) => Promise<void>;
+    isNameTaken: (name: string) => boolean;
+    waitForActionCompletion: (action: EntityID) => Promise<boolean>;
   };
 }) => {
   const ethBalance = useTokens((s) => s.eth.balance);
@@ -56,8 +57,13 @@ export const Registration = ({
     setAutoCreate(staged !== null);
   }, [address.selected]);
 
+  // creation attempt reverted (most likely a name race lost while bridging)
+  const [createFailed, setCreateFailed] = useState(false);
+
+  // cache-first with a live ECS fallback: a name registered on-chain after
+  // the boot-time cache fill is still caught here
   const isNameTaken = (username: string) => {
-    return NameCache.has(username);
+    return NameCache.has(username) || utils.isNameTaken(username);
   };
 
   const isOperaterTaken = (operatorAddress: string) => {
@@ -77,6 +83,7 @@ export const Registration = ({
   const handleNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const truncated = event.target.value.slice(0, 16);
     setName(truncated);
+    setCreateFailed(false); // picking a new name clears the failure notice
     if (autoCreate) localStorage.setItem(storageKey, truncated); // keep stage in sync
   };
 
@@ -115,16 +122,21 @@ export const Registration = ({
     try {
       const actionID = actions.createAccount(name);
       if (!actionID) throw new Error('Account creation failed');
-      await utils.waitForActionCompletion(actionID);
+      // false = the action reverted or was canceled (e.g. lost a name race,
+      // rejected signature) — must NOT fall through to the success path
+      const succeeded = await utils.waitForActionCompletion(actionID);
+      if (!succeeded) throw new Error('AccountCreate action did not complete');
 
       // Clear stale account query caches so the AccountRegistrar's ECS query
       // picks up the freshly created account on the next render cycle.
       OperatorCache.clear();
       NameCache.clear();
       localStorage.removeItem(storageKey); // staged name no longer needed
+      setCreateFailed(false);
       return true;
     } catch (e) {
       console.error('ERROR CREATING ACCOUNT:', e);
+      setCreateFailed(true); // surface the revert (likely a lost name race)
       return false;
     }
   };
@@ -273,6 +285,11 @@ export const Registration = ({
             />
           </TextTooltip>
         </InputActionRow>
+        {createFailed && (
+          <FailNotice role='status' aria-live='polite'>
+            Account creation failed: that name may have just been taken. Try another.
+          </FailNotice>
+        )}
         <DocsSlot>
           <IconButton
             scale={2.2}
@@ -365,5 +382,12 @@ const Actions = styled.div`
 
 const DocsSlot = styled.div`
   margin-top: 0.75vw;
+`;
+
+const FailNotice = styled.div`
+  margin-top: 0.45vw;
+  color: #b4453f;
+  font-size: 0.72vw;
+  text-align: center;
 `;
 

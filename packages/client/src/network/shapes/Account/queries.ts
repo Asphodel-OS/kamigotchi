@@ -50,13 +50,14 @@ export const queryByIndex = (comps: Components, index: number) => {
   return IndexCache.get(index);
 };
 
-// query for an account entity by its name
+// query for an account entity by its name. misses are normal (availability
+// checks probe names that don't exist) — only ambiguity is warn-worthy
 export const queryByName = (comps: Components, name: string) => {
   if (!NameCache.has(name)) {
     const results = query(comps, { name });
     const length = results.length;
-    if (length != 1) console.warn(`found ${length} entities for account name: ${name}`);
-    if (length > 1) NameCache.set(name, results[0]);
+    if (length > 1) console.warn(`found ${length} entities for account name: ${name}`);
+    if (length > 0) NameCache.set(name, results[0]);
   }
   return NameCache.get(name);
 };
