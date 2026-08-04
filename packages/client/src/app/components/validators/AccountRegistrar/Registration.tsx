@@ -188,48 +188,49 @@ export const Registration = ({
               You need to bridge Ether to Yominet before you can play. Pick your username now — your
               account is created automatically the moment your ETH arrives.
             </Description>
-            <Input
-              type='string'
-              value={name}
-              onChange={(e) => handleNameChange(e)}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter' && !getError()) armAutoCreate();
-              }}
-              placeholder='choose your username'
-              style={{ pointerEvents: 'auto' }}
-            />
-            <TextTooltip
-              text={
-                nameError
-                  ? [nameError]
-                  : autoCreate
-                    ? ['Your account will be created automatically when your ETH lands.', 'Click to reopen the bridge.']
-                    : []
-              }
-              fullWidth
-              cursor={nameError ? 'help' : 'pointer'}
-            >
-              <IconButton
-                scale={3}
-                fullWidth
-                img={MenuIcons.kami}
-                color={CONFIRM_GREEN}
-                // no amount prefill — the bridge modal defaults to Zevana's
-                // live price + operator gas headroom. re-clicking while armed
-                // just reopens the bridge modal (arming is idempotent)
-                text={autoCreate ? 'Waiting for ETH...' : 'Bridge ETH and Create Account'}
-                disabled={!!nameError}
-                onClick={armAutoCreate}
+            <Actions>
+              <Input
+                type='string'
+                value={name}
+                onChange={(e) => handleNameChange(e)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' && !getError()) armAutoCreate();
+                }}
+                placeholder='choose your username'
+                style={{ pointerEvents: 'auto' }}
               />
-            </TextTooltip>
-            <IconButton
-              scale={2.4}
-              fullWidth
-              img={MenuIcons.kamiwiki}
-              color={DOCS_BLUE}
-              onClick={openDocs}
-              text='Read the Docs'
-            />
+              <TextTooltip
+                text={
+                  nameError
+                    ? [nameError]
+                    : autoCreate
+                      ? ['Your account will be created automatically when your ETH lands.', 'Click to reopen the bridge.']
+                      : []
+                }
+                cursor={nameError ? 'help' : 'pointer'}
+              >
+                <IconButton
+                  scale={2.7}
+                  width={18}
+                  img={MenuIcons.kami}
+                  color={CONFIRM_GREEN}
+                  // no amount prefill — the bridge modal defaults to Zevana's
+                  // live price + operator gas headroom. re-clicking while armed
+                  // just reopens the bridge modal (arming is idempotent)
+                  text={autoCreate ? 'Waiting for ETH...' : 'Bridge ETH and Create Account'}
+                  disabled={!!nameError}
+                  onClick={armAutoCreate}
+                />
+              </TextTooltip>
+              <IconButton
+                scale={2.2}
+                width={10.5}
+                img={MenuIcons.kamiwiki}
+                color={DOCS_BLUE}
+                onClick={openDocs}
+                text='Read the Docs'
+              />
+            </Actions>
           </Section>
         </BridgeFlow>
       </Container>
@@ -272,13 +273,16 @@ export const Registration = ({
             />
           </TextTooltip>
         </InputActionRow>
-        <IconButton
-          scale={2.4}
-          img={MenuIcons.kamiwiki}
-          color={DOCS_BLUE}
-          onClick={openDocs}
-          text='Read the Docs'
-        />
+        <DocsSlot>
+          <IconButton
+            scale={2.2}
+            width={10.5}
+            img={MenuIcons.kamiwiki}
+            color={DOCS_BLUE}
+            onClick={openDocs}
+            text='Read the Docs'
+          />
+        </DocsSlot>
       </CreateFlow>
     </Container>
   );
@@ -348,5 +352,18 @@ const Input = styled.input`
 
 const InputActionRow = styled(Row)`
   gap: 0.45vw;
+`;
+
+const Actions = styled.div`
+  margin-top: 0.9vw;
+
+  display: flex;
+  flex-flow: column nowrap;
+  align-items: center;
+  gap: 0.6vw;
+`;
+
+const DocsSlot = styled.div`
+  margin-top: 0.75vw;
 `;
 

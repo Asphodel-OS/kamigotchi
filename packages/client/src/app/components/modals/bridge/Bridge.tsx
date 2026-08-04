@@ -941,7 +941,7 @@ const Content = styled.div<{ tall?: boolean }>`
   display: flex;
   flex-direction: row;
   gap: 0.8vw;
-  height: ${({ tall }) => (tall ? '25vw' : '22vw')};
+  height: ${({ tall }) => (tall ? '27vw' : '23vw')};
 
   min-height: 0;
   padding: 0.3vw;
