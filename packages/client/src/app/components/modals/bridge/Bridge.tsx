@@ -5,40 +5,49 @@ import { formatEther, parseEther } from 'viem';
 
 import { ModalHeader, ModalWrapper } from 'app/components/library';
 import { UIComponent } from 'app/root/types';
-import { useNetwork, useVisibility } from 'app/stores';
+import { useAccount, useNetwork, useVisibility } from 'app/stores';
 import { getEvmWalletProvider, getInjectedWallet } from 'app/utils';
 import { MenuIcons } from 'assets/images/icons/menu';
 import { DEAD_ADDRESS } from 'constants/addresses';
 import { DefaultChain } from 'constants/chains';
-import {
-  BRIDGE_OPEN_REQUEST_EVENT,
-  BridgeEvmTx,
-  buildBridgeRouteRequest,
-  fetchBridgeMsgs,
-  fetchBridgeRoute,
-  getBridgeServiceStatus,
-  getNativeBalance,
-  getSourceTransactionStatus,
-  getYominetBlockNumber,
-  getYominetEthBalance,
-  hasReceivedYominetEthMintSince,
-  isBridgeOpenDetail,
-} from './helpers/api';
 import { BridgeForm } from './BridgeForm';
 import { BridgeUpdates } from './BridgeUpdates';
 import {
+  BRIDGE_OPEN_REQUEST_EVENT,
+  BridgeEvmTx,
+  SourceTransactionStatus,
+  buildBridgeRouteRequest,
+  encodeErc20Approve,
+  fetchBridgeMsgs,
+  fetchBridgeRoute,
+  getBridgeServiceStatus,
+  getBridgeTransferState,
+  getErc20Allowance,
+  getErc20Balance,
+  getNativeBalance,
+  getSourceTransactionStatus,
+  getYominetTokenBalance,
+  isBridgeOpenDetail,
+  trackBridgeTransaction,
+  waitForSourceTransaction,
+} from './helpers/api';
+import {
+  BridgeAssetId,
   BridgePhase,
   BridgeUpdateEntry,
   BridgeUpdateTone,
+  DEFAULT_BRIDGE_ASSET,
   DEGRADED_POLL_INTERVAL_MS,
   DISABLED_SOURCE_CHAIN_IDS,
-  MIN_BRIDGE_AMOUNT,
   EVMChainOption,
   EVMWalletProvider,
   POLL_INTERVAL_MS,
   POLL_MAX_ATTEMPTS,
   SOURCE_CHAIN_OPTIONS,
   STATUS_RECHECK_EVERY_ATTEMPTS,
+  getDefaultChainForAsset,
+  getDestDenom,
+  getMinBridgeAmountLabel,
 } from './helpers/constants';
 import { clearBridgePolling, loadBridgePolling, saveBridgePolling } from './helpers/persistence';
 import {
@@ -47,6 +56,8 @@ import {
   toHexQuantity,
   waitForWalletChain,
 } from './helpers/utils';
+
+const getDefaultSourceChain = () => getDefaultChainForAsset(DEFAULT_BRIDGE_ASSET);
 
 export const BridgeModal: UIComponent = {
   id: 'BridgeModal',
@@ -57,14 +68,11 @@ export const BridgeModal: UIComponent = {
     const isOpen = useVisibility((s) => s.modals.bridge);
     const setBridgeProcessActive = useVisibility((s) => s.setBridgeProcessActive);
     const selectedAddress = useNetwork((s) => s.selectedAddress);
+    const accountValidations = useAccount((s) => s.validations);
     const { wallets } = useWallets();
 
-    const [sourceChain, setSourceChain] = useState<EVMChainOption>(
-      () =>
-        SOURCE_CHAIN_OPTIONS.find((o) => !DISABLED_SOURCE_CHAIN_IDS.has(o.chainId)) ??
-        SOURCE_CHAIN_OPTIONS[0]
-    );
-    const [amount, setAmount] = useState('0.001');
+    const [sourceChain, setSourceChain] = useState<EVMChainOption>(getDefaultSourceChain);
+    const [amount, setAmount] = useState(() => getDefaultSourceChain().defaultAmount);
 
     const [sourceBalance, setSourceBalance] = useState<bigint>(0n);
     const [yomiBalance, setYomiBalance] = useState<bigint>(0n);
@@ -79,13 +87,17 @@ export const BridgeModal: UIComponent = {
     const closedDuringWalletPromptRef = useRef(false);
     const bridgeAbortRef = useRef<AbortController>(new AbortController());
 
-    const setUpdates = (value: BridgeUpdateEntry[] | ((prev: BridgeUpdateEntry[]) => BridgeUpdateEntry[])) => {
+    const setUpdates = (
+      value: BridgeUpdateEntry[] | ((prev: BridgeUpdateEntry[]) => BridgeUpdateEntry[])
+    ) => {
       const next = typeof value === 'function' ? value(updatesRef.current) : value;
       updatesRef.current = next;
       _setUpdates(next);
     };
 
     const accountReady = Boolean(selectedAddress && selectedAddress !== DEAD_ADDRESS);
+
+    const onyxLocked = accountValidations.accountChecked && !accountValidations.accountExists;
     const parsedAmount = (() => {
       try {
         return parseEther(amount);
@@ -111,6 +123,16 @@ export const BridgeModal: UIComponent = {
         if (last?.text === text && last?.tone === tone) return current;
         return [...current, { id: Date.now() + Math.random(), tone, text, url }];
       });
+    };
+
+    const handleSourceChainChange = (chain: EVMChainOption) => {
+      setSourceChain(chain);
+      setAmount(chain.defaultAmount);
+    };
+
+    const handleAssetChange = (asset: BridgeAssetId) => {
+      if (asset === sourceChain.asset) return;
+      handleSourceChainChange(getDefaultChainForAsset(asset, sourceChain.chainId));
     };
 
     const setBridgePhase = (nextPhase: BridgePhase) => {
@@ -178,18 +200,27 @@ export const BridgeModal: UIComponent = {
       throw createBridgeAbortError();
     };
 
-    const refreshBalances = async (): Promise<{ src: bigint; yomi: bigint } | null> => {
+    const refreshBalances = async (): Promise<{
+      src: bigint;
+      native: bigint;
+      yomi: bigint;
+    } | null> => {
       if (!accountReady) return null;
       if (isRefreshingBalancesRef.current) return null;
       isRefreshingBalancesRef.current = true;
       try {
-        const [src, yomi] = await Promise.all([
+        const sourceToken = sourceChain.sourceTokenAddress;
+        const [native, yomi, srcToken] = await Promise.all([
           getNativeBalance(sourceChain.rpcUrl, selectedAddress),
-          getYominetEthBalance(selectedAddress),
+          getYominetTokenBalance(sourceChain.destTokenAddress, selectedAddress),
+          sourceToken
+            ? getErc20Balance(sourceChain.rpcUrl, sourceToken, selectedAddress)
+            : Promise.resolve(null),
         ]);
+        const src = srcToken ?? native;
         setSourceBalance(src);
         setYomiBalance(yomi);
-        return { src, yomi };
+        return { src, native, yomi };
       } catch {
         return null;
       } finally {
@@ -203,8 +234,8 @@ export const BridgeModal: UIComponent = {
         return undefined;
       }
 
-      if (!parsedAmount || parsedAmount < MIN_BRIDGE_AMOUNT) {
-        appendUpdate('error', 'Minimum bridge amount is 0.000001 ETH.');
+      if (!parsedAmount || parsedAmount < sourceChain.minAmount) {
+        appendUpdate('error', `Minimum bridge amount is ${getMinBridgeAmountLabel(sourceChain)}.`);
         return undefined;
       }
 
@@ -236,14 +267,23 @@ export const BridgeModal: UIComponent = {
         return null;
       }
 
+      const symbol = sourceChain.symbol;
       if (!parsedAmount || latestBalances.src < parsedAmount) {
-        failBridge(`Insufficient **${sourceChain.label}** balance for this bridge amount.`);
+        failBridge(`Insufficient **${symbol}** balance on **${sourceChain.label}**.`);
+        return null;
+      }
+
+      if (sourceChain.sourceTokenAddress && latestBalances.native === 0n) {
+        failBridge(
+          `You need some ETH on **${sourceChain.label}** to cover the bridge fee, in addition to your ${symbol}.`
+        );
         return null;
       }
 
       const routeRequest = buildBridgeRouteRequest({
         source_asset_denom: sourceChain.denom,
         source_asset_chain_id: sourceChain.chainId,
+        dest_asset_denom: getDestDenom(sourceChain),
         amount_in: amountInWei,
       });
 
@@ -270,7 +310,72 @@ export const BridgeModal: UIComponent = {
         throw new Error('Router did not return an EVM transaction payload.');
       }
 
-      return { evmTx, expectedAmountOut: amountOut };
+      return evmTx;
+    };
+
+    const abortWalletFlow = async (
+      wallet: EVMWalletProvider,
+      yominetChainId: string,
+      error: unknown
+    ): Promise<never> => {
+      const restoreTargetChainId = previousWalletChainIdRef.current ?? yominetChainId;
+      await restorePreviousWalletChain(wallet);
+      const shouldAbortAfterRejection = closedDuringWalletPromptRef.current;
+      closedDuringWalletPromptRef.current = false;
+      releaseBridgeProcessWhenWalletSettles(wallet, restoreTargetChainId);
+      if (shouldAbortAfterRejection) {
+        resetBridgeUiState();
+        throw createBridgeAbortError();
+      }
+      setBridgePhase('idle');
+      throw error;
+    };
+
+    const ensureErc20Approvals = async (wallet: EVMWalletProvider, evmTx: BridgeEvmTx) => {
+      const approvals = evmTx.required_erc20_approvals ?? [];
+      const symbol = sourceChain.symbol;
+
+      for (const approval of approvals) {
+        const required = BigInt(approval.amount);
+        const current = await getErc20Allowance(
+          sourceChain.rpcUrl,
+          approval.token_contract,
+          selectedAddress,
+          approval.spender
+        );
+        if (current >= required) continue;
+
+        await throwIfBridgeAborted(wallet);
+        setBridgePhase('approving');
+        appendUpdate('approval', `Approve ${symbol} spending to continue...`);
+        const approvalHash = await wallet.request({
+          method: 'eth_sendTransaction',
+          params: [
+            {
+              from: selectedAddress,
+              to: approval.token_contract,
+              data: encodeErc20Approve(approval.spender, required),
+            },
+          ],
+        });
+
+        if (typeof approvalHash !== 'string') {
+          throw new Error('Wallet did not return an approval transaction hash.');
+        }
+
+        setBridgePhase('confirmingApproval');
+        appendUpdate(
+          'status',
+          `Approval Tx: ${approvalHash}`,
+          `${sourceChain.explorerUrl}/tx/${approvalHash}`
+        );
+        appendUpdate('status', `Waiting for ${symbol} approval to confirm...`);
+        await waitForSourceTransaction(
+          sourceChain.rpcUrl,
+          approvalHash,
+          bridgeAbortRef.current.signal
+        );
+      }
     };
 
     const submitBridgeTransaction = async (wallet: EVMWalletProvider, evmTx: BridgeEvmTx) => {
@@ -293,6 +398,15 @@ export const BridgeModal: UIComponent = {
       await throwIfBridgeAborted(wallet);
       await wallet.request({ method: 'eth_requestAccounts' });
       await throwIfBridgeAborted(wallet);
+
+      try {
+        await ensureErc20Approvals(wallet, evmTx);
+      } catch (error) {
+        if (isBridgeAbortError(error)) throw error;
+        await abortWalletFlow(wallet, yominetChainId, error);
+      }
+
+      await throwIfBridgeAborted(wallet);
       setBridgePhase('awaitingApproval');
       appendUpdate('approval', 'Waiting for approval...');
       let hash: unknown;
@@ -309,17 +423,7 @@ export const BridgeModal: UIComponent = {
           ],
         });
       } catch (error) {
-        const restoreTargetChainId = previousWalletChainIdRef.current ?? yominetChainId;
-        await restorePreviousWalletChain(wallet);
-        const shouldAbortAfterRejection = closedDuringWalletPromptRef.current;
-        closedDuringWalletPromptRef.current = false;
-        releaseBridgeProcessWhenWalletSettles(wallet, restoreTargetChainId);
-        if (shouldAbortAfterRejection) {
-          resetBridgeUiState();
-          throw createBridgeAbortError();
-        }
-        setBridgePhase('idle');
-        throw error;
+        await abortWalletFlow(wallet, yominetChainId, error);
       }
 
       if (typeof hash !== 'string') {
@@ -337,28 +441,39 @@ export const BridgeModal: UIComponent = {
       }
       closedDuringWalletPromptRef.current = false;
       previousWalletChainIdRef.current = null;
-      appendUpdate('status', `**${sourceChain.label}** Tx: ${hash}`, `${sourceChain.explorerUrl}/tx/${hash}`);
-      appendUpdate('status', `Bridging:\n**${sourceChain.label}** → **Yominet**\nCome back in 5 minutes!`);
+      appendUpdate(
+        'status',
+        `**${sourceChain.label}** Tx: ${hash}`,
+        `${sourceChain.explorerUrl}/tx/${hash}`
+      );
+      appendUpdate(
+        'status',
+        `Bridging:\n**${sourceChain.label}** → **Yominet**\nCome back in 5 minutes!`
+      );
       releaseBridgeProcessWhenWalletSettles(wallet, yominetChainId);
       return hash;
     };
 
     const persistCompletion = () => {
       const persisted = loadBridgePolling();
-      if (persisted) saveBridgePolling({ ...persisted, updates: updatesRef.current, completed: true });
+      if (persisted)
+        saveBridgePolling({ ...persisted, updates: updatesRef.current, completed: true });
     };
 
     const waitForBridgeCompletion = async (
       pollingSourceChain: EVMChainOption,
-      yominetStartBlock: number,
-      expectedAmountOut: bigint,
       sourceTxHash: string,
       signal: AbortSignal
     ) => {
-      let sourceTransactionStatus = await getSourceTransactionStatus(
-        pollingSourceChain.rpcUrl,
-        sourceTxHash
-      );
+      let sourceTransactionStatus: SourceTransactionStatus = 'pending';
+      try {
+        sourceTransactionStatus = await getSourceTransactionStatus(
+          pollingSourceChain.rpcUrl,
+          sourceTxHash
+        );
+      } catch (error) {
+        console.warn('Could not read the source transaction yet.', error);
+      }
 
       for (let attempt = 0; attempt < POLL_MAX_ATTEMPTS; attempt++) {
         if (signal.aborted) return;
@@ -376,38 +491,56 @@ export const BridgeModal: UIComponent = {
 
         await new Promise((resolve) => setTimeout(resolve, pollIntervalMs));
         if (signal.aborted) return;
-        sourceTransactionStatus = await getSourceTransactionStatus(
-          pollingSourceChain.rpcUrl,
-          sourceTxHash
-        );
-        if (sourceTransactionStatus === 'reverted') {
-          appendUpdate(
-            'error',
-            `Source transaction reverted on ${pollingSourceChain.label}. The bridge transfer was not completed.`
-          );
-          persistCompletion();
-          return;
-        }
 
-        const receivedOnYominet = await hasReceivedYominetEthMintSince(
-          selectedAddress,
-          yominetStartBlock,
-          expectedAmountOut
-        );
-        const nextBalance = await getYominetEthBalance(selectedAddress);
-        setYomiBalance(nextBalance);
-        if (receivedOnYominet) {
-          appendUpdate('success', `**Yominet** Tx: ${receivedOnYominet}`, `${DefaultChain.blockExplorers?.default.url}/tx/${receivedOnYominet}`);
-          appendUpdate('celebrate', 'Bridge Complete Congratulations');
-          persistCompletion();
-          return;
+        try {
+          sourceTransactionStatus = await getSourceTransactionStatus(
+            pollingSourceChain.rpcUrl,
+            sourceTxHash
+          );
+          if (sourceTransactionStatus === 'reverted') {
+            appendUpdate(
+              'error',
+              `Source transaction reverted on ${pollingSourceChain.label}. The bridge transfer was not completed.`
+            );
+            persistCompletion();
+            return;
+          }
+
+          const destToken = pollingSourceChain.destTokenAddress;
+          setYomiBalance(await getYominetTokenBalance(destToken, selectedAddress));
+
+          const transfer = await getBridgeTransferState(pollingSourceChain.chainId, sourceTxHash);
+
+          if (transfer.state === 'failed') {
+            appendUpdate(
+              'error',
+              `The bridge transfer did not complete. Your **${pollingSourceChain.symbol}** should remain on **${pollingSourceChain.label}** — check the source transaction.`
+            );
+            persistCompletion();
+            return;
+          }
+
+          if (transfer.state === 'success') {
+            if (transfer.destTxHash) {
+              appendUpdate(
+                'success',
+                `**Yominet** Tx: ${transfer.destTxHash}`,
+                `${DefaultChain.blockExplorers?.default.url}/tx/${transfer.destTxHash}`
+              );
+            }
+            appendUpdate('celebrate', 'Bridge Complete Congratulations');
+            persistCompletion();
+            return;
+          }
+        } catch (error) {
+          console.warn('Bridge status poll failed; retrying on the next tick.', error);
         }
       }
 
       if (sourceTransactionStatus === 'success') {
         appendUpdate(
           'error',
-          `Source transaction confirmed on ${pollingSourceChain.label}, but no matching Yominet transfer has been observed yet. Please check again shortly.`
+          `Source transaction confirmed on ${pollingSourceChain.label}, but the transfer has not been reported complete yet. It may still land — check your balance shortly.`
         );
         persistCompletion();
         return;
@@ -422,7 +555,7 @@ export const BridgeModal: UIComponent = {
 
     const handleBridgeModalClose = () => {
       if (!isOpen || phaseRef.current === 'idle') return true;
-      if (phaseRef.current === 'awaitingApproval') {
+      if (phaseRef.current === 'approving' || phaseRef.current === 'awaitingApproval') {
         closedDuringWalletPromptRef.current = true;
         appendUpdate(
           'meta',
@@ -451,7 +584,9 @@ export const BridgeModal: UIComponent = {
         const routeRequest = details?.routeRequest;
         if (routeRequest) {
           const requestedChain = SOURCE_CHAIN_OPTIONS.find(
-            (option) => option.chainId === routeRequest.source_asset_chain_id
+            (option) =>
+              option.chainId === routeRequest.source_asset_chain_id &&
+              (!routeRequest.source_asset_denom || option.denom === routeRequest.source_asset_denom)
           );
           if (requestedChain && !DISABLED_SOURCE_CHAIN_IDS.has(requestedChain.chainId)) {
             setSourceChain(requestedChain);
@@ -475,7 +610,9 @@ export const BridgeModal: UIComponent = {
       const persisted = loadBridgePolling();
       if (!persisted || persisted.selectedAddress !== selectedAddress) return;
 
-      const chain = SOURCE_CHAIN_OPTIONS.find((o) => o.chainId === persisted.sourceChainId);
+      const chain = persisted.sourceOptionId
+        ? SOURCE_CHAIN_OPTIONS.find((o) => o.id === persisted.sourceOptionId)
+        : SOURCE_CHAIN_OPTIONS.find((o) => o.chainId === persisted.sourceChainId);
       if (!chain) {
         clearBridgePolling();
         return;
@@ -485,24 +622,14 @@ export const BridgeModal: UIComponent = {
       setUpdates(persisted.updates);
 
       if (persisted.completed) return;
-      if (
-        typeof persisted.expectedAmountOut !== 'string' ||
-        typeof persisted.yominetStartBlock !== 'number'
-      ) {
-        clearBridgePolling();
-        return;
-      }
 
       setBridgePhase('submitted');
-      waitForBridgeCompletion(
-        chain,
-        persisted.yominetStartBlock,
-        BigInt(persisted.expectedAmountOut),
-        persisted.sourceTxHash,
-        bridgeAbortRef.current.signal
-      ).finally(() => {
-        setBridgePhase('idle');
-      });
+      void trackBridgeTransaction(chain.chainId, persisted.sourceTxHash);
+      waitForBridgeCompletion(chain, persisted.sourceTxHash, bridgeAbortRef.current.signal).finally(
+        () => {
+          setBridgePhase('idle');
+        }
+      );
     }, [selectedAddress]);
 
     useEffect(() => {
@@ -516,7 +643,7 @@ export const BridgeModal: UIComponent = {
       refreshBalances();
       const intervalId = window.setInterval(refreshBalances, 5000);
       return () => window.clearInterval(intervalId);
-    }, [isOpen, sourceChain.chainId, selectedAddress]);
+    }, [isOpen, sourceChain.id, selectedAddress]);
 
     /////////////////
     // INTERACTION
@@ -531,31 +658,23 @@ export const BridgeModal: UIComponent = {
       try {
         if (!parsedAmount) return;
 
-        const preparedBridge = await prepareBridge(parsedAmount.toString(), signal);
+        const evmTx = await prepareBridge(parsedAmount.toString(), signal);
         if (signal.aborted) throw createBridgeAbortError();
-        if (!preparedBridge) return;
+        if (!evmTx) return;
 
-        const yominetStartBlock = await getYominetBlockNumber();
-        if (signal.aborted) throw createBridgeAbortError();
-        const sourceTxHash = await submitBridgeTransaction(wallet, preparedBridge.evmTx);
+        const sourceTxHash = await submitBridgeTransaction(wallet, evmTx);
         if (signal.aborted) throw createBridgeAbortError();
         saveBridgePolling({
           sourceTxHash,
-          expectedAmountOut: preparedBridge.expectedAmountOut,
           sourceChainId: sourceChain.chainId,
-          yominetStartBlock,
+          sourceOptionId: sourceChain.id,
           selectedAddress,
           updates: updatesRef.current,
           timestamp: Date.now(),
           completed: false,
         });
-        await waitForBridgeCompletion(
-          sourceChain,
-          yominetStartBlock,
-          BigInt(preparedBridge.expectedAmountOut),
-          sourceTxHash,
-          signal
-        );
+        void trackBridgeTransaction(sourceChain.chainId, sourceTxHash);
+        await waitForBridgeCompletion(sourceChain, sourceTxHash, signal);
       } catch (error) {
         if (signal.aborted) return;
         if (!isBridgeAbortError(error)) {
@@ -580,13 +699,13 @@ export const BridgeModal: UIComponent = {
       <BridgeOverlay>
         <ModalWrapper
           id='bridge'
-          header={<ModalHeader title='Bridge ETH to Yominet' icon={MenuIcons.kami} />}
+          header={<ModalHeader title='Bridge to Yominet' icon={MenuIcons.kami} />}
           canExit
           onClose={handleBridgeModalClose}
           noScroll
           truncate
         >
-          <Content>
+          <Content tall={sourceChain.asset === 'ONYX'}>
             <BridgeForm
               sourceChain={sourceChain}
               amount={amount}
@@ -595,9 +714,11 @@ export const BridgeModal: UIComponent = {
               yomiBalance={yomiBalance}
               isBridging={isBridging}
               accountReady={accountReady}
+              onyxLocked={onyxLocked}
               hasSufficientSourceBalance={hasSufficientSourceBalance}
               onAmountChange={setAmount}
-              onSourceChainChange={setSourceChain}
+              onAssetChange={handleAssetChange}
+              onSourceChainChange={handleSourceChainChange}
               onSubmit={startBridge}
             />
             <BridgeUpdates updates={updates} isOpen={isOpen} />
@@ -613,11 +734,11 @@ const BridgeOverlay = styled.div`
   height: 100%;
 `;
 
-const Content = styled.div`
+const Content = styled.div<{ tall?: boolean }>`
   display: flex;
   flex-direction: row;
   gap: 0.8vw;
-  height: 21vw;
+  height: ${({ tall }) => (tall ? '25vw' : '22vw')};
 
   min-height: 0;
   padding: 0.3vw;

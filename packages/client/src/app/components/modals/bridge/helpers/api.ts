@@ -1,4 +1,5 @@
-import { Contract, JsonRpcProvider, getAddress, id as keccak256 } from 'ethers';
+import { Contract, Interface, JsonRpcProvider, getAddress } from 'ethers';
+import { erc20Abi } from 'viem';
 import { DefaultChain } from 'constants/chains';
 import { Tokens } from 'constants/tokens';
 import { toBigInt } from 'utils/numbers';
@@ -6,14 +7,14 @@ import { toBigInt } from 'utils/numbers';
 ////////////////
 // CONFIG
 
-const ROUTER_API_BASE_URL = 'https://router-api.initia.xyz/v2/fungible';
+const ROUTER_API_ROOT = 'https://router-api.initia.xyz';
+const ROUTER_API_BASE_URL = `${ROUTER_API_ROOT}/v2/fungible`;
 const BRIDGE_STATUS_URL =
   'https://opinit-api-yominet-1.anvil.asia-southeast.initia.xyz/status';
 export const BRIDGE_OPEN_REQUEST_EVENT = 'kamigotchi:bridge-open-request';
 const YOMINET_CHAIN_ID = 'yominet-1';
 const YOMINET_ETH_DENOM = `evm/${Tokens.ETH.address.slice(2)}`;
 const YOMINET_RPC_URL = DefaultChain.rpcUrls.default.http[0] ?? '';
-const YOMINET_ETH_TOKEN_ADDRESS = Tokens.ETH.address;
 const BRIDGE_STATUS_KEYS = ['host', 'child', 'batch_submitter', 'da'] as const;
 
 ////////////////
@@ -21,13 +22,20 @@ const BRIDGE_STATUS_KEYS = ['host', 'child', 'batch_submitter', 'da'] as const;
 
 type RouterApiPath = 'route' | 'msgs';
 type BridgeOperation = Record<string, unknown>;
+
+export type BridgeErc20Approval = {
+  amount: string;
+  spender: string;
+  token_contract: string;
+};
+
 export type BridgeEvmTx = {
   chain_id: string;
   to: string;
   value: string;
   data: string;
   signer_address?: string;
-  required_erc20_approvals?: unknown[];
+  required_erc20_approvals?: BridgeErc20Approval[];
 };
 
 export type BridgeRouteRequest = {
@@ -183,10 +191,99 @@ export async function getBridgeServiceStatus(): Promise<BridgeServiceStatus> {
 }
 
 ////////////////
+// TRANSFER TRACKING
+
+export type BridgeTransferState = 'pending' | 'success' | 'failed';
+
+const TRACK_MAX_ATTEMPTS = 60;
+const TRACK_RETRY_INTERVAL_MS = 5_000;
+
+const TRANSFER_SUCCESS_STATES = new Set(['STATE_COMPLETED', 'STATE_COMPLETED_SUCCESS']);
+const TRANSFER_FAILED_STATES = new Set([
+  'STATE_COMPLETED_ERROR',
+  'STATE_ABANDONED',
+  'STATE_PENDING_ERROR',
+]);
+
+export async function trackBridgeTransaction(chainId: string, txHash: string): Promise<boolean> {
+  for (let attempt = 0; attempt < TRACK_MAX_ATTEMPTS; attempt++) {
+    try {
+      const response = await fetch(`${ROUTER_API_ROOT}/v2/tx/track`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ tx_hash: txHash, chain_id: chainId }),
+      });
+      if (response.ok) return true;
+    } catch {}
+    await new Promise((resolve) => setTimeout(resolve, TRACK_RETRY_INTERVAL_MS));
+  }
+  return false;
+}
+
+function findDestinationTxHash(value: unknown, destChainId: string): string | undefined {
+  if (Array.isArray(value)) {
+    for (const entry of value) {
+      const found = findDestinationTxHash(entry, destChainId);
+      if (found) return found;
+    }
+    return undefined;
+  }
+
+  if (!value || typeof value !== 'object') return undefined;
+  const record = value as Record<string, unknown>;
+  if (record.chain_id === destChainId && typeof record.tx_hash === 'string') {
+    return record.tx_hash;
+  }
+
+  for (const nested of Object.values(record)) {
+    const found = findDestinationTxHash(nested, destChainId);
+    if (found) return found;
+  }
+  return undefined;
+}
+
+function readTransferState(payload: Record<string, unknown>): string | undefined {
+  const transfers = payload.transfers;
+  const firstTransfer = Array.isArray(transfers) ? transfers[0] : undefined;
+  const fromTransfer =
+    firstTransfer && typeof firstTransfer === 'object'
+      ? (firstTransfer as Record<string, unknown>).state
+      : undefined;
+
+  return [payload.status, payload.state, fromTransfer].find(
+    (candidate): candidate is string => typeof candidate === 'string'
+  );
+}
+
+export async function getBridgeTransferState(
+  chainId: string,
+  txHash: string
+): Promise<{ state: BridgeTransferState; destTxHash?: string }> {
+  const params = new URLSearchParams({ tx_hash: txHash, chain_id: chainId });
+
+  const response = await fetch(`${ROUTER_API_ROOT}/v2/tx/status?${params.toString()}`).catch(
+    () => null
+  );
+  if (!response) return { state: 'pending' };
+
+  if (!response.ok) return { state: 'pending' };
+
+  const payload: unknown = await response.json().catch(() => null);
+  if (!payload || typeof payload !== 'object') return { state: 'pending' };
+
+  const record = payload as Record<string, unknown>;
+  const rawState = readTransferState(record);
+  if (rawState && TRANSFER_FAILED_STATES.has(rawState)) return { state: 'failed' };
+  if (!rawState || !TRANSFER_SUCCESS_STATES.has(rawState)) return { state: 'pending' };
+
+  return { state: 'success', destTxHash: findDestinationTxHash(record, YOMINET_CHAIN_ID) };
+}
+
+////////////////
 // RPC QUERIES
 
 const providerCache = new Map<string, JsonRpcProvider>();
-const yominetEthAbi = ['function balanceOf(address account) view returns (uint256)'];
+const erc20Interface = new Interface(erc20Abi);
 
 function getRpcProvider(rpcUrl: string): JsonRpcProvider {
   // putting this here because
@@ -206,11 +303,56 @@ export async function getNativeBalance(rpcUrl: string, address: string): Promise
   return provider.getBalance(getAddress(address));
 }
 
-export async function getYominetEthBalance(address: string): Promise<bigint> {
-  const provider = getRpcProvider(YOMINET_RPC_URL);
-  const contract = new Contract(YOMINET_ETH_TOKEN_ADDRESS, yominetEthAbi, provider);
+export async function getErc20Balance(
+  rpcUrl: string,
+  tokenAddress: string,
+  address: string
+): Promise<bigint> {
+  const provider = getRpcProvider(rpcUrl);
+  const contract = new Contract(getAddress(tokenAddress), erc20Abi, provider);
   const balance = await contract.balanceOf(getAddress(address));
   return toBigInt(balance);
+}
+
+export async function getErc20Allowance(
+  rpcUrl: string,
+  tokenAddress: string,
+  owner: string,
+  spender: string
+): Promise<bigint> {
+  const provider = getRpcProvider(rpcUrl);
+  const contract = new Contract(getAddress(tokenAddress), erc20Abi, provider);
+  const allowance = await contract.allowance(getAddress(owner), getAddress(spender));
+  return toBigInt(allowance);
+}
+
+export function encodeErc20Approve(spender: string, amount: bigint): string {
+  return erc20Interface.encodeFunctionData('approve', [getAddress(spender), amount]);
+}
+
+export async function getYominetTokenBalance(
+  tokenAddress: string,
+  address: string
+): Promise<bigint> {
+  return getErc20Balance(YOMINET_RPC_URL, tokenAddress, address);
+}
+
+const RECEIPT_POLL_INTERVAL_MS = 3_000;
+const RECEIPT_POLL_MAX_ATTEMPTS = 100;
+
+export async function waitForSourceTransaction(
+  rpcUrl: string,
+  txHash: string,
+  signal?: AbortSignal
+): Promise<void> {
+  for (let attempt = 0; attempt < RECEIPT_POLL_MAX_ATTEMPTS; attempt++) {
+    if (signal?.aborted) return;
+    const status = await getSourceTransactionStatus(rpcUrl, txHash);
+    if (status === 'success') return;
+    if (status === 'reverted') throw new Error(`Transaction ${txHash} reverted.`);
+    await new Promise((resolve) => setTimeout(resolve, RECEIPT_POLL_INTERVAL_MS));
+  }
+  throw new Error(`Timed out waiting for transaction ${txHash} to confirm.`);
 }
 
 export async function getSourceTransactionStatus(
@@ -225,31 +367,4 @@ export async function getSourceTransactionStatus(
   if (receiptStatus === 1) return 'success';
   if (receiptStatus === 0) return 'reverted';
   return 'pending';
-}
-
-// adding this until we know how to check
-// tx state from INITIA API
-const TRANSFER_EVENT_TOPIC = keccak256('Transfer(address,address,uint256)');
-const ZERO_ADDRESS_TOPIC = '0x' + '0'.repeat(64);
-
-export async function getYominetBlockNumber(): Promise<number> {
-  const provider = getRpcProvider(YOMINET_RPC_URL);
-  return provider.getBlockNumber();
-}
-
-export async function hasReceivedYominetEthMintSince(
-  address: string,
-  fromBlock: number,
-  expectedAmount: bigint
-): Promise<string | null> {
-  const provider = getRpcProvider(YOMINET_RPC_URL);
-  const paddedAddress = '0x' + getAddress(address).slice(2).toLowerCase().padStart(64, '0');
-  const logs = await provider.getLogs({
-    address: YOMINET_ETH_TOKEN_ADDRESS,
-    topics: [TRANSFER_EVENT_TOPIC, ZERO_ADDRESS_TOPIC, paddedAddress],
-    fromBlock,
-    toBlock: 'latest',
-  });
-  const match = logs.find((log) => BigInt(log.data) === expectedAmount);
-  return match?.transactionHash ?? null;
 }
