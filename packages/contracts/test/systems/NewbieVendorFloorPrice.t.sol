@@ -281,4 +281,20 @@ contract NewbieVendorFloorPriceTest is SetupTemplate {
     vm.expectRevert("KamiMarketRegistry: exceeds index cap");
     __KamiMarketRegistrySystem.rebuildListingIndex(ids);
   }
+
+  function testIndexCapReusesDeadSlot() public {
+    // fill the index to cap: slot 0 gets a short expiry, the rest stay active
+    (, uint32 k0) = _createStakedKami(bob);
+    _listKamiWithExpiry(bob, k0, 0.03 ether, block.timestamp + 100);
+    for (uint256 i = 1; i < 100; i++) {
+      (, uint32 ki) = _createStakedKami(bob);
+      _listKami(bob, ki, 0.03 ether);
+    }
+    _fastForward(200); // slot 0 expires
+
+    // newcomer reclaims the dead slot: a skipped add would leave price at 0.033
+    (, uint32 kNew) = _createStakedKami(bob);
+    _listKami(bob, kNew, 0.02 ether);
+    assertEq(_NewbieVendorBuySystem.calcPrice(), 0.022 ether);
+  }
 }

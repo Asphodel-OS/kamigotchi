@@ -1,8 +1,13 @@
 // SPDX-License-Identifier: MIT
 pragma solidity >=0.8.28;
 
-import { getAddrByID } from "solecs/utils.sol";
+import { getAddrByID, getCompByID } from "solecs/utils.sol";
 import { IUint256Component as IUintComp } from "solecs/interfaces/IUint256Component.sol";
+
+import { IComponent } from "solecs/interfaces/IComponent.sol";
+
+import { ID as StateCompID } from "components/StateComponent.sol";
+import { LibComp } from "libraries/utils/LibComp.sol";
 
 import { BalanceComponent, ID as BalanceCompID } from "components/BalanceComponent.sol";
 import { IDOwnsKamiOrderComponent, ID as IDOwnsKamiOrderCompID } from "components/IDOwnsKamiOrderComponent.sol";
@@ -20,8 +25,10 @@ uint256 constant ACTIVE_LISTING_INDEX_ENTITY = uint256(keccak256("kami.market.li
 
 /// @dev caps the O(N) index rewrites and the vendor's in-tx floor scan so they
 ///      stay well under Yominet's 4.5M per-tx lane gas cap (~15-20k gas per
-///      entry in calcPrice). Listings beyond the cap still exist and trade —
-///      they are just invisible to floor pricing until a rebuild re-syncs them.
+///      entry in calcPrice). At the cap, add() reuses slots held by dead
+///      (cancelled/filled remnants or expired) entries; only when all slots are
+///      genuinely active does a newcomer stay unindexed — it still exists and
+///      trades, just invisible to floor pricing until a rebuild re-syncs it.
 uint256 constant MAX_ACTIVE_LISTING_INDEX = 100;
 
 /// @dev Deployed (linked) library — consumers reach it via delegatecall, keeping
@@ -29,19 +36,38 @@ uint256 constant MAX_ACTIVE_LISTING_INDEX = 100;
 ///      sits at the EIP-170 limit, which Yominet enforces on-chain.
 ///      Runs in the calling system's context, so component writer-auth is unchanged.
 library LibKamiMarketIndex {
+  using LibComp for IComponent;
+
   /// @notice Append a listing to the active-listing index
-  /// @dev at the cap the listing is skipped, never rejected — a full index must
+  /// @dev at the cap, dead entries are reclaimed first; a fully-active index
+  ///      skips the newcomer, never rejects the listing — a full index must
   ///      degrade floor pricing, not brick listing creation
   function add(IUintComp comps, uint256 id) public {
     ValuesComponent comp = ValuesComponent(getAddrByID(comps, ValuesCompID));
     uint256[] memory cur = comp.has(ACTIVE_LISTING_INDEX_ENTITY)
       ? comp.get(ACTIVE_LISTING_INDEX_ENTITY)
       : new uint256[](0);
-    if (cur.length >= MAX_ACTIVE_LISTING_INDEX) return;
+    if (cur.length >= MAX_ACTIVE_LISTING_INDEX) {
+      for (uint256 i; i < cur.length; i++) {
+        if (_isDead(comps, cur[i])) {
+          cur[i] = id;
+          comp.set(ACTIVE_LISTING_INDEX_ENTITY, cur);
+          return;
+        }
+      }
+      return;
+    }
     uint256[] memory next = new uint256[](cur.length + 1);
     for (uint256 i; i < cur.length; i++) next[i] = cur[i];
     next[cur.length] = id;
     comp.set(ACTIVE_LISTING_INDEX_ENTITY, next);
+  }
+
+  /// @notice Whether an indexed entry no longer contributes to floor pricing
+  function _isDead(IUintComp comps, uint256 id) internal view returns (bool) {
+    if (!getCompByID(comps, StateCompID).eqString(id, "ACTIVE")) return true;
+    TimeEndComponent timeEndComp = TimeEndComponent(getAddrByID(comps, TimeEndCompID));
+    return timeEndComp.has(id) && block.timestamp > timeEndComp.get(id);
   }
 
   /// @notice Remove settled/cancelled order state: index entry + queryable components
