@@ -902,7 +902,6 @@ export const BridgeModal: UIComponent = {
                 setAmount(value);
               }}
               onAssetChange={handleAssetChange}
-              onSourceChainChange={setSourceChain}
               onSubmit={startBridge}
             />
             <BridgeUpdates updates={updates} isOpen={isOpen} />

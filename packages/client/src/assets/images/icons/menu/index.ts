@@ -4,6 +4,7 @@ import HelpIcon from './help.png';
 import InventoryIcon from './inventory.png';
 import KamiIcon from './kami.png';
 import KamiSendIcon from './kamisend_color.png';
+import KamiWikiIcon from './kamiwiki.png';
 import ExternalIcon from './link_to_external_apps.png';
 import LpFountainIcon from './lp_fountain.png';
 import MapIcon from './map.png';
@@ -27,6 +28,7 @@ export {
   InventoryIcon,
   KamiIcon,
   KamiSendIcon,
+  KamiWikiIcon,
   LpFountainIcon,
   MapIcon,
   MarketplaceIcon,
@@ -52,6 +54,7 @@ export const MenuIcons = {
   inventory: InventoryIcon,
   kami: KamiIcon,
   kamisend_color: KamiSendIcon,
+  kamiwiki: KamiWikiIcon,
   lp_fountain: LpFountainIcon,
   map: MapIcon,
   marketplace: MarketplaceIcon,

@@ -18,6 +18,10 @@ import { Section } from './components/shared';
 // staged username survives the multi-minute bridge wait (and reloads)
 const STAGED_NAME_PREFIX = 'kami:stagedUsername:';
 
+// pastel confirm/docs palette shared with FundOperator + token portal
+const CONFIRM_GREEN = '#C2F0C2';
+const DOCS_BLUE = '#d6e4f8';
+
 export const Registration = ({
   address,
   actions,
@@ -126,7 +130,7 @@ export const Registration = ({
   };
 
   const openDocs = () => {
-    window.open('https://docs.kamigotchi.io', '_blank', 'noopener,noreferrer');
+    window.open('https://docs.asphodel.io/kamigotchi', '_blank', 'noopener,noreferrer');
   };
 
   const OperatorDisplay = () => {
@@ -173,6 +177,8 @@ export const Registration = ({
     return null;
   };
 
+  const nameError = getError();
+
   if (needsToBridge()) {
     return (
       <Container>
@@ -182,41 +188,48 @@ export const Registration = ({
               You need to bridge Ether to Yominet before you can play. Pick your username now — your
               account is created automatically the moment your ETH arrives.
             </Description>
-            <InputActionRow>
-              <Input
-                type='string'
-                value={name}
-                onChange={(e) => handleNameChange(e)}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter' && !getError() && !autoCreate) armAutoCreate();
-                }}
-                placeholder='choose your username'
-                style={{ pointerEvents: 'auto' }}
-              />
+            <Input
+              type='string'
+              value={name}
+              onChange={(e) => handleNameChange(e)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' && !getError()) armAutoCreate();
+              }}
+              placeholder='choose your username'
+              style={{ pointerEvents: 'auto' }}
+            />
+            <TextTooltip
+              text={
+                nameError
+                  ? [nameError]
+                  : autoCreate
+                    ? ['Your account will be created automatically when your ETH lands.', 'Click to reopen the bridge.']
+                    : []
+              }
+              fullWidth
+              cursor={nameError ? 'help' : 'pointer'}
+            >
               <IconButton
-                scale={2.4}
-                text={autoCreate ? 'Waiting for ETH...' : 'Create once ETH arrives'}
-                disabled={!!getError() || autoCreate}
+                scale={3}
+                fullWidth
+                img={MenuIcons.kami}
+                color={CONFIRM_GREEN}
+                // no amount prefill — the bridge modal defaults to Zevana's
+                // live price + operator gas headroom. re-clicking while armed
+                // just reopens the bridge modal (arming is idempotent)
+                text={autoCreate ? 'Waiting for ETH...' : 'Bridge ETH and Create Account'}
+                disabled={!!nameError}
                 onClick={armAutoCreate}
               />
-            </InputActionRow>
-            <Text role='status' aria-live='polite'>
-              {getError() ??
-                (autoCreate
-                  ? 'Name staged! Your account will be created automatically when your ETH lands.'
-                  : '')}
-            </Text>
+            </TextTooltip>
             <IconButton
-              scale={3}
-              img={MenuIcons.kami}
-              // no amount prefill — the bridge modal defaults to Zevana's
-              // live price + operator gas headroom
-              onClick={() => triggerBridgeModal()}
-              text='Bridge ETH to Yominet'
+              scale={2.4}
+              fullWidth
+              img={MenuIcons.kamiwiki}
+              color={DOCS_BLUE}
+              onClick={openDocs}
+              text='Read the Docs'
             />
-            <DocsLink type='button' onClick={openDocs}>
-              What is this?
-            </DocsLink>
           </Section>
         </BridgeFlow>
       </Container>
@@ -247,19 +260,25 @@ export const Registration = ({
             placeholder='choose your username'
             style={{ pointerEvents: 'auto' }}
           />
-          <IconButton
-            scale={2.4}
-            text='Create Account'
-            disabled={!!getError()}
-            onClick={() => handleAccountCreation()}
-          />
+          <TextTooltip text={nameError ? [nameError] : []} cursor='help'>
+            <IconButton
+              scale={2.4}
+              text='Create Account'
+              color={CONFIRM_GREEN}
+              disabled={!!nameError}
+              onClick={async () => {
+                await handleAccountCreation();
+              }}
+            />
+          </TextTooltip>
         </InputActionRow>
-        <Text role='status' aria-live='polite'>
-          {getError() ?? ''}
-        </Text>
-        <DocsLink type='button' onClick={openDocs}>
-          What is this?
-        </DocsLink>
+        <IconButton
+          scale={2.4}
+          img={MenuIcons.kamiwiki}
+          color={DOCS_BLUE}
+          onClick={openDocs}
+          text='Read the Docs'
+        />
       </CreateFlow>
     </Container>
   );
@@ -331,21 +350,3 @@ const InputActionRow = styled(Row)`
   gap: 0.45vw;
 `;
 
-const Text = styled.div`
-  min-height: 0.8vw;
-  padding: 0.35vw 0;
-  color: red;
-  font-size: 0.75vw;
-  text-align: center;
-`;
-
-const DocsLink = styled.button`
-  margin-top: 1vw;
-  border: 0;
-  background: transparent;
-  padding: 0;
-  color: #3b4fb3;
-  font-size: 0.82vw;
-  text-decoration: underline;
-  cursor: pointer;
-`;

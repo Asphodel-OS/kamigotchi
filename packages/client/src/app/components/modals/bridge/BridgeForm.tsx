@@ -1,16 +1,14 @@
 import styled from 'styled-components';
 
-import { IconButton, IconListButton, Text, TextTooltip } from 'app/components/library';
+import { IconButton, StepButton, Text, TextTooltip } from 'app/components/library';
 import { openBaselineLink } from 'app/components/modals/tokenPortal/utils';
 import { MenuIcons } from 'assets/images/icons/menu';
 import { formatEthPriceLabel } from 'utils/numbers';
 import {
   BRIDGE_ASSET_OPTIONS,
   BridgeAssetId,
-  DISABLED_SOURCE_CHAIN_IDS,
   EVMChainOption,
   getAssetsForChainId,
-  getChainOptionsForAsset,
   getMinBridgeAmountLabel,
 } from './helpers/constants';
 
@@ -31,9 +29,11 @@ type BridgeFormProps = {
   hasSufficientSourceBalance: boolean;
   onAmountChange: (amount: string) => void;
   onAssetChange: (asset: BridgeAssetId) => void;
-  onSourceChainChange: (chain: EVMChainOption) => void;
   onSubmit: () => void;
 };
+
+// free-typed amount: digits + up to 7 decimals (mirrors FundOperator)
+const AMOUNT_INPUT_REGEX = /^\d*\.?\d{0,7}$/;
 
 const getAssetLockReason = (
   asset: BridgeAssetId,
@@ -72,14 +72,25 @@ export const BridgeForm = ({
   hasSufficientSourceBalance,
   onAmountChange,
   onAssetChange,
-  onSourceChainChange,
   onSubmit,
 }: BridgeFormProps) => {
   const symbol = sourceChain.symbol;
-  const chainOptions = getChainOptionsForAsset(sourceChain.asset);
   const availableAssets = new Set(
     getAssetsForChainId(sourceChain.chainId).map((asset) => asset.id)
   );
+  const chainUnroutable = routableOptionIds !== null && !routableOptionIds.has(sourceChain.id);
+
+  const handleAmountInput = (value: string) => {
+    if (value === '' || AMOUNT_INPUT_REGEX.test(value)) onAmountChange(value);
+  };
+
+  // press-and-hold stepper: same step sizes the old number input used
+  const nudge = (direction: 1 | -1) => {
+    const step = sourceChain.asset === 'ONYX' ? 0.1 : 0.0001;
+    const current = Number(amount) || 0;
+    const next = Math.max(0, +(current + direction * step).toFixed(7));
+    onAmountChange(next === 0 ? '' : next.toString());
+  };
   const isDisabled =
     isBridging ||
     !accountReady ||
@@ -119,30 +130,27 @@ export const BridgeForm = ({
         })}
       </AssetRow>
       <Label>Source Chain</Label>
-      <IconListButton
+      <IconButton
         img={sourceChain.icon}
-        text={sourceChain.label}
+        text={chainUnroutable ? `${sourceChain.label} (unavailable)` : sourceChain.label}
         fullWidth
         scale={2.2}
         disabled={isBridging}
-        options={chainOptions.map((option) => {
-          const unroutable = routableOptionIds !== null && !routableOptionIds.has(option.id);
-          return {
-            text: unroutable ? `${option.label} (unavailable)` : option.label,
-            image: option.icon,
-            disabled: DISABLED_SOURCE_CHAIN_IDS.has(option.chainId) || unroutable,
-            onClick: () => onSourceChainChange(option),
-          };
-        })}
+        onClick={() => undefined}
       />
       <Label>Amount ({symbol})</Label>
-      <Input
-        type='number'
-        min='0'
-        step={sourceChain.asset === 'ONYX' ? '0.1' : '0.0001'}
-        value={amount}
-        onChange={(event) => onAmountChange(event.target.value)}
-      />
+      <AmountRow>
+        <StepButton label='-' onStep={() => nudge(-1)} />
+        <AmountField
+          type='text'
+          inputMode='decimal'
+          placeholder='0'
+          value={amount}
+          onChange={(event) => handleAmountInput(event.target.value)}
+          style={{ pointerEvents: 'auto' }}
+        />
+        <StepButton label='+' onStep={() => nudge(1)} />
+      </AmountRow>
       <Balances>
         <BalanceItem>
           <BalanceLabel>Source balance:</BalanceLabel>
@@ -225,11 +233,37 @@ const Rule = styled.div`
 
 const PurchaseSlot = styled.div``;
 
-const Input = styled.input`
-  border: solid black 0.12vw;
+const AmountRow = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 0.4vw;
+  flex-shrink: 0;
+`;
+
+const AmountField = styled.input`
+  flex: 1;
+  min-width: 0;
+  background: #fafafa;
+  border: 0.12vw solid #ccc;
   border-radius: 0.5vw;
-  padding: 0.45vw;
-  font-size: 0.78vw;
+  color: #333;
+  height: 2.4vw;
+  padding: 0.5vw 0.4vw;
+
+  font-family: Pixel;
+  font-size: 1.05vw;
+  text-align: center;
+  cursor: text;
+
+  &::placeholder {
+    color: #bbb;
+  }
+
+  &:focus {
+    border-color: #a0c0e8;
+    background: #fff9e0;
+    outline: none;
+  }
 `;
 
 const Balances = styled.div`
