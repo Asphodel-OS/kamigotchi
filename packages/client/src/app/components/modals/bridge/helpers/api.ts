@@ -126,8 +126,7 @@ async function postRouterApi<T>(path: RouterApiPath, body: Record<string, unknow
 /// de-lists sources server-side by marking the asset hidden (e.g. arbitrum
 /// and base natives as of 2026-07) — probing live means the picker heals
 /// itself when initia re-enables a route. fails open so a flaky probe never
-/// bricks the picker. keyed by option id, since one chain can carry more
-/// than one bridgeable asset.
+/// bricks the picker.
 export async function fetchRoutableSourceOptionIds(
   options: { id: string; chainId: string; denom: string }[]
 ): Promise<Set<string>> {

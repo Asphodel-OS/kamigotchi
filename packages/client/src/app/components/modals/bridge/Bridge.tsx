@@ -161,7 +161,8 @@ export const BridgeModal: UIComponent = {
       if (asset === sourceChain.asset) return;
       const nextChain = getDefaultChainForAsset(asset, sourceChain.chainId);
       setSourceChain(nextChain);
-      // each asset has its own default, and the eth prefill re-applies below
+      setSourceBalance(0n);
+      setYomiBalance(0n);
       amountTouchedRef.current = false;
       setAmount(nextChain.defaultAmount);
     };
@@ -726,7 +727,6 @@ export const BridgeModal: UIComponent = {
       // price is unchanged (the touched ref was just reset on close)
       if (!isOpen) return;
       if (amountTouchedRef.current || phaseRef.current !== 'idle') return;
-      // the price + gas headroom is denominated in eth — meaningless for onyx
       if (sourceChain.asset !== 'ETH') return;
       const price = parseBigIntSafe(vendorPriceData);
       if (price === undefined) return;
@@ -784,7 +784,6 @@ export const BridgeModal: UIComponent = {
     }, [isOpen]);
     useEffect(() => {
       if (!routableOptionIds || routableOptionIds.has(sourceChain.id)) return;
-      // stay on the asset the player picked — only steer to another of its chains
       const fallback = SOURCE_CHAIN_OPTIONS.find(
         (o) =>
           o.asset === sourceChain.asset &&
@@ -799,7 +798,7 @@ export const BridgeModal: UIComponent = {
       refreshBalances();
       const intervalId = window.setInterval(refreshBalances, 5000);
       return () => window.clearInterval(intervalId);
-    }, [isOpen, sourceChain.chainId, selectedAddress]);
+    }, [isOpen, sourceChain.id, selectedAddress]);
 
     /////////////////
     // INTERACTION
