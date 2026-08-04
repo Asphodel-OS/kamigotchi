@@ -35,9 +35,7 @@ import { LibCooldown } from "libraries/utils/LibCooldown.sol";
 
 import { KamiMarketVault } from "tokens/KamiMarketVault.sol";
 
-/// @dev holds uint256[] of listing IDs not yet filled/cancelled — feeds
-///      floor-derived pricing (newbie vendor); expired entries filtered on read
-uint256 constant ACTIVE_LISTING_INDEX_ENTITY = uint256(keccak256("kami.market.listing.index"));
+import { LibKamiMarketIndex, ACTIVE_LISTING_INDEX_ENTITY } from "libraries/LibKamiMarketIndex.sol";
 
 /// @title  Library for Kami Marketplace orderbook
 /// @notice Handles listings (ETH), offers (WETH), and collection offers (WETH)
@@ -66,7 +64,7 @@ library LibKamiMarket {
     TimeStartComponent(getAddrByID(comps, TimeStartCompID)).set(id, block.timestamp);
     if (expiry > 0) TimeEndComponent(getAddrByID(comps, TimeEndCompID)).set(id, expiry);
 
-    _indexAddListing(comps, id);
+    LibKamiMarketIndex.add(comps, id);
   }
 
   /// @notice Create a specific offer entity (WETH, approval-based)
@@ -304,27 +302,6 @@ library LibKamiMarket {
     return timeEndComp.has(id) && block.timestamp > timeEndComp.get(id);
   }
 
-  function _indexAddListing(IUintComp comps, uint256 id) internal {
-    uint256[] memory cur = getListingIndex(comps);
-    uint256[] memory next = new uint256[](cur.length + 1);
-    for (uint256 i; i < cur.length; i++) next[i] = cur[i];
-    next[cur.length] = id;
-    setListingIndex(comps, next);
-  }
-
-  /// @dev tolerant: no-op when id is absent (offers, pre-index listings)
-  function _indexRemoveListing(IUintComp comps, uint256 id) internal {
-    uint256[] memory cur = getListingIndex(comps);
-    for (uint256 i; i < cur.length; i++) {
-      if (cur[i] != id) continue;
-      uint256[] memory next = new uint256[](cur.length - 1);
-      for (uint256 j; j < i; j++) next[j] = cur[j];
-      for (uint256 j = i + 1; j < cur.length; j++) next[j - 1] = cur[j];
-      setListingIndex(comps, next);
-      return;
-    }
-  }
-
   /////////////////
   // CLEANUP
 
@@ -340,29 +317,7 @@ library LibKamiMarket {
 
   /// @notice Remove indexed/queryable components after order is settled
   function _cleanup(IUintComp comps, uint256 id) internal {
-    _indexRemoveListing(comps, id); // no-op for offers
-
-    IDOwnsKamiOrderComponent(getAddrByID(comps, IDOwnsKamiOrderCompID)).remove(id);
-
-    // conditionally remove optional components
-    IndexKamiComponent indexComp = IndexKamiComponent(getAddrByID(comps, IndexKamiCompID));
-    if (indexComp.has(id)) indexComp.remove(id);
-
-    IndexKamiListingComponent listingIndexComp = IndexKamiListingComponent(getAddrByID(comps, IndexKamiListingCompID));
-    if (listingIndexComp.has(id)) listingIndexComp.remove(id);
-
-    ValueComponent(getAddrByID(comps, ValueCompID)).remove(id);
-
-    TimeStartComponent(getAddrByID(comps, TimeStartCompID)).remove(id);
-
-    TimeEndComponent timeEndComp = TimeEndComponent(getAddrByID(comps, TimeEndCompID));
-    if (timeEndComp.has(id)) timeEndComp.remove(id);
-
-    BalanceComponent balComp = BalanceComponent(getAddrByID(comps, BalanceCompID));
-    if (balComp.has(id)) balComp.remove(id);
-
-    MaxComponent maxComp = MaxComponent(getAddrByID(comps, MaxCompID));
-    if (maxComp.has(id)) maxComp.remove(id);
+    LibKamiMarketIndex.cleanup(comps, id);
   }
 
   /////////////////
