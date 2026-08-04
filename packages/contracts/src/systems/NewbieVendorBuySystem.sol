@@ -60,7 +60,7 @@ contract NewbieVendorBuySystem is System {
     uint256 accountCreated = TimeStartComponent(getAddrByID(components, TimeStartCompID)).get(accID);
     require(block.timestamp - accountCreated <= 86400, "NewbieVendor: account too old");
 
-    // compute price from TWAP oracle
+    // compute price from the marketplace floor
     uint256 price = calcPrice();
     require(msg.value >= price, "NewbieVendor: insufficient ETH");
 
@@ -70,12 +70,14 @@ contract NewbieVendorBuySystem is System {
     // verify kami is on display + remove from pool
     _verifyDisplayAndRemove(kamiIndex);
 
-    // verify vendor owns kami, transfer, send ETH
-    _transferKami(kamiIndex, price, accID);
-
-    // soulbind — prevents listing, unstaking, or accepting offers
+    // soulbind — prevents listing, unstaking, or accepting offers. Must precede
+    // the ETH transfers in _transferKami: the excess refund hands msg.sender a
+    // callback, and an un-soulbound kami could be listed/sent from it
     uint256 kamiID = LibKami.getByIndex(components, kamiIndex);
     LibSoulbound.set(components, kamiID, 3 days);
+
+    // verify vendor owns kami, transfer, send ETH
+    _transferKami(kamiIndex, price, accID);
 
     // emit event
     _emitBuy(accID, kamiIndex, price);
