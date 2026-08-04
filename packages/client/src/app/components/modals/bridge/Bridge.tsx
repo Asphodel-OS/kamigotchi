@@ -157,6 +157,16 @@ export const BridgeModal: UIComponent = {
       });
     };
 
+    const registerBridgeTracking = (chainId: string, txHash: string) => {
+      void trackBridgeTransaction(chainId, txHash).then((tracked) => {
+        if (tracked) return;
+        appendUpdate(
+          'meta',
+          'Could not register this transfer with the router. The bridge is still on-chain, but status updates may be delayed.'
+        );
+      });
+    };
+
     const handleAssetChange = (asset: BridgeAssetId) => {
       if (asset === sourceChain.asset) return;
       const nextChain = getDefaultChainForAsset(asset, sourceChain.chainId);
@@ -388,6 +398,14 @@ export const BridgeModal: UIComponent = {
       const symbol = sourceChain.symbol;
 
       for (const approval of approvals) {
+        const expectedToken = sourceChain.sourceTokenAddress;
+        if (
+          !expectedToken ||
+          approval.token_contract.toLowerCase() !== expectedToken.toLowerCase()
+        ) {
+          throw new Error('Bridge route requested an approval for an unexpected token.');
+        }
+
         const required = BigInt(approval.amount);
         const current = await getErc20Allowance(
           sourceChain.rpcUrl,
@@ -638,7 +656,7 @@ export const BridgeModal: UIComponent = {
       setPollTimedOut(false);
       appendUpdate('status', 'Checking for the Yominet transfer...');
       setBridgePhase('submitted');
-      void trackBridgeTransaction(chain.chainId, persisted.sourceTxHash);
+      registerBridgeTracking(chain.chainId, persisted.sourceTxHash);
       waitForBridgeCompletion(chain, persisted.sourceTxHash, bridgeAbortRef.current.signal)
         .catch(() => {
           // transient RPC failure — keep the recovery path available
@@ -753,7 +771,7 @@ export const BridgeModal: UIComponent = {
       if (persisted.completed) return;
 
       setBridgePhase('submitted');
-      void trackBridgeTransaction(chain.chainId, persisted.sourceTxHash);
+      registerBridgeTracking(chain.chainId, persisted.sourceTxHash);
       waitForBridgeCompletion(chain, persisted.sourceTxHash, bridgeAbortRef.current.signal)
         .catch(() => {
           // transient RPC failure on the resumed poll — surface the retry path
@@ -829,7 +847,7 @@ export const BridgeModal: UIComponent = {
           timestamp: Date.now(),
           completed: false,
         });
-        void trackBridgeTransaction(sourceChain.chainId, sourceTxHash);
+        registerBridgeTracking(sourceChain.chainId, sourceTxHash);
         await waitForBridgeCompletion(sourceChain, sourceTxHash, signal);
       } catch (error) {
         if (signal.aborted) return;
