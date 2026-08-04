@@ -303,10 +303,14 @@ contract NewbieVendorTWAPTest is SetupTemplate {
   }
 
   function testDefaultMinPriceFloorWhenUnset() public {
+    uint256 defaultMinPrice = 0.004 ether; // DEFAULT_MIN_PRICE fallback
+
     vm.startPrank(deployer);
     __NewbieVendorRegistrySystem.setMinPrice(0);
     __NewbieVendorRegistrySystem.initTWAP(0);
     vm.stopPrank();
+
+    assertEq(_NewbieVendorBuySystem.calcPrice(), defaultMinPrice);
 
     uint256 kamiID = _mintKami(alice);
     uint32 kamiIndex = LibKami.getIndex(components, kamiID);
@@ -319,11 +323,11 @@ contract NewbieVendorTWAPTest is SetupTemplate {
     vm.deal(charlie.owner, 1 ether);
     vm.startPrank(charlie.owner);
     vm.expectRevert("NewbieVendor: insufficient ETH");
-    _NewbieVendorBuySystem.executeTyped{value: 0}(kamiIndex);
+    _NewbieVendorBuySystem.executeTyped{value: defaultMinPrice - 1}(kamiIndex);
     vm.stopPrank();
 
     vm.prank(charlie.owner);
-    _NewbieVendorBuySystem.executeTyped{value: MIN_PRICE}(kamiIndex);
+    _NewbieVendorBuySystem.executeTyped{value: defaultMinPrice}(kamiIndex);
     assertTrue(LibFlag.has(components, charlie.id, "NEWBIE_VENDOR_PURCHASED"));
   }
 

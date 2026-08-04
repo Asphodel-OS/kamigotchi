@@ -39,7 +39,8 @@ contract _KamiMarketRegistrySystem is System, AuthRoles {
         LibKamiMarket.isOrderActive(components, ids[i]),
         "KamiMarketRegistry: not active"
       );
-      // duplicates would let one listing occupy multiple bottom-10 slots
+      // duplicates would leave phantom entries: index removal only drops
+      // the first occurrence
       for (uint256 j; j < i; j++) {
         require(ids[j] != ids[i], "KamiMarketRegistry: duplicate id");
       }

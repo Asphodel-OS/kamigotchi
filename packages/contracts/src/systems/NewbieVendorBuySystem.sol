@@ -20,7 +20,7 @@ import { LibSoulbound } from "libraries/LibSoulbound.sol";
 uint256 constant ID = uint256(keccak256("system.newbievendor.buy"));
 
 uint256 constant VENDOR_ENTITY = uint256(keccak256("newbie.vendor"));
-uint256 constant DEFAULT_MIN_PRICE = 0.005 ether;
+uint256 constant DEFAULT_MIN_PRICE = 0.004 ether;
 uint256 constant FLOOR_PREMIUM_BPS = 11_000; // 110% of the marketplace floor
 // listings priced above this are decorative, not market signal — skipping
 // them also keeps the premium math overflow-safe

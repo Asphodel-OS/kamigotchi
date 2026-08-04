@@ -9,7 +9,7 @@ import { LibKami } from "libraries/LibKami.sol";
 import { LibKami721 } from "libraries/LibKami721.sol";
 
 /// @notice Tests for Newbie Vendor floor-derived pricing:
-///         calcPrice = max(110% of avg(10 cheapest active listings), minPrice)
+///         calcPrice = max(110% of the cheapest active listing, minPrice)
 ///         with the vendor's own and expired listings excluded.
 contract NewbieVendorFloorPriceTest is SetupTemplate {
   uint256 constant MIN_PRICE = 0.005 ether;
