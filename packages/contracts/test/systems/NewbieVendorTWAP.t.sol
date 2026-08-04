@@ -353,11 +353,14 @@ contract NewbieVendorTWAPTest is SetupTemplate {
     __NewbieVendorRegistrySystem.setPool(pool);
 
     // Charlie sends more than the (min) price — excess is refunded
+    uint256 price = _NewbieVendorBuySystem.calcPrice();
     vm.deal(charlie.owner, 1 ether);
+    uint256 balanceBefore = charlie.owner.balance;
     vm.prank(charlie.owner);
-    _NewbieVendorBuySystem.executeTyped{value: 0.015 ether}(kamiIndex);
+    _NewbieVendorBuySystem.executeTyped{value: price + 0.01 ether}(kamiIndex);
 
     assertTrue(LibFlag.has(components, charlie.id, "NEWBIE_VENDOR_PURCHASED"));
+    assertEq(charlie.owner.balance, balanceBefore - price); // only price kept, excess back
   }
 
   function testVendorBuyRoutesProceedsToMarketFeeRecipient() public {

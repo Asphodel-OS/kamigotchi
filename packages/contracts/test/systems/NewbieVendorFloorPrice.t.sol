@@ -157,9 +157,10 @@ contract NewbieVendorFloorPriceTest is SetupTemplate {
   }
 
   function testVendorOwnListingsExcluded() public {
-    // the vendor (alice) listing cheap must not drag her own price down
+    // the vendor's (alice) own listing must not set her floor; priced above the
+    // min-clamp so a broken exclusion would show as 0.022 instead of MIN_PRICE
     (, uint32 kamiIndex) = _createStakedKami(alice);
-    _listKami(alice, kamiIndex, 0.001 ether);
+    _listKami(alice, kamiIndex, 0.02 ether);
 
     assertEq(_NewbieVendorBuySystem.calcPrice(), MIN_PRICE);
   }
@@ -271,5 +272,13 @@ contract NewbieVendorFloorPriceTest is SetupTemplate {
     vm.prank(bob.owner);
     vm.expectRevert();
     __KamiMarketRegistrySystem.rebuildListingIndex(new uint256[](0));
+  }
+
+  function testRebuildListingIndexRejectsOversized() public {
+    // length gate fires before shape validation, so dummy ids suffice
+    uint256[] memory ids = new uint256[](101);
+    vm.prank(deployer);
+    vm.expectRevert("KamiMarketRegistry: exceeds index cap");
+    __KamiMarketRegistrySystem.rebuildListingIndex(ids);
   }
 }

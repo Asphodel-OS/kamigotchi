@@ -8,6 +8,7 @@ import { AuthRoles } from "libraries/utils/AuthRoles.sol";
 import { LibConfig } from "libraries/LibConfig.sol";
 import { LibEntityType } from "libraries/utils/LibEntityType.sol";
 import { LibKamiMarket } from "libraries/LibKamiMarket.sol";
+import { MAX_ACTIVE_LISTING_INDEX } from "libraries/LibKamiMarketIndex.sol";
 
 uint256 constant ID = uint256(keccak256("system.kamimarket.registry"));
 
@@ -30,6 +31,7 @@ contract _KamiMarketRegistrySystem is System, AuthRoles {
   /// @notice Rebuild the active-listing index (backfill after upgrade, or repair)
   /// @dev accepts only ACTIVE KAMI_LISTING entities; overwrites wholesale
   function rebuildListingIndex(uint256[] memory ids) public onlyAdmin(components) {
+    require(ids.length <= MAX_ACTIVE_LISTING_INDEX, "KamiMarketRegistry: exceeds index cap");
     for (uint256 i; i < ids.length; i++) {
       require(
         LibEntityType.isShape(components, ids[i], "KAMI_LISTING"),
