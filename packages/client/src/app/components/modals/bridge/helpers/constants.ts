@@ -59,9 +59,6 @@ const ONYX_ETHEREUM_ADDRESS = '0x80Ea38D56E262457D73c0d8dFe027AE8925821e2';
 const MIN_ETH_AMOUNT = 1_000_000_000_000n;
 const DEFAULT_ETH_AMOUNT = '0.001';
 
-const ETHEREUM_RPC_URL =
-  import.meta.env.VITE_ETH_MAINNET_RPC ?? 'https://ethereum-rpc.publicnode.com';
-
 export const SOURCE_CHAIN_OPTIONS: EVMChainOption[] = [
   {
     id: 'ethereum-eth',
@@ -70,7 +67,7 @@ export const SOURCE_CHAIN_OPTIONS: EVMChainOption[] = [
     denom: 'ethereum-native',
     label: 'Ethereum Mainnet',
     icon: TokenIcons.eth,
-    rpcUrl: ETHEREUM_RPC_URL,
+    rpcUrl: 'https://ethereum-rpc.publicnode.com',
     explorerUrl: 'https://etherscan.io',
     symbol: 'ETH',
     destTokenAddress: Tokens.ETH.address,
@@ -84,7 +81,7 @@ export const SOURCE_CHAIN_OPTIONS: EVMChainOption[] = [
     denom: ONYX_ETHEREUM_ADDRESS,
     label: 'Ethereum Mainnet',
     icon: TokenIcons.eth,
-    rpcUrl: ETHEREUM_RPC_URL,
+    rpcUrl: 'https://ethereum-rpc.publicnode.com',
     explorerUrl: 'https://etherscan.io',
     symbol: 'ONYX',
     destTokenAddress: Tokens.ONYX.address,
