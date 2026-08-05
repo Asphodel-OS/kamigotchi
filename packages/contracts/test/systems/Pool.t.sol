@@ -624,6 +624,7 @@ contract PoolTest is SetupTemplate {
     uint256 reserveA;
     uint256 reserveB;
     uint256 totalSupply;
+    uint256 timestamp;
   }
 
   // every action under test emits exactly one sync, so assert that here rather
@@ -631,9 +632,9 @@ contract PoolTest is SetupTemplate {
   function _decodeSync(Vm.Log[] memory logs) internal returns (Sync memory s) {
     assertEq(_countWorldEvents(logs, "POOL_SYNC"), 1);
     (, bytes memory values) = abi.decode(_findWorldEvent(logs, "POOL_SYNC").data, (uint8[], bytes));
-    (s.poolID, s.indexA, s.indexB, s.reserveA, s.reserveB, s.totalSupply) = abi.decode(
+    (s.poolID, s.indexA, s.indexB, s.reserveA, s.reserveB, s.totalSupply, s.timestamp) = abi.decode(
       values,
-      (uint256, uint32, uint32, uint256, uint256, uint256)
+      (uint256, uint32, uint32, uint256, uint256, uint256, uint256)
     );
   }
 
@@ -880,13 +881,28 @@ contract PoolTest is SetupTemplate {
       _findWorldEvent(vm.getRecordedLogs(), "POOL_SYNC").data,
       (uint8[], bytes)
     );
-    assertEq(schema.length, 6);
+    assertEq(schema.length, 7);
     assertEq(schema[0], uint8(LibTypes.SchemaValue.UINT256));
     assertEq(schema[1], uint8(LibTypes.SchemaValue.UINT32));
     assertEq(schema[2], uint8(LibTypes.SchemaValue.UINT32));
     assertEq(schema[3], uint8(LibTypes.SchemaValue.UINT256));
     assertEq(schema[4], uint8(LibTypes.SchemaValue.UINT256));
     assertEq(schema[5], uint8(LibTypes.SchemaValue.UINT256));
+    assertEq(schema[6], uint8(LibTypes.SchemaValue.UINT256));
+  }
+
+  function testSyncTimestamp() public {
+    _createPool();
+    _fundAccount(alice.index, 10_000);
+    _giveItem(alice, ITEM_A, 10_000);
+
+    uint256 warpedTo = block.timestamp + 12 hours;
+    vm.warp(warpedTo);
+
+    vm.recordLogs();
+    _swap(alice, ITEM_A, ITEM_B, 1_000, 0);
+
+    assertEq(_decodeSync(vm.getRecordedLogs()).timestamp, warpedTo);
   }
 
   function testSyncFollowsSwapInSameTx() public {
