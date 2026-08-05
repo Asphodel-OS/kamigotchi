@@ -649,6 +649,46 @@ contract PoolTest is SetupTemplate {
     assertEq(s.totalSupply, LibPool.getTotalSupply(components, poolID));
   }
 
+  struct Swap {
+    uint256 accID;
+    uint256 poolID;
+    uint32 indexIn;
+    uint32 indexOut;
+    uint256 amountIn;
+    uint256 amountOut;
+    uint256 timestamp;
+  }
+
+  function _decodeSwap(Vm.Log[] memory logs) internal returns (Swap memory s) {
+    assertEq(_countWorldEvents(logs, "POOL_SWAP"), 1);
+    (, bytes memory values) = abi.decode(_findWorldEvent(logs, "POOL_SWAP").data, (uint8[], bytes));
+    (s.accID, s.poolID, s.indexIn, s.indexOut, s.amountIn, s.amountOut, s.timestamp) = abi.decode(
+      values,
+      (uint256, uint256, uint32, uint32, uint256, uint256, uint256)
+    );
+  }
+
+  struct Liquidity {
+    uint256 accID;
+    uint256 poolID;
+    uint256 amtA;
+    uint256 amtB;
+    uint256 shares;
+    uint256 timestamp;
+  }
+
+  function _decodeLiquidity(
+    Vm.Log[] memory logs,
+    string memory identifier
+  ) internal returns (Liquidity memory l) {
+    assertEq(_countWorldEvents(logs, identifier), 1);
+    (, bytes memory values) = abi.decode(_findWorldEvent(logs, identifier).data, (uint8[], bytes));
+    (l.accID, l.poolID, l.amtA, l.amtB, l.shares, l.timestamp) = abi.decode(
+      values,
+      (uint256, uint256, uint256, uint256, uint256, uint256)
+    );
+  }
+
   function testSyncOnSwap() public {
     uint256 poolID = _createPool();
     _fundAccount(alice.index, 10_000);
@@ -903,6 +943,83 @@ contract PoolTest is SetupTemplate {
     _swap(alice, ITEM_A, ITEM_B, 1_000, 0);
 
     assertEq(_decodeSync(vm.getRecordedLogs()).timestamp, warpedTo);
+  }
+
+  function testSwapSchemaShape() public {
+    _createPool();
+    _fundAccount(alice.index, 10_000);
+    _giveItem(alice, ITEM_A, 10_000);
+
+    vm.recordLogs();
+    _swap(alice, ITEM_A, ITEM_B, 1_000, 0);
+
+    (uint8[] memory schema, ) = abi.decode(
+      _findWorldEvent(vm.getRecordedLogs(), "POOL_SWAP").data,
+      (uint8[], bytes)
+    );
+    assertEq(schema.length, 7);
+    assertEq(schema[0], uint8(LibTypes.SchemaValue.UINT256));
+    assertEq(schema[1], uint8(LibTypes.SchemaValue.UINT256));
+    assertEq(schema[2], uint8(LibTypes.SchemaValue.UINT32));
+    assertEq(schema[3], uint8(LibTypes.SchemaValue.UINT32));
+    assertEq(schema[4], uint8(LibTypes.SchemaValue.UINT256));
+    assertEq(schema[5], uint8(LibTypes.SchemaValue.UINT256));
+    assertEq(schema[6], uint8(LibTypes.SchemaValue.UINT256));
+  }
+
+  function testSwapTimestamp() public {
+    _createPool();
+    _fundAccount(alice.index, 10_000);
+    _giveItem(alice, ITEM_A, 10_000);
+
+    uint256 warpedTo = block.timestamp + 12 hours;
+    vm.warp(warpedTo);
+
+    vm.recordLogs();
+    _swap(alice, ITEM_A, ITEM_B, 1_000, 0);
+
+    assertEq(_decodeSwap(vm.getRecordedLogs()).timestamp, warpedTo);
+  }
+
+  function testLiquiditySchemaShape() public {
+    _createPool();
+    _giveItem(alice, ITEM_A, 10_000);
+    _giveItem(alice, ITEM_B, 10_000);
+
+    vm.recordLogs();
+    _addLiquidity(alice, 1_000, 1_000);
+
+    (uint8[] memory schema, ) = abi.decode(
+      _findWorldEvent(vm.getRecordedLogs(), "POOL_LIQUIDITY_ADD").data,
+      (uint8[], bytes)
+    );
+    assertEq(schema.length, 6);
+    assertEq(schema[0], uint8(LibTypes.SchemaValue.UINT256));
+    assertEq(schema[1], uint8(LibTypes.SchemaValue.UINT256));
+    assertEq(schema[2], uint8(LibTypes.SchemaValue.UINT256));
+    assertEq(schema[3], uint8(LibTypes.SchemaValue.UINT256));
+    assertEq(schema[4], uint8(LibTypes.SchemaValue.UINT256));
+    assertEq(schema[5], uint8(LibTypes.SchemaValue.UINT256));
+  }
+
+  function testLiquidityTimestamp() public {
+    _createPool();
+    _giveItem(alice, ITEM_A, 10_000);
+    _giveItem(alice, ITEM_B, 10_000);
+
+    uint256 addedAt = block.timestamp + 12 hours;
+    vm.warp(addedAt);
+
+    vm.recordLogs();
+    (, , uint256 shares) = _addLiquidity(alice, 1_000, 1_000);
+    assertEq(_decodeLiquidity(vm.getRecordedLogs(), "POOL_LIQUIDITY_ADD").timestamp, addedAt);
+
+    uint256 removedAt = addedAt + 3 hours;
+    vm.warp(removedAt);
+
+    vm.recordLogs();
+    _removeLiquidity(alice, shares);
+    assertEq(_decodeLiquidity(vm.getRecordedLogs(), "POOL_LIQUIDITY_REMOVE").timestamp, removedAt);
   }
 
   function testSyncFollowsSwapInSameTx() public {
