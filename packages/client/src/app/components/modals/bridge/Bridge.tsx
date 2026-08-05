@@ -16,7 +16,6 @@ import { getEvmWalletProvider, getInjectedWallet } from 'app/utils';
 import { MenuIcons } from 'assets/images/icons/menu';
 import { DEAD_ADDRESS } from 'constants/addresses';
 import { DefaultChain } from 'constants/chains';
-import { queryAccountFromEmbedded } from 'network/shapes/Account';
 import { BridgeForm } from './BridgeForm';
 import { BridgeUpdates } from './BridgeUpdates';
 import {
@@ -77,6 +76,8 @@ const PREFILL_ROUNDING_STEP = 100_000_000_000_000n; // round default up to 0.000
 // how long the "Bridge Complete" celebration stays up before the modal
 // auto-advances a new player to the registration screen
 const AUTO_ADVANCE_DELAY_MS = 2500;
+// soft fade-out before the auto-hide actually closes the modal
+const AUTO_HIDE_FADE_MS = 450;
 
 const getDefaultSourceChain = () => getDefaultChainForAsset(DEFAULT_BRIDGE_ASSET);
 
@@ -111,6 +112,8 @@ export const BridgeModal: UIComponent = {
     const [shouldResetOnNextOpen, setShouldResetOnNextOpen] = useState(false);
     // polling gave up but the bridge may still land — offers a manual re-check
     const [pollTimedOut, setPollTimedOut] = useState(false);
+    // auto-hide in progress: fades the modal out before closing it
+    const [fadingOut, setFadingOut] = useState(false);
     // chains the router can actually route from right now (null = not probed
     // yet, treat as all-routable). initia de-lists sources server-side
     const [routableOptionIds, setRoutableOptionIds] = useState<Set<string> | null>(null);
@@ -197,6 +200,7 @@ export const BridgeModal: UIComponent = {
         window.clearTimeout(autoAdvanceTimerRef.current);
         autoAdvanceTimerRef.current = null;
       }
+      setFadingOut(false);
     };
 
     const clearBridgeState = (bridging: boolean) => {
@@ -530,25 +534,33 @@ export const BridgeModal: UIComponent = {
         saveBridgePolling({ ...persisted, updates: updatesRef.current, completed: true });
     };
 
-    // after a successful bridge, advance a new player to the registration
-    // screen instead of leaving them parked on the modal. existing accounts
-    // (topping up mid-game) keep the modal open
+    // after a successful bridge, let the celebration sit for a beat, then
+    // soft-fade the modal away and close it. new players land on the
+    // registration screen; existing accounts return to the game
     const scheduleAutoAdvance = () => {
-      if (queryAccountFromEmbedded(network)) return;
       cancelAutoAdvance();
       // bind the timer to the wallet it was scheduled for — a completion for
       // wallet A must never close a modal wallet B opened during the delay
       const sessionAddress = selectedAddress;
       autoAdvanceTimerRef.current = window.setTimeout(() => {
-        autoAdvanceTimerRef.current = null;
-        if (useNetwork.getState().selectedAddress !== sessionAddress) return;
+        if (useNetwork.getState().selectedAddress !== sessionAddress) {
+          autoAdvanceTimerRef.current = null;
+          return;
+        }
         // callers reset phase to idle right after completion; anything else
         // means a new bridge attempt started during the delay
-        if (phaseRef.current !== 'idle') return;
-        if (queryAccountFromEmbedded(network)) return;
-        setShouldResetOnNextOpen(true);
-        setBridgeProcessActive(false);
-        setModals({ bridge: false });
+        if (phaseRef.current !== 'idle') {
+          autoAdvanceTimerRef.current = null;
+          return;
+        }
+        setFadingOut(true);
+        autoAdvanceTimerRef.current = window.setTimeout(() => {
+          autoAdvanceTimerRef.current = null;
+          setFadingOut(false);
+          setShouldResetOnNextOpen(true);
+          setBridgeProcessActive(false);
+          setModals({ bridge: false });
+        }, AUTO_HIDE_FADE_MS);
       }, AUTO_ADVANCE_DELAY_MS);
     };
 
@@ -876,7 +888,7 @@ export const BridgeModal: UIComponent = {
     // RENDERING
 
     return (
-      <BridgeOverlay>
+      <BridgeOverlay style={{ opacity: fadingOut ? 0 : 1 }}>
         <ModalWrapper
           id='bridge'
           header={<ModalHeader title='Bridge to Yominet' icon={MenuIcons.kami} />}
@@ -920,6 +932,7 @@ const BridgeOverlay = styled.div`
   position: relative;
   z-index: 1000;
   height: 100%;
+  transition: opacity ${AUTO_HIDE_FADE_MS}ms ease;
 `;
 
 const CheckAgainButton = styled.button`
