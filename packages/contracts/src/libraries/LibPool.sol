@@ -277,7 +277,7 @@ library LibPool {
       world,
       "POOL_SWAP",
       swapEventSchema(),
-      abi.encode(accID, poolID, indexIn, indexOut, amountIn, amountOut)
+      abi.encode(accID, poolID, indexIn, indexOut, amountIn, amountOut, block.timestamp)
     );
   }
 
@@ -296,7 +296,7 @@ library LibPool {
       world,
       isAdd ? "POOL_LIQUIDITY_ADD" : "POOL_LIQUIDITY_REMOVE",
       liquidityEventSchema(),
-      abi.encode(accID, poolID, amtA, amtB, shares)
+      abi.encode(accID, poolID, amtA, amtB, shares, block.timestamp)
     );
   }
 
@@ -330,39 +330,43 @@ library LibPool {
         hi,
         valComp.safeGet(LibInventory.genID(poolID, lo)),
         valComp.safeGet(LibInventory.genID(poolID, hi)),
-        valComp.safeGet(poolID)
+        valComp.safeGet(poolID),
+        block.timestamp
       );
   }
 
   function swapEventSchema() internal pure returns (uint8[] memory) {
-    uint8[] memory _schema = new uint8[](6);
+    uint8[] memory _schema = new uint8[](7);
     _schema[0] = uint8(LibTypes.SchemaValue.UINT256); // accID
     _schema[1] = uint8(LibTypes.SchemaValue.UINT256); // poolID
     _schema[2] = uint8(LibTypes.SchemaValue.UINT32); // itemIn
     _schema[3] = uint8(LibTypes.SchemaValue.UINT32); // itemOut
     _schema[4] = uint8(LibTypes.SchemaValue.UINT256); // amountIn
     _schema[5] = uint8(LibTypes.SchemaValue.UINT256); // amountOut
+    _schema[6] = uint8(LibTypes.SchemaValue.UINT256); // timestamp
     return _schema;
   }
 
   function liquidityEventSchema() internal pure returns (uint8[] memory) {
-    uint8[] memory _schema = new uint8[](5);
+    uint8[] memory _schema = new uint8[](6);
     _schema[0] = uint8(LibTypes.SchemaValue.UINT256); // accID
     _schema[1] = uint8(LibTypes.SchemaValue.UINT256); // poolID
     _schema[2] = uint8(LibTypes.SchemaValue.UINT256); // amtA
     _schema[3] = uint8(LibTypes.SchemaValue.UINT256); // amtB
     _schema[4] = uint8(LibTypes.SchemaValue.UINT256); // shares
+    _schema[5] = uint8(LibTypes.SchemaValue.UINT256); // timestamp
     return _schema;
   }
 
   function syncEventSchema() internal pure returns (uint8[] memory) {
-    uint8[] memory _schema = new uint8[](6);
+    uint8[] memory _schema = new uint8[](7);
     _schema[0] = uint8(LibTypes.SchemaValue.UINT256); // poolID
     _schema[1] = uint8(LibTypes.SchemaValue.UINT32); // indexA
     _schema[2] = uint8(LibTypes.SchemaValue.UINT32); // indexB
     _schema[3] = uint8(LibTypes.SchemaValue.UINT256); // reserveA
     _schema[4] = uint8(LibTypes.SchemaValue.UINT256); // reserveB
     _schema[5] = uint8(LibTypes.SchemaValue.UINT256); // totalSupply
+    _schema[6] = uint8(LibTypes.SchemaValue.UINT256); // timestamp
     return _schema;
   }
 
