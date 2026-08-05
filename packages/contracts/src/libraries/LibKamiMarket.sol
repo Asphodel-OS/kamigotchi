@@ -16,6 +16,7 @@ import { StateComponent, ID as StateCompID } from "components/StateComponent.sol
 import { TimeEndComponent, ID as TimeEndCompID } from "components/TimeEndComponent.sol";
 import { TimeStartComponent, ID as TimeStartCompID } from "components/TimeStartComponent.sol";
 import { ValueComponent, ID as ValueCompID } from "components/ValueComponent.sol";
+import { ValuesComponent, ID as ValuesCompID } from "components/ValuesComponent.sol";
 import { ID as EntityTypeCompID } from "components/EntityTypeComponent.sol";
 
 import { IComponent } from "solecs/interfaces/IComponent.sol";
@@ -33,6 +34,8 @@ import { LibKami } from "libraries/LibKami.sol";
 import { LibCooldown } from "libraries/utils/LibCooldown.sol";
 
 import { KamiMarketVault } from "tokens/KamiMarketVault.sol";
+
+import { LibKamiMarketIndex, ACTIVE_LISTING_INDEX_ENTITY } from "libraries/LibKamiMarketIndex.sol";
 
 /// @title  Library for Kami Marketplace orderbook
 /// @notice Handles listings (ETH), offers (WETH), and collection offers (WETH)
@@ -60,6 +63,8 @@ library LibKamiMarket {
     ValueComponent(getAddrByID(comps, ValueCompID)).set(id, price);
     TimeStartComponent(getAddrByID(comps, TimeStartCompID)).set(id, block.timestamp);
     if (expiry > 0) TimeEndComponent(getAddrByID(comps, TimeEndCompID)).set(id, expiry);
+
+    LibKamiMarketIndex.add(comps, id);
   }
 
   /// @notice Create a specific offer entity (WETH, approval-based)
@@ -272,6 +277,32 @@ library LibKamiMarket {
   }
 
   /////////////////
+  // LISTING INDEX
+
+  /// @notice All listing IDs not yet filled/cancelled (may include expired ones)
+  function getListingIndex(IUintComp comps) internal view returns (uint256[] memory) {
+    ValuesComponent comp = ValuesComponent(getAddrByID(comps, ValuesCompID));
+    if (!comp.has(ACTIVE_LISTING_INDEX_ENTITY)) return new uint256[](0);
+    return comp.get(ACTIVE_LISTING_INDEX_ENTITY);
+  }
+
+  /// @notice Overwrite the listing index wholesale (admin backfill/repair)
+  function setListingIndex(IUintComp comps, uint256[] memory ids) internal {
+    ValuesComponent(getAddrByID(comps, ValuesCompID)).set(ACTIVE_LISTING_INDEX_ENTITY, ids);
+  }
+
+  /// @notice Whether an order is in ACTIVE state
+  function isOrderActive(IUintComp comps, uint256 id) internal view returns (bool) {
+    return getCompByID(comps, StateCompID).eqString(id, "ACTIVE");
+  }
+
+  /// @notice Whether an order has an expiry in the past
+  function isOrderExpired(IUintComp comps, uint256 id) internal view returns (bool) {
+    TimeEndComponent timeEndComp = TimeEndComponent(getAddrByID(comps, TimeEndCompID));
+    return timeEndComp.has(id) && block.timestamp > timeEndComp.get(id);
+  }
+
+  /////////////////
   // CLEANUP
 
   function _markFilled(IUintComp comps, uint256 id) internal {
@@ -286,27 +317,7 @@ library LibKamiMarket {
 
   /// @notice Remove indexed/queryable components after order is settled
   function _cleanup(IUintComp comps, uint256 id) internal {
-    IDOwnsKamiOrderComponent(getAddrByID(comps, IDOwnsKamiOrderCompID)).remove(id);
-
-    // conditionally remove optional components
-    IndexKamiComponent indexComp = IndexKamiComponent(getAddrByID(comps, IndexKamiCompID));
-    if (indexComp.has(id)) indexComp.remove(id);
-
-    IndexKamiListingComponent listingIndexComp = IndexKamiListingComponent(getAddrByID(comps, IndexKamiListingCompID));
-    if (listingIndexComp.has(id)) listingIndexComp.remove(id);
-
-    ValueComponent(getAddrByID(comps, ValueCompID)).remove(id);
-
-    TimeStartComponent(getAddrByID(comps, TimeStartCompID)).remove(id);
-
-    TimeEndComponent timeEndComp = TimeEndComponent(getAddrByID(comps, TimeEndCompID));
-    if (timeEndComp.has(id)) timeEndComp.remove(id);
-
-    BalanceComponent balComp = BalanceComponent(getAddrByID(comps, BalanceCompID));
-    if (balComp.has(id)) balComp.remove(id);
-
-    MaxComponent maxComp = MaxComponent(getAddrByID(comps, MaxCompID));
-    if (maxComp.has(id)) maxComp.remove(id);
+    LibKamiMarketIndex.cleanup(comps, id);
   }
 
   /////////////////

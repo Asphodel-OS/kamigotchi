@@ -20,14 +20,21 @@ import { LibSoulbound } from "libraries/LibSoulbound.sol";
 uint256 constant ID = uint256(keccak256("system.newbievendor.buy"));
 
 uint256 constant VENDOR_ENTITY = uint256(keccak256("newbie.vendor"));
-uint256 constant TWAP_ENTITY = uint256(keccak256("newbie.vendor.twap"));
-uint256 constant DEFAULT_MIN_PRICE = 0.005 ether;
+uint256 constant DEFAULT_MIN_PRICE = 0.004 ether;
+uint256 constant FLOOR_PREMIUM_BPS = 11_000; // 110% of the marketplace floor
+// listings priced above this are decorative, not market signal — skipping
+// them also keeps the premium math overflow-safe
+uint256 constant MAX_CONSIDERED_PRICE = 1_000_000 ether;
 
-/// @notice Newbie Kami Vendor — buy one kami at TWAP price (one-time per player)
-/// @dev Price is derived from a TWAP oracle fed by marketplace sales (LibTWAP).
-///      Returns max(twapPrice, minPrice). The vendor holds kamis staked in-game.
-///      Admin sets a pool of kami indices; the first 3 are displayed for sale.
-///      When one is bought, the next from the pool fills in.
+/// @notice Newbie Kami Vendor — buy one kami at market-floor price (one-time per player)
+/// @dev Price tracks the marketplace: 110% of the cheapest active listing
+///      (vendor's own excluded), clamped below by minPrice. A cheap listing is
+///      itself a real buyable offer, so faking one risks selling at that price;
+///      residual list/cancel timing games are bounded by the clamp — worst case
+///      the vendor sells at the admin-set floor, one kami per <24h-old account.
+///      The vendor holds kamis staked in-game. Admin sets a pool of kami
+///      indices; the first 3 are displayed for sale. When one is bought, the
+///      next from the pool fills in.
 contract NewbieVendorBuySystem is System {
   constructor(IWorld _world, address _components) System(_world, _components) {}
 
@@ -53,7 +60,7 @@ contract NewbieVendorBuySystem is System {
     uint256 accountCreated = TimeStartComponent(getAddrByID(components, TimeStartCompID)).get(accID);
     require(block.timestamp - accountCreated <= 86400, "NewbieVendor: account too old");
 
-    // compute price from TWAP oracle
+    // compute price from the marketplace floor
     uint256 price = calcPrice();
     require(msg.value >= price, "NewbieVendor: insufficient ETH");
 
@@ -63,12 +70,14 @@ contract NewbieVendorBuySystem is System {
     // verify kami is on display + remove from pool
     _verifyDisplayAndRemove(kamiIndex);
 
-    // verify vendor owns kami, transfer, send ETH
-    _transferKami(kamiIndex, price, accID);
-
-    // soulbind — prevents listing, unstaking, or accepting offers
+    // soulbind — prevents listing, unstaking, or accepting offers. Must precede
+    // the ETH transfers in _transferKami: the excess refund hands msg.sender a
+    // callback, and an un-soulbound kami could be listed/sent from it
     uint256 kamiID = LibKami.getByIndex(components, kamiIndex);
     LibSoulbound.set(components, kamiID, 3 days);
+
+    // verify vendor owns kami, transfer, send ETH
+    _transferKami(kamiIndex, price, accID);
 
     // emit event
     _emitBuy(accID, kamiIndex, price);
@@ -138,35 +147,39 @@ contract NewbieVendorBuySystem is System {
     }
   }
 
-  /// @notice Compute vendor price from TWAP oracle, floored at minimum price
-  /// @return price max(twapPrice, minPrice)
+  /// @notice Compute vendor price from the marketplace floor
+  /// @return price max(110% of the cheapest active listing, minPrice)
   function calcPrice() public view returns (uint256 price) {
     uint256 minPrice = LibConfig.get(components, "NEWBIE_VENDOR_MIN_PRICE");
     if (minPrice == 0) minPrice = DEFAULT_MIN_PRICE;
 
-    ValuesComponent valuesComp = ValuesComponent(getAddrByID(components, ValuesCompID));
-    if (!valuesComp.has(TWAP_ENTITY)) return minPrice;
+    uint256 floor = _cheapestListing();
+    if (floor == 0) return minPrice; // no eligible listings
 
-    uint256[] memory data = valuesComp.get(TWAP_ENTITY);
-    if (data.length != 5) return minPrice;
+    price = (floor * FLOOR_PREMIUM_BPS) / 10_000;
+    if (price < minPrice) price = minPrice;
+  }
 
-    uint256 cumulativePriceSeconds = data[0];
-    uint256 lastPrice = data[1];
-    uint256 lastUpdateTime = data[2];
-    uint256 snapshotCumulative = data[3];
-    uint256 snapshotTimestamp = data[4];
+  /// @notice Price of the cheapest active, unexpired marketplace listing,
+  ///         excluding the vendor's own; 0 when none are eligible
+  function _cheapestListing() internal view returns (uint256 cheapest) {
+    uint256[] memory ids = LibKamiMarket.getListingIndex(components);
+    if (ids.length == 0) return 0;
 
-    uint256 windowTime = block.timestamp - snapshotTimestamp;
-    if (windowTime == 0) {
-      // just after snapshot — use lastPrice
-      return lastPrice > minPrice ? lastPrice : minPrice;
+    uint256 vendorAccID = uint256(
+      uint160(LibConfig.getAddress(components, "NEWBIE_VENDOR_ADDRESS"))
+    );
+
+    for (uint256 i; i < ids.length; i++) {
+      uint256 id = ids[i];
+      if (!LibKamiMarket.isOrderActive(components, id)) continue;
+      if (LibKamiMarket.isOrderExpired(components, id)) continue;
+      if (LibKamiMarket.getOwner(components, id) == vendorAccID) continue;
+
+      uint256 p = LibKamiMarket.getPrice(components, id);
+      if (p > MAX_CONSIDERED_PRICE) continue;
+      if (cheapest == 0 || p < cheapest) cheapest = p;
     }
-
-    // extend cumulative to now
-    uint256 liveCumulative = cumulativePriceSeconds + lastPrice * (block.timestamp - lastUpdateTime);
-    uint256 twapPrice = (liveCumulative - snapshotCumulative) / windowTime;
-
-    return twapPrice > minPrice ? twapPrice : minPrice;
   }
 
   function _emitBuy(uint256 accID, uint32 kamiIndex, uint256 price) internal {

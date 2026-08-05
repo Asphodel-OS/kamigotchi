@@ -518,7 +518,8 @@
         "TimeStart",
         "TimeEnd",
         "Type",
-        "Value"
+        "Value",
+        "Values"
       ],
       "skipEnv": ["testing"]
     },
@@ -696,7 +697,8 @@
         "TimeStart",
         "TimeEnd",
         "TimeLast",
-        "Value"
+        "Value",
+        "Values"
       ]
     },
     {
@@ -780,7 +782,8 @@
         "TimeStart",
         "TimeEnd",
         "TimeLast",
-        "Value"
+        "Value",
+        "Values"
       ]
     },
     {
@@ -1042,7 +1045,8 @@
         "TimeLast",
         "TimeStart",
         "TimeEnd",
-        "Value"
+        "Value",
+        "Values"
       ]
     },
     {
