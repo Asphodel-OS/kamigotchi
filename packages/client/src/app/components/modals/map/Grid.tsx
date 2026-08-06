@@ -482,17 +482,17 @@ const QuestMarker = styled.span`
 
 // pixel-art source: keep edges crisp at any tile scale
 const MarkerIcon = styled.img`
-  width: 3vw;
-  height: 3vw;
+  width: 2.25vw;
+  height: 2.25vw;
   display: block;
   image-rendering: pixelated;
 `;
 
 // inline marker for the room tooltip title
 const TitleMarkIcon = styled.img`
-  width: 1vw;
-  height: 1vw;
-  margin-left: 0.3vw;
+  width: 1.5vw;
+  height: 1.5vw;
+  margin-left: 0.5vw;
   image-rendering: pixelated;
 `;
 
