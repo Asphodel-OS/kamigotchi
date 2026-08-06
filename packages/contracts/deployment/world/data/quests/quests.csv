@@ -1800,7 +1800,7 @@ MINA: “He’s demanding, and personally repellent, but interesting.”
 MINA: “Working with him has given me an idea.”
 MINA: “Menu, you might appreciate this. We’ll have to talk later.”
 MENU: “Is it about that thing you mentioned last time? Awesome!”",Complete SQ117,Make 20 Scavenging Rolls at the Techno Temple,"7x Booster Pack,2x Agency Reputation"
-SQ802,3802,In Game,Quest Diagnostics,No,SIDE,MENU,"MENU: “Excuse me. Sorry to butt in, if you’re busy.”
+SQ802,3802,Defunct,Quest Diagnostics,No,SIDE,MENU,"MENU: “Excuse me. Sorry to butt in, if you’re busy.”
 MENU: “I’ve been running the usual diagnostics and defrags. Usually nothing comes up.”
 MENU: “But this time, I think there’s been a real change.”
 MENU: “It might be a long walk, depending on where you are, but can you return to the Lost Woods for me?”
@@ -1829,7 +1829,7 @@ MINA: “Will you indulge it?”
 MENU: “What’s it going to do?”
 MENU: “Is it even safe?”
 MINA: “I think that’s something the Operator should determine.”","Own the Aetheric Sextant,In Room: Slippery Pit",In Room: Hatch to Nowhere,"2x Agency Reputation,2x Elders Loyalty"
-SQ999,10002,In Game,Claim Your Free Gift!,No,,,"I was really going through it on the 21st. It had me feeling bad enough that it must have affected you too. Here, take this. ","I’m back to 100 percent and processing faster than ever. I hope that gift helped you get back on your feet again. ","Before 25/10/25 0 GMT,At least 1 Kami liquidated",,"5x Booster Pack,3x ”Melkarth's Heroic Awakening” Spell Card"
+SQ999,10002,Defunct,Claim Your Free Gift!,No,,,"I was really going through it on the 21st. It had me feeling bad enough that it must have affected you too. Here, take this. ","I’m back to 100 percent and processing faster than ever. I hope that gift helped you get back on your feet again. ","Before 25/10/25 0 GMT,At least 1 Kami liquidated",,"5x Booster Pack,3x ”Melkarth's Heroic Awakening” Spell Card"
 SQ997,10003,In Game,Condolences on your Recent Liquidations,No,SIDE,MENU,"MENU: “I was not having a good time this weekend, and it seems like you weren’t either.”
 MENU: “Take these, they should help you get back on your feet.”","MENU: “I’m back to 100 percent and processing faster than ever. I hope that gift helped you get back on your feet too. ",At least 1 Kami liquidated,,5x ”Melkarth's Heroic Awakening” spell card
 test-0,1000000,Test,Daily Test Quest,Yes,,,Beg for your MUSU.,,,,"10000x MUSU (Test),2x Agency Reputation"
@@ -1855,3 +1855,4 @@ MINA: ""Becoming a provider will grant you a claim to part of the whole pool.""
 MINA: “Touch the fountain here or through your Menu to get started.”","MINA: “Have you made an offering to the fountain yet?”
 MINA: “Here's something simple to get you started.”
 MINA: “Wood and stone are humble, but they provide support.”",Complete MIN100,,"10x Stone,10x Wooden Stick"
+TTX01,10001,Defunct,Proof of Honesty,No,,,,,Missed Mina,,
