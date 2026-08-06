@@ -1,31 +1,50 @@
 import styled from 'styled-components';
 
-import { IconButton, IconListButton, Text, TextTooltip } from 'app/components/library';
+import { IconButton, StepButton, Text, TextTooltip } from 'app/components/library';
+import { openBaselineLink } from 'app/components/modals/tokenPortal/utils';
 import { MenuIcons } from 'assets/images/icons/menu';
 import { formatEthPriceLabel } from 'utils/numbers';
 import {
-  DISABLED_SOURCE_CHAIN_IDS,
+  BRIDGE_ASSET_OPTIONS,
+  BridgeAssetId,
   EVMChainOption,
-  MIN_BRIDGE_AMOUNT,
-  SOURCE_CHAIN_ICON_BY_CHAIN_ID,
-  SOURCE_CHAIN_OPTIONS,
+  getAssetsForChainId,
+  getMinBridgeAmountLabel,
 } from './helpers/constants';
+
+const ACTIVE_ASSET_COLOR = '#e0eeff';
+const PURCHASE_GREEN = '#C2F0C2';
 
 type BridgeFormProps = {
   sourceChain: EVMChainOption;
+  // source options the router can currently route from; null = not probed (all enabled)
+  routableOptionIds: Set<string> | null;
   amount: string;
   parsedAmount: bigint | null;
   sourceBalance: bigint;
   yomiBalance: bigint;
   isBridging: boolean;
   accountReady: boolean;
+  onyxLocked: boolean;
   hasSufficientSourceBalance: boolean;
   onAmountChange: (amount: string) => void;
-  onSourceChainChange: (chain: EVMChainOption) => void;
+  onAssetChange: (asset: BridgeAssetId) => void;
   onSubmit: () => void;
 };
 
+// free-typed amount: digits + up to 7 decimals (mirrors FundOperator)
+const AMOUNT_INPUT_REGEX = /^\d*\.?\d{0,7}$/;
+
+const getAssetLockReason = (
+  asset: BridgeAssetId,
+  availableAssets: Set<BridgeAssetId>
+): string | undefined => {
+  if (!availableAssets.has(asset)) return `${asset} is not available on this chain.`;
+  return undefined;
+};
+
 const getDisabledReason = (
+  sourceChain: EVMChainOption,
   isBridging: boolean,
   accountReady: boolean,
   hasSufficientSourceBalance: boolean,
@@ -33,31 +52,53 @@ const getDisabledReason = (
 ): string | undefined => {
   if (isBridging) return 'Bridge transaction in progress.';
   if (!accountReady) return 'Connect your wallet first.';
-  if (!parsedAmount || parsedAmount < MIN_BRIDGE_AMOUNT) return 'Minimum amount is 0.000001 ETH.';
-  if (!hasSufficientSourceBalance) return 'Insufficient source chain balance.';
+  if (!parsedAmount || parsedAmount < sourceChain.minAmount)
+    return `Minimum amount is ${getMinBridgeAmountLabel(sourceChain)}.`;
+  if (!hasSufficientSourceBalance)
+    return `Insufficient ${sourceChain.symbol} balance on ${sourceChain.label}.`;
   return undefined;
 };
 
 export const BridgeForm = ({
   sourceChain,
+  routableOptionIds,
   amount,
   parsedAmount,
   sourceBalance,
   yomiBalance,
   isBridging,
   accountReady,
+  onyxLocked,
   hasSufficientSourceBalance,
   onAmountChange,
-  onSourceChainChange,
+  onAssetChange,
   onSubmit,
 }: BridgeFormProps) => {
+  const symbol = sourceChain.symbol;
+  const availableAssets = new Set(
+    getAssetsForChainId(sourceChain.chainId).map((asset) => asset.id)
+  );
+  const chainUnroutable = routableOptionIds !== null && !routableOptionIds.has(sourceChain.id);
+
+  const handleAmountInput = (value: string) => {
+    if (value === '' || AMOUNT_INPUT_REGEX.test(value)) onAmountChange(value);
+  };
+
+  // press-and-hold stepper: same step sizes the old number input used
+  const nudge = (direction: 1 | -1) => {
+    const step = sourceChain.asset === 'ONYX' ? 0.1 : 0.0001;
+    const current = Number(amount) || 0;
+    const next = Math.max(0, +(current + direction * step).toFixed(7));
+    onAmountChange(next === 0 ? '' : next.toString());
+  };
   const isDisabled =
     isBridging ||
     !accountReady ||
     !hasSufficientSourceBalance ||
     !parsedAmount ||
-    parsedAmount < MIN_BRIDGE_AMOUNT;
+    parsedAmount < sourceChain.minAmount;
   const disabledReason = getDisabledReason(
+    sourceChain,
     isBridging,
     accountReady,
     hasSufficientSourceBalance,
@@ -66,53 +107,87 @@ export const BridgeForm = ({
 
   return (
     <FormColumn>
+      <Label>Source Asset</Label>
+      <AssetRow>
+        {BRIDGE_ASSET_OPTIONS.map((asset) => {
+          const lockReason = getAssetLockReason(asset.id, availableAssets);
+          const isLocked = !!lockReason || (asset.id === 'ONYX' && onyxLocked);
+          return (
+            <AssetSlot key={asset.id}>
+              <TextTooltip text={lockReason ? [lockReason] : []} fullWidth cursor='help'>
+                <IconButton
+                  img={asset.icon}
+                  text={asset.label}
+                  color={asset.id === sourceChain.asset ? ACTIVE_ASSET_COLOR : '#fff'}
+                  onClick={() => onAssetChange(asset.id)}
+                  disabled={isBridging || isLocked}
+                  fullWidth
+                  scale={2.2}
+                />
+              </TextTooltip>
+            </AssetSlot>
+          );
+        })}
+      </AssetRow>
       <Label>Source Chain</Label>
-      <IconListButton
-        img={SOURCE_CHAIN_ICON_BY_CHAIN_ID[sourceChain.chainId]}
-        text={sourceChain.label}
+      <IconButton
+        img={sourceChain.icon}
+        text={chainUnroutable ? `${sourceChain.label} (unavailable)` : sourceChain.label}
         fullWidth
         scale={2.2}
         disabled={isBridging}
-        options={SOURCE_CHAIN_OPTIONS.map((option) => ({
-          text: option.label,
-          image: SOURCE_CHAIN_ICON_BY_CHAIN_ID[option.chainId],
-          disabled: DISABLED_SOURCE_CHAIN_IDS.has(option.chainId),
-          onClick: () => onSourceChainChange(option),
-        }))}
+        onClick={() => undefined}
       />
-      <Label>Destination Chain</Label>
-      <DestinationText>Yominet</DestinationText>
-      <Label>Amount (ETH)</Label>
-      <Input
-        type='number'
-        min='0'
-        step='0.0001'
-        value={amount}
-        onChange={(event) => onAmountChange(event.target.value)}
-      />
+      <Label>Amount ({symbol})</Label>
+      <AmountRow>
+        <StepButton label='-' onStep={() => nudge(-1)} />
+        <AmountField
+          type='text'
+          inputMode='decimal'
+          placeholder='0'
+          value={amount}
+          onChange={(event) => handleAmountInput(event.target.value)}
+          style={{ pointerEvents: 'auto' }}
+        />
+        <StepButton label='+' onStep={() => nudge(1)} />
+      </AmountRow>
       <Balances>
         <BalanceItem>
           <BalanceLabel>Source balance:</BalanceLabel>
           <Text size={0.8}>
-            <BalanceNumber>{formatEthPriceLabel(sourceBalance, 5)}</BalanceNumber> ETH
+            <BalanceNumber>{formatEthPriceLabel(sourceBalance, 5)}</BalanceNumber> {symbol}
           </Text>
         </BalanceItem>
         <BalanceItem>
-          <BalanceLabel>Yominet bridged ETH:</BalanceLabel>
+          <BalanceLabel>Yominet bridged {symbol}:</BalanceLabel>
           <Text size={0.8}>
-            <BalanceNumber>{formatEthPriceLabel(yomiBalance, 5)}</BalanceNumber> ETH
+            <BalanceNumber>{formatEthPriceLabel(yomiBalance, 5)}</BalanceNumber> {symbol}
           </Text>
         </BalanceItem>
       </Balances>
       <TextTooltip text={disabledReason ? [disabledReason] : []} fullWidth cursor='help'>
         <IconButton
           img={MenuIcons.kami}
-          text={isBridging ? 'Bridging...' : 'Bridge to Yominet'}
+          text={isBridging ? 'Bridging...' : `Bridge ${symbol} to Yominet`}
           onClick={onSubmit}
           disabled={isDisabled}
           fullWidth
         />
       </TextTooltip>
+      {sourceChain.asset === 'ONYX' && (
+        <>
+          <Rule />
+          <PurchaseSlot>
+            <IconButton
+              fullWidth
+              scale={2.2}
+              color={PURCHASE_GREEN}
+              text='Purchase $ONYX'
+              onClick={() => openBaselineLink(sourceChain.sourceTokenAddress ?? '')}
+            />
+          </PurchaseSlot>
+        </>
+      )}
     </FormColumn>
   );
 };
@@ -140,19 +215,55 @@ const Label = styled.label`
   font-weight: 700;
 `;
 
-const Input = styled.input`
-  border: solid black 0.12vw;
-  border-radius: 0.5vw;
-  padding: 0.45vw;
-  font-size: 0.78vw;
+const AssetRow = styled.div`
+  display: flex;
+  flex-flow: row nowrap;
+  gap: 0.4vw;
 `;
 
-const DestinationText = styled.div`
+const AssetSlot = styled.div`
+  flex: 1 1 0;
+  min-width: 0;
+`;
+
+const Rule = styled.div`
+  border-top: 0.12vw solid #e0e0e0;
+  margin-top: 0.15vw;
+`;
+
+const PurchaseSlot = styled.div``;
+
+const AmountRow = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 0.4vw;
+  flex-shrink: 0;
+`;
+
+const AmountField = styled.input`
+  flex: 1;
+  min-width: 0;
+  background: #fafafa;
+  border: 0.12vw solid #ccc;
   border-radius: 0.5vw;
-  padding: 0.45vw;
-  font-size: 0.78vw;
-  color: #111;
-  background: #f0f0f0;
+  color: #333;
+  height: 2.4vw;
+  padding: 0.5vw 0.4vw;
+
+  font-family: Pixel;
+  font-size: 1.05vw;
+  text-align: center;
+  cursor: text;
+
+  &::placeholder {
+    color: #bbb;
+  }
+
+  &:focus {
+    border-color: #a0c0e8;
+    background: #fff9e0;
+    outline: none;
+  }
 `;
 
 const Balances = styled.div`

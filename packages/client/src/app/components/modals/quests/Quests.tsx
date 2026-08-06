@@ -78,7 +78,7 @@ export const QuestModal: UIComponent = {
     })();
 
     const { actions, api, components, notifications } = network;
-    const { IsRegistry, OwnsQuestID, IsComplete } = components;
+    const { IsRegistry, OwnsQuestID, IsComplete, QuestIndex } = components;
     const { accountEntity, account } = data;
     const { getBase, getItem, filterByAvailable, populate } = utils;
     const { queryRegistry, queryOngoing, queryCompleted } = utils;
@@ -96,28 +96,36 @@ export const QuestModal: UIComponent = {
       return () => clearInterval(id);
     }, [isNetworkReady]);
 
-    // Reactively subscribe to ECS changes relevant to quests
+    // Reactively subscribe to ECS changes relevant to quests. QuestIndex is
+    // included because a freshly accepted instance arrives component-by-component:
+    // without it the list is derived while the index is still missing and never
+    // recomputed once it lands
     const registryEntities = useComponentEntities(IsRegistry) || [];
     const ownsQuestEntities = useComponentEntities(OwnsQuestID) || [];
     const isCompleteEntities = useComponentEntities(IsComplete) || [];
+    const questIndexEntities = useComponentEntities(QuestIndex) || [];
 
     // Derive quest lists reactively from ECS streams
+
+    // a quest instance whose registry entry can't be resolved is not renderable:
+    // either mid-sync (index not in yet) or orphaned by a deleted registry entry.
+    // rendering it would show another quest's details under its own id
+    const isResolvable = (q: BaseQuest) =>
+      q.index !== 0 &&
+      q.registryEntityIndex !== undefined &&
+      !getIsDisabled(components, q.registryEntityIndex);
 
     const registry: BaseQuest[] = useMemo(() => {
       return queryRegistry().map((entity) => getBase(entity));
     }, [network, registryEntities]);
 
     const completed: BaseQuest[] = useMemo(() => {
-      return queryCompleted()
-        .map((entity) => getBase(entity))
-        .filter((q) => !getIsDisabled(components, q.registryEntityIndex));
-    }, [network, account.id, ownsQuestEntities, isCompleteEntities]);
+      return queryCompleted().map((entity) => getBase(entity)).filter(isResolvable);
+    }, [network, account.id, ownsQuestEntities, isCompleteEntities, questIndexEntities]);
 
     const ongoing: BaseQuest[] = useMemo(() => {
-      return queryOngoing()
-        .map((entity) => getBase(entity))
-        .filter((q) => !getIsDisabled(components, q.registryEntityIndex));
-    }, [network, account.id, ownsQuestEntities, isCompleteEntities]);
+      return queryOngoing().map((entity) => getBase(entity)).filter(isResolvable);
+    }, [network, account.id, ownsQuestEntities, isCompleteEntities, questIndexEntities]);
 
     /////////////////
     // SUBSCRIPTIONS

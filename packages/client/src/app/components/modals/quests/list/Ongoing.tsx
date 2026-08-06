@@ -41,10 +41,14 @@ export const OngoingQuests = ({
     return () => clearInterval(timerId);
   }, []);
 
-  // always update if the list of quests changes
+  // always update if the list of quests changes. keyed on identity, not length:
+  // a completion paired with an acceptance keeps the count the same while the
+  // membership changes, which would otherwise leave the finished quest rendered
+  // (with a Complete button that reverts on-chain)
+  const questsKey = quests.map((q) => q.id).join(',');
   useEffect(() => {
     update();
-  }, [quests.length]);
+  }, [questsKey]);
 
   // update when this tab is opened or data changes if stale
   useEffect(() => {

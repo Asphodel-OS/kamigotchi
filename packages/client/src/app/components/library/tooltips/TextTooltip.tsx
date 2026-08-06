@@ -26,7 +26,7 @@ export const TextTooltip = ({
   persistOnClick,
 }: {
   text: string[] | React.ReactNode[];
-  title?: string;
+  title?: React.ReactNode;
   children: React.ReactNode;
   grow?: boolean;
   direction?: 'row' | 'column';

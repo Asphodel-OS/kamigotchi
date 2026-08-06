@@ -126,7 +126,7 @@ export const fetchSnapshot = async (
   setPercentage: (percentage: number) => void,
   setMessage?: (msg: string) => void
 ): Promise<StateCache> => {
-  let currentBlock = stateCache.lastKamigazeBlock;
+  const currentBlock = stateCache.lastKamigazeBlock;
   let initialLoad = currentBlock == 0;
 
   log.debug('[snapshot] fetchSnapshot started', {
@@ -149,7 +149,7 @@ export const fetchSnapshot = async (
   try {
     setMessage?.('Querying for State Info');
     log.debug('[snapshot] Fetching state block');
-    let BlockResponse = await fetchStateBlock(kamigazeClient);
+    const BlockResponse = await fetchStateBlock(kamigazeClient);
     log.debug('[snapshot] State block received', {
       blockNumber: BlockResponse.blockNumber,
       nonce: BlockResponse.nonce,
@@ -284,6 +284,13 @@ async function fetchEntities({
   });
 }
 
+// kamigaze serves state strictly AFTER fromBlock, but a block's entries can be
+// split across chunk boundaries (chunks are size-based). Resuming from the last
+// processed block would silently skip the rest of that block — permanently,
+// since set-once components (e.g. IsComplete) never re-emit. Rewinding one
+// block re-serves the whole boundary block; re-applying entries is idempotent.
+const resumeBlock = (pointer: number): number => Math.max(0, pointer - 1);
+
 async function fetchStateRemovals({
   stateCache,
   kamigazeClient,
@@ -297,7 +304,7 @@ async function fetchStateRemovals({
     name: 'fetchStateRemovals',
     createStream: () =>
       kamigazeClient.getState({
-        fromBlock: stateCache.lastStateRemovalsBlock || stateCache.lastKamigazeBlock,
+        fromBlock: resumeBlock(stateCache.lastStateRemovalsBlock || stateCache.lastKamigazeBlock),
         removals: true,
       }),
     processChunk: async (chunk) => {
@@ -335,7 +342,7 @@ async function fetchStateValues({
     name: 'fetchStateValues',
     createStream: () =>
       kamigazeClient.getState({
-        fromBlock: stateCache.lastStateValuesBlock || stateCache.lastKamigazeBlock,
+        fromBlock: resumeBlock(stateCache.lastStateValuesBlock || stateCache.lastKamigazeBlock),
         removals: false,
       }),
     processChunk: async (chunk) => {

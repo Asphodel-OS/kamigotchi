@@ -15,7 +15,8 @@ export const query = (components: Components, options?: QueryOptions): EntityInd
   const { Location, EntityType, RoomIndex } = components;
 
   const toQuery: QueryFragment[] = [];
-  if (options?.index) toQuery.push(HasValue(RoomIndex, { value: options.index }));
+  if (options?.index !== undefined)
+    toQuery.push(HasValue(RoomIndex, { value: options.index }));
   if (options?.location) {
     toQuery.push(
       HasValue(Location, {

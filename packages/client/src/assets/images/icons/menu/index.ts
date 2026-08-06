@@ -1,9 +1,11 @@
 import ChatIcon from './chat.png';
+import ExclamIcon from './exclam.png';
 import ClockIcon from './clock.png';
 import HelpIcon from './help.png';
 import InventoryIcon from './inventory.png';
 import KamiIcon from './kami.png';
 import KamiSendIcon from './kamisend_color.png';
+import KamiWikiIcon from './kamiwiki.png';
 import ExternalIcon from './link_to_external_apps.png';
 import LpFountainIcon from './lp_fountain.png';
 import MapIcon from './map.png';
@@ -21,12 +23,14 @@ import Whispo from './whispo.png';
 
 export {
   ChatIcon,
+  ExclamIcon,
   ClockIcon,
   ExternalIcon,
   HelpIcon,
   InventoryIcon,
   KamiIcon,
   KamiSendIcon,
+  KamiWikiIcon,
   LpFountainIcon,
   MapIcon,
   MarketplaceIcon,
@@ -48,10 +52,12 @@ export const MenuIcons = {
   whispo: Whispo,
   link_to_external_apps: ExternalIcon,
   chat: ChatIcon,
+  exclam: ExclamIcon,
   help: HelpIcon,
   inventory: InventoryIcon,
   kami: KamiIcon,
   kamisend_color: KamiSendIcon,
+  kamiwiki: KamiWikiIcon,
   lp_fountain: LpFountainIcon,
   map: MapIcon,
   marketplace: MarketplaceIcon,

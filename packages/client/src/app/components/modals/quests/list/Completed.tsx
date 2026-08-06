@@ -32,10 +32,11 @@ export const CompletedQuests = ({
   const [cleaned, setCleaned] = useState<Quest[]>([]);
   const [lastUpdate, setLastUpdate] = useState(0);
 
-  // always update if the list of quests changes
+  // always update if the list of quests changes (identity, not length — see Ongoing)
+  const questsKey = quests.map((q) => q.id).join(',');
   useEffect(() => {
     update();
-  }, [quests.length]);
+  }, [questsKey]);
 
   // update when this tab is opened or data changes if stale
   useEffect(() => {
