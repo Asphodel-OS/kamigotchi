@@ -215,15 +215,10 @@ const Buffs = styled.div`
   pointer-events: auto;
   overflow: auto hidden;
 
+  /* scrollable (wheel handler above) but never shows a scrollbar */
+  scrollbar-width: none;
   &::-webkit-scrollbar {
-    height: 0.2vw;
-  }
-  &::-webkit-scrollbar-track {
-    background-color: rgba(202, 202, 56, 1);
-  }
-  &::-webkit-scrollbar-thumb {
-    background-color: rgba(201, 150, 9, 1);
-    border-radius: 0.2vw;
+    display: none;
   }
 `;
 
