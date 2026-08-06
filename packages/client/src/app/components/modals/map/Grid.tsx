@@ -9,7 +9,7 @@ import { DropdownToggle } from 'app/components/library/buttons/DropdownToggle';
 import { triggerNodeModal } from 'app/triggers';
 import { HelpMenuIcons } from 'assets/images/help';
 import { insectIcon } from 'assets/images/icons/affinities';
-import { KamiIcon, OperatorIcon } from 'assets/images/icons/menu';
+import { ExclamIcon, KamiIcon, OperatorIcon } from 'assets/images/icons/menu';
 import { StaminaIcon } from 'assets/images/icons/stats';
 import { mapBackgrounds } from 'assets/images/map';
 import { Zones } from 'constants/zones';
@@ -353,9 +353,7 @@ export const Grid = ({
                       : []
                   }
                   title={`${room.name}${isRoomBlocked(room) ? ' (blocked)' : ''}${
-                    questTargetMap.has(room.index)
-                      ? ` — ❗ ${questTargetMap.get(room.index)!.join(', ')}`
-                      : ''
+                    questTargetMap.has(room.index) ? ' — ❗' : ''
                   }`}
                   maxWidth={25}
                   grow
@@ -376,7 +374,7 @@ export const Grid = ({
                   >
                     {questTargetMap.has(room.index) && room.index !== roomIndex && (
                       <QuestMarker>
-                        !
+                        <MarkerIcon src={ExclamIcon} alt='' />
                         {questTargetMap.get(room.index)!.length > 1
                           ? `×${questTargetMap.get(room.index)!.length}`
                           : ''}
@@ -444,6 +442,12 @@ const QuestMarker = styled.span`
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
+
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: center;
+  gap: 0.1vw;
+
   color: #ffcc33;
   font-size: 1.5vw;
   font-weight: 900;
@@ -471,6 +475,14 @@ const QuestMarker = styled.span`
       transform: translate(-50%, -50%) translateY(-0.16vw);
     }
   }
+`;
+
+// pixel-art source: keep edges crisp at any tile scale
+const MarkerIcon = styled.img`
+  width: 1.5vw;
+  height: 1.5vw;
+  display: block;
+  image-rendering: pixelated;
 `;
 
 const Tile = styled.div<{ hasRoom: boolean; isHighlighted: boolean; backgroundColor: any }>`
