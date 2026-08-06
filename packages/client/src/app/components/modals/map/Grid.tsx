@@ -224,11 +224,10 @@ export const Grid = ({
   };
 
   // get the color of a room tile
-  // (quest targets deliberately get no tint — the pulsing ! marker carries it,
-  // a color wash fights the pixel art underneath)
   const getTileColor = (room: Room) => {
     if (!room.index) return;
     if (room.index === roomIndex) return 'rgba(51,187,51,0.9)';
+    if (questTargetMap.has(room.index)) return 'rgba(255,204,51,0.6)'; // quest target: gold
     if (!currExit(room)) return;
     return isRoomBlocked(room) ? 'rgba(0,0,0,0.3)' : 'rgba(255,136,85,0.6)';
   };
@@ -352,9 +351,13 @@ export const Grid = ({
                         ]
                       : []
                   }
-                  title={`${room.name}${isRoomBlocked(room) ? ' (blocked)' : ''}${
-                    questTargetMap.has(room.index) ? ' — ❗' : ''
-                  }`}
+                  title={
+                    <>
+                      {room.name}
+                      {isRoomBlocked(room) ? ' (blocked)' : ''}
+                      {questTargetMap.has(room.index) && <TitleMarkIcon src={ExclamIcon} alt='' />}
+                    </>
+                  }
                   maxWidth={25}
                   grow
                 >
@@ -479,9 +482,17 @@ const QuestMarker = styled.span`
 
 // pixel-art source: keep edges crisp at any tile scale
 const MarkerIcon = styled.img`
-  width: 1.5vw;
-  height: 1.5vw;
+  width: 3vw;
+  height: 3vw;
   display: block;
+  image-rendering: pixelated;
+`;
+
+// inline marker for the room tooltip title
+const TitleMarkIcon = styled.img`
+  width: 1vw;
+  height: 1vw;
+  margin-left: 0.3vw;
   image-rendering: pixelated;
 `;
 
