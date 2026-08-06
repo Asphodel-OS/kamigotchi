@@ -14,7 +14,7 @@ interface QueryOptions {
 export const query = (comps: Components, options?: QueryOptions) => {
   const { EntityType, Name, NPCIndex } = comps;
   const query = [];
-  if (options?.index) query.push(HasValue(NPCIndex, { value: options.index }));
+  if (options?.index !== undefined) query.push(HasValue(NPCIndex, { value: options.index }));
   if (options?.name) query.push(HasValue(Name, { value: options.name }));
   query.push(HasValue(EntityType, { value: 'NPC' }));
   return Array.from(runQuery(query));

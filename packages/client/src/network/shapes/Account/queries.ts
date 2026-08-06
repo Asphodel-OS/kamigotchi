@@ -23,11 +23,12 @@ const query = (comps: Components, options?: QueryOptions): EntityIndex[] => {
   const { AccountIndex, EntityType, Name, OwnerAddress, OperatorAddress, RoomIndex } = comps;
 
   const toQuery: QueryFragment[] = [];
-  if (options?.index) toQuery.push(HasValue(AccountIndex, { value: options.index }));
+  if (options?.index !== undefined)
+    toQuery.push(HasValue(AccountIndex, { value: options.index }));
   if (options?.owner) toQuery.push(HasValue(OwnerAddress, { value: options.owner }));
   if (options?.operator) toQuery.push(HasValue(OperatorAddress, { value: options.operator }));
   if (options?.name) toQuery.push(HasValue(Name, { value: options.name }));
-  if (options?.room) toQuery.push(HasValue(RoomIndex, { value: options.room }));
+  if (options?.room !== undefined) toQuery.push(HasValue(RoomIndex, { value: options.room }));
   toQuery.push(HasValue(EntityType, { value: 'ACCOUNT' })); // last bc fat
 
   const results = runQuery(toQuery);

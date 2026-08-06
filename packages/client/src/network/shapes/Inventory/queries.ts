@@ -13,7 +13,8 @@ export const query = (components: Components, options: QueryOptions) => {
 
   const toQuery: QueryFragment[] = [];
   if (options?.owner) toQuery.push(HasValue(OwnsInvID, { value: options.owner }));
-  if (options?.itemIndex) toQuery.push(HasValue(ItemIndex, { value: options.itemIndex }));
+  if (options?.itemIndex !== undefined)
+    toQuery.push(HasValue(ItemIndex, { value: options.itemIndex }));
   toQuery.push(HasValue(EntityType, { value: 'INVENTORY' }));
 
   return Array.from(runQuery(toQuery));
