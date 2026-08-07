@@ -296,6 +296,11 @@ export interface KamiMarketHistoryRequest {
 export interface LeaderboardRequest {
 }
 
+export interface SetLogLevelRequest {
+  level: string;
+  apiKey: string;
+}
+
 /** RESPONSE */
 export interface RoomResponse {
   Messages: Message[];
@@ -345,6 +350,26 @@ export interface KamiMarketBidsResponse {
 
 export interface KamiMarketHistoryResponse {
   Orders: KamiMarketOrder[];
+}
+
+export interface SetLogLevelResponse {
+  level: string;
+}
+
+export interface PoolPriceRequest {
+  indexA: number;
+  indexB: number;
+}
+
+export interface PoolPricePoint {
+  bucketTs: number;
+  price: number;
+}
+
+export interface PoolPriceHistory {
+  points: PoolPricePoint[];
+  baseIndex: number;
+  quoteIndex: number;
 }
 
 export interface LeaderboardRow {
@@ -3707,6 +3732,64 @@ export const LeaderboardRequest: MessageFns<LeaderboardRequest> = {
   },
 };
 
+function createBaseSetLogLevelRequest(): SetLogLevelRequest {
+  return { level: "", apiKey: "" };
+}
+
+export const SetLogLevelRequest: MessageFns<SetLogLevelRequest> = {
+  encode(message: SetLogLevelRequest, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+    if (message.level !== "") {
+      writer.uint32(10).string(message.level);
+    }
+    if (message.apiKey !== "") {
+      writer.uint32(18).string(message.apiKey);
+    }
+    return writer;
+  },
+
+  decode(input: BinaryReader | Uint8Array, length?: number): SetLogLevelRequest {
+    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
+    const end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseSetLogLevelRequest();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1: {
+          if (tag !== 10) {
+            break;
+          }
+
+          message.level = reader.string();
+          continue;
+        }
+        case 2: {
+          if (tag !== 18) {
+            break;
+          }
+
+          message.apiKey = reader.string();
+          continue;
+        }
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skip(tag & 7);
+    }
+    return message;
+  },
+
+  create(base?: DeepPartial<SetLogLevelRequest>): SetLogLevelRequest {
+    return SetLogLevelRequest.fromPartial(base ?? {});
+  },
+  fromPartial(object: DeepPartial<SetLogLevelRequest>): SetLogLevelRequest {
+    const message = createBaseSetLogLevelRequest();
+    message.level = object.level ?? "";
+    message.apiKey = object.apiKey ?? "";
+    return message;
+  },
+};
+
 function createBaseRoomResponse(): RoomResponse {
   return { Messages: [], Feeds: [] };
 }
@@ -4285,6 +4368,238 @@ export const KamiMarketHistoryResponse: MessageFns<KamiMarketHistoryResponse> = 
   },
 };
 
+function createBaseSetLogLevelResponse(): SetLogLevelResponse {
+  return { level: "" };
+}
+
+export const SetLogLevelResponse: MessageFns<SetLogLevelResponse> = {
+  encode(message: SetLogLevelResponse, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+    if (message.level !== "") {
+      writer.uint32(10).string(message.level);
+    }
+    return writer;
+  },
+
+  decode(input: BinaryReader | Uint8Array, length?: number): SetLogLevelResponse {
+    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
+    const end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseSetLogLevelResponse();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1: {
+          if (tag !== 10) {
+            break;
+          }
+
+          message.level = reader.string();
+          continue;
+        }
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skip(tag & 7);
+    }
+    return message;
+  },
+
+  create(base?: DeepPartial<SetLogLevelResponse>): SetLogLevelResponse {
+    return SetLogLevelResponse.fromPartial(base ?? {});
+  },
+  fromPartial(object: DeepPartial<SetLogLevelResponse>): SetLogLevelResponse {
+    const message = createBaseSetLogLevelResponse();
+    message.level = object.level ?? "";
+    return message;
+  },
+};
+
+function createBasePoolPriceRequest(): PoolPriceRequest {
+  return { indexA: 0, indexB: 0 };
+}
+
+export const PoolPriceRequest: MessageFns<PoolPriceRequest> = {
+  encode(message: PoolPriceRequest, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+    if (message.indexA !== 0) {
+      writer.uint32(8).uint32(message.indexA);
+    }
+    if (message.indexB !== 0) {
+      writer.uint32(16).uint32(message.indexB);
+    }
+    return writer;
+  },
+
+  decode(input: BinaryReader | Uint8Array, length?: number): PoolPriceRequest {
+    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
+    const end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBasePoolPriceRequest();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1: {
+          if (tag !== 8) {
+            break;
+          }
+
+          message.indexA = reader.uint32();
+          continue;
+        }
+        case 2: {
+          if (tag !== 16) {
+            break;
+          }
+
+          message.indexB = reader.uint32();
+          continue;
+        }
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skip(tag & 7);
+    }
+    return message;
+  },
+
+  create(base?: DeepPartial<PoolPriceRequest>): PoolPriceRequest {
+    return PoolPriceRequest.fromPartial(base ?? {});
+  },
+  fromPartial(object: DeepPartial<PoolPriceRequest>): PoolPriceRequest {
+    const message = createBasePoolPriceRequest();
+    message.indexA = object.indexA ?? 0;
+    message.indexB = object.indexB ?? 0;
+    return message;
+  },
+};
+
+function createBasePoolPricePoint(): PoolPricePoint {
+  return { bucketTs: 0, price: 0 };
+}
+
+export const PoolPricePoint: MessageFns<PoolPricePoint> = {
+  encode(message: PoolPricePoint, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+    if (message.bucketTs !== 0) {
+      writer.uint32(8).int64(message.bucketTs);
+    }
+    if (message.price !== 0) {
+      writer.uint32(17).double(message.price);
+    }
+    return writer;
+  },
+
+  decode(input: BinaryReader | Uint8Array, length?: number): PoolPricePoint {
+    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
+    const end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBasePoolPricePoint();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1: {
+          if (tag !== 8) {
+            break;
+          }
+
+          message.bucketTs = longToNumber(reader.int64());
+          continue;
+        }
+        case 2: {
+          if (tag !== 17) {
+            break;
+          }
+
+          message.price = reader.double();
+          continue;
+        }
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skip(tag & 7);
+    }
+    return message;
+  },
+
+  create(base?: DeepPartial<PoolPricePoint>): PoolPricePoint {
+    return PoolPricePoint.fromPartial(base ?? {});
+  },
+  fromPartial(object: DeepPartial<PoolPricePoint>): PoolPricePoint {
+    const message = createBasePoolPricePoint();
+    message.bucketTs = object.bucketTs ?? 0;
+    message.price = object.price ?? 0;
+    return message;
+  },
+};
+
+function createBasePoolPriceHistory(): PoolPriceHistory {
+  return { points: [], baseIndex: 0, quoteIndex: 0 };
+}
+
+export const PoolPriceHistory: MessageFns<PoolPriceHistory> = {
+  encode(message: PoolPriceHistory, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+    for (const v of message.points) {
+      PoolPricePoint.encode(v!, writer.uint32(10).fork()).join();
+    }
+    if (message.baseIndex !== 0) {
+      writer.uint32(16).uint32(message.baseIndex);
+    }
+    if (message.quoteIndex !== 0) {
+      writer.uint32(24).uint32(message.quoteIndex);
+    }
+    return writer;
+  },
+
+  decode(input: BinaryReader | Uint8Array, length?: number): PoolPriceHistory {
+    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
+    const end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBasePoolPriceHistory();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1: {
+          if (tag !== 10) {
+            break;
+          }
+
+          message.points.push(PoolPricePoint.decode(reader, reader.uint32()));
+          continue;
+        }
+        case 2: {
+          if (tag !== 16) {
+            break;
+          }
+
+          message.baseIndex = reader.uint32();
+          continue;
+        }
+        case 3: {
+          if (tag !== 24) {
+            break;
+          }
+
+          message.quoteIndex = reader.uint32();
+          continue;
+        }
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skip(tag & 7);
+    }
+    return message;
+  },
+
+  create(base?: DeepPartial<PoolPriceHistory>): PoolPriceHistory {
+    return PoolPriceHistory.fromPartial(base ?? {});
+  },
+  fromPartial(object: DeepPartial<PoolPriceHistory>): PoolPriceHistory {
+    const message = createBasePoolPriceHistory();
+    message.points = object.points?.map((e) => PoolPricePoint.fromPartial(e)) || [];
+    message.baseIndex = object.baseIndex ?? 0;
+    message.quoteIndex = object.quoteIndex ?? 0;
+    return message;
+  },
+};
+
 function createBaseLeaderboardRow(): LeaderboardRow {
   return { Name: "", Value: "" };
 }
@@ -4470,6 +4785,14 @@ export const KamidenServiceDefinition = {
       responseStream: false,
       options: {},
     },
+    getPoolPriceHistory: {
+      name: "GetPoolPriceHistory",
+      requestType: PoolPriceRequest,
+      requestStream: false,
+      responseType: PoolPriceHistory,
+      responseStream: false,
+      options: {},
+    },
     getKillsByAccount: {
       name: "GetKillsByAccount",
       requestType: LeaderboardRequest,
@@ -4535,6 +4858,15 @@ export const KamidenServiceDefinition = {
       responseStream: true,
       options: {},
     },
+    /** Set runtime logger level (admin only) */
+    setLogLevel: {
+      name: "SetLogLevel",
+      requestType: SetLogLevelRequest,
+      requestStream: false,
+      responseType: SetLogLevelResponse,
+      responseStream: false,
+      options: {},
+    },
   },
 } as const;
 
@@ -4588,6 +4920,10 @@ export interface KamidenServiceImplementation<CallContextExt = {}> {
     request: KamiMarketHistoryRequest,
     context: CallContext & CallContextExt,
   ): Promise<DeepPartial<KamiMarketHistoryResponse>>;
+  getPoolPriceHistory(
+    request: PoolPriceRequest,
+    context: CallContext & CallContextExt,
+  ): Promise<DeepPartial<PoolPriceHistory>>;
   getKillsByAccount(
     request: LeaderboardRequest,
     context: CallContext & CallContextExt,
@@ -4621,6 +4957,11 @@ export interface KamidenServiceImplementation<CallContextExt = {}> {
     request: StreamRequest,
     context: CallContext & CallContextExt,
   ): ServerStreamingMethodResult<DeepPartial<StreamResponse>>;
+  /** Set runtime logger level (admin only) */
+  setLogLevel(
+    request: SetLogLevelRequest,
+    context: CallContext & CallContextExt,
+  ): Promise<DeepPartial<SetLogLevelResponse>>;
 }
 
 export interface KamidenServiceClient<CallOptionsExt = {}> {
@@ -4673,6 +5014,10 @@ export interface KamidenServiceClient<CallOptionsExt = {}> {
     request: DeepPartial<KamiMarketHistoryRequest>,
     options?: CallOptions & CallOptionsExt,
   ): Promise<KamiMarketHistoryResponse>;
+  getPoolPriceHistory(
+    request: DeepPartial<PoolPriceRequest>,
+    options?: CallOptions & CallOptionsExt,
+  ): Promise<PoolPriceHistory>;
   getKillsByAccount(
     request: DeepPartial<LeaderboardRequest>,
     options?: CallOptions & CallOptionsExt,
@@ -4706,6 +5051,11 @@ export interface KamidenServiceClient<CallOptionsExt = {}> {
     request: DeepPartial<StreamRequest>,
     options?: CallOptions & CallOptionsExt,
   ): AsyncIterable<StreamResponse>;
+  /** Set runtime logger level (admin only) */
+  setLogLevel(
+    request: DeepPartial<SetLogLevelRequest>,
+    options?: CallOptions & CallOptionsExt,
+  ): Promise<SetLogLevelResponse>;
 }
 
 type Builtin = Date | Function | Uint8Array | string | number | boolean | undefined;
