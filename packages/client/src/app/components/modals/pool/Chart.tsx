@@ -209,6 +209,8 @@ export const Chart = ({
   const [hover, setHover] = useState<Hover | null>(null);
 
   const hasReference = referencePrice > 0;
+  const referenceRef = useRef(referencePrice);
+  referenceRef.current = referencePrice;
 
   useEffect(() => {
     if (!KamidenClient) return setStatus('offline');
@@ -229,7 +231,7 @@ export const Chart = ({
           .filter((point) => point.ts > 0 && point.price > 0 && Number.isFinite(point.price))
           .sort((a, b) => a.ts - b.ts);
 
-        const inverted = isInverted(parsed, referencePrice, {
+        const inverted = isInverted(parsed, referenceRef.current, {
           baseIsUnit: response.baseIndex === unit.index,
           quoteIsSubject: response.quoteIndex === subject.index,
         });
