@@ -17,11 +17,9 @@ const CHUNK_TIMEOUT_MS = 30000;
 const MAX_RETRIES = 20;
 const RETRY_DELAYS = [1000, 2000, 3000, 5000, 10000];
 
-// The snapshot service sheds load past MAX_CONCURRENT with gRPC RESOURCE_EXHAUSTED
-// instead of hanging the caller. That is expected backpressure, not a failure, so
-// it retries on a separate budget with a steady backoff: a sustained saturation
-// window (e.g. a region failover concentrating traffic) is waited out rather than
-// burning the fatal retry budget and failing the whole snapshot load.
+// RESOURCE_EXHAUSTED is expected backpressure, not a failure, so it gets its own
+// retry budget separate from the fatal one, keeping transient saturation from
+// failing the whole load.
 const CAPACITY_RETRY_DELAY_MS = 10000;
 const MAX_CAPACITY_RETRIES = 60;
 
