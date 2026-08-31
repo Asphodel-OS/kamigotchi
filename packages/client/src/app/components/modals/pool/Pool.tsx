@@ -31,6 +31,7 @@ import {
   quote,
 } from 'network/shapes/Pool';
 import { playClick, playFund } from 'utils/sounds';
+import { Chart } from './Chart';
 import { PoolPosition, Positions } from './Positions';
 import { fmtPrice } from './utils';
 
@@ -43,9 +44,10 @@ const RED = '#F8D6D6';
 // pastel tab colors, shared with the Token Portal tabs
 const TAB_BLUE = '#E0EEFF';
 const TAB_ORANGE = '#FFF0E0';
+const TAB_GREEN = '#E4F5E0';
 
 type View = 'world' | 'positions';
-type Tab = 'swap' | 'liquidity';
+type Tab = 'swap' | 'liquidity' | 'chart';
 
 // floor to a safe non-negative integer. guards negatives / non-finite so a bad
 // amount ("1e999" -> Infinity) can never reach BigInt() downstream
@@ -490,6 +492,24 @@ export const PoolModal: UIComponent = {
       );
     };
 
+    const renderChart = () => {
+      if (!pool || !priceInfo)
+        return <EmptyText text={['No pools available.', 'Check back later!']} size={1} />;
+      const unitIndex =
+        pool.itemA.index === priceInfo.item.index ? pool.itemB.index : pool.itemA.index;
+      return (
+        <Chart
+          subject={{
+            index: priceInfo.item.index,
+            name: priceInfo.item.name,
+            image: priceInfo.item.image,
+          }}
+          unit={{ index: unitIndex, name: priceInfo.unitName, image: priceInfo.unitImage }}
+          referencePrice={priceInfo.price}
+        />
+      );
+    };
+
     const renderLiquidity = () => {
       if (!pool) return <EmptyText text={['No pools available.', 'Check back later!']} size={1} />;
       const sharePct =
@@ -670,12 +690,22 @@ export const PoolModal: UIComponent = {
                   $active={tab === 'liquidity'}
                   onClick={() => switchTab('liquidity')}
                   disabled={tab === 'liquidity'}
-                  style={{ borderRight: 'none' }}
                 >
                   Liquidity
                 </TabButton>
+                <TabButton
+                  $color={TAB_GREEN}
+                  $active={tab === 'chart'}
+                  onClick={() => switchTab('chart')}
+                  disabled={tab === 'chart'}
+                  style={{ borderRight: 'none' }}
+                >
+                  Chart
+                </TabButton>
               </Tabs>
-              {tab === 'swap' ? renderSwap() : renderLiquidity()}
+              {tab === 'swap' && renderSwap()}
+              {tab === 'liquidity' && renderLiquidity()}
+              {tab === 'chart' && renderChart()}
             </>
           )}
         </Container>
