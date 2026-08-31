@@ -5,12 +5,20 @@ import styled from 'styled-components';
 import { EmptyText, Text } from 'app/components/library';
 import { getKamidenClient } from 'clients/kamiden';
 import { playClick } from 'utils/sounds';
+import {
+  DAY,
+  PricePoint,
+  RANGES,
+  Range,
+  computeNiceAxis,
+  fmtAxisDate,
+  fmtFullDate,
+  fmtValue,
+  isInverted,
+} from './utils';
 
 const KamidenClient = getKamidenClient();
 
-const DAY = 3600 * 24;
-
-const Y_TICKS = 5;
 const X_LABEL_DIVISOR = 5;
 
 const GREEN = '#2F8F46';
@@ -18,13 +26,6 @@ const GRID = '#e8e8e8';
 const CROSSHAIR = '#bbb';
 const TICK = '#999';
 
-const RANGES = {
-  '7d': DAY * 7,
-  '30d': DAY * 30,
-  Max: null,
-} as const;
-
-type Range = keyof typeof RANGES;
 type Status = 'offline' | 'loading' | 'error' | 'ready';
 
 export interface ChartAsset {
@@ -33,87 +34,11 @@ export interface ChartAsset {
   image?: string;
 }
 
-interface PricePoint {
-  ts: number;
-  price: number;
-}
-
 interface Hover {
   index: number;
   x: number;
   y: number;
 }
-
-const isInverted = (
-  points: PricePoint[],
-  reference: number,
-  labels: { baseIsUnit: boolean; quoteIsSubject: boolean }
-) => {
-  const latest = points[points.length - 1]?.price ?? 0;
-  if (reference > 0 && latest > 0) {
-    const asIs = Math.abs(Math.log(latest / reference));
-    const flipped = Math.abs(Math.log(1 / latest / reference));
-    return flipped < asIs;
-  }
-  return labels.baseIsUnit && labels.quoteIsSubject;
-};
-
-const niceNum = (range: number, round: boolean) => {
-  const exponent = Math.floor(Math.log10(range));
-  const fraction = range / Math.pow(10, exponent);
-  let nice: number;
-  if (round) {
-    if (fraction < 1.5) nice = 1;
-    else if (fraction < 3) nice = 2;
-    else if (fraction < 7) nice = 5;
-    else nice = 10;
-  } else {
-    if (fraction <= 1) nice = 1;
-    else if (fraction <= 2) nice = 2;
-    else if (fraction <= 5) nice = 5;
-    else nice = 10;
-  }
-  return nice * Math.pow(10, exponent);
-};
-
-const computeNiceAxis = (dataMin: number, dataMax: number, tickCount = Y_TICKS) => {
-  let low = dataMin;
-  let high = dataMax;
-  if (low === high) {
-    const pad = low === 0 ? 1 : Math.abs(low) * 0.1;
-    low -= pad;
-    high += pad;
-  }
-
-  const step = niceNum(niceNum(high - low, false) / (tickCount - 1), true);
-  const decimals = Math.max(0, -Math.floor(Math.log10(step)) + 1);
-  const round = (value: number) => parseFloat(value.toFixed(decimals));
-
-  const min = Math.floor(low / step) * step;
-  const max = Math.ceil(high / step) * step;
-  const ticks: number[] = [];
-  for (let value = min; value <= max + step * 0.5; value += step) ticks.push(round(value));
-
-  return { min: round(min), max: round(max), ticks, decimals };
-};
-
-const fmtValue = (value: number, decimals: number) =>
-  value.toLocaleString('en-US', {
-    minimumFractionDigits: decimals,
-    maximumFractionDigits: decimals,
-  });
-
-const fmtAxisDate = (ts: number) => {
-  const date = new Date(ts * 1000);
-  return `${date.getUTCMonth() + 1}/${date.getUTCDate()}`;
-};
-
-const fmtFullDate = (ts: number) =>
-  new Date(ts * 1000).toLocaleDateString('en-US', {
-    month: 'short',
-    day: 'numeric',
-    timeZone: 'UTC',
-  });
 
 const CrosshairPlugin = {
   id: 'poolCrosshair',
