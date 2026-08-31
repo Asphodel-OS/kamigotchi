@@ -60,6 +60,22 @@ const CrosshairPlugin = {
   },
 };
 
+const RightEdgePlugin = {
+  id: 'poolRightEdge',
+  beforeDatasetsDraw: (chart: any) => {
+    const { ctx, chartArea } = chart;
+    if (!chartArea) return;
+    ctx.save();
+    ctx.beginPath();
+    ctx.lineWidth = 1;
+    ctx.strokeStyle = GRID;
+    ctx.moveTo(chartArea.right, chartArea.top);
+    ctx.lineTo(chartArea.right, chartArea.bottom);
+    ctx.stroke();
+    ctx.restore();
+  },
+};
+
 const RangeSelector = ({
   range,
   onSelect,
@@ -236,7 +252,7 @@ export const Chart = ({
             data: points.map((point) => ({ x: point.ts, y: point.price })),
             borderColor: GREEN,
             backgroundColor: GREEN,
-            borderWidth: 1.5,
+            borderWidth: 2.5,
             pointRadius: points.length > 120 ? 0 : 2.5,
             pointHoverRadius: 4,
             tension: 0.1,
@@ -287,7 +303,7 @@ export const Chart = ({
           tooltip: { enabled: false, external: trackHover },
         },
       },
-      plugins: [CrosshairPlugin],
+      plugins: [CrosshairPlugin, RightEdgePlugin],
     });
 
     return () => {
