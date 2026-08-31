@@ -5,13 +5,13 @@ import styled from 'styled-components';
 import { EmptyText, Text } from 'app/components/library';
 import { getKamidenClient } from 'clients/kamiden';
 import { playClick } from 'utils/sounds';
+import { CrosshairPlugin, RightEdgePlugin, buildChartOptions } from './chartOptions';
 import {
   DAY,
   PricePoint,
   RANGES,
   Range,
   computeNiceAxis,
-  fmtAxisDate,
   fmtFullDate,
   fmtValue,
   isInverted,
@@ -22,9 +22,6 @@ const KamidenClient = getKamidenClient();
 const X_LABEL_DIVISOR = 5;
 
 const GREEN = '#2F8F46';
-const GRID = '#e8e8e8';
-const CROSSHAIR = '#bbb';
-const TICK = '#999';
 
 type Status = 'offline' | 'loading' | 'error' | 'ready';
 
@@ -39,42 +36,6 @@ interface Hover {
   x: number;
   y: number;
 }
-
-const CrosshairPlugin = {
-  id: 'poolCrosshair',
-  beforeDatasetsDraw: (chart: any) => {
-    const active = chart.tooltip?.getActiveElements?.();
-    if (!active?.length) return;
-
-    const { ctx } = chart;
-    const { top, bottom } = chart.chartArea;
-    ctx.save();
-    ctx.beginPath();
-    ctx.lineWidth = 1;
-    ctx.strokeStyle = CROSSHAIR;
-    ctx.setLineDash([3, 4]);
-    ctx.moveTo(active[0].element.x, top);
-    ctx.lineTo(active[0].element.x, bottom);
-    ctx.stroke();
-    ctx.restore();
-  },
-};
-
-const RightEdgePlugin = {
-  id: 'poolRightEdge',
-  beforeDatasetsDraw: (chart: any) => {
-    const { ctx, chartArea } = chart;
-    if (!chartArea) return;
-    ctx.save();
-    ctx.beginPath();
-    ctx.lineWidth = 1;
-    ctx.strokeStyle = GRID;
-    ctx.moveTo(chartArea.right, chartArea.top);
-    ctx.lineTo(chartArea.right, chartArea.bottom);
-    ctx.stroke();
-    ctx.restore();
-  },
-};
 
 const RangeSelector = ({
   range,
@@ -244,10 +205,10 @@ export const Chart = ({
     };
 
     chartRef.current = new ChartJS(ctx, {
-      type: 'line',
       data: {
         datasets: [
           {
+            type: 'line',
             label: 'Price',
             data: points.map((point) => ({ x: point.ts, y: point.price })),
             borderColor: GREEN,
@@ -259,50 +220,7 @@ export const Chart = ({
           },
         ],
       },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        animation: false,
-        interaction: { mode: 'index', intersect: false },
-        scales: {
-          y: {
-            min: bounds.min,
-            max: bounds.max,
-            border: { display: false },
-            grid: { color: GRID, z: -1 },
-            afterBuildTicks: (axis: any) => {
-              axis.ticks = bounds.ticks.map((value) => ({ value }));
-            },
-            ticks: {
-              color: TICK,
-              font: { family: 'Pixel', size: 9 },
-              autoSkip: false,
-              callback: (value: any) => fmtValue(Number(value), bounds.decimals),
-            },
-          },
-          x: {
-            type: 'linear',
-            min: span.min,
-            max: span.max,
-            border: { display: false },
-            grid: { color: GRID, z: -1 },
-            afterBuildTicks: (axis: any) => {
-              axis.ticks = span.ticks.map((value) => ({ value }));
-            },
-            ticks: {
-              color: TICK,
-              font: { family: 'Pixel', size: 9 },
-              maxRotation: 0,
-              autoSkip: false,
-              callback: (value: any) => fmtAxisDate(Number(value)),
-            },
-          },
-        },
-        plugins: {
-          legend: { display: false },
-          tooltip: { enabled: false, external: trackHover },
-        },
-      },
+      options: buildChartOptions(bounds, span, trackHover),
       plugins: [CrosshairPlugin, RightEdgePlugin],
     });
 
