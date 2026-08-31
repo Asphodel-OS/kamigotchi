@@ -259,7 +259,7 @@ export const Chart = ({
       return (
         <ChartBox>
           <canvas ref={canvasRef} />
-          {hover && (
+          {hover && points[hover.index] && (
             <HoverCard
               point={points[hover.index]}
               subject={subject}
