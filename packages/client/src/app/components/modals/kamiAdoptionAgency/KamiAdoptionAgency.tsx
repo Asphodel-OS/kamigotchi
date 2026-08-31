@@ -1,7 +1,8 @@
 import { EntityIndex } from 'engine/recs';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
-import { useReadContract } from 'wagmi';
+import { formatEther } from 'viem';
+import { useBalance, useReadContract } from 'wagmi';
 
 import NewbieVendorBuySystem from 'abi/NewbieVendorBuySystem.json';
 import { getAccount as _getAccount, getAccountKamis as _getAccountKamis } from 'app/cache/account';
@@ -9,6 +10,7 @@ import { IconButton, ModalWrapper } from 'app/components/library';
 import { ListingCard } from 'app/components/modals/marketplace/tabs/listings/ListingCard';
 import { useLayers } from 'app/root/hooks';
 import { UIComponent } from 'app/root/types';
+import { triggerBridgeModal } from 'app/triggers';
 import { useNetwork, useSelected, useVisibility } from 'app/stores';
 import { queryAccountFromEmbedded } from 'network/shapes/Account';
 import { getKami as _getKami } from 'network/shapes/Kami';
@@ -20,6 +22,9 @@ import { type Abi } from 'viem';
 
 const NEWBIE_VENDOR_BUY_SYSTEM_ID = 'system.newbievendor.buy';
 const NEWBIE_VENDOR_MAX_ACCOUNT_AGE_SECONDS = 24 * 60 * 60;
+// headroom over the padded price so the buy tx itself can pay gas
+const BUY_GAS_DUST_WEI = 200_000_000_000_000n; // 0.0002 ETH
+const SHORTFALL_ROUNDING_STEP = 100_000_000_000_000n; // display/prefill in 0.0001 steps
 const getNowInSeconds = () => Math.floor(Date.now() / 1000);
 export const KamiAdoptionAgency: UIComponent = {
   id: 'KamiAdoptionAgencyModal',
@@ -54,6 +59,9 @@ export const KamiAdoptionAgency: UIComponent = {
     const [completedAdoptionsByAddress, setCompletedAdoptionsByAddress] = useState<
       Record<string, boolean>
     >({});
+    // bumped to re-read the vendor pool — world/components are stable refs,
+    // so a memo keyed on them alone would show stale stock forever
+    const [stockTick, setStockTick] = useState(0);
 
     // close the modal when the player moves to a different room (movement is
     // possible while open — e.g. the map modal occupies a different zone).
@@ -71,9 +79,11 @@ export const KamiAdoptionAgency: UIComponent = {
       }, 1000);
       return () => clearInterval(timerID);
     }, [isModalOpen, accountEntity, world, components, setModals]);
+    // refresh the stock while the modal is open — catches other players'
+    // adoptions and pool rotations, not just our own purchase
     const displayedKamis = useMemo(() => {
       return getDisplayedKamiEntities().map((entity) => getKami(entity));
-    }, [world, components]);
+    }, [world, components, stockTick]);
     const ownerApi = apis.get(selectedAddress);
     const hasCompletedAdoption = useMemo(
       () => (selectedAddress ? !!completedAdoptionsByAddress[selectedAddress] : false),
@@ -92,8 +102,37 @@ export const KamiAdoptionAgency: UIComponent = {
       functionName: 'calcPrice',
       query: { enabled: isModalOpen && !!systemAddress },
     });
+    // refresh the stock + live price while the modal is open — catches other
+    // players' adoptions, pool rotations, and price moves (shortfall accuracy)
+    useEffect(() => {
+      if (!isModalOpen) return;
+      setStockTick((t) => t + 1); // fresh read on every open
+      const timerID = setInterval(() => {
+        setStockTick((t) => t + 1);
+        refetchPrice();
+      }, 2000);
+      return () => clearInterval(timerID);
+    }, [isModalOpen, refetchPrice]);
+
     const priceWei = useMemo(() => parseBigIntSafe(priceData), [priceData]);
     const priceLabel = useMemo(() => formatEthPriceLabel(priceData, 5), [priceData]);
+
+    // owner wallet pays for the buy — surface the shortfall instead of
+    // leaving the button silently unaffordable
+    const { data: ownerBalanceData } = useBalance({
+      address: selectedAddress as `0x${string}` | undefined,
+      query: { enabled: isModalOpen && !!selectedAddress },
+    });
+    const shortfallWei = useMemo(() => {
+      const balance = ownerBalanceData?.value;
+      if (balance === undefined || priceWei === undefined) return 0n;
+      const required = (priceWei * 101n) / 100n + BUY_GAS_DUST_WEI; // same 1% pad as buyKami
+      if (balance >= required) return 0n;
+      const missing = required - balance;
+      return ((missing + SHORTFALL_ROUNDING_STEP - 1n) / SHORTFALL_ROUNDING_STEP) * SHORTFALL_ROUNDING_STEP;
+    }, [ownerBalanceData, priceWei]);
+    const insufficientFunds = shortfallWei > 0n;
+
     const isBuyDisabled = useMemo(
       () =>
         hasCompletedAdoption ||
@@ -102,10 +141,12 @@ export const KamiAdoptionAgency: UIComponent = {
         buyingKamiIndex !== null ||
         !systemAddress ||
         priceWei === undefined ||
+        insufficientFunds ||
         !ownerApi,
       [
         buyingKamiIndex,
         hasCompletedAdoption,
+        insufficientFunds,
         ownerApi,
         priceWei,
         systemAddress,
@@ -147,6 +188,7 @@ export const KamiAdoptionAgency: UIComponent = {
           const didComplete = await didActionSucceed(actions.Action, transaction);
           if (didComplete && selectedAddress) {
             setCompletedAdoptionsByAddress((prev) => ({ ...prev, [selectedAddress]: true }));
+            setStockTick((t) => t + 1); // drop the adopted kami from the shelf
             refetchPrice();
           }
         } finally {
@@ -196,6 +238,15 @@ export const KamiAdoptionAgency: UIComponent = {
             <AdoptionBadge $warning={!userQualifiesForAdoption}>
               {adoptionBadgeMessage}
             </AdoptionBadge>
+          )}
+          {displayedKamis.length > 0 && userQualifiesForAdoption && insufficientFunds && (
+            <ShortfallNudge
+              onClick={() =>
+                triggerBridgeModal({ routeRequest: { amount_in: shortfallWei.toString() } })
+              }
+            >
+              Need {formatEther(shortfallWei)} more ETH → Bridge
+            </ShortfallNudge>
           )}
           <KamiGrid>
             {displayedKamis.map((kami) => (
@@ -291,6 +342,21 @@ const AdoptionBadge = styled.div<{ $warning: boolean }>`
   font-weight: bold;
   line-height: 1.1vw;
   text-align: center;
+`;
+
+const ShortfallNudge = styled.button`
+  padding: 0.35vw 0.7vw;
+  border: 0.15vw solid #000000;
+  border-radius: 0.5vw;
+  background-color: #d6e4f8;
+  font-size: 0.75vw;
+  font-weight: bold;
+  line-height: 1.1vw;
+  text-align: center;
+  cursor: pointer;
+  &:hover {
+    background-color: #c2d8f5;
+  }
 `;
 
 const KamiGrid = styled.div`

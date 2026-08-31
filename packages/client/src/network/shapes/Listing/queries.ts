@@ -10,8 +10,10 @@ export interface QueryOptions {
 export const query = (comps: Components, options?: QueryOptions) => {
   const { EntityType, ItemIndex, NPCIndex } = comps;
   const query = [];
-  if (options?.npcIndex) query.push(HasValue(NPCIndex, { value: options.npcIndex }));
-  if (options?.itemIndex) query.push(HasValue(ItemIndex, { value: options.npcIndex }));
+  if (options?.npcIndex !== undefined)
+    query.push(HasValue(NPCIndex, { value: options.npcIndex }));
+  if (options?.itemIndex !== undefined)
+    query.push(HasValue(ItemIndex, { value: options.itemIndex }));
   query.push(HasValue(EntityType, { value: 'LISTING' }));
   return Array.from(runQuery(query));
 };

@@ -9,13 +9,14 @@ import { DropdownToggle } from 'app/components/library/buttons/DropdownToggle';
 import { triggerNodeModal } from 'app/triggers';
 import { HelpMenuIcons } from 'assets/images/help';
 import { insectIcon } from 'assets/images/icons/affinities';
-import { KamiIcon, OperatorIcon } from 'assets/images/icons/menu';
+import { ExclamIcon, KamiIcon, OperatorIcon } from 'assets/images/icons/menu';
 import { StaminaIcon } from 'assets/images/icons/stats';
 import { mapBackgrounds } from 'assets/images/map';
 import { Zones } from 'constants/zones';
 import { Allo } from 'network/shapes/Allo';
 import { BaseKami } from 'network/shapes/Kami/types';
 import { Node } from 'network/shapes/Node';
+import { checkQuestObjective, getQuest, queryOngoingQuests } from 'network/shapes/Quest';
 import { calculatePathStaminaCost, findPath, NullRoom, Room } from 'network/shapes/Room';
 import { DetailedEntity } from 'network/shapes/utils';
 import { playClick } from 'utils/sounds';
@@ -137,6 +138,26 @@ export const Grid = ({
     return map;
   }, [accountKamis]);
 
+  // rooms targeted by ongoing quest objectives — the map should show where to go
+  const questTargetMap = useMemo(() => {
+    const map = new Map<number, string[]>();
+    if (!account?.id) return map;
+    const { world, components } = network;
+    queryOngoingQuests(components, account.id).forEach((entity) => {
+      const quest = getQuest(world, components, entity);
+      if (quest.complete) return;
+      quest.objectives.forEach((obj) => {
+        if (obj.target?.type !== 'ROOM' || !obj.target.index) return;
+        // a finished step of a multi-objective quest shouldn't keep its room marked
+        if (checkQuestObjective(world, components, obj, quest, account).completable) return;
+        const names = map.get(obj.target.index) ?? [];
+        if (!names.includes(quest.name)) names.push(quest.name);
+        map.set(obj.target.index, names);
+      });
+    });
+    return map;
+  }, [network, account?.id, tick]);
+
   /////////////////
   // INTERACTION
 
@@ -206,6 +227,7 @@ export const Grid = ({
   const getTileColor = (room: Room) => {
     if (!room.index) return;
     if (room.index === roomIndex) return 'rgba(51,187,51,0.9)';
+    if (questTargetMap.has(room.index)) return 'rgba(255,204,51,0.6)'; // quest target: gold
     if (!currExit(room)) return;
     return isRoomBlocked(room) ? 'rgba(0,0,0,0.3)' : 'rgba(255,136,85,0.6)';
   };
@@ -329,7 +351,13 @@ export const Grid = ({
                         ]
                       : []
                   }
-                  title={`${room.name}${isRoomBlocked(room) ? ' (blocked)' : ''}`}
+                  title={
+                    <>
+                      {room.name}
+                      {isRoomBlocked(room) ? ' (blocked)' : ''}
+                      {questTargetMap.has(room.index) && <TitleMarkIcon src={ExclamIcon} alt='' />}
+                    </>
+                  }
                   maxWidth={25}
                   grow
                 >
@@ -347,6 +375,14 @@ export const Grid = ({
                     isHighlighted={!!backgroundColor}
                     onMouseEnter={() => updateRoomStats(room.index)}
                   >
+                    {questTargetMap.has(room.index) && room.index !== roomIndex && (
+                      <QuestMarker>
+                        <MarkerIcon src={ExclamIcon} alt='' />
+                        {questTargetMap.get(room.index)!.length > 1
+                          ? `×${questTargetMap.get(room.index)!.length}`
+                          : ''}
+                      </QuestMarker>
+                    )}
                     <GridFilter
                       data={{
                         optionSelected: mode[0],
@@ -404,7 +440,64 @@ const Row = styled.div`
   flex-grow: 1;
 `;
 
+const QuestMarker = styled.span`
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: center;
+  gap: 0.1vw;
+
+  color: #ffcc33;
+  font-size: 1.5vw;
+  font-weight: 900;
+  line-height: 1;
+  text-shadow:
+    -0.09vw 0 0 #000,
+    0.09vw 0 0 #000,
+    0 -0.09vw 0 #000,
+    0 0.09vw 0 #000,
+    -0.09vw -0.09vw 0 #000,
+    0.09vw -0.09vw 0 #000,
+    -0.09vw 0.09vw 0 #000,
+    0.09vw 0.09vw 0 #000,
+    0 0.16vw 0 #000;
+  animation: questBounce 1.1s ease-in-out infinite;
+  pointer-events: none;
+  z-index: 2;
+
+  @keyframes questBounce {
+    0%,
+    100% {
+      transform: translate(-50%, -50%) translateY(0);
+    }
+    50% {
+      transform: translate(-50%, -50%) translateY(-0.16vw);
+    }
+  }
+`;
+
+// pixel-art source: keep edges crisp at any tile scale
+const MarkerIcon = styled.img`
+  width: 2.25vw;
+  height: 2.25vw;
+  display: block;
+  image-rendering: pixelated;
+`;
+
+// inline marker for the room tooltip title
+const TitleMarkIcon = styled.img`
+  width: 1.5vw;
+  height: 1.5vw;
+  margin-left: 0.5vw;
+  image-rendering: pixelated;
+`;
+
 const Tile = styled.div<{ hasRoom: boolean; isHighlighted: boolean; backgroundColor: any }>`
+  position: relative;
   border-left: 0.01vw solid rgba(0, 0, 0, 0.2);
   border-bottom: 0.01vw solid rgba(0, 0, 0, 0.2);
   background-color: ${({ backgroundColor }) => backgroundColor};

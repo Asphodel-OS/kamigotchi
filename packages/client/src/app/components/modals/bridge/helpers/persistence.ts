@@ -2,9 +2,10 @@ import { BridgeUpdateEntry } from './constants';
 
 export type PersistedBridgePolling = {
   sourceTxHash: string;
-  expectedAmountOut: string;
   sourceChainId: string;
-  yominetStartBlock: number;
+  sourceOptionId?: string;
+  expectedAmountOut?: string;
+  yominetStartBlock?: number;
   selectedAddress: string;
   updates: BridgeUpdateEntry[];
   timestamp: number;

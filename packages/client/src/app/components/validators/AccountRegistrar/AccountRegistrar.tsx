@@ -9,10 +9,11 @@ import { emptyAccountDetails, useAccount, useNetwork, useTokens, useVisibility }
 import { GodID, SyncState } from 'engine/constants';
 import {
   getBaseAccount as _getBaseAccount,
+  queryAccountByName,
   queryAccountFromEmbedded,
   queryAllAccounts,
 } from 'network/shapes/Account';
-import { waitForActionCompletion } from 'network/utils';
+import { didActionSucceed } from 'network/utils';
 import { GasConstants } from 'constants/gas';
 import { Registration } from './Registration';
 
@@ -52,8 +53,14 @@ export const AccountRegistrar: UIComponent = {
         network,
         utils: {
           getBaseAccount: (entity: EntityIndex) => _getBaseAccount(world, components, entity),
+          // live ECS probe (cache-first): catches taken names the boot-time
+          // cache fill missed. exact-string match, same as the on-chain check
+          isNameTaken: (name: string) => queryAccountByName(components, name) !== undefined,
+          // resolves to whether the action actually COMPLETED — a reverted or
+          // canceled action returns false (waitForCompletion alone resolves on
+          // failure too, which read as success upstream)
           waitForActionCompletion: (action: EntityID) =>
-            waitForActionCompletion(
+            didActionSucceed(
               network.actions.Action,
               world.entityToIndex.get(action) as EntityIndex
             ),
@@ -192,6 +199,7 @@ export const AccountRegistrar: UIComponent = {
           actions={{ createAccount }}
           utils={{
             toggleFixtures,
+            isNameTaken: utils.isNameTaken,
             waitForActionCompletion: utils.waitForActionCompletion,
           }}
         />

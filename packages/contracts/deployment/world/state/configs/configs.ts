@@ -193,7 +193,7 @@ async function initVIP(api: AdminAPI) {
 }
 
 async function initNewbieVendor(api: AdminAPI) {
-  await api.config.set.number('NEWBIE_VENDOR_MIN_PRICE', 5000000000000000); // 0.005 ether
+  await api.config.set.number('NEWBIE_VENDOR_MIN_PRICE', 4000000000000000); // 0.004 ether
   await api.config.set.number('NEWBIE_VENDOR_TWAP_WINDOW', 86400); // 24h
   await api.config.set.bool('NEWBIE_VENDOR_ENABLED', true);
   await api.vendor.setCycleDuration(172800); // 48h

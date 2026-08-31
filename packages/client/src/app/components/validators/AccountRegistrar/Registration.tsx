@@ -1,8 +1,7 @@
 import InfoIcon from '@mui/icons-material/Info';
 import { EntityID } from 'engine/recs';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
-import { parseEther } from 'viem';
 
 import { IconButton, TextTooltip } from 'app/components/library';
 import { triggerBridgeModal } from 'app/triggers';
@@ -16,7 +15,12 @@ import { playSignup } from 'utils/sounds';
 import { Description, Row } from './components';
 import { Section } from './components/shared';
 
-const REGISTRATION_BRIDGE_AMOUNT_WEI = parseEther(GasConstants.Empty.toString()).toString();
+// staged username survives the multi-minute bridge wait (and reloads)
+const STAGED_NAME_PREFIX = 'kami:stagedUsername:';
+
+// pastel confirm/docs palette shared with FundOperator + token portal
+const CONFIRM_GREEN = '#C2F0C2';
+const DOCS_BLUE = '#d6e4f8';
 
 export const Registration = ({
   address,
@@ -32,15 +36,34 @@ export const Registration = ({
   };
   utils: {
     toggleFixtures: (toggle: boolean) => void;
-    waitForActionCompletion: (action: EntityID) => Promise<void>;
+    isNameTaken: (name: string) => boolean;
+    waitForActionCompletion: (action: EntityID) => Promise<boolean>;
   };
 }) => {
   const ethBalance = useTokens((s) => s.eth.balance);
 
-  const [name, setName] = useState('');
+  const storageKey = `${STAGED_NAME_PREFIX}${address.selected}`;
+  const [name, setName] = useState(() => localStorage.getItem(storageKey) ?? '');
+  // armed = the player staged their name during the bridge wait; the account
+  // is created automatically (wallet still prompts) once ETH lands
+  const [autoCreate, setAutoCreate] = useState(() => localStorage.getItem(storageKey) !== null);
+  const autoFiringRef = useRef(false);
 
+  // re-sync staged state when the selected wallet changes without a remount —
+  // one wallet's staged name must never register under another wallet
+  useEffect(() => {
+    const staged = localStorage.getItem(storageKey);
+    setName(staged ?? '');
+    setAutoCreate(staged !== null);
+  }, [address.selected]);
+
+  // creation attempt reverted (most likely a name race lost while bridging)
+  const [createFailed, setCreateFailed] = useState(false);
+
+  // cache-first with a live ECS fallback: a name registered on-chain after
+  // the boot-time cache fill is still caught here
   const isNameTaken = (username: string) => {
-    return NameCache.has(username);
+    return NameCache.has(username) || utils.isNameTaken(username);
   };
 
   const isOperaterTaken = (operatorAddress: string) => {
@@ -60,28 +83,66 @@ export const Registration = ({
   const handleNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const truncated = event.target.value.slice(0, 16);
     setName(truncated);
+    setCreateFailed(false); // picking a new name clears the failure notice
+    if (autoCreate) localStorage.setItem(storageKey, truncated); // keep stage in sync
   };
 
-  const handleAccountCreation = async () => {
+  // stage the name and kick the bridge off — creation fires when ETH lands
+  const armAutoCreate = () => {
+    if (getError()) return;
+    localStorage.setItem(storageKey, name);
+    setAutoCreate(true);
+    triggerBridgeModal();
+  };
+
+  // fire the staged creation once funds arrive (the owner wallet still
+  // prompts for the signature — this just saves the player the babysitting).
+  // one-shot: a rejected signature keeps the staged name (in storage) so
+  // nothing is lost, but doesn't re-prompt until the player acts or reloads
+  useEffect(() => {
+    if (!autoCreate || autoFiringRef.current) return;
+    // wallet-switch race guard: for one render after a switch, state still
+    // holds the previous wallet's staged name while storageKey already points
+    // at the new wallet — only fire when the stage on disk for the currently
+    // selected wallet matches what we're about to register
+    if (localStorage.getItem(storageKey) !== name) return;
+    if (needsToBridge()) return;
+    if (getError()) return;
+    autoFiringRef.current = true;
+    setAutoCreate(false);
+    handleAccountCreation().finally(() => {
+      autoFiringRef.current = false;
+    });
+  }, [ethBalance, autoCreate, name]);
+
+  const handleAccountCreation = async (): Promise<boolean> => {
     playSignup();
     utils.toggleFixtures(true);
 
     try {
       const actionID = actions.createAccount(name);
       if (!actionID) throw new Error('Account creation failed');
-      await utils.waitForActionCompletion(actionID);
+      // false = the action reverted or was canceled (e.g. lost a name race,
+      // rejected signature) — must NOT fall through to the success path
+      const succeeded = await utils.waitForActionCompletion(actionID);
+      if (!succeeded) throw new Error('AccountCreate action did not complete');
 
       // Clear stale account query caches so the AccountRegistrar's ECS query
       // picks up the freshly created account on the next render cycle.
       OperatorCache.clear();
       NameCache.clear();
+      localStorage.removeItem(storageKey); // staged name no longer needed
+      setCreateFailed(false);
+      return true;
     } catch (e) {
       console.error('ERROR CREATING ACCOUNT:', e);
+      setCreateFailed(true); // surface the revert (likely a lost name race)
+      return false;
     }
   };
 
   const openDocs = () => {
-    window.open('https://docs.kamigotchi.io', '_blank', 'noopener,noreferrer');
+    window.open('https://docs.asphodel.io/kamigotchi', '_blank', 'noopener,noreferrer');
   };
 
   const OperatorDisplay = () => {
@@ -128,30 +189,60 @@ export const Registration = ({
     return null;
   };
 
+  const nameError = getError();
+
   if (needsToBridge()) {
     return (
       <Container>
         <BridgeFlow>
           <Section padding={0.6}>
             <Description size={0.88}>
-              You need to bridge Ether to Yominet before you can play. This funds the tiny amount of
-              gas needed to create your account.
-              <IconButton
-                scale={3}
-                img={MenuIcons.kami}
-                onClick={() =>
-                  triggerBridgeModal({
-                    routeRequest: {
-                      amount_in: REGISTRATION_BRIDGE_AMOUNT_WEI,
-                    },
-                  })
-                }
-                text='Bridge ETH to Yominet'
-              />
+              You need to bridge Ether to Yominet before you can play. Pick your username now — your
+              account is created automatically the moment your ETH arrives.
             </Description>
-            <DocsLink type='button' onClick={openDocs}>
-              What is this?
-            </DocsLink>
+            <Actions>
+              <Input
+                type='string'
+                value={name}
+                onChange={(e) => handleNameChange(e)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' && !getError()) armAutoCreate();
+                }}
+                placeholder='choose your username'
+                style={{ pointerEvents: 'auto' }}
+              />
+              <TextTooltip
+                text={
+                  nameError
+                    ? [nameError]
+                    : autoCreate
+                      ? ['Your account will be created automatically when your ETH lands.', 'Click to reopen the bridge.']
+                      : []
+                }
+                cursor={nameError ? 'help' : 'pointer'}
+              >
+                <IconButton
+                  scale={2.7}
+                  width={18}
+                  img={MenuIcons.kami}
+                  color={CONFIRM_GREEN}
+                  // no amount prefill — the bridge modal defaults to Zevana's
+                  // live price + operator gas headroom. re-clicking while armed
+                  // just reopens the bridge modal (arming is idempotent)
+                  text={autoCreate ? 'Waiting for ETH...' : 'Bridge ETH and Create Account'}
+                  disabled={!!nameError}
+                  onClick={armAutoCreate}
+                />
+              </TextTooltip>
+              <IconButton
+                scale={2.2}
+                width={10.5}
+                img={MenuIcons.kamiwiki}
+                color={DOCS_BLUE}
+                onClick={openDocs}
+                text='Read the Docs'
+              />
+            </Actions>
           </Section>
         </BridgeFlow>
       </Container>
@@ -182,19 +273,33 @@ export const Registration = ({
             placeholder='choose your username'
             style={{ pointerEvents: 'auto' }}
           />
-          <IconButton
-            scale={2.4}
-            text='Create Account'
-            disabled={!!getError()}
-            onClick={() => handleAccountCreation()}
-          />
+          <TextTooltip text={nameError ? [nameError] : []} cursor='help'>
+            <IconButton
+              scale={2.4}
+              text='Create Account'
+              color={CONFIRM_GREEN}
+              disabled={!!nameError}
+              onClick={async () => {
+                await handleAccountCreation();
+              }}
+            />
+          </TextTooltip>
         </InputActionRow>
-        <Text role='status' aria-live='polite'>
-          {getError() ?? ''}
-        </Text>
-        <DocsLink type='button' onClick={openDocs}>
-          What is this?
-        </DocsLink>
+        {createFailed && (
+          <FailNotice role='status' aria-live='polite'>
+            Account creation failed: that name may have just been taken. Try another.
+          </FailNotice>
+        )}
+        <DocsSlot>
+          <IconButton
+            scale={2.2}
+            width={10.5}
+            img={MenuIcons.kamiwiki}
+            color={DOCS_BLUE}
+            onClick={openDocs}
+            text='Read the Docs'
+          />
+        </DocsSlot>
       </CreateFlow>
     </Container>
   );
@@ -266,21 +371,23 @@ const InputActionRow = styled(Row)`
   gap: 0.45vw;
 `;
 
-const Text = styled.div`
-  min-height: 0.8vw;
-  padding: 0.35vw 0;
-  color: red;
-  font-size: 0.75vw;
+const Actions = styled.div`
+  margin-top: 0.9vw;
+
+  display: flex;
+  flex-flow: column nowrap;
+  align-items: center;
+  gap: 0.6vw;
+`;
+
+const DocsSlot = styled.div`
+  margin-top: 0.75vw;
+`;
+
+const FailNotice = styled.div`
+  margin-top: 0.45vw;
+  color: #b4453f;
+  font-size: 0.72vw;
   text-align: center;
 `;
 
-const DocsLink = styled.button`
-  margin-top: 1vw;
-  border: 0;
-  background: transparent;
-  padding: 0;
-  color: #3b4fb3;
-  font-size: 0.82vw;
-  text-decoration: underline;
-  cursor: pointer;
-`;
