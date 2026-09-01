@@ -1,3 +1,5 @@
+import { ClientError, Status } from 'nice-grpc-web';
+
 import { KamigazeServiceClient } from 'clients/kamigaze';
 import { createDecode } from 'engine/encoders';
 import { log } from 'utils/logger';
@@ -15,14 +17,16 @@ const CHUNK_TIMEOUT_MS = 30000;
 const MAX_RETRIES = 20;
 const RETRY_DELAYS = [1000, 2000, 3000, 5000, 10000];
 
+// RESOURCE_EXHAUSTED is expected backpressure, not a failure, so it gets its own
+// retry budget separate from the fatal one, keeping transient saturation from
+// failing the whole load.
+const CAPACITY_RETRY_DELAY_MS = 10000;
+const MAX_CAPACITY_RETRIES = 60;
+
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
-const maybeThrow = () => {
-  if (Math.random() < 0.6) {
-    log.warn('[snapshot] Throwing on purpose');
-    throw new Error('[snapshot] [TEST] Random chunk failure (1 in 5)');
-  }
-};
+const isCapacityError = (error: unknown): boolean =>
+  error instanceof ClientError && error.code === Status.RESOURCE_EXHAUSTED;
 
 async function withTimeout<T>(fn: () => Promise<T>, ms: number): Promise<T> {
   return Promise.race([
@@ -55,6 +59,7 @@ async function fetchWithRetry<TChunk>({
   onRetry,
 }: StreamingFetchOptions<TChunk>): Promise<void> {
   let retryCount = 0;
+  let capacityRetryCount = 0;
   let chunkIndex = 0;
   let totalChunks = 0;
   const progressSpan = progressRange.end - progressRange.start;
@@ -87,11 +92,27 @@ async function fetchWithRetry<TChunk>({
           chunkIndex++;
         }, CHUNK_TIMEOUT_MS);
         retryCount = 0;
+        capacityRetryCount = 0;
       }
 
       log.debug(`[snapshot] ${name} completed`, { chunksProcessed: chunkIndex });
       return;
     } catch (error) {
+      if (isCapacityError(error)) {
+        capacityRetryCount++;
+        if (capacityRetryCount > MAX_CAPACITY_RETRIES) throw error;
+
+        log.info(
+          `[snapshot] ${name} server at capacity, backing off ${CAPACITY_RETRY_DELAY_MS / 1000}s (${capacityRetryCount}/${MAX_CAPACITY_RETRIES})`,
+          getRetryContext?.()
+        );
+        await sleep(CAPACITY_RETRY_DELAY_MS);
+
+        totalChunks = 0;
+        onRetry?.();
+        continue;
+      }
+
       retryCount++;
       log.warn(`[snapshot] ${name} error`, { retryCount, error });
       if (retryCount > MAX_RETRIES) throw error;
