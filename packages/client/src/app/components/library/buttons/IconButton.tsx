@@ -32,7 +32,7 @@ export const IconButton = forwardRef(function IconButton(
     cooldownBackground,
   }: {
     onClick?: () => void | Promise<void>;
-    img?: string | SvgIconComponent; // TODO: get rid of all svg icons and mui references
+    img?: string | string[] | SvgIconComponent; // TODO: get rid of all svg icons and mui references. an array renders overlapping icons (pair style)
     text?: string;
     width?: number;
     shake?: boolean;
@@ -77,6 +77,25 @@ export const IconButton = forwardRef(function IconButton(
 
   const MyImage = () => {
     if (img) {
+      if (Array.isArray(img)) {
+        return (
+          <Stack>
+            {img.map((src, i) => (
+              <Image
+                key={i}
+                src={src}
+                scale={scale}
+                orientation={scaleOrientation}
+                iconInsetPx={resolvedIconInsetPx}
+                iconInsetXpx={resolvedIconInsetXpx}
+                iconInsetYpx={resolvedIconInsetYpx}
+                filter={filter}
+                stacked={i > 0}
+              />
+            ))}
+          </Stack>
+        );
+      }
       if (typeof img === 'string') {
         return (
           <Image
@@ -188,6 +207,12 @@ const Container = styled.button<{
   }
 `;
 
+// overlapping pair, same offset ratio as the pool picker's pair sprites
+const Stack = styled.div`
+  display: flex;
+  align-items: center;
+`;
+
 const Image = styled.img<{
   scale: number;
   orientation: string;
@@ -195,6 +220,7 @@ const Image = styled.img<{
   iconInsetXpx?: number;
   iconInsetYpx?: number;
   filter?: string;
+  stacked?: boolean;
 }>`
   width: ${({ scale, orientation, iconInsetPx, iconInsetXpx }) =>
     `calc(${scale * 0.75}${orientation} - ${iconInsetXpx ?? iconInsetPx ?? 0}px)`};
@@ -203,6 +229,8 @@ const Image = styled.img<{
   ${({ scale }) => (scale > 4 ? 'image-rendering: pixelated;' : '')}
   user-drag: none;
   ${({ filter }) => filter && `filter: ${filter};`}
+  ${({ stacked, scale, orientation }) =>
+    stacked && `margin-left: -${scale * 0.75 * 0.25}${orientation};`}
 `;
 
 const Text = styled.div<{

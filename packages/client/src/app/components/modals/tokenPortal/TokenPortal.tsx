@@ -7,12 +7,11 @@ import { getPortalConfig } from 'app/cache/config';
 import { getItem as _getItem, getItemByIndex as _getItemByIndex } from 'app/cache/item';
 import { EmptyText, HelpChip, IconButton, ModalWrapper } from 'app/components/library';
 import { UIComponent, useLayers } from 'app/root';
-import { useNetwork, useVisibility } from 'app/stores';
+import { useNetwork, useTokens, useVisibility } from 'app/stores';
 import { TriggerIcons } from 'assets/images/icons/triggers';
-import { TokenIcons } from 'assets/images/tokens';
 import { getKamidenClient } from 'clients/kamiden';
 import { PortalReceipt, TokenPortalRequest } from 'clients/kamiden/proto';
-import { ETH_INDEX, ONYX_INDEX } from 'constants/items';
+import { ONYX_INDEX } from 'constants/items';
 import { EntityID, EntityIndex } from 'engine/recs';
 import { Account, NullAccount, queryAccountFromEmbedded } from 'network/shapes/Account';
 import { Item, NullItem, queryItems } from 'network/shapes/Item';
@@ -22,7 +21,13 @@ import { getHelpText } from './constants';
 import { Queue } from './queue';
 import { Swap } from './swap';
 import { Mode } from './swap/types';
-import { getResultWithdraw, openBaselineLink } from './utils';
+import {
+  findWalletPair,
+  fmtTokenAmt,
+  getResultWithdraw,
+  getTokenMeta,
+  isPortalItem,
+} from './utils';
 
 // kamiswap (marketplace) tab pastels: blue for deposit, orange for withdraw
 const DEPOSIT_BLUE = '#E0EEFF';
@@ -71,6 +76,7 @@ export const TokenPortalModal: UIComponent = {
     const apis = useNetwork((s) => s.apis);
     const selectedAddress = useNetwork((s) => s.selectedAddress);
     const isOpen = useVisibility((s) => s.modals.tokenPortal);
+    const walletBalances = useTokens((s) => s.balances);
 
     const [account, setAccount] = useState<Account>(NullAccount);
     const [options, setOptions] = useState<Item[]>([]);
@@ -84,11 +90,12 @@ export const TokenPortalModal: UIComponent = {
     /////////////////
     // SUBSCRIPTIONS
 
-    // on mount, retrieve the list of ERC20 items and default to ONYX
+    // on mount, retrieve the list of ERC20 items and default to ONYX. only items
+    // the portal has actually registered (token address set) are offered
     useEffect(() => {
       const itemEntites = queryTokenItems();
       const items = itemEntites.map((item) => getItem(item)) as Item[];
-      const cleaned = items.filter((item) => item.index !== ETH_INDEX);
+      const cleaned = items.filter(isPortalItem).sort((a, b) => a.index - b.index);
       setOptions(cleaned);
 
       // set up ticking
@@ -97,11 +104,13 @@ export const TokenPortalModal: UIComponent = {
       return () => clearInterval(timerId);
     }, []);
 
-    // default the selected option to ONYX whenever the list of item options change
+    // default the selected option to ONYX (first registered token otherwise)
+    // whenever the list of item options change
     useEffect(() => {
       const onyxItem = options.find((item: Item) => item.index === ONYX_INDEX);
-      if (onyxItem) setSelected(onyxItem);
-      else console.warn('no onyx item found');
+      const fallback = onyxItem ?? options[0];
+      if (fallback) setSelected(fallback);
+      else console.warn('no portal token items found');
     }, [options.length]);
 
     // set the account if the connected entity changes
@@ -134,7 +143,7 @@ export const TokenPortalModal: UIComponent = {
         id: actionID,
         action: 'Approve token',
         params: [item.token?.address, spenderAddr, amt],
-        description: `Approving ${amt} $ONYX to be spent`,
+        description: `Approving ${amt} ${getTokenMeta(item).symbol} to be spent`,
         execute: async () => {
           return api.erc20.approve(item.token?.address!, spenderAddr, amt);
         },
@@ -146,14 +155,13 @@ export const TokenPortalModal: UIComponent = {
       const api = apis.get(selectedAddress);
       if (!api) return console.error(`API not established for ${selectedAddress}`);
 
-      const scale = item.token?.scale ?? 0;
-      const tokenAmt = convertAmt / 10 ** scale;
+      const tokenAmt = fmtTokenAmt(convertAmt, item);
 
       // construct the transaction and push it to the queue
       const tx = actions.add({
         action: 'TokenDeposit',
         params: [item.index, amt],
-        description: `Depositing ${tokenAmt.toFixed(scale)} $ONYX for ${amt} ${item.name}`,
+        description: `Depositing ${tokenAmt} ${getTokenMeta(item).symbol} for ${amt} ${item.name}`,
         execute: async () => api.portal.ERC20.deposit(item.index, convertAmt),
       });
     };
@@ -163,15 +171,13 @@ export const TokenPortalModal: UIComponent = {
       const api = apis.get(selectedAddress);
       if (!api) return console.error(`API not established for ${selectedAddress}`);
 
-      const taxedAmt = getResultWithdraw(config, amt);
-      const scale = item.token?.scale ?? 0;
-      const tokenAmt = taxedAmt / 10 ** scale;
+      const tokenAmt = fmtTokenAmt(getResultWithdraw(config, amt), item);
 
       // construct the transaction and push it to the queue
       const tx = actions.add({
         action: 'TokenWithdraw',
         params: [item.index, amt],
-        description: `Withdrawing ${amt} ${item.name} for ${tokenAmt.toFixed(scale)} $ONYX`,
+        description: `Withdrawing ${amt} ${item.name} for ${tokenAmt} ${getTokenMeta(item).symbol}`,
         execute: async () => api.portal.ERC20.withdraw(item.index, amt),
       });
     };
@@ -185,7 +191,7 @@ export const TokenPortalModal: UIComponent = {
       const tx = actions.add({
         action: 'TokenReceiptClaim',
         params: [receipt.ReceiptID],
-        description: `Claiming withdrawal of ${Number(receipt.TokenAmt) / 10 ** 18} $ONYX`,
+        description: `Claiming withdrawal of ${describeReceipt(receipt)}`,
         execute: async () => api.portal.ERC20.claim(receipt.ReceiptID),
       });
     };
@@ -199,9 +205,29 @@ export const TokenPortalModal: UIComponent = {
       const tx = actions.add({
         action: 'TokenReceiptCancel',
         params: [receipt.ReceiptID],
-        description: `Canceling withdrawal of ${Number(receipt.TokenAmt) / 10 ** 18} $ONYX`,
+        description: `Canceling withdrawal of ${describeReceipt(receipt)}`,
         execute: async () => api.portal.ERC20.cancel(receipt.ReceiptID),
       });
+    };
+
+    // "0.5 $ONYX" for a receipt, using the receipt's own item for branding
+    const describeReceipt = (receipt: PortalReceipt) => {
+      const item = utils.getItemByIndex(receipt.ItemIndex as number);
+      const symbol = item ? getTokenMeta(item).symbol : '';
+      return `${Number(receipt.TokenAmt) / 10 ** 18} ${symbol}`;
+    };
+
+    // wallet balance shown on each token card, in whole tokens
+    const walletOf = (item: Item) => {
+      const pair = findWalletPair(walletBalances, item.token?.address);
+      const scale = Math.min(item.token?.scale ?? 0, 5);
+      return (pair?.balance ?? 0).toFixed(scale);
+    };
+
+    const selectToken = (item: Item) => {
+      if (item.index === selected.index) return;
+      playClick();
+      setSelected(item);
     };
 
     async function getTokenHistory(accountId: string) {
@@ -244,7 +270,7 @@ export const TokenPortalModal: UIComponent = {
         id='tokenPortal'
         header={
           <PortalHeader>
-            <HeaderIcon src={TokenIcons.onyx} alt='Token Portal' />
+            <HeaderIcon src={getTokenMeta(selected).icon} alt='Token Portal' />
             <HeaderTitle>Token Portal</HeaderTitle>
             <HelpChip tooltip={{ text: getHelpText(config), size: 0.6 }} size={1.2} />
           </PortalHeader>
@@ -257,6 +283,26 @@ export const TokenPortalModal: UIComponent = {
           <EmptyText text={['Failed to Connect Account']} size={1} />
         ) : (
           <Container>
+            {options.length > 1 && (
+              <TokenRow>
+                {options.map((item) => {
+                  const meta = getTokenMeta(item);
+                  return (
+                    <TokenButton
+                      key={item.index}
+                      $active={item.index === selected.index}
+                      onClick={() => selectToken(item)}
+                    >
+                      <TokenLabel>{item.name}</TokenLabel>
+                      <TokenBalanceRow>
+                        <TokenIcon src={meta.icon} alt={meta.symbol} />
+                        <TokenBalance>{walletOf(item)}</TokenBalance>
+                      </TokenBalanceRow>
+                    </TokenButton>
+                  );
+                })}
+              </TokenRow>
+            )}
             <Tabs>
               <TabButton
                 $color={DEPOSIT_BLUE}
@@ -292,8 +338,9 @@ export const TokenPortalModal: UIComponent = {
                   fullWidth
                   scale={2.2}
                   color={GREEN}
-                  text='Purchase $ONYX'
-                  onClick={() => openBaselineLink(selected.token?.address ?? '')}
+                  text={getTokenMeta(selected).buyLabel}
+                  disabled={!getTokenMeta(selected).buyLabel}
+                  onClick={() => getTokenMeta(selected).onBuy()}
                 />
               </BuyWrapper>
               <IconButton
@@ -349,6 +396,63 @@ const HeaderTitle = styled.div`
   font-size: 1.2vw;
   color: #333;
   font-family: Pixel;
+`;
+
+// token cards mirror the Operator Gas modal's Owner / Operator mode buttons
+const TokenRow = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+  justify-content: center;
+  gap: 0.5vw;
+`;
+
+const TokenButton = styled.button<{ $active: boolean }>`
+  border: 0.12vw solid ${({ $active }) => ($active ? '#a0c0e8' : '#ddd')};
+  border-radius: 0.6vw;
+  background: ${({ $active }) => ($active ? '#e8f0fe' : '#fafafa')};
+  color: #333;
+  cursor: pointer;
+
+  flex: 1 1 0;
+  padding: 0.6vw 0.6vw;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 0.3vw;
+
+  transition:
+    background 0.15s,
+    border-color 0.15s;
+  pointer-events: auto;
+
+  &:hover {
+    background: ${({ $active }) => ($active ? '#dce8fa' : '#f0f0f0')};
+  }
+`;
+
+const TokenLabel = styled.div`
+  font-size: 0.7vw;
+  color: #999;
+`;
+
+const TokenBalanceRow = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 0.25vw;
+`;
+
+const TokenBalance = styled.div`
+  font-size: 1.05vw;
+  font-weight: 600;
+  color: #444;
+`;
+
+const TokenIcon = styled.img`
+  width: 1.1vw;
+  height: 1.1vw;
 `;
 
 const Tabs = styled.div`

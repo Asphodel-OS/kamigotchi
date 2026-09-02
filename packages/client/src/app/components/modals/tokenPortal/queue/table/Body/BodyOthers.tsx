@@ -3,14 +3,13 @@ import styled from 'styled-components';
 import { Configs } from 'app/cache/config/portal';
 import { TextTooltip } from 'app/components/library';
 import { useSelected, useVisibility } from 'app/stores';
-import { TokenIcons } from 'assets/images/tokens';
 import { PortalReceipt } from 'clients/kamiden/proto';
 import { EntityID } from 'engine/recs';
 import { formatEntityID } from 'engine/utils';
 import { Account, Item } from 'network/shapes';
 import { playClick } from 'utils/sounds';
 import { getCountdown } from 'utils/time';
-import { openBaselineLink } from '../../../utils';
+import { getTokenMeta } from '../../../utils';
 
 export const BodyOthers = ({
   data,
@@ -105,11 +104,8 @@ export const BodyOthers = ({
               </Field>
             </TextTooltip>
             <Field width={2}>
-              <TextTooltip text={['$ONYX']} alignText={'right'}>
-                <Icon
-                  src={TokenIcons.onyx}
-                  onClick={() => openBaselineLink(item?.token?.address ?? '')}
-                />
+              <TextTooltip text={[getTokenMeta(item).symbol]} alignText={'right'}>
+                <Icon src={getTokenMeta(item).icon} onClick={() => getTokenMeta(item).onBuy()} />
               </TextTooltip>
             </Field>
             <Field width={3.5}>{getTokenConversion(r)}</Field>

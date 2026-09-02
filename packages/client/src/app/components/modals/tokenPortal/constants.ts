@@ -8,10 +8,11 @@ export const getHelpText = (config: PortalConfigs) => {
   const delayDays = (config.delay ?? 0) / 86400;
   return [
     'You can deposit and withdraw supported',
-    'ERC20 tokens through the Token Portal.',
+    'tokens ($ONYX, $ETH) through the Token Portal.',
     '\n',
     'Once deposited, assets are converted into',
-    'in-world items you can freely spend and use.',
+    'in-world items (Onyx Shards, Ether Shards)',
+    'you can freely spend, trade, and pool.',
     'Deposited assets are available instantly,',
     'but withdrawals generate a pending Receipt',
     `which can be claimed after a delay (~${delayDays.toFixed(0)}d atm).`,
