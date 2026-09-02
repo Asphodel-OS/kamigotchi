@@ -1,5 +1,49 @@
 import { PortalConfigs } from 'app/cache/config';
+import { triggerBridgeModal } from 'app/triggers';
+import { TokenIcons } from 'assets/images/tokens';
+import { Tokens } from 'constants/tokens';
 import { Item } from 'network/shapes';
+
+// display facts per portal token, keyed by the item's registry token address
+export interface TokenMeta {
+  symbol: string; // '$ONYX'
+  icon: string;
+  buyLabel: string;
+  onBuy: () => void;
+}
+
+const TOKEN_META: Record<string, Omit<TokenMeta, 'onBuy'> & { onBuy: (address: string) => void }> =
+  {
+    [Tokens.ONYX.address.toLowerCase()]: {
+      symbol: '$ONYX',
+      icon: TokenIcons.onyx,
+      buyLabel: 'Purchase $ONYX',
+      onBuy: (address) => openBaselineLink(address),
+    },
+    [Tokens.ETH.address.toLowerCase()]: {
+      symbol: '$ETH',
+      icon: TokenIcons.eth,
+      buyLabel: 'Bridge ETH',
+      onBuy: () => triggerBridgeModal(),
+    },
+  };
+
+// unknown portal tokens fall back to a neutral label so the modal never crashes
+// on an item registered on-chain before the client learned its branding
+export const getTokenMeta = (item: Item): TokenMeta => {
+  const address = (item.token?.address ?? '').toLowerCase();
+  const meta = TOKEN_META[address];
+  if (!meta) {
+    return { symbol: item.name, icon: item.image, buyLabel: '', onBuy: () => undefined };
+  }
+  return { ...meta, onBuy: () => meta.onBuy(address) };
+};
+
+// item units -> whole tokens, shown at the item's scale (1 ETH = 1e5 shards -> 5 dp)
+export const fmtTokenAmt = (units: number, item: Item) => {
+  const scale = item.token?.scale ?? 0;
+  return (units / 10 ** scale).toFixed(scale);
+};
 
 // get the necessary deposit balance to achieve the target balance (in item units)
 export const getNeededDeposit = (config: PortalConfigs, target: number) => {

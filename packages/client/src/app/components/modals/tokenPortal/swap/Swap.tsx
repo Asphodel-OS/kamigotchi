@@ -5,18 +5,31 @@ import { PortalConfigs } from 'app/cache/config';
 import { getInventoryBalance } from 'app/cache/inventory';
 import { StepButton, Text } from 'app/components/library';
 import { useTokens } from 'app/stores';
-import { TokenIcons } from 'assets/images/tokens';
 import { Inventory, Item } from 'network/shapes';
 import { playClick } from 'utils/sounds';
-import { getNeededDeposit, getResultWithdraw, getSwapRate } from '../utils';
+import {
+  fmtTokenAmt,
+  getNeededDeposit,
+  getResultWithdraw,
+  getSwapRate,
+  getTokenMeta,
+} from '../utils';
 import { Mode } from './types';
 
 // pastel action color, shared with the FundOperator and Pool modals
 const GREEN = '#C2F0C2';
 
-// floor to a safe non-negative integer. guards negatives / non-finite so a bad
-// amount can never reach the tx builders
-const safeAmt = (v: number) => (!Number.isFinite(v) || v < 0 ? 0 : Math.floor(v));
+// floor to a safe non-negative number at `decimals` places. guards negatives /
+// non-finite so a bad amount can never reach the tx builders
+const safeAmt = (v: number, decimals = 0) => {
+  if (!Number.isFinite(v) || v < 0) return 0;
+  const f = 10 ** decimals;
+  return Math.floor(v * f + 1e-9) / f;
+};
+
+// deposit stepper: 1 whole token for coarse scales (ONYX), 0.001 for fine
+// ones (ETH at scale 5) so a step is never a whole ETH
+const depositStep = (scale: number) => (scale > 2 ? 10 ** -(scale - 2) : 1);
 
 export const Swap = ({
   actions,
@@ -40,12 +53,15 @@ export const Swap = ({
   const { approve, deposit, withdraw } = actions;
   const { config, inventory } = data;
   const { mode, selected } = state;
-  // hardcoded for now to just onyx
-  const { allowance: onyxAllowance, balance: onyxBalance } = useTokens((s) => s.onyx);
+  // wallet balance/allowance of whichever portal token is selected. TokenChecker
+  // keeps every supported token in the balances map, keyed by address
+  const balances = useTokens((s) => s.balances);
+  const wallet = balances.get(selected.token?.address ?? '') ?? { allowance: 0, balance: 0 };
+  const token = getTokenMeta(selected);
 
-  // DEPOSIT: whole $ONYX paid in. WITHDRAW: item units withdrawn.
+  // DEPOSIT: whole tokens paid in. WITHDRAW: item units withdrawn.
   const [amt, setAmt] = useState<number>(0);
-  useEffect(() => setAmt(0), [mode]);
+  useEffect(() => setAmt(0), [mode, selected.index]);
 
   /////////////////
   // INTERPRETATION
@@ -56,7 +72,7 @@ export const Swap = ({
 
   // deposit: most items receivable within the $ONYX typed in.
   // getNeededDeposit rounds, so walk down until the charge fits
-  const unitsIn = amt * rate;
+  const unitsIn = Math.floor(amt * rate + 1e-9);
   let receiveItems = Math.max(
     0,
     Math.floor(unitsIn * (1 - config.tax.import.rate)) - config.tax.import.flat
@@ -66,11 +82,11 @@ export const Swap = ({
 
   const receivedUnits = getResultWithdraw(config, amt); // item units a withdrawal pays out
 
-  const maxAmt = mode === 'DEPOSIT' ? Math.floor(onyxBalance) : itemBalance;
-  const needsApproval = mode === 'DEPOSIT' && depositUnits / rate > onyxAllowance;
+  // deposits are typed in whole tokens with `scale` decimals; withdrawals in item units
+  const maxAmt = mode === 'DEPOSIT' ? safeAmt(wallet.balance, scale) : itemBalance;
+  const needsApproval = mode === 'DEPOSIT' && depositUnits / rate > wallet.allowance;
   const insufficient = amt > maxAmt;
-  const zeroOutput =
-    amt > 0 && (mode === 'DEPOSIT' ? receiveItems <= 0 : receivedUnits <= 0);
+  const zeroOutput = amt > 0 && (mode === 'DEPOSIT' ? receiveItems <= 0 : receivedUnits <= 0);
   const blocked = amt <= 0 || insufficient || zeroOutput;
 
   /////////////////
@@ -96,9 +112,10 @@ export const Swap = ({
   // DISPLAY
 
   const actionText = () => {
-    if (insufficient) return mode === 'DEPOSIT' ? 'insufficient $ONYX' : 'insufficient balance';
+    if (insufficient)
+      return mode === 'DEPOSIT' ? `insufficient ${token.symbol}` : 'insufficient balance';
     if (zeroOutput) return 'amount too small';
-    if (mode === 'DEPOSIT') return needsApproval ? `approve $ONYX` : 'deposit';
+    if (mode === 'DEPOSIT') return needsApproval ? `approve ${token.symbol}` : 'deposit';
     return 'withdraw';
   };
 
@@ -109,7 +126,7 @@ export const Swap = ({
           {mode === 'DEPOSIT' ? `You're receiving (in-game)` : `You're withdrawing (in-game)`}
         </Text>
         <Text size={0.75} color='#999'>
-          balance: {itemBalance}
+          balance: {itemBalance} (~{fmtTokenAmt(itemBalance, selected)} {token.symbol})
         </Text>
       </HeadRow>
       <TradeCard>
@@ -133,20 +150,24 @@ export const Swap = ({
           {mode === 'DEPOSIT' ? `You're paying (wallet)` : `You're receiving (wallet)`}
         </Text>
         <Text size={0.75} color='#999'>
-          wallet: {onyxBalance.toFixed(scale > 0 ? 2 : 0)} $ONYX
+          wallet: {wallet.balance.toFixed(scale > 0 ? Math.min(scale, 5) : 0)} {token.symbol}
         </Text>
       </HeadRow>
       <TradeCard>
         <ItemBlockBox>
-          <BigSprite src={TokenIcons.onyx} alt='$ONYX' />
-          <ItemName>$ONYX</ItemName>
+          <BigSprite src={token.icon} alt={token.symbol} />
+          <ItemName>{token.symbol}</ItemName>
         </ItemBlockBox>
         {mode === 'DEPOSIT' ? (
-          <AmountBox value={amt} set={setAmt} max={maxAmt} />
+          <AmountBox
+            value={amt}
+            set={setAmt}
+            max={maxAmt}
+            decimals={scale}
+            step={depositStep(scale)}
+          />
         ) : (
-          <OutputField>
-            {amt > 0 ? `~${(receivedUnits / rate).toFixed(scale)}` : '0'}
-          </OutputField>
+          <OutputField>{amt > 0 ? `~${(receivedUnits / rate).toFixed(scale)}` : '0'}</OutputField>
         )}
       </TradeCard>
     </SideBlock>
@@ -197,33 +218,62 @@ export const Swap = ({
 // SUBCOMPONENTS
 
 // gas-modal-style amount control: centered input flanked by press-and-hold
-// steppers, with a MAX chip. `max` clamps typing and the steppers
-const AmountBox = ({ value, set, max }: { value: number; set: (n: number) => void; max: number }) => {
+// steppers, with a MAX chip. `max` clamps typing and the steppers. `decimals`
+// > 0 allows fractional tokens (deposits); 0 keeps item units integral
+const AmountBox = ({
+  value,
+  set,
+  max,
+  decimals = 0,
+  step = 1,
+}: {
+  value: number;
+  set: (n: number) => void;
+  max: number;
+  decimals?: number;
+  step?: number;
+}) => {
   const [focused, setFocused] = useState(false);
+  // the raw text is kept so a trailing "." or "0.00" survives while typing
+  const [text, setText] = useState('');
+  useEffect(() => {
+    if (value === 0) setText('');
+    else if (Number(text) !== value) setText(String(value));
+  }, [value]);
+
   const cap = (n: number) => Math.min(n, max);
+  const pattern = decimals > 0 ? new RegExp(`^\\d*\\.?\\d{0,${decimals}}$`) : /^\d+$/;
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const v = e.target.value;
-    if (v === '') return set(0);
-    if (/^\d+$/.test(v)) set(cap(safeAmt(Number(v))));
+    if (v === '') {
+      setText('');
+      return set(0);
+    }
+    if (!pattern.test(v)) return;
+    setText(v);
+    set(cap(safeAmt(Number(v), decimals)));
   };
+  const nudge = (dir: 1 | -1) => set(cap(safeAmt(value + dir * step, decimals)));
+
   return (
     <AmountRow>
-      <StepButton label='-' onStep={() => set(safeAmt(value - 1))} />
+      <StepButton label='-' onStep={() => nudge(-1)} />
       <AmountField
         type='text'
-        inputMode='numeric'
+        inputMode={decimals > 0 ? 'decimal' : 'numeric'}
         placeholder={focused ? 'amount' : '0'}
-        value={value === 0 ? '' : String(value)}
+        value={text}
         onChange={onChange}
         // clear on focus so a click starts a fresh number (mirrors FundOperator)
         onFocus={() => {
           setFocused(true);
+          setText('');
           set(0);
         }}
         onBlur={() => setFocused(false)}
         style={{ pointerEvents: 'auto' }}
       />
-      <StepButton label='+' onStep={() => set(cap(safeAmt(value + 1)))} />
+      <StepButton label='+' onStep={() => nudge(1)} />
       <MaxChip
         onClick={() => {
           playClick();
@@ -399,4 +449,3 @@ const MaxChip = styled.button`
     border-color: #a0c0e8;
   }
 `;
-

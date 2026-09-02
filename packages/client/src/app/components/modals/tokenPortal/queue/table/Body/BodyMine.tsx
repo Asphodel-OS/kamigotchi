@@ -4,12 +4,11 @@ import { Configs } from 'app/cache/config/portal';
 import { IconButton, TextTooltip } from 'app/components/library';
 import { PlaceholderIcon } from 'assets/images/icons';
 import { ActionIcons } from 'assets/images/icons/actions';
-import { TokenIcons } from 'assets/images/tokens';
 import { PortalReceipt } from 'clients/kamiden/proto';
 import { EntityID } from 'engine/recs';
 import { Account, Item } from 'network/shapes';
 import { getCountdown } from 'utils/time';
-import { openBaselineLink } from '../../../utils';
+import { getTokenMeta } from '../../../utils';
 
 export const BodyMine = ({
   actions,
@@ -96,11 +95,8 @@ export const BodyMine = ({
             </TextTooltip>
             <Field width={5}>{r.IsWithdrawal ? 'Withdrawal' : 'Deposit'}</Field>
             <Field width={2}>
-              <TextTooltip text={['$ONYX']} alignText={'right'}>
-                <Icon
-                  src={TokenIcons.onyx}
-                  onClick={() => openBaselineLink(item?.token?.address ?? '')}
-                />
+              <TextTooltip text={[getTokenMeta(item).symbol]} alignText={'right'}>
+                <Icon src={getTokenMeta(item).icon} onClick={() => getTokenMeta(item).onBuy()} />
               </TextTooltip>
             </Field>
             <Field width={3.5}>{getTokenConversion(r)}</Field>
