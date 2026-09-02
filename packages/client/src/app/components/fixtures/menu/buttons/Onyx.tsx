@@ -1,26 +1,28 @@
 import { IconButton, TextTooltip } from 'app/components/library';
 import { useTokens, useVisibility } from 'app/stores';
 import { TokenIcons } from 'assets/images/tokens';
+import { Tokens } from 'constants/tokens';
 
-const ONYX_ADDR = '0x4BaDFb501Ab304fF11217C44702bb9E9732E7CF4';
-
+// menu entry for the Token Portal: both portal tokens as an overlapping pair,
+// balances in the tooltip rather than on the button (like the other menu icons)
 export const OnyxMenuButton = () => {
   const balances = useTokens((s) => s.balances);
   const portalIsOpen = useVisibility((s) => s.modals.tokenPortal);
   const setModals = useVisibility((s) => s.setModals);
 
-  const onyxInfo = balances.get(ONYX_ADDR);
-  const balance = onyxInfo?.balance ?? 0;
-  const allowance = onyxInfo?.allowance ?? 0;
+  const onyx = balances.get(Tokens.ONYX.address) ?? { balance: 0, allowance: 0 };
+  const eth = balances.get(Tokens.ETH.address) ?? { balance: 0, allowance: 0 };
 
   return (
     <TextTooltip
       title='Token Portal'
-      text={[`$ONYX Balance: ${balance.toFixed(3)}`, `$ONYX Allowance: ${allowance.toFixed(3)}`]}
+      text={[
+        `$ONYX: ${onyx.balance.toFixed(2)} (approved ${onyx.allowance.toFixed(2)})`,
+        `$ETH: ${eth.balance.toFixed(4)} (approved ${eth.allowance.toFixed(4)})`,
+      ]}
     >
       <IconButton
-        img={TokenIcons.onyx}
-        text={balance?.toFixed(3)}
+        img={[TokenIcons.onyx, TokenIcons.eth]}
         onClick={() => setModals({ tokenPortal: !portalIsOpen })}
         scale={4.5}
         scaleOrientation='vh'
