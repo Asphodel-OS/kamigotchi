@@ -200,7 +200,7 @@ export const Swap = ({
       <Info>
         {mode === 'DEPOSIT' && isGasToken && (
           <Text size={0.72} color='#888'>
-            {GAS_RESERVE_ETH} ETH is held back for gas
+            max leaves {GAS_RESERVE_ETH} ETH in your wallet for gas
           </Text>
         )}
         {mode === 'DEPOSIT' && needsApproval && amt > 0 && (
