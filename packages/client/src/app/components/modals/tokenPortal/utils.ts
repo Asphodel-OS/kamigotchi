@@ -29,14 +29,42 @@ const TOKEN_META: Record<string, Omit<TokenMeta, 'onBuy'> & { onBuy: (address: s
   };
 
 // unknown portal tokens fall back to a neutral label so the modal never crashes
-// on an item registered on-chain before the client learned its branding
-export const getTokenMeta = (item: Item): TokenMeta => {
-  const address = (item.token?.address ?? '').toLowerCase();
+// on an item registered on-chain before the client learned its branding, or on
+// a receipt whose item the registry no longer resolves
+export const getTokenMeta = (item?: Item): TokenMeta => {
+  const address = (item?.token?.address ?? '').toLowerCase();
   const meta = TOKEN_META[address];
   if (!meta) {
-    return { symbol: item.name, icon: item.image, buyLabel: '', onBuy: () => undefined };
+    return {
+      symbol: item?.name ?? '',
+      icon: item?.image ?? '',
+      buyLabel: '',
+      onBuy: () => undefined,
+    };
   }
   return { ...meta, onBuy: () => meta.onBuy(address) };
+};
+
+// the shape reader substitutes a dead address when an ERC20-typed item has no
+// TokenAddress yet (registered in the item registry but not on the portal)
+const DEAD_ADDRESS = '0x000000000000000000000000000000000000dead';
+export const isPortalItem = (item: Item) => {
+  const address = (item.token?.address ?? '').toLowerCase();
+  return item.type === 'ERC20' && !!address && address !== DEAD_ADDRESS;
+};
+
+// wallet balance/allowance for a token address, tolerant of checksum casing
+// between the registry-sourced address and the TokenChecker's store keys
+export const findWalletPair = (
+  balances: Map<string, { allowance: number; balance: number }>,
+  address?: string
+) => {
+  if (!address) return undefined;
+  const exact = balances.get(address);
+  if (exact) return exact;
+  const wanted = address.toLowerCase();
+  for (const [key, pair] of balances) if (key.toLowerCase() === wanted) return pair;
+  return undefined;
 };
 
 // item units -> whole tokens, shown at the item's scale (1 ETH = 1e5 shards -> 5 dp)

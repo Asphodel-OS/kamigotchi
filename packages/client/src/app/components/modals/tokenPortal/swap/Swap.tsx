@@ -5,9 +5,12 @@ import { PortalConfigs } from 'app/cache/config';
 import { getInventoryBalance } from 'app/cache/inventory';
 import { StepButton, Text } from 'app/components/library';
 import { useTokens } from 'app/stores';
+import { GasConstants } from 'constants/gas';
+import { Tokens } from 'constants/tokens';
 import { Inventory, Item } from 'network/shapes';
 import { playClick } from 'utils/sounds';
 import {
+  findWalletPair,
   fmtTokenAmt,
   getNeededDeposit,
   getResultWithdraw,
@@ -15,6 +18,10 @@ import {
   getTokenMeta,
 } from '../utils';
 import { Mode } from './types';
+
+// depositing the gas token itself must leave the owner wallet enough to keep
+// signing: the MAX chip and the cap hold back this much ETH
+const GAS_RESERVE_ETH = GasConstants.Low;
 
 // pastel action color, shared with the FundOperator and Pool modals
 const GREEN = '#C2F0C2';
@@ -56,8 +63,10 @@ export const Swap = ({
   // wallet balance/allowance of whichever portal token is selected. TokenChecker
   // keeps every supported token in the balances map, keyed by address
   const balances = useTokens((s) => s.balances);
-  const wallet = balances.get(selected.token?.address ?? '') ?? { allowance: 0, balance: 0 };
+  const wallet = findWalletPair(balances, selected.token?.address) ?? { allowance: 0, balance: 0 };
   const token = getTokenMeta(selected);
+  const isGasToken =
+    (selected.token?.address ?? '').toLowerCase() === Tokens.ETH.address.toLowerCase();
 
   // DEPOSIT: whole tokens paid in. WITHDRAW: item units withdrawn.
   const [amt, setAmt] = useState<number>(0);
@@ -83,7 +92,8 @@ export const Swap = ({
   const receivedUnits = getResultWithdraw(config, amt); // item units a withdrawal pays out
 
   // deposits are typed in whole tokens with `scale` decimals; withdrawals in item units
-  const maxAmt = mode === 'DEPOSIT' ? safeAmt(wallet.balance, scale) : itemBalance;
+  const depositable = isGasToken ? Math.max(0, wallet.balance - GAS_RESERVE_ETH) : wallet.balance;
+  const maxAmt = mode === 'DEPOSIT' ? safeAmt(depositable, scale) : itemBalance;
   const needsApproval = mode === 'DEPOSIT' && depositUnits / rate > wallet.allowance;
   const insufficient = amt > maxAmt;
   const zeroOutput = amt > 0 && (mode === 'DEPOSIT' ? receiveItems <= 0 : receivedUnits <= 0);
@@ -188,6 +198,11 @@ export const Swap = ({
       )}
 
       <Info>
+        {mode === 'DEPOSIT' && isGasToken && (
+          <Text size={0.72} color='#888'>
+            {GAS_RESERVE_ETH} ETH is held back for gas
+          </Text>
+        )}
         {mode === 'DEPOSIT' && needsApproval && amt > 0 && (
           <Text size={0.72} color='#888'>
             approval required before depositing
@@ -236,9 +251,11 @@ const AmountBox = ({
   const [focused, setFocused] = useState(false);
   // the raw text is kept so a trailing "." or "0.00" survives while typing
   const [text, setText] = useState('');
+  // external resets (mode/token switch, MAX, steppers) re-derive the text; a
+  // partially typed "0." or "0.00" already reads as 0 and is left alone
   useEffect(() => {
-    if (value === 0) setText('');
-    else if (Number(text) !== value) setText(String(value));
+    if (Number(text) === value) return;
+    setText(value === 0 ? '' : String(value));
   }, [value]);
 
   const cap = (n: number) => Math.min(n, max);

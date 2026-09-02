@@ -21,7 +21,13 @@ import { getHelpText } from './constants';
 import { Queue } from './queue';
 import { Swap } from './swap';
 import { Mode } from './swap/types';
-import { fmtTokenAmt, getResultWithdraw, getTokenMeta } from './utils';
+import {
+  findWalletPair,
+  fmtTokenAmt,
+  getResultWithdraw,
+  getTokenMeta,
+  isPortalItem,
+} from './utils';
 
 // kamiswap (marketplace) tab pastels: blue for deposit, orange for withdraw
 const DEPOSIT_BLUE = '#E0EEFF';
@@ -89,9 +95,7 @@ export const TokenPortalModal: UIComponent = {
     useEffect(() => {
       const itemEntites = queryTokenItems();
       const items = itemEntites.map((item) => getItem(item)) as Item[];
-      const cleaned = items
-        .filter((item) => !!item.token?.address)
-        .sort((a, b) => a.index - b.index);
+      const cleaned = items.filter(isPortalItem).sort((a, b) => a.index - b.index);
       setOptions(cleaned);
 
       // set up ticking
@@ -215,7 +219,7 @@ export const TokenPortalModal: UIComponent = {
 
     // wallet balance shown on each token card, in whole tokens
     const walletOf = (item: Item) => {
-      const pair = walletBalances.get(item.token?.address ?? '');
+      const pair = findWalletPair(walletBalances, item.token?.address);
       const scale = Math.min(item.token?.scale ?? 0, 5);
       return (pair?.balance ?? 0).toFixed(scale);
     };
