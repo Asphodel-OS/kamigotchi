@@ -19,6 +19,9 @@ import { LibRandom } from "libraries/utils/LibRandom.sol";
 // hardcoded entity representing the gacha pool
 uint256 constant GACHA_ID = uint256(keccak256("gacha.id"));
 
+// commits awaiting reveal. once creation stops at the 721 cap, these are pool kamis already spoken for
+string constant PENDING_COMMITS_KEY = "GACHA_COMMITS_PENDING";
+
 library LibGacha {
   using LibComp for IComponent;
   using LibString for string;
@@ -31,6 +34,7 @@ library LibGacha {
     uint256 accID,
     uint256 revealBlock
   ) internal returns (uint256[] memory) {
+    LibData.inc(components, 0, 0, PENDING_COMMITS_KEY, amount);
     return LibCommit.commit(world, components, accID, revealBlock, "GACHA_COMMIT", amount);
   }
 
@@ -66,6 +70,15 @@ library LibGacha {
       kamiIDs,
       LibCommit.extractHolders(components, commitIDs)
     );
+
+    releasePending(components, commitIDs.length);
+  }
+
+  /// @notice releases revealed claims. saturates at zero: commits made before the
+  ///         counter existed were never counted, and must still reveal
+  function releasePending(IUintComp components, uint256 amount) internal {
+    uint256 pending = getNumPending(components);
+    LibData.set(components, 0, 0, PENDING_COMMITS_KEY, pending > amount ? pending - amount : 0);
   }
 
   /////////////////
@@ -126,6 +139,17 @@ library LibGacha {
   function getNumInGacha(IUintComp components) internal view returns (uint256) {
     IDOwnsKamiComponent ownerComp = IDOwnsKamiComponent(getAddrByID(components, IDOwnsKamiCompID));
     return ownerComp.size(abi.encode(GACHA_ID));
+  }
+
+  function getNumPending(IUintComp components) internal view returns (uint256) {
+    return LibData.get(components, 0, 0, PENDING_COMMITS_KEY);
+  }
+
+  /// @notice pool kamis not yet claimed by an unrevealed commit
+  function getNumFree(IUintComp components) internal view returns (uint256) {
+    uint256 pool = getNumInGacha(components);
+    uint256 pending = getNumPending(components);
+    return pool > pending ? pool - pending : 0;
   }
 
   /////////////////

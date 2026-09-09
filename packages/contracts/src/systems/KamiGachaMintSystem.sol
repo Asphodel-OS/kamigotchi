@@ -27,11 +27,10 @@ contract KamiGachaMintSystem is System {
 
     uint256 accID = LibAccount.getByOwner(components, msg.sender);
 
-    // the claim is served from the pool after creation tops it up, and creation is
-    // capped by remaining 721 supply. checked before the ticket burn so a claim that
-    // cannot be served fails without consuming the ticket
+    // served from what the pool holds beyond unrevealed commits, plus what creation can
+    // still add under the 721 cap. checked before the ticket burn so a refused claim keeps it
     require(
-      LibGacha.getNumInGacha(components) + LibKamiCreate.getSupplyHeadroom(components) >= amount,
+      LibGacha.getNumFree(components) + LibKamiCreate.getSupplyHeadroom(components) >= amount,
       "gacha pool exhausted"
     );
 
