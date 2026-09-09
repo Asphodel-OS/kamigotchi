@@ -5,13 +5,14 @@ import styled from 'styled-components';
 import { Inventory } from 'app/cache/inventory';
 import { EmptyText, ItemTooltip } from 'app/components/library';
 import { ButtonListOption, IconListButton } from 'app/components/library/buttons';
-import { MUSU_INDEX } from 'constants/items';
+import { MUSU_INDEX, VIPP_INDEX } from 'constants/items';
 import { Account } from 'network/shapes/Account';
 import { Allo } from 'network/shapes/Allo';
 import { Item } from 'network/shapes/Item';
 import { Kami } from 'network/shapes/Kami';
 import { DetailedEntity } from 'network/shapes/utils';
 import { Mode } from '../types';
+import { UseAmountOption } from './UseAmountOption';
 
 const EMPTY_TEXT = ['Inventory is empty.', 'Be less poore..'];
 
@@ -84,29 +85,29 @@ export const ItemGrid = ({
 
   // get the list of quantity options for an Account to use an Item in batch
   const getAccountOptions = (item: Item, bal: number): ButtonListOption[] => {
-    if (!meetsRequirements(account, item)) return [];
+    if (bal < 1 || !meetsRequirements(account, item)) return [];
     const useItem = (amt: number) => useForAccount(item, amt);
 
-    const options: ButtonListOption[] = [];
-    const increments = [1, 3, 10, 33, 100, 333, 1000, 3333];
-    increments.forEach((i) => {
-      if (bal >= i) options.push({ text: `Use ${i}`, onClick: () => useItem(i) });
-    });
-
-    if (bal > 1) options.push({ text: 'Use All', onClick: () => useItem(bal) });
+    const options: ButtonListOption[] = [
+      {
+        text: 'Use',
+        onClick: () => {},
+        content: (close) => (
+          <UseAmountOption
+            max={bal}
+            onSubmit={(amt) => {
+              useItem(amt);
+              close();
+            }}
+          />
+        ),
+      },
+    ];
+    const allowsUseAll = item.index === VIPP_INDEX;
+    if (bal > 1 && allowsUseAll) options.push({ text: 'Use All', onClick: () => useItem(bal) });
 
     return options;
   };
-
-  // // get the list of kamis that a specific item can be used on
-  // const getAvailableKamis = (item: Item): Kami[] => {
-  //   let kamis2 = getAccessibleKamis(account, kamis);
-  //   if (item.type === 'REVIVE') kamis2 = kamis2.filter((kami) => kami.state === 'DEAD');
-  //   if (item.type === 'FOOD') kamis2 = kamis2.filter((kami) => kami.state !== 'DEAD');
-  //   if (item.type === 'RENAME_POTION') kamis2 = kamis2.filter((kami) => !kami.flags?.namable);
-  //   if (item.type === 'SKILL_RESET') kamis2 = kamis2.filter((kami) => kami.state !== 'DEAD');
-  //   return kamis2;
-  // };
 
   /////////////////
   // RENDER
