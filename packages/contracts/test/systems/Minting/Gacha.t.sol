@@ -3,6 +3,9 @@ pragma solidity >=0.8.28;
 
 import "./MintTemplate.t.sol";
 
+import { Kami721 } from "tokens/Kami721.sol";
+import { LibKami721 } from "libraries/LibKami721.sol";
+
 /** @dev
  * this focuses on the gacha, with a strong emphasis on checking invarients
  * and proper component values
@@ -68,6 +71,47 @@ contract GachaTest is MintTemplate {
     assertPoolAmt(poolAmt + 1); // reroll in, target not yet withdrawn
     kamiID = _reveal(commitID); // target withdrawn
     assertPoolAmt(poolAmt);
+  }
+
+  /// @notice a claim larger than the current pool is fine while 721 supply remains,
+  ///         since creation tops the pool up before the reveal draws from it
+  function testGachaMintExceedingPoolWithHeadroom() public {
+    _batchMint(1);
+    assertPoolAmt(1);
+
+    uint256[] memory commitIDs = _mint(alice, 3);
+    assertPoolAmt(4); // three created, none withdrawn yet
+
+    _reveal(commitIDs);
+    assertPoolAmt(1);
+  }
+
+  /// @notice at max 721 supply the mint stops creating kami, and the claim is served
+  ///         by drawing the existing pool down instead
+  function testGachaMintAtMaxSupply() public {
+    Kami721 nft = LibKami721.getContract(components);
+    uint256 max = nft.MAX_SUPPLY();
+
+    // fill the 721 to its cap, seeding the entire supply into the pool
+    _batchMint(2222);
+    vm.startPrank(deployer);
+    while (nft.totalSupply() < max) {
+      uint256 left = max - nft.totalSupply();
+      __721BatchMinterSystem.batchMint(left > 2222 ? 2222 : left);
+    }
+    vm.stopPrank();
+    assertEq(nft.totalSupply(), max, "expected the 721 at max supply");
+    assertPoolAmt(max);
+
+    // the mint no longer tops the pool up
+    uint256 commitID = _mint(alice);
+    assertEq(nft.totalSupply(), max, "supply moved past max on mint");
+    assertPoolAmt(max); // nothing created, nothing withdrawn yet
+
+    // and the reveal draws the claim out of what is already there
+    _reveal(commitID);
+    assertEq(nft.totalSupply(), max, "supply moved past max on reveal");
+    assertPoolAmt(max - 1);
   }
 
   function testGachaRerollSingle() public {

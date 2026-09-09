@@ -312,7 +312,15 @@ contract _721BatchMinterSystem is System, TraitHandler {
   function batchMint(uint256 amount) external onlyOwner returns (uint256[] memory) {
     // require(colorWeights.keys != 0, "traits not set");
 
-    uint32 startIndex = uint32(LibKami721.getContract(components).totalSupply()) + 1; // starts from 1
+    // skip mints past max supply rather than reverting the whole batch
+    Kami721 nft = LibKami721.getContract(components);
+    uint256 supply = nft.totalSupply();
+    uint256 maxSupply = nft.MAX_SUPPLY();
+    uint256 headroom = supply >= maxSupply ? 0 : maxSupply - supply;
+    if (amount > headroom) amount = headroom;
+    if (amount == 0) return new uint256[](0);
+
+    uint32 startIndex = uint32(supply) + 1; // starts from 1
     uint256 startGacha = idOwnsPetComp.size(abi.encode(GACHA_ID)); // starts from 0
 
     /// @dev creating pets, unrevealed-ish state
