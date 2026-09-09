@@ -7,7 +7,9 @@ import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { LibAccount } from "libraries/LibAccount.sol";
 import { LibAuction } from "libraries/LibAuction.sol";
 import { LibAuctionRegistry } from "libraries/LibAuctionRegistry.sol";
-import { LibInventory } from "libraries/LibInventory.sol";
+import { LibGacha } from "libraries/LibGacha.sol";
+import { LibInventory, GACHA_TICKET_INDEX, REROLL_TICKET_INDEX } from "libraries/LibInventory.sol";
+import { LibKamiCreate } from "libraries/LibKamiCreate.sol";
 
 uint256 constant ID = uint256(keccak256("system.auction.buy"));
 
@@ -21,6 +23,17 @@ contract AuctionBuySystem is System {
     uint256 accID = LibAccount.verifyOwner(components);
     uint256 id = LibAuction.verifyBuyParams(components, itemIndex, amt);
     LibAuction.verifyRequirements(components, id, accID);
+
+    // tickets are worthless once nothing can be drawn, so stop selling them at that point.
+    // a mint can still create under the 721 cap; a reroll only draws what the pool holds
+    if (itemIndex == GACHA_TICKET_INDEX) {
+      require(
+        LibGacha.getNumFree(components) + LibKamiCreate.getSupplyHeadroom(components) > 0,
+        "gacha pool exhausted"
+      );
+    } else if (itemIndex == REROLL_TICKET_INDEX) {
+      require(LibGacha.getNumFree(components) > 0, "gacha pool exhausted");
+    }
 
     // process the buy
     uint256 cost = LibAuction.calcBuy(components, id, amt);
