@@ -25,7 +25,8 @@ contract AuctionBuySystem is System {
     LibAuction.verifyRequirements(components, id, accID);
 
     // tickets are worthless once nothing can be drawn, so stop selling them at that point.
-    // a mint can still create under the 721 cap; a reroll only draws what the pool holds
+    // deliberately not rationed against the pool: tickets held by inactive players must
+    // not lock kamis, so surplus tickets bought at the very end simply go unused
     if (itemIndex == GACHA_TICKET_INDEX) {
       require(
         LibGacha.getNumFree(components) + LibKamiCreate.getSupplyHeadroom(components) > 0,

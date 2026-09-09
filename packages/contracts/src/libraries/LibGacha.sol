@@ -19,7 +19,8 @@ import { LibRandom } from "libraries/utils/LibRandom.sol";
 // hardcoded entity representing the gacha pool
 uint256 constant GACHA_ID = uint256(keccak256("gacha.id"));
 
-// commits awaiting reveal. once creation stops at the 721 cap, these are pool kamis already spoken for
+// commits awaiting reveal. once creation stops at the 721 cap, these are pool kamis already spoken for.
+// starts at zero on upgrade: seed it from unrevealed legacy commits at deploy (release saturates regardless)
 string constant PENDING_COMMITS_KEY = "GACHA_COMMITS_PENDING";
 
 library LibGacha {
