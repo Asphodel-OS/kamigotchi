@@ -12,6 +12,10 @@ export const UseAmountOption = ({
 }) => {
   const [raw, setRaw] = useState('1');
 
+  // input will match the width of number of digits of the item qwuantity
+  // capped at 6 chars
+  const digits = Math.min(max.toString().length, 6);
+
   const amount = parseInt(raw, 10);
   const isValid = !isNaN(amount) && amount >= 1 && amount <= max;
 
@@ -25,8 +29,8 @@ export const UseAmountOption = ({
   };
 
   const handleChange = (value: string) => {
-    const digits = value.replace(/\D/g, '').replace(/^0+/, '');
-    setRaw(digits === '' ? '' : clamp(parseInt(digits, 10)).toString());
+    const cleaned = value.replace(/\D/g, '').replace(/^0+/, '');
+    setRaw(cleaned === '' ? '' : clamp(parseInt(cleaned, 10)).toString());
   };
 
   const handleSubmit = () => {
@@ -38,6 +42,7 @@ export const UseAmountOption = ({
       <Label>Use</Label>
       <StepButton label='-' onStep={() => nudge(-1)} />
       <Input
+        $digits={digits}
         type='text'
         inputMode='numeric'
         autoComplete='off'
@@ -67,12 +72,12 @@ const Label = styled.div`
   padding-right: 0.15vw;
 `;
 
-const Input = styled.input`
+const Input = styled.input<{ $digits: number }>`
   border: 0.1vw solid #ccc;
   border-radius: 0.4vw;
   background-color: #fff;
 
-  width: 3.6vw;
+  width: ${({ $digits }) => `calc(${$digits}ch + 1vw)`};
   height: 1.8vw;
   flex-shrink: 0;
   box-sizing: border-box;
