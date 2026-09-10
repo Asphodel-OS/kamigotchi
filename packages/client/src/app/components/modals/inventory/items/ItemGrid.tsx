@@ -83,30 +83,18 @@ export const ItemGrid = ({
     }));
   };
 
-  // get the list of quantity options for an Account to use an Item in batch
+  // Use All is reserved for VIPP - every other Account item uses the quantity row
   const getAccountOptions = (item: Item, bal: number): ButtonListOption[] => {
-    if (bal < 1 || !meetsRequirements(account, item)) return [];
-    const useItem = (amt: number) => useForAccount(item, amt);
+    if (bal < 2 || item.index !== VIPP_INDEX) return [];
+    if (!meetsRequirements(account, item)) return [];
+    return [{ text: 'Use All', onClick: () => useForAccount(item, bal) }];
+  };
 
-    const options: ButtonListOption[] = [
-      {
-        text: 'Use',
-        onClick: () => {},
-        content: (close) => (
-          <UseAmountOption
-            max={bal}
-            onSubmit={(amt) => {
-              useItem(amt);
-              close();
-            }}
-          />
-        ),
-      },
-    ];
-    const allowsUseAll = item.index === VIPP_INDEX;
-    if (bal > 1 && allowsUseAll) options.push({ text: 'Use All', onClick: () => useItem(bal) });
-
-    return options;
+  // the batch-use quantity row, pinned above the options of an Account item
+  const getQuantityRow = (item: Item, bal: number) => {
+    if (item.for !== 'ACCOUNT' || bal < 1) return undefined;
+    if (!meetsRequirements(account, item)) return undefined;
+    return <UseAmountOption max={bal} onSubmit={(amt) => useForAccount(item, amt)} />;
   };
 
   /////////////////
@@ -118,6 +106,7 @@ export const ItemGrid = ({
       {displayed.map((inv) => {
         const item = inv.item;
         const options = getItemActions(item, inv.balance);
+        const quantityRow = getQuantityRow(item, inv.balance);
 
         return (
           <ItemWrapper key={item.index}>
@@ -127,7 +116,8 @@ export const ItemGrid = ({
               scale={4.8}
               balance={inv.balance}
               options={options}
-              disabled={options.length == 0 || item.is.disabled}
+              topContent={quantityRow}
+              disabled={(options.length == 0 && !quantityRow) || item.is.disabled}
               tooltip={{
                 text: [<ItemTooltip key={item.index} item={item} utils={utils} />],
                 maxWidth: 25,

@@ -2,6 +2,7 @@ import { useState } from 'react';
 import styled from 'styled-components';
 
 import { StepButton } from 'app/components/library';
+import { playClick } from 'utils/sounds';
 
 export const UseAmountOption = ({
   max,
@@ -34,24 +35,28 @@ export const UseAmountOption = ({
   };
 
   const handleSubmit = () => {
-    if (isValid) onSubmit(amount);
+    if (!isValid) return;
+    playClick();
+    onSubmit(amount);
+    setRaw('1');
   };
 
   return (
-    <Row>
+    <Row onBlur={(e) => !e.currentTarget.contains(e.relatedTarget) && setRaw('1')}>
       <Label>Use</Label>
-      <StepButton label='-' onStep={() => nudge(-1)} />
-      <Input
-        $digits={digits}
-        type='text'
-        inputMode='numeric'
-        autoComplete='off'
-        value={raw}
-        onChange={(e) => handleChange(e.target.value)}
-        onBlur={() => raw === '' && setRaw('1')}
-        onKeyDown={(e) => e.key === 'Enter' && handleSubmit()}
-      />
-      <StepButton label='+' onStep={() => nudge(1)} />
+      <Group onClick={(e) => e.stopPropagation()}>
+        <StepButton label='-' onStep={() => nudge(-1)} />
+        <Input
+          $digits={digits}
+          type='text'
+          inputMode='numeric'
+          autoComplete='off'
+          value={raw}
+          onChange={(e) => handleChange(e.target.value)}
+          onKeyDown={(e) => e.key === 'Enter' && handleSubmit()}
+        />
+        <StepButton label='+' onStep={() => nudge(1)} />
+      </Group>
       <Confirm disabled={!isValid} onClick={handleSubmit}>
         ✓
       </Confirm>
@@ -63,7 +68,16 @@ const Row = styled.div`
   display: flex;
   align-items: center;
   gap: 0.3vw;
+
   width: 100%;
+  padding: 0.45vw;
+  box-sizing: border-box;
+`;
+
+const Group = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 0.3vw;
 `;
 
 const Label = styled.div`

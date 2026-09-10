@@ -1,4 +1,4 @@
-import { ReactNode, useEffect, useRef, useState } from 'react';
+import { ReactNode, useState } from 'react';
 import styled from 'styled-components';
 
 import { playClick } from 'utils/sounds';
@@ -11,7 +11,6 @@ export interface Option {
   onClick: Function;
   image?: string;
   disabled?: boolean;
-  content?: (close: () => void) => ReactNode;
 }
 
 export function IconListButton({
@@ -25,6 +24,7 @@ export function IconListButton({
   scale,
   scaleOrientation,
   searchable,
+  topContent,
   icon,
   filter,
   shake,
@@ -34,6 +34,7 @@ export function IconListButton({
 }: {
   options: Option[];
   searchable?: boolean;
+  topContent?: ReactNode;
   filter?: string;
 
   // button
@@ -67,32 +68,11 @@ export function IconListButton({
   disabled?: boolean;
 }) {
   const [search, setSearch] = useState<string>('');
-  const [forceClose, setForceClose] = useState(false);
-  const [resetKey, setResetKey] = useState(0);
-
-  useEffect(() => {
-    if (forceClose) setForceClose(false);
-  }, [forceClose]);
-
-  const touchedContent = useRef(false);
-
-  const resetContent = () => {
-    if (!touchedContent.current) return;
-    touchedContent.current = false;
-    setResetKey((k) => k + 1);
-  };
 
   // close the menu and layer in a sound effect
   const onSelect = (option: Option) => {
     playClick();
     option.onClick();
-    resetContent();
-  };
-
-  const closeFromContent = () => {
-    playClick();
-    setForceClose(true);
-    resetContent();
   };
 
   const OptionsMap = () => {
@@ -108,40 +88,21 @@ export function IconListButton({
             }}
           />
         )}
+        {topContent}
         {options
           .filter((option) => !searchable || option.text.toLowerCase().includes(search))
-          .map((option, i) =>
-            option.content ? (
-              <CustomOption
-                key={`${i}-${resetKey}`}
-                onMouseDown={(e) => {
-                  touchedContent.current = true;
-                  e.stopPropagation();
-                }}
-                onClick={(e) => e.stopPropagation()}
-              >
-                {option.content(closeFromContent)}
-              </CustomOption>
-            ) : (
-              <MenuOption key={i} disabled={option.disabled} onClick={() => onSelect(option)}>
-                {option.image && <OptionIcon src={option.image} />}
-                {option.text && <OptionText>{option.text}</OptionText>}
-              </MenuOption>
-            )
-          )}
+          .map((option, i) => (
+            <MenuOption key={i} disabled={option.disabled} onClick={() => onSelect(option)}>
+              {option.image && <OptionIcon src={option.image} />}
+              {option.text && <OptionText>{option.text}</OptionText>}
+            </MenuOption>
+          ))}
       </MenuWrapper>
     );
   };
 
   return (
-    <Popover
-      content={OptionsMap()}
-      maxHeight={33}
-      fullWidth={fullWidth}
-      disabled={disabled}
-      forceClose={forceClose}
-      onClose={resetContent}
-    >
+    <Popover content={OptionsMap()} maxHeight={33} fullWidth={fullWidth} disabled={disabled}>
       <TextTooltip {...tooltip} text={tooltip?.text ?? ['']}>
         <IconButton
           img={img}
@@ -211,20 +172,6 @@ const MenuOption = styled.div<{ disabled?: boolean }>`
   &:active {
     background-color: #bbb;
   }
-`;
-
-const CustomOption = styled.div`
-  position: relative;
-  background-color: #fff;
-  border-radius: 0.45vw;
-
-  width: 100%;
-  padding: 0.45vw;
-  box-sizing: border-box;
-
-  display: flex;
-  align-items: center;
-  cursor: default;
 `;
 
 const OptionIcon = styled.img`
