@@ -14,8 +14,8 @@ export const UseAmountOption = ({
   const [raw, setRaw] = useState('1');
 
   // input will match the width of number of digits of the item qwuantity
-  // capped at 6 chars
-  const digits = Math.min(max.toString().length, 6);
+  // capped at 7 chars
+  const digits = Math.min(max.toString().length, 7);
 
   const amount = parseInt(raw, 10);
   const isValid = !isNaN(amount) && amount >= 1 && amount <= max;
