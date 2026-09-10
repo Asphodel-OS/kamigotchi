@@ -5,13 +5,14 @@ import styled from 'styled-components';
 import { Inventory } from 'app/cache/inventory';
 import { EmptyText, ItemTooltip } from 'app/components/library';
 import { ButtonListOption, IconListButton } from 'app/components/library/buttons';
-import { MUSU_INDEX } from 'constants/items';
+import { MUSU_INDEX, VIPP_INDEX } from 'constants/items';
 import { Account } from 'network/shapes/Account';
 import { Allo } from 'network/shapes/Allo';
 import { Item } from 'network/shapes/Item';
 import { Kami } from 'network/shapes/Kami';
 import { DetailedEntity } from 'network/shapes/utils';
 import { Mode } from '../types';
+import { UseAmountOption } from './UseAmountOption';
 
 const EMPTY_TEXT = ['Inventory is empty.', 'Be less poore..'];
 
@@ -82,31 +83,19 @@ export const ItemGrid = ({
     }));
   };
 
-  // get the list of quantity options for an Account to use an Item in batch
+  // Use All is reserved for VIPP - every other Account item uses the quantity row
   const getAccountOptions = (item: Item, bal: number): ButtonListOption[] => {
+    if (bal < 2 || item.index !== VIPP_INDEX) return [];
     if (!meetsRequirements(account, item)) return [];
-    const useItem = (amt: number) => useForAccount(item, amt);
-
-    const options: ButtonListOption[] = [];
-    const increments = [1, 3, 10, 33, 100, 333, 1000, 3333];
-    increments.forEach((i) => {
-      if (bal >= i) options.push({ text: `Use ${i}`, onClick: () => useItem(i) });
-    });
-
-    if (bal > 1) options.push({ text: 'Use All', onClick: () => useItem(bal) });
-
-    return options;
+    return [{ text: 'Use All', onClick: () => useForAccount(item, bal) }];
   };
 
-  // // get the list of kamis that a specific item can be used on
-  // const getAvailableKamis = (item: Item): Kami[] => {
-  //   let kamis2 = getAccessibleKamis(account, kamis);
-  //   if (item.type === 'REVIVE') kamis2 = kamis2.filter((kami) => kami.state === 'DEAD');
-  //   if (item.type === 'FOOD') kamis2 = kamis2.filter((kami) => kami.state !== 'DEAD');
-  //   if (item.type === 'RENAME_POTION') kamis2 = kamis2.filter((kami) => !kami.flags?.namable);
-  //   if (item.type === 'SKILL_RESET') kamis2 = kamis2.filter((kami) => kami.state !== 'DEAD');
-  //   return kamis2;
-  // };
+  // the batch-use quantity row, pinned above the options of an Account item
+  const getQuantityRow = (item: Item, bal: number) => {
+    if (item.for !== 'ACCOUNT' || bal < 1) return undefined;
+    if (!meetsRequirements(account, item)) return undefined;
+    return <UseAmountOption max={bal} onSubmit={(amt) => useForAccount(item, amt)} />;
+  };
 
   /////////////////
   // RENDER
@@ -117,6 +106,7 @@ export const ItemGrid = ({
       {displayed.map((inv) => {
         const item = inv.item;
         const options = getItemActions(item, inv.balance);
+        const quantityRow = getQuantityRow(item, inv.balance);
 
         return (
           <ItemWrapper key={item.index}>
@@ -126,7 +116,8 @@ export const ItemGrid = ({
               scale={4.8}
               balance={inv.balance}
               options={options}
-              disabled={options.length == 0 || item.is.disabled}
+              topContent={quantityRow}
+              disabled={(options.length == 0 && !quantityRow) || item.is.disabled}
               tooltip={{
                 text: [<ItemTooltip key={item.index} item={item} utils={utils} />],
                 maxWidth: 25,

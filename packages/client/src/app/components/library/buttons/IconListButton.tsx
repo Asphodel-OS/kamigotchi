@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { ReactNode, useState } from 'react';
 import styled from 'styled-components';
 
 import { playClick } from 'utils/sounds';
@@ -24,6 +24,7 @@ export function IconListButton({
   scale,
   scaleOrientation,
   searchable,
+  topContent,
   icon,
   filter,
   shake,
@@ -33,6 +34,7 @@ export function IconListButton({
 }: {
   options: Option[];
   searchable?: boolean;
+  topContent?: ReactNode;
   filter?: string;
 
   // button
@@ -65,26 +67,12 @@ export function IconListButton({
 
   disabled?: boolean;
 }) {
-  const toggleRef = useRef<HTMLButtonElement>(null);
-  const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
   const [search, setSearch] = useState<string>('');
-
-  const handleOpen = () => {
-    if (!disabled && toggleRef.current) {
-      playClick();
-      setAnchorEl(toggleRef.current);
-    }
-  };
-
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
 
   // close the menu and layer in a sound effect
   const onSelect = (option: Option) => {
     playClick();
     option.onClick();
-    handleClose();
   };
 
   const OptionsMap = () => {
@@ -100,6 +88,7 @@ export function IconListButton({
             }}
           />
         )}
+        {topContent}
         {options
           .filter((option) => !searchable || option.text.toLowerCase().includes(search))
           .map((option, i) => (
@@ -118,7 +107,7 @@ export function IconListButton({
         <IconButton
           img={img}
           text={text}
-          onClick={handleOpen}
+          onClick={() => {}}
           disabled={disabled}
           radius={radius ?? 0.45}
           scale={scale ?? 2.5}
