@@ -7,6 +7,8 @@ out = "out"
 solc = "0.8.28"
 src = "src"
 verbosity = 1
+# the mint suites batch-create thousands of kami in one call; the 2^30 default OOGs
+gas_limit = 100000000000
 gas_reports = ["*"]
 memory_limit = 43554432
 

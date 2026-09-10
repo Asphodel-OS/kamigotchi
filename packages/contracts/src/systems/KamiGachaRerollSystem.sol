@@ -25,6 +25,9 @@ contract KamiGachaRerollSystem is System {
     LibKami.verifyAccount(components, kamiIDs, accID);
     LibKami.verifyState(components, kamiIDs, "RESTING");
 
+    // on an empty pool a reroll only hands back the deposit; refuse before the ticket burn
+    require(LibGacha.getNumFree(components) > 0, "gacha pool exhausted");
+
     // unequip all items before depositing into gacha pool
     for (uint256 i; i < kamiIDs.length; i++) {
       LibEquipment.unequipAll(components, kamiIDs[i], accID);

@@ -72,7 +72,13 @@ string constant BASE_NAME = string("test kamigotchi ");
 library LibKamiCreate {
   using LibString for string;
 
+  /// @notice creates a new kami, seeded into the gacha pool
+  /// @dev once the 721 is at max supply no new kami can be minted; claims then draw
+  ///      down the existing pool instead of topping it up. returns 0 in that case.
   function create(IUintComp comps) public returns (uint256 id) {
+    Kami721 nft = LibKami721.getContract(comps);
+    if (nft.totalSupply() >= nft.MAX_SUPPLY()) return 0; // supply exhausted, skip the mint
+
     uint32 index = getNextIndex(comps);
     id = LibKami.genID(index);
     if (LibEntityType.checkAndSet(comps, id, "KAMI")) revert("kami already exists");
@@ -81,11 +87,15 @@ library LibKamiCreate {
     uint32[] memory traits = setTraits(comps, id);
     setStats(comps, id, traits);
     setURI(comps, id, traits);
-    Kami721 nft = LibKami721.getContract(comps);
     nft.mint(address(nft), index);
   }
 
+  /// @notice creates up to amt kamis, clamped to the remaining 721 supply
+  /// @return ids the kamis actually created - shorter than amt once supply runs out
   function create(IUintComp comps, uint256 amt) public returns (uint256[] memory ids) {
+    uint256 headroom = getSupplyHeadroom(comps);
+    if (amt > headroom) amt = headroom;
+
     ids = new uint256[](amt);
     for (uint256 i; i < amt; i++) ids[i] = create(comps);
   }
@@ -153,6 +163,14 @@ library LibKamiCreate {
 
   function getNextIndex(IUintComp comps) internal view returns (uint32) {
     return uint32(LibKami721.getContract(comps).totalSupply()) + 1;
+  }
+
+  /// @notice number of 721s still mintable before hitting max supply
+  function getSupplyHeadroom(IUintComp comps) internal view returns (uint256) {
+    Kami721 nft = LibKami721.getContract(comps);
+    uint256 supply = nft.totalSupply();
+    uint256 max = nft.MAX_SUPPLY();
+    return supply >= max ? 0 : max - supply;
   }
 
   /////////////////
