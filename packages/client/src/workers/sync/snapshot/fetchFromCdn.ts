@@ -19,6 +19,10 @@ import { CDN_FULL_THRESHOLD_BLOCKS, fetchStateBlock, MAX_RETRIES, RETRY_DELAYS }
 export type StateManifest = {
   nonce: number;
   block: number;
+  // Key prefix of this export's chunk set, taken verbatim rather than composed here. Nonce
+  // and block do not identify an image on their own, so the exporter gives each export its
+  // own prefix and the layout stays its business alone.
+  prefix: string;
   values: number;
   entities: number;
 };
@@ -149,7 +153,7 @@ export const fetchFromCdn = async (
   retried = false
 ): Promise<StateCache> => {
   const cache = createStateCache();
-  const prefix = `${cdnUrl}/${manifest.nonce}/${manifest.block}`;
+  const prefix = `${cdnUrl}/${manifest.prefix}`;
 
   try {
     setMessage?.('Querying for Components');

@@ -52,15 +52,23 @@ const chunk = <T>(items: T[], size: number): T[][] => {
 const valueChunks = chunk(values, 10);
 const entityChunks = chunk(entities, 3);
 
-const manifest: StateManifest = {
+// Mirrors the exporter's key shape: every export owns a prefix, because nonce and block
+// alone do not identify an image. The client never composes this, it reads it.
+const SLOT = '2026-09-13T20Z';
+const prefixFor = (block: number) => `${NONCE}/${block}/${SLOT}`;
+
+const manifestFor = (block: number): StateManifest => ({
   nonce: NONCE,
-  block: BLOCK,
+  block,
+  prefix: prefixFor(block),
   values: valueChunks.length,
   entities: entityChunks.length,
-};
+});
+
+const manifest = manifestFor(BLOCK);
 
 const chunkBytes = (block: number): Record<string, Uint8Array> => {
-  const prefix = `${CDN}/${NONCE}/${block}`;
+  const prefix = `${CDN}/${prefixFor(block)}`;
   const bytes: Record<string, Uint8Array> = {
     [`${prefix}/components.pb.gz`]: ComponentsResponse.encode({ components }).finish(),
   };
@@ -197,11 +205,11 @@ describe('fetchFromCdn', () => {
 
   it.each([404, 403])('restarts from a fresh manifest when a chunk is %i', async (status) => {
     const nextBlock = 200;
-    const gone = `${CDN}/${NONCE}/${BLOCK}/values-1.pb.gz`;
+    const gone = `${CDN}/${prefixFor(BLOCK)}/values-1.pb.gz`;
     const bytes = { ...chunkBytes(BLOCK), ...chunkBytes(nextBlock) };
     const spy = stubFetch(async (url) => {
       if (url === `${CDN}/latest.json`) {
-        return new Response(JSON.stringify({ ...manifest, block: nextBlock }));
+        return new Response(JSON.stringify(manifestFor(nextBlock)));
       }
       if (url === gone) return new Response(null, { status });
       return respond(bytes[url]);
@@ -214,7 +222,7 @@ describe('fetchFromCdn', () => {
   });
 
   it('rejects when the re-read manifest points at the same block', async () => {
-    const gone = `${CDN}/${NONCE}/${BLOCK}/values-1.pb.gz`;
+    const gone = `${CDN}/${prefixFor(BLOCK)}/values-1.pb.gz`;
     const bytes = chunkBytes(BLOCK);
     stubFetch(async (url) => {
       if (url === `${CDN}/latest.json`) return new Response(JSON.stringify(manifest));
