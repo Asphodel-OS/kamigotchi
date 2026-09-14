@@ -59,7 +59,17 @@ async function rebootGame(initialBoot: boolean): Promise<Layers> {
   // Set the game config
   const networkConfig = createNetworkConfig();
   if (!networkConfig) throw new Error('Invalid config');
-  else console.log('Root Network Config', networkConfig);
+
+  // Everything else in this config is what you want when diagnosing a boot — which API,
+  // which CDN, which world. The burner key is not, and a console is the wrong place for a
+  // key regardless of how disposable it is: extensions, error reporters, screenshots and
+  // shared support sessions all capture it. Kept as a presence flag so "was a key set at
+  // all" stays answerable, which is the only thing the value was ever used for here.
+  const { privateKey, ...loggableConfig } = networkConfig;
+  console.log('Root Network Config', {
+    ...loggableConfig,
+    privateKey: privateKey ? '[redacted]' : undefined,
+  });
 
   // Populate the layers
   if (!layers.network) layers.network = await createNetworkLayer(networkConfig);
