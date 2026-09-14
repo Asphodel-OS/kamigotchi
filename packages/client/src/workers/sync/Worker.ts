@@ -221,6 +221,7 @@ export class SyncWorker<C extends Components> implements DoWork<Input, NetworkEv
           ? await planCdnLoad(config.stateCdnUrl, kamigazeClient, initialState)
           : undefined;
 
+        const loadStartedAt = performance.now();
         initialState = manifest
           ? await fetchFromCdn(config.stateCdnUrl!, manifest, decode, setPercentage, setMessage)
               .then((cache) => {
@@ -246,6 +247,21 @@ export class SyncWorker<C extends Components> implements DoWork<Input, NetworkEv
               setPercentage,
               setMessage
             );
+
+        // Logged on both paths on purpose: if only the CDN path announced itself, a gRPC
+        // load would be indistinguishable from a log that never fired, which is exactly
+        // the question this is here to answer.
+        log.info(`[state] full load served by ${loadedFromCdn ? 'CDN' : 'gRPC'}`, {
+          source: loadedFromCdn ? config.stateCdnUrl : snapshotUrl,
+          cdnConfigured: !!config.stateCdnUrl,
+          prefix: loadedFromCdn ? manifest?.prefix : undefined,
+          block: initialState.lastKamigazeBlock,
+          nonce: initialState.kamigazeNonce,
+          components: initialState.components.length,
+          entities: initialState.entities.length,
+          values: initialState.state.size,
+          seconds: +((performance.now() - loadStartedAt) / 1000).toFixed(2),
+        });
       } catch (e) {
         console.log(snapshotUrl);
         var errorMessage: string;
