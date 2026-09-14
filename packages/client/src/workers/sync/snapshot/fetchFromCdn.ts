@@ -14,7 +14,13 @@ import {
   storeStateEntities,
   storeStateValues,
 } from '../state';
-import { CDN_FULL_THRESHOLD_BLOCKS, fetchStateBlock, MAX_RETRIES, RETRY_DELAYS } from './fetch';
+import {
+  CDN_FULL_THRESHOLD_BLOCKS,
+  CHUNK_TIMEOUT_MS,
+  fetchStateBlock,
+  MAX_RETRIES,
+  RETRY_DELAYS,
+} from './fetch';
 
 export type StateManifest = {
   nonce: number;
@@ -37,14 +43,51 @@ class CdnChunkGone extends Error {
 
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
+// The manifest gates the whole path decision and is under 100 bytes, so it gets a much
+// tighter budget than a chunk: a stalled read here is dead time before the gRPC fallback.
+const MANIFEST_TIMEOUT_MS = 5000;
+
+// Chunk counts are load bearing in a way a bad value cannot announce: fetchFromCdn derives
+// its request list from them, so a missing or zero count fetches nothing, raises no 404, and
+// still finalises the cache at manifest.block. The client would then bridge forward from a
+// block whose state it never loaded and stay silently incomplete. A malformed prefix is
+// self-correcting by comparison, since it 404s into the chunk-gone path.
+//
+// Every count is > 0 on any published manifest: the exporter refuses to run until
+// GetLatestStateBlock() > 0, so there is always at least one values and one entities chunk.
+// Anything else is corruption, and rejecting it falls back to gRPC.
+const isValidManifest = (value: unknown): value is StateManifest => {
+  const m = value as Partial<StateManifest> | null;
+  const positiveInt = (n: unknown): boolean => Number.isInteger(n) && (n as number) > 0;
+
+  return (
+    !!m &&
+    typeof m.prefix === 'string' &&
+    m.prefix.length > 0 &&
+    positiveInt(m.nonce) &&
+    positiveInt(m.block) &&
+    positiveInt(m.values) &&
+    positiveInt(m.entities)
+  );
+};
+
 export const fetchManifest = async (cdnUrl: string): Promise<StateManifest | undefined> => {
   try {
-    const res = await fetch(`${cdnUrl}/latest.json`, { cache: 'no-store' });
+    const res = await fetch(`${cdnUrl}/latest.json`, {
+      cache: 'no-store',
+      signal: AbortSignal.timeout(MANIFEST_TIMEOUT_MS),
+    });
     if (!res.ok) {
       log.warn('[cdn] manifest unavailable', { status: res.status });
       return undefined;
     }
-    return (await res.json()) as StateManifest;
+
+    const parsed = await res.json();
+    if (!isValidManifest(parsed)) {
+      log.warn('[cdn] manifest malformed, using gRPC', { manifest: parsed });
+      return undefined;
+    }
+    return parsed;
   } catch (e) {
     log.warn('[cdn] manifest unavailable', e);
     return undefined;
@@ -93,7 +136,7 @@ const fetchChunk = async (url: string): Promise<Uint8Array> => {
 
   while (retryCount <= MAX_RETRIES) {
     try {
-      const res = await fetch(url);
+      const res = await fetch(url, { signal: AbortSignal.timeout(CHUNK_TIMEOUT_MS) });
       if (res.status === 404 || res.status === 403) throw new CdnChunkGone(url);
       if (!res.ok) throw new Error(`[cdn] chunk ${url} responded ${res.status}`);
       return new Uint8Array(await res.arrayBuffer());

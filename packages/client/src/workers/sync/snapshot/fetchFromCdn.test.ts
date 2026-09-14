@@ -14,7 +14,7 @@ import { createDecode } from 'engine/encoders';
 import { formatEntityID } from 'engine/utils';
 import { uint8ArrayToHexString } from 'utils/numbers';
 import { createStateCache, getStateCacheEntries, StateCache } from '../state';
-import { fetchSnapshot } from './fetch';
+import { fetchSnapshot, MAX_RETRIES, RETRY_DELAYS } from './fetch';
 import { fetchFromCdn, planCdnLoad, StateManifest } from './fetchFromCdn';
 
 const CDN = 'https://cdn.test';
@@ -102,8 +102,8 @@ const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 // the DOM BodyInit type predates the generic Uint8Array, so the cast is the whole gap
 const respond = (bytes: Uint8Array) => new Response(bytes as unknown as BodyInit);
 
-const stubFetch = (handler: (url: string) => Promise<Response>) => {
-  const spy = vi.fn((input: RequestInfo | URL) => handler(String(input)));
+const stubFetch = (handler: (url: string, init?: RequestInit) => Promise<Response>) => {
+  const spy = vi.fn((input: RequestInfo | URL, init?: RequestInit) => handler(String(input), init));
   vi.stubGlobal('fetch', spy);
   return spy;
 };
@@ -271,5 +271,86 @@ describe('planCdnLoad', () => {
     expect(
       await planCdnLoad(CDN, fakeClient(BLOCK, NONCE), warmCache(BLOCK - 10, NONCE - 1))
     ).toEqual(manifest);
+  });
+
+  // A bad chunk count cannot announce itself: fetchFromCdn builds its request list from it,
+  // so zero fetches nothing, 404s nothing, and still finalises the cache at manifest.block.
+  // The load would look clean and be permanently short of state below that block.
+  it.each([
+    ['values is zero', { values: 0 }],
+    ['entities is zero', { entities: 0 }],
+    ['values is missing', { values: undefined }],
+    ['entities is missing', { entities: undefined }],
+    ['block is zero', { block: 0 }],
+    ['nonce is missing', { nonce: undefined }],
+    ['prefix is missing', { prefix: undefined }],
+    ['prefix is empty', { prefix: '' }],
+    ['values is fractional', { values: 1.5 }],
+    ['values is a string', { values: '2' }],
+  ])('refuses a manifest where %s', async (_label, patch) => {
+    stubFetch(async (url) => {
+      if (url === `${CDN}/latest.json`) {
+        return new Response(JSON.stringify({ ...manifest, ...patch }));
+      }
+      return respond(chunkBytes(BLOCK)[url]);
+    });
+
+    expect(await planCdnLoad(CDN, fakeClient(BLOCK, NONCE), createStateCache())).toBeUndefined();
+  });
+
+  it('refuses a manifest that is not an object', async () => {
+    stubFetch(async (url) => {
+      if (url === `${CDN}/latest.json`) return new Response('null');
+      return respond(chunkBytes(BLOCK)[url]);
+    });
+
+    expect(await planCdnLoad(CDN, fakeClient(BLOCK, NONCE), createStateCache())).toBeUndefined();
+  });
+});
+
+// Without a signal a stalled response never settles, and both the retry loop and the gRPC
+// fallback sit downstream of that promise, so cold boot hangs indefinitely rather than
+// degrading. The gRPC chunk loader already bounds its reads (fetch.ts CHUNK_TIMEOUT_MS).
+describe('request bounding', () => {
+  it('aborts the manifest read and every chunk read on a timeout', async () => {
+    const spy = serve(chunkBytes(BLOCK));
+
+    await fetchFromCdn(CDN, manifest, decode, noop);
+
+    expect(spy.mock.calls.length).toBeGreaterThan(1);
+    for (const [url, init] of spy.mock.calls) {
+      const signal = (init as RequestInit | undefined)?.signal;
+      expect(signal, `no abort signal on ${String(url)}`).toBeInstanceOf(AbortSignal);
+    }
+  });
+
+  // Picks up where the wiring test stops. Whether AbortSignal.timeout fires on schedule is
+  // the platform's business — and its timer is not one vi.useFakeTimers drives, so driving
+  // it here would test nothing. What is ours is the handling: a timed-out read has to be
+  // retryable like any transient failure, not fatal like a 404, and has to give up rather
+  // than spin. The retry sleeps do use setTimeout, so fake timers carry the delays.
+  it('retries a timed-out chunk and eventually gives up', async () => {
+    vi.useFakeTimers();
+    const bytes = chunkBytes(BLOCK);
+    const stalled = `${CDN}/${prefixFor(BLOCK)}/values-0.pb.gz`;
+
+    const spy = stubFetch(async (url) => {
+      if (url !== stalled) return respond(bytes[url]);
+      throw new DOMException('The operation timed out.', 'TimeoutError');
+    });
+
+    const load = fetchFromCdn(CDN, manifest, decode, noop).then(
+      () => undefined,
+      (e) => e
+    );
+    await vi.advanceTimersByTimeAsync(RETRY_DELAYS[RETRY_DELAYS.length - 1] * (MAX_RETRIES + 2));
+    vi.useRealTimers();
+
+    await expect(load).resolves.toBeInstanceOf(Error);
+
+    // retried rather than treated as gone, and bounded rather than endless
+    const attempts = spy.mock.calls.filter(([url]) => String(url) === stalled).length;
+    expect(attempts).toBeGreaterThan(1);
+    expect(attempts).toBe(MAX_RETRIES + 1);
   });
 });

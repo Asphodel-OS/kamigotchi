@@ -13,7 +13,7 @@ import {
   storeStateValues,
 } from '../state';
 
-const CHUNK_TIMEOUT_MS = 30000;
+export const CHUNK_TIMEOUT_MS = 30000;
 export const MAX_RETRIES = 20;
 export const RETRY_DELAYS = [1000, 2000, 3000, 5000, 10000];
 
