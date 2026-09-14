@@ -331,7 +331,7 @@ importers:
         version: 7.2.0
       solady:
         specifier: github:Vectorized/solady
-        version: https://codeload.github.com/Vectorized/solady/tar.gz/2afba69bf67b78dd4abeadcc696052b3a6f71499
+        version: https://codeload.github.com/Vectorized/solady/tar.gz/73f13dd1483707ef6b4d16cb0543570b7e1715a8
       solmate:
         specifier: github:transmissions11/solmate
         version: https://codeload.github.com/transmissions11/solmate/tar.gz/89365b880c4f3c786bdd453d4b8e8fe410344a69
@@ -362,7 +362,7 @@ importers:
         version: 5.1.1
       forge-std:
         specifier: github:foundry-rs/forge-std
-        version: https://codeload.github.com/foundry-rs/forge-std/tar.gz/7fdf81f9ceb2f6ebbb8f9f1c6c5274d5bcc9a1f5
+        version: https://codeload.github.com/foundry-rs/forge-std/tar.gz/27ab851c7cde58b22cc4de426d59e23a31c5cb9c
       memmove:
         specifier: https://github.com/brockelmore/memmove.git#d577ecd1bc43656f4032edf4daa9797f756a8ad2
         version: memmove.git#d577ecd1bc43656f4032edf4daa9797f756a8ad2@https://codeload.github.com/brockelmore/memmove/tar.gz/d577ecd1bc43656f4032edf4daa9797f756a8ad2
@@ -5736,9 +5736,9 @@ packages:
     resolution: {integrity: sha512-gIXjKqtFuWEgzFRJA9WCQeSJLZDjgJUOMCMzxtvFq/37KojM1BFGufqsCy0r4qSQmYLsZYMeyRqzIWOMup03sw==}
     engines: {node: '>=14'}
 
-  forge-std@https://codeload.github.com/foundry-rs/forge-std/tar.gz/7fdf81f9ceb2f6ebbb8f9f1c6c5274d5bcc9a1f5:
-    resolution: {tarball: https://codeload.github.com/foundry-rs/forge-std/tar.gz/7fdf81f9ceb2f6ebbb8f9f1c6c5274d5bcc9a1f5}
-    version: 1.16.2
+  forge-std@https://codeload.github.com/foundry-rs/forge-std/tar.gz/27ab851c7cde58b22cc4de426d59e23a31c5cb9c:
+    resolution: {tarball: https://codeload.github.com/foundry-rs/forge-std/tar.gz/27ab851c7cde58b22cc4de426d59e23a31c5cb9c}
+    version: 1.11.0
 
   form-data@4.0.4:
     resolution: {integrity: sha512-KrGhL9Q4zjj0kiUt5OO4Mr/A/jlI2jDYs5eHBpYHPcBEVSiipAvn2Ko2HnPe20rmcuuvMHNdZFp+4IlGTMF0Ow==}
@@ -8266,8 +8266,8 @@ packages:
     resolution: {integrity: sha512-HLpt+uLy/pxB+bum/9DzAgiKS8CX1EvbWxI4zlmgGCExImLdiad2iCwXT5Z4c9c3Eq8rP2318mPW2c+QbtjK8A==}
     engines: {node: '>= 10.0.0', npm: '>= 3.0.0'}
 
-  solady@https://codeload.github.com/Vectorized/solady/tar.gz/2afba69bf67b78dd4abeadcc696052b3a6f71499:
-    resolution: {tarball: https://codeload.github.com/Vectorized/solady/tar.gz/2afba69bf67b78dd4abeadcc696052b3a6f71499}
+  solady@https://codeload.github.com/Vectorized/solady/tar.gz/73f13dd1483707ef6b4d16cb0543570b7e1715a8:
+    resolution: {tarball: https://codeload.github.com/Vectorized/solady/tar.gz/73f13dd1483707ef6b4d16cb0543570b7e1715a8}
     version: 0.1.26
 
   solhint@3.6.2:
@@ -17312,7 +17312,7 @@ snapshots:
       cross-spawn: 7.0.6
       signal-exit: 4.1.0
 
-  forge-std@https://codeload.github.com/foundry-rs/forge-std/tar.gz/7fdf81f9ceb2f6ebbb8f9f1c6c5274d5bcc9a1f5: {}
+  forge-std@https://codeload.github.com/foundry-rs/forge-std/tar.gz/27ab851c7cde58b22cc4de426d59e23a31c5cb9c: {}
 
   form-data@4.0.4:
     dependencies:
@@ -20370,7 +20370,7 @@ snapshots:
       ip-address: 10.1.0
       smart-buffer: 4.2.0
 
-  solady@https://codeload.github.com/Vectorized/solady/tar.gz/2afba69bf67b78dd4abeadcc696052b3a6f71499: {}
+  solady@https://codeload.github.com/Vectorized/solady/tar.gz/73f13dd1483707ef6b4d16cb0543570b7e1715a8: {}
 
   solhint@3.6.2(typescript@4.9.5):
     dependencies:
