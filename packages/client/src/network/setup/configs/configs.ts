@@ -35,6 +35,7 @@ export const getConfig = (provider?: BrowserProvider): NetworkConfig => {
     chainId: Number(import.meta.env.VITE_CHAIN_ID),
     worldAddress: import.meta.env.VITE_WORLD_ADDRESS,
     initialBlockNumber: Number(import.meta.env.VITE_INITIAL_BLOCK_NUMBER),
+    stateCdnUrl: import.meta.env.VITE_STATE_CDN_URL || undefined,
   };
 
   // TODO: deprecate second path this whenever it stops being loadbearing
@@ -97,4 +98,5 @@ const shape: (networkConfig: NetworkConfig) => SetupContractConfig = (config) =>
   devMode: config.devMode,
   snapshotServiceUrl: config.snapshotServiceUrl,
   streamServiceUrl: config.streamServiceUrl,
+  stateCdnUrl: config.stateCdnUrl,
 });

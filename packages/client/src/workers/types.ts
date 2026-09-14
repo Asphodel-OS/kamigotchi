@@ -77,5 +77,6 @@ export type SyncWorkerConfig = {
   streamServiceUrl?: string;
   fetchSystemCalls?: boolean;
   snapshotNumChunks?: number;
+  stateCdnUrl?: string;
   pruneOptions?: { playerAddress: string; hashedComponentId: string };
 };

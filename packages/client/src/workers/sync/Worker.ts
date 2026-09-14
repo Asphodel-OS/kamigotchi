@@ -34,9 +34,15 @@ import {
   NetworkEvents,
   SyncWorkerConfig,
 } from '../types';
-import { createSnapshotClient, fetchSnapshot, isRateLimited } from './snapshot';
+import { bridgeBoot } from './bridge';
 import {
-  createStateCache,
+  createSnapshotClient,
+  fetchFromCdn,
+  fetchSnapshot,
+  isRateLimited,
+  planCdnLoad,
+} from './snapshot';
+import {
   getStateCacheEntries,
   getStateReport,
   getStateStore,
@@ -44,7 +50,13 @@ import {
   saveStateCacheToStore,
   storeStateEvents,
 } from './state';
-import { createStream, fillGap, HEALTH_CHECK_BUFFER_MS, KEEPALIVE_INTERVAL_MS } from './stream';
+import {
+  createStream,
+  fetchGapEvents,
+  fillGap,
+  HEALTH_CHECK_BUFFER_MS,
+  KEEPALIVE_INTERVAL_MS,
+} from './stream';
 import {
   createFetchSystemCallsFromEvents,
   createFetchWorldEventsInBlockRange,
@@ -196,27 +208,52 @@ export class SyncWorker<C extends Components> implements DoWork<Input, NetworkEv
     let initialState = await loadStateCacheFromStore(indexedDB);
     console.log('INITIAL STATE (PRE-SYNC)', getStateReport(initialState));
 
-    if (snapshotUrl) {
+    const kamigazeClient = snapshotUrl ? createSnapshotClient(snapshotUrl) : undefined;
+    const setPercentage = (percentage: number) => this.setLoadingState({ percentage });
+    const setMessage = (msg: string) => this.setLoadingState({ msg });
+    let loadedFromCdn = false;
+
+    if (kamigazeClient) {
       this.setLoadingState({ msg: 'Querying for Components', percentage: 0 });
-      const kamigazeClient = createSnapshotClient(snapshotUrl);
 
       try {
-        initialState = await fetchSnapshot(
-          initialState,
-          kamigazeClient,
-          decode,
-          config.snapshotNumChunks ?? 10,
-          (percentage: number) => this.setLoadingState({ percentage }),
-          (msg: string) => this.setLoadingState({ msg })
-        );
+        const manifest = config.stateCdnUrl
+          ? await planCdnLoad(config.stateCdnUrl, kamigazeClient, initialState)
+          : undefined;
+
+        initialState = manifest
+          ? await fetchFromCdn(config.stateCdnUrl!, manifest, decode, setPercentage, setMessage)
+              .then((cache) => {
+                loadedFromCdn = true;
+                return cache;
+              })
+              .catch((e) => {
+                log.warn('[cdn] full load failed, falling back to gRPC', e);
+                return fetchSnapshot(
+                  initialState,
+                  kamigazeClient,
+                  decode,
+                  config.snapshotNumChunks ?? 10,
+                  setPercentage,
+                  setMessage
+                );
+              })
+          : await fetchSnapshot(
+              initialState,
+              kamigazeClient,
+              decode,
+              config.snapshotNumChunks ?? 10,
+              setPercentage,
+              setMessage
+            );
       } catch (e) {
         console.log(snapshotUrl);
         var errorMessage: string;
 
-        if (await isRateLimited(snapshotUrl, e)) {
+        if (await isRateLimited(snapshotUrl!, e)) {
           errorMessage = "You're refreshing too much! Try again in a minute or two";
         } else {
-          errorMessage = `Unknown error: ${e.code}. Can you drop this in the discord if it persists?`;
+          errorMessage = `Unknown error: ${(e as any).code}. Can you drop this in the discord if it persists?`;
         }
         console.error('failed to retrieve state', e);
         this.setLoadingState({
@@ -303,14 +340,39 @@ export class SyncWorker<C extends Components> implements DoWork<Input, NetworkEv
       percentage: 0,
     });
 
-    const gapStateEvents = await fillGap({
-      kamigazeUrl: streamServiceUrl!,
-      decode,
-      fetchWorldEvents,
-      fromBlock: gapFromBlock,
-      toBlock: streamStartBlockNumber,
-      setPercentage: (percentage: number) => this.setLoadingState({ percentage }),
-    });
+    const gapStateEvents =
+      loadedFromCdn && kamigazeClient
+        ? await bridgeBoot({
+            cache: stateCache,
+            toBlock: streamStartBlockNumber,
+            gap: (fromBlock, skipRpcFallback) =>
+              fetchGapEvents({
+                kamigazeUrl: streamServiceUrl!,
+                decode,
+                fetchWorldEvents,
+                fromBlock,
+                toBlock: streamStartBlockNumber,
+                setPercentage,
+                skipRpcFallback,
+              }),
+            fetchDelta: (cache) =>
+              fetchSnapshot(
+                cache,
+                kamigazeClient,
+                decode,
+                config.snapshotNumChunks ?? 10,
+                setPercentage,
+                setMessage
+              ),
+          })
+        : await fillGap({
+            kamigazeUrl: streamServiceUrl!,
+            decode,
+            fetchWorldEvents,
+            fromBlock: gapFromBlock,
+            toBlock: streamStartBlockNumber,
+            setPercentage,
+          });
 
     // Merge gap events and live events buffered during gap fill
     storeStateEvents(stateCache.current, [...gapStateEvents, ...initialLiveEvents]);

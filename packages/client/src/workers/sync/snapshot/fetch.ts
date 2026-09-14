@@ -14,8 +14,13 @@ import {
 } from '../state';
 
 const CHUNK_TIMEOUT_MS = 30000;
-const MAX_RETRIES = 20;
-const RETRY_DELAYS = [1000, 2000, 3000, 5000, 10000];
+export const MAX_RETRIES = 20;
+export const RETRY_DELAYS = [1000, 2000, 3000, 5000, 10000];
+
+// ponytail: block-age heuristic. 30 days at 1s blocks, well past the ~25-30 day
+// break-even between a day of delta (1-5MB) and the full image (~120MB). It only
+// bounds the pathological case of a months-old cache; the exact value barely matters.
+export const CDN_FULL_THRESHOLD_BLOCKS = 2_592_000;
 
 // RESOURCE_EXHAUSTED is expected backpressure, not a failure, so it gets its own
 // retry budget separate from the fatal one, keeping transient saturation from
@@ -223,7 +228,7 @@ export const fetchSnapshot = async (
   return options.stateCache;
 };
 
-const fetchStateBlock = async (kamigazeClient: KamigazeServiceClient) => {
+export const fetchStateBlock = async (kamigazeClient: KamigazeServiceClient) => {
   let retryCount = 0;
   log.debug('[snapshot] fetchStateBlock started');
 

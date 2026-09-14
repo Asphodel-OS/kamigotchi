@@ -5,11 +5,9 @@ export type {
   BlockResponse,
   Component,
   ComponentsRequest,
-  ComponentsResponse,
   DeepPartial,
   ECSEvent,
   EntitiesRequest,
-  EntitiesResponse,
   Entity,
   GetEventsSinceRequest,
   GetEventsSinceResponse,
@@ -19,10 +17,14 @@ export type {
   ServerStreamingMethodResult,
   State,
   StateRequest,
-  StateResponse,
   StreamRequest,
   StreamResponse,
   TxMetadata,
 } from './proto';
 
-export { KamigazeServiceDefinition as KamigazeServiceDefinition } from './proto';
+export {
+  ComponentsResponse,
+  EntitiesResponse,
+  KamigazeServiceDefinition,
+  StateResponse,
+} from './proto';
