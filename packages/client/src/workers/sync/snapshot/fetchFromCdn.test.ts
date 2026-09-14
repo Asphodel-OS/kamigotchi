@@ -80,8 +80,13 @@ const chunkBytes = (block: number): Record<string, Uint8Array> => {
   return bytes;
 };
 
-const decode = (async (_component: string, data: Uint8Array) =>
-  uint8ArrayToHexString(data)) as unknown as ReturnType<typeof createDecode>;
+// Component-sensitive on purpose. storeValues decodes with
+// stateCache.components[componentIdx], so applying a value chunk before components are
+// stored passes undefined to the real decoder, which misses ComponentsSchema and falls
+// back to the bool decoder — silently decoding the whole image wrong. A stub that ignored
+// its component argument would stay green through exactly that reordering.
+const decode = (async (component: string, data: Uint8Array) =>
+  `${component}:${uint8ArrayToHexString(data)}`) as unknown as ReturnType<typeof createDecode>;
 
 const noop = () => {};
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
