@@ -1,8 +1,12 @@
 import { ClientError, Status } from 'nice-grpc-web';
 
 import { KamigazeServiceClient } from 'clients/kamigaze';
+import { getMiddlewareClient } from 'clients/middleware';
 import { createDecode } from 'engine/encoders';
+import { EntityID } from 'engine/recs';
+import { formatComponentID, formatEntityID } from 'engine/utils';
 import { log } from 'utils/logger';
+import { NetworkEvents } from 'workers/types';
 import {
   StateCache,
   createStateCache,
@@ -12,6 +16,7 @@ import {
   storeStateEntities,
   storeStateValues,
 } from '../state';
+import { storeEvent } from '../state/cache';
 
 const CHUNK_TIMEOUT_MS = 30000;
 const MAX_RETRIES = 20;
@@ -139,6 +144,120 @@ interface FetchOptions {
   setMessage?: (msg: string) => void;
 }
 
+async function doTheThing(state: StateCache, decode: ReturnType<typeof createDecode>) {
+  console.error('[ws] hi');
+  const client = getMiddlewareClient();
+
+  let kamion = '0x000000000000000000000000f23fe9f3f9e4b8dbd17722486a849434b2842fc3';
+  let res = await client?.getComponentValues({
+    key: 'ACCOUNT',
+    entityId: kamion,
+    includeChildren: true,
+  });
+  log.info(`[mw] getting account components ${res?.entity?.components.length}`);
+
+  if (!res) return;
+  let entity = res.entity!;
+  const entityId = formatEntityID(entity.entityId);
+  for (const component of entity.components) {
+    const componentId = formatComponentID(component.componentId);
+    const value = await decode(componentId, component.value);
+    storeEvent(state, {
+      type: NetworkEvents.NetworkComponentUpdate,
+      component: componentId,
+      entity: entityId,
+      value,
+      blockNumber: state.blockNumber,
+    });
+  }
+  for (const childEntity of entity.children) {
+    for (const cmp of childEntity.components) {
+      const value = await decode(cmp.componentId, cmp.value);
+      storeEvent(state, {
+        type: NetworkEvents.NetworkComponentUpdate,
+        component: cmp.componentId,
+        entity: childEntity.entityId as EntityID,
+        value,
+        blockNumber: state.blockNumber,
+      });
+    }
+  }
+
+  res2 = await client?.getComponentValuesByType({ key: 'KAMI' });
+  log.info(`[mw] getting kamis ${res2?.entities.length}`);
+  if (!res2) return;
+  for (const entity of res2.entities) {
+    const entityId = formatEntityID(entity.entityId);
+    for (const component of entity.components) {
+      const componentId = formatComponentID(component.componentId);
+      //console.log(`entityId ${entityId} compoonentId ${componentId}`);
+      const value = await decode(componentId, component.value);
+      storeEvent(state, {
+        type: NetworkEvents.NetworkComponentUpdate,
+        component: componentId,
+        entity: entityId,
+        value,
+        blockNumber: state.blockNumber,
+      });
+    }
+  }
+
+  let res2 = await client?.getComponentValuesByType({ key: 'KAMI' });
+  log.info(`[mw] getting kamis ${res2?.entities.length}`);
+  if (!res2) return;
+  for (const entity of res2.entities) {
+    const entityId = formatEntityID(entity.entityId);
+    for (const component of entity.components) {
+      const componentId = formatComponentID(component.componentId);
+      //console.log(`entityId ${entityId} compoonentId ${componentId}`);
+      const value = await decode(componentId, component.value);
+      storeEvent(state, {
+        type: NetworkEvents.NetworkComponentUpdate,
+        component: componentId,
+        entity: entityId,
+        value,
+        blockNumber: state.blockNumber,
+      });
+    }
+  }
+  res2 = await client?.getComponentValuesByType({ key: 'ROOM' });
+  log.info(`[mw] getting rooms ${res2?.entities.length}`);
+  if (!res2) return;
+  for (const entity of res2.entities) {
+    const entityId = formatEntityID(entity.entityId);
+    for (const component of entity.components) {
+      const componentId = formatComponentID(component.componentId);
+      //console.log(`entityId ${entityId} compoonentId ${componentId}`);
+      const value = await decode(componentId, component.value);
+      storeEvent(state, {
+        type: NetworkEvents.NetworkComponentUpdate,
+        component: componentId,
+        entity: entityId,
+        value,
+        blockNumber: state.blockNumber,
+      });
+    }
+  }
+
+  res2 = await client?.getComponentValuesByType({ key: 'NODE' });
+  log.info(`[mw] getting nodes ${res2?.entities.length}`);
+  if (!res2) return;
+  for (const entity of res2.entities) {
+    const entityId = formatEntityID(entity.entityId);
+    for (const component of entity.components) {
+      const componentId = formatComponentID(component.componentId);
+      const value = await decode(componentId, component.value);
+      storeEvent(state, {
+        type: NetworkEvents.NetworkComponentUpdate,
+        component: componentId,
+        entity: entityId,
+        value,
+        blockNumber: state.blockNumber,
+      });
+    }
+  }
+}
+
 export const fetchSnapshot = async (
   stateCache: StateCache,
   kamigazeClient: KamigazeServiceClient,
@@ -166,6 +285,14 @@ export const fetchSnapshot = async (
     setPercentage,
     setMessage,
   };
+
+  options.stateCache.lastStateValuesBlock = 248247900;
+  options.stateCache.lastStateRemovalsBlock = 248247900;
+  options.stateCache.lastKamigazeBlock = 248247900;
+  //HEREA
+  doTheThing(options.stateCache, options.decode);
+  console.error('[ws] did the zing');
+  return options.stateCache;
 
   try {
     setMessage?.('Querying for State Info');
