@@ -20,7 +20,14 @@ export const createConfig = (provider?: BrowserProvider): SetupContractConfig | 
   ) {
     return shape(config);
   } else {
-    console.error('Invalid network config', config);
+    // Same reasoning as boot.tsx: the key never reaches the console, but whether one was
+    // present has to stay visible because its absence is one of the things that lands you
+    // in this branch.
+    const { privateKey, ...loggableConfig } = config;
+    console.error('Invalid network config', {
+      ...loggableConfig,
+      privateKey: privateKey ? '[redacted]' : undefined,
+    });
   }
 };
 
