@@ -341,7 +341,7 @@ const OptionColumn = styled.div<{ color: string }>`
   gap: 0.9vw;
   padding: 0.5vw 0.4vw 0.6vw 0;
   max-height: 40vh;
-  overflow-y: auto;
+  overflow: hidden scroll;
   ::-webkit-scrollbar {
     background: transparent;
     width: 0.3vw;
@@ -368,7 +368,7 @@ const Option = styled.button<{ color?: string }>`
   z-index: 3;
   box-shadow: 0 0.1vw 0.2vw rgba(0, 0, 0, 1);
   cursor: pointer;
-  width: 55%;
+  width: 80%;
   max-width: fit-content;
   padding: 0 0.5vw;
   border-radius: 0.3vw;
