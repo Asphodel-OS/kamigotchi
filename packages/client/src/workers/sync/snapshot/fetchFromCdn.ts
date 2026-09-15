@@ -198,6 +198,33 @@ export const fetchFromCdn = async (
   const cache = createStateCache();
   const prefix = `${cdnUrl}/${manifest.prefix}`;
 
+  // Fetching and applying overlap, so phase marks cannot separate them the way the
+  // Worker's connecting/setup/backfill marks do. These are accumulated instead, and the
+  // sums deliberately do not add up to wall clock. Read them as:
+  //   applyMs vs wallMs  — applying is single-threaded and additive, so if the two are
+  //                        close then decoding is the whole story and the network is not
+  //   fetchMs            — inflated whenever the thread is busy, since it includes waiting
+  //                        for JS to read the body. High fetchMs alongside high applyMs
+  //                        means blocking, not a slow link
+  //   protoMs vs valuesApplyMs — protobuf parse against the per-row ABI decode
+  const t = {
+    fetchMs: 0,
+    protoMs: 0,
+    valuesApplyMs: 0,
+    entitiesApplyMs: 0,
+    valueRows: 0,
+    entityRows: 0,
+    bytes: 0,
+  };
+  const wallStart = performance.now();
+  const timedFetch = (url: string) => async () => {
+    const started = performance.now();
+    const bytes = await fetchChunk(url);
+    t.fetchMs += performance.now() - started;
+    t.bytes += bytes.byteLength;
+    return bytes;
+  };
+
   try {
     setMessage?.('Querying for Components');
     const componentBytes = await fetchChunk(`${prefix}/components.pb.gz`);
@@ -210,14 +237,22 @@ export const fetchFromCdn = async (
       ...Array.from({ length: manifest.values }, (_, i) => `${prefix}/values-${i}.pb.gz`),
       ...Array.from({ length: manifest.entities }, (_, i) => `${prefix}/entities-${i}.pb.gz`),
     ];
-    const chunks = startWithLimit(urls.map((url) => () => fetchChunk(url)));
+    const chunks = startWithLimit(urls.map(timedFetch));
     const valueChunks = chunks.slice(0, manifest.values);
     const entityChunks = chunks.slice(manifest.values);
 
     let valuesApplied = 0;
     const applyValues = valueChunks.map((chunk) =>
       chunk.then(async (bytes) => {
-        await storeStateValues(cache, StateResponse.decode(bytes).state, decode);
+        const protoStart = performance.now();
+        const state = StateResponse.decode(bytes).state;
+        t.protoMs += performance.now() - protoStart;
+
+        const applyStart = performance.now();
+        await storeStateValues(cache, state, decode);
+        t.valuesApplyMs += performance.now() - applyStart;
+        t.valueRows += state.length;
+
         valuesApplied++;
         setPercentage(+(5 + (valuesApplied / manifest.values) * 60).toFixed(1));
       })
@@ -225,12 +260,38 @@ export const fetchFromCdn = async (
 
     const applyEntitiesInOrder = async () => {
       for (let i = 0; i < entityChunks.length; i++) {
-        storeStateEntities(cache, EntitiesResponse.decode(await entityChunks[i]).entities);
+        const bytes = await entityChunks[i];
+        const protoStart = performance.now();
+        const entities = EntitiesResponse.decode(bytes).entities;
+        t.protoMs += performance.now() - protoStart;
+
+        const applyStart = performance.now();
+        storeStateEntities(cache, entities);
+        t.entitiesApplyMs += performance.now() - applyStart;
+        t.entityRows += entities.length;
+
         setPercentage(+(65 + ((i + 1) / manifest.entities) * 35).toFixed(1));
       }
     };
 
     await Promise.all([Promise.all(applyValues), applyEntitiesInOrder()]);
+
+    const wallMs = performance.now() - wallStart;
+    const applyMs = t.valuesApplyMs + t.entitiesApplyMs;
+    log.info('[cdn] load profile', {
+      wallSeconds: +(wallMs / 1000).toFixed(2),
+      applySeconds: +(applyMs / 1000).toFixed(2),
+      applyShareOfWall: `${((applyMs / wallMs) * 100).toFixed(0)}%`,
+      valuesApplySeconds: +(t.valuesApplyMs / 1000).toFixed(2),
+      entitiesApplySeconds: +(t.entitiesApplyMs / 1000).toFixed(2),
+      protoParseSeconds: +(t.protoMs / 1000).toFixed(2),
+      fetchSecondsInflatedByBlocking: +(t.fetchMs / 1000).toFixed(2),
+      valueRows: t.valueRows,
+      entityRows: t.entityRows,
+      microsecondsPerValueRow: +((t.valuesApplyMs * 1000) / Math.max(t.valueRows, 1)).toFixed(1),
+      megabytes: +(t.bytes / 1e6).toFixed(1),
+      megabytesPerSecond: +(t.bytes / 1e6 / (wallMs / 1000)).toFixed(1),
+    });
 
     storeStateBlock(cache, { blockNumber: manifest.block, nonce: manifest.nonce });
     cache.lastKamigazeBlock = manifest.block;
