@@ -354,3 +354,45 @@ describe('request bounding', () => {
     expect(attempts).toBe(MAX_RETRIES + 1);
   });
 });
+
+// Values and entities apply concurrently, and entities finish far sooner. When the two
+// wrote into separate ranges of one percentage, entities raced it to 100 and the values
+// then dragged it back down, leaving the bar stranded mid-way when the load completed.
+describe('load progress', () => {
+  const collect = async (serveBytes = chunkBytes(BLOCK)) => {
+    serve(serveBytes);
+    const seen: number[] = [];
+    await fetchFromCdn(CDN, manifest, decode, (p) => seen.push(p));
+    return seen;
+  };
+
+  it('never goes backwards', async () => {
+    const seen = await collect();
+
+    const drops = seen.filter((p, i) => i > 0 && p < seen[i - 1]!);
+    expect(drops, `progress went backwards in ${JSON.stringify(seen)}`).toEqual([]);
+  });
+
+  it('starts inside the range and ends at 100', async () => {
+    const seen = await collect();
+
+    expect(Math.min(...seen)).toBeGreaterThanOrEqual(0);
+    expect(Math.max(...seen)).toBeLessThanOrEqual(100);
+    expect(seen.at(-1)).toBe(100);
+  });
+
+  it('stays monotonic when entity chunks land before value chunks', async () => {
+    const bytes = chunkBytes(BLOCK);
+    // the real ordering: entities are cheap and finish while values are still decoding
+    stubFetch(async (url) => {
+      if (url.includes('/values-')) await sleep(15);
+      return respond(bytes[url]);
+    });
+
+    const seen: number[] = [];
+    await fetchFromCdn(CDN, manifest, decode, (p) => seen.push(p));
+
+    expect(seen.filter((p, i) => i > 0 && p < seen[i - 1]!)).toEqual([]);
+    expect(seen.at(-1)).toBe(100);
+  });
+});

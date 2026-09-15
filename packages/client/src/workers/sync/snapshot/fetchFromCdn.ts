@@ -241,7 +241,23 @@ export const fetchFromCdn = async (
     const valueChunks = chunks.slice(0, manifest.values);
     const entityChunks = chunks.slice(manifest.values);
 
+    // Values and entities apply concurrently, so two writers sharing one percentage cannot
+    // own separate ranges: entities finish roughly 25x sooner, so they used to race the bar
+    // to 100 before the values snapped it back and left it stranded at 65 when the load
+    // finished. One function reading both counters is monotonic by construction, since
+    // neither counter ever decreases.
+    //
+    // The split is weighted by where the time goes, not by chunk count. A measured cold
+    // boot spends 36.3s in values against 1.4s in entities, so dividing the bar evenly
+    // across nine chunks would sprint through five of them and stall on the rest.
     let valuesApplied = 0;
+    let entitiesApplied = 0;
+    const reportProgress = () => {
+      const values = (valuesApplied / manifest.values) * 90;
+      const entities = (entitiesApplied / manifest.entities) * 5;
+      setPercentage(+(5 + values + entities).toFixed(1));
+    };
+
     const applyValues = valueChunks.map((chunk) =>
       chunk.then(async (bytes) => {
         const protoStart = performance.now();
@@ -254,7 +270,7 @@ export const fetchFromCdn = async (
         t.valueRows += state.length;
 
         valuesApplied++;
-        setPercentage(+(5 + (valuesApplied / manifest.values) * 60).toFixed(1));
+        reportProgress();
       })
     );
 
@@ -270,7 +286,8 @@ export const fetchFromCdn = async (
         t.entitiesApplyMs += performance.now() - applyStart;
         t.entityRows += entities.length;
 
-        setPercentage(+(65 + ((i + 1) / manifest.entities) * 35).toFixed(1));
+        entitiesApplied++;
+        reportProgress();
       }
     };
 
