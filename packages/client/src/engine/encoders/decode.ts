@@ -1,5 +1,5 @@
 import { ComponentValue } from 'engine/recs';
-import { AbiCoder, BytesLike } from 'ethers';
+import { AbiCoder, BytesLike, ParamType } from 'ethers';
 
 import { ComponentsSchema } from 'types/ComponentsSchema';
 import { ContractSchemaValue, ContractSchemaValueId } from './types';
@@ -57,19 +57,23 @@ export function createDecoder<D extends { [key: string]: unknown }>(
   keys: (keyof D)[],
   valueTypes: ContractSchemaValue[]
 ): (data: BytesLike) => D {
+  if (keys.length !== valueTypes.length) {
+    throw new Error('Component schema keys and values length does not match');
+  }
+
+  // Everything here is fixed once the decoder exists, but the closure below runs once per
+  // state row — about 3 million times on a prod cold boot. Rebuilding the type array and
+  // handing ethers raw strings meant re-parsing each type into a ParamType on every row,
+  // which measured 17us/row and 95% of a 56s load. Entities, which never reach this path,
+  // cost 1.5us/row. Pre-parsing to ParamType is what keeps it out of the hot loop.
+  const coder = AbiCoder.defaultAbiCoder();
+  const paramTypes = valueTypes.map((valueType) =>
+    ParamType.from(ContractSchemaValueId[valueType])
+  );
+
   return (data: BytesLike) => {
-    // Decode data with the schema values provided by the component
-    const decoded = AbiCoder.defaultAbiCoder().decode(
-      valueTypes.map((valueType) => ContractSchemaValueId[valueType]),
-      data
-    );
+    const decoded = coder.decode(paramTypes, data);
 
-    // Now keys and valueTypes lengths must match
-    if (keys.length !== valueTypes.length) {
-      throw new Error('Component schema keys and values length does not match');
-    }
-
-    // Construct the client component value
     const result: Partial<{ [key in keyof D]: unknown }> = {};
     for (let i = 0; i < keys.length; i++) {
       result[keys[i]!] = flattenValue(decoded[i], valueTypes[i]!);
