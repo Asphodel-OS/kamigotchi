@@ -17,6 +17,10 @@ export interface BridgeBootOptions {
  * answer means the streamer cache no longer reaches back that far, which the snapshot
  * delta fixes - and the streamer then answers a second ask from the snapshot head,
  * because the snapshot itself always trails the chain by its sync period.
+ *
+ * Reading empty as "out of range" only holds while the streamer refuses asks below its
+ * eviction watermark (kamigaze pkg/cache GetEventsSince) rather than answering short, so
+ * that streamer must be deployed to an environment before a client here points at its CDN.
  */
 export const bridgeBoot = async ({
   cache,

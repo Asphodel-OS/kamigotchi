@@ -269,7 +269,10 @@ export class SyncWorker<C extends Components> implements DoWork<Input, NetworkEv
         if (await isRateLimited(snapshotUrl!, e)) {
           errorMessage = "You're refreshing too much! Try again in a minute or two";
         } else {
-          errorMessage = `Unknown error: ${(e as any).code}. Can you drop this in the discord if it persists?`;
+          // gRPC failures carry .code; CDN ones are fetch TypeErrors that do not, and
+          // reading .code off those rendered a literal "Unknown error: undefined".
+          const detail = (e as any)?.code ?? (e instanceof Error ? e.message : String(e));
+          errorMessage = `Unknown error: ${detail}. Can you drop this in the discord if it persists?`;
         }
         console.error('failed to retrieve state', e);
         this.setLoadingState({
