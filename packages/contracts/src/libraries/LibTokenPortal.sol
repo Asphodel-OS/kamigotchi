@@ -175,10 +175,10 @@ library LibTokenPortal {
     uint32 itemIndex = IndexItemComponent(getAddrByID(comps, ItemIndexCompID)).get(receiptID);
     uint256 itemAmt = LibERC20.toGameUnits(tokenAmt, scale);
 
-    // send tokens to the destination and clear receipt
+    // clear the receipt before the token transfer so a re-entering token cannot claim twice
+    removeReceipt(comps, receiptID);
     TokenHolderComponent walletComp = TokenHolderComponent(getAddrByID(comps, TokenHolderCompID));
     walletComp.withdraw(tokenAddress, to, tokenAmt);
-    removeReceipt(comps, receiptID);
 
     // logging redundant info to withdraw() for better traceability
     LogData memory logData = LogData(accID, itemIndex, itemAmt, 0, tokenAddress, tokenAmt);

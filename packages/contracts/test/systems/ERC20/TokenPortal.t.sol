@@ -5,7 +5,7 @@ import "tests/utils/SetupTemplate.t.sol";
 
 import { LibFlag } from "libraries/LibFlag.sol";
 import { LibTokenPortal, RESERVE_ACC } from "libraries/LibTokenPortal.sol";
-import { OPERATOR_LANE_FLAG } from "systems/TokenPortalSystem.sol";
+import { OPERATOR_LANE_FLAG, TokenPortalSystem } from "systems/TokenPortalSystem.sol";
 
 /// @notice basic system testing for systems that are not directly tested elsewhere
 /** @dev
@@ -229,7 +229,6 @@ contract TokenPortalTest is SetupTemplate {
     assertEq(token.balanceOf(alice.owner), 4 ether);
   }
 
-
   //////////////////
   // OPERATOR LANE
 
@@ -384,6 +383,28 @@ contract TokenPortalTest is SetupTemplate {
     _TokenPortalSystem.withdrawToOperator(tokenItem, 1);
   }
 
+  /// @notice a token that re-enters claim during transfer cannot be paid twice
+  function testTokenPortal_claimIsReentrancySafe() public {
+    ReentrantToken evil = new ReentrantToken(_TokenPortalSystem);
+    uint32 evilItem = 12;
+    _createGenericItem(evilItem, string("ERC20"));
+    vm.prank(deployer);
+    _TokenPortalSystem.setItem(evilItem, address(evil), 3);
+
+    uint256 units = LibERC20.toGameUnits(4 ether, 3);
+    evil.mint(alice.owner, 4 ether);
+    _approveERC20(address(evil), alice.owner);
+    _deposit(alice, evilItem, units);
+    uint256 receiptID = _initiateWithdraw(alice, evilItem, units);
+    evil.arm(receiptID);
+
+    _setTime(block.timestamp + LibTokenPortal.calcWithdrawalDelay(components));
+    vm.prank(alice.owner);
+    _TokenPortalSystem.claim(receiptID);
+    assertEq(evil.balanceOf(alice.owner), 4 ether, "paid other than once");
+    assertTrue(evil.reentered(), "re-entry path not exercised");
+  }
+
   //////////////////
   // UTILS
 
@@ -409,5 +430,29 @@ contract TokenPortalTest is SetupTemplate {
     vm.startPrank(acc.owner);
     receiptID = _TokenPortalSystem.withdraw(itemIndex, itemAmt);
     vm.stopPrank();
+  }
+}
+
+/// @dev erc20 whose transfer re-enters the portal claim for an armed receipt
+contract ReentrantToken is OpenMintable {
+  TokenPortalSystem private portal;
+  uint256 private receiptID;
+  bool public reentered;
+
+  constructor(TokenPortalSystem _portal) OpenMintable("evil", "EVIL") {
+    portal = _portal;
+  }
+
+  function arm(uint256 _receiptID) external {
+    receiptID = _receiptID;
+  }
+
+  function transfer(address to, uint256 amount) public override returns (bool) {
+    bool ok = super.transfer(to, amount);
+    if (receiptID != 0 && !reentered) {
+      reentered = true;
+      try portal.claim(receiptID) {} catch {}
+    }
+    return ok;
   }
 }

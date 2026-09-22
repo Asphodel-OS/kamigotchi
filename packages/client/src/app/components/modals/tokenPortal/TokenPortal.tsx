@@ -90,6 +90,7 @@ export const TokenPortalModal: UIComponent = {
 
     const apis = useNetwork((s) => s.apis);
     const selectedAddress = useNetwork((s) => s.selectedAddress);
+    const burnerAddress = useNetwork((s) => s.burnerAddress);
     const isOpen = useVisibility((s) => s.modals.tokenPortal);
     const walletBalances = useTokens((s) => s.balances);
 
@@ -209,9 +210,12 @@ export const TokenPortalModal: UIComponent = {
       });
     };
 
-    // operator-lane receipts are driven by the burner so the operator completes the loop alone
+    // operator-lane receipts are driven by the burner so the operator completes the loop
+    // alone; after a rotation the burner is no longer authorized, so the owner signs instead
+    const burnerIsOperator =
+      (account.operatorAddress ?? '').toLowerCase() === burnerAddress.toLowerCase();
     const receiptAPI = (receipt: PortalReceipt) =>
-      isOperatorLane(receipt) ? burnerAPI.player : apis.get(selectedAddress);
+      isOperatorLane(receipt) && burnerIsOperator ? burnerAPI.player : apis.get(selectedAddress);
 
     // claim a withdrawal receipt whose time has come
     const claimTx = async (receipt: PortalReceipt) => {
