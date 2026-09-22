@@ -161,21 +161,23 @@ library LibTokenPortal {
   /// @notice execute a pending Withdrawal Receipt to claim tokens
   /// @dev tax already handled during Receipt generation (withdraw step)
   /// @dev address/scale are read directly from TokenPortalSystem storage
+  /// @param to destination wallet, resolved by the calling system (owner or operator lane)
   function claim(
     IWorld world,
     IUintComp comps,
     uint256 receiptID,
     address tokenAddress,
-    int32 scale
+    int32 scale,
+    address to
   ) public {
     uint256 accID = OwnerComponent(getAddrByID(comps, OwnerCompID)).get(receiptID);
     uint256 tokenAmt = ValueComponent(getAddrByID(comps, ValueCompID)).get(receiptID);
     uint32 itemIndex = IndexItemComponent(getAddrByID(comps, ItemIndexCompID)).get(receiptID);
     uint256 itemAmt = LibERC20.toGameUnits(tokenAmt, scale);
 
-    // send tokens to owner and clear receipt
+    // send tokens to the destination and clear receipt
     TokenHolderComponent walletComp = TokenHolderComponent(getAddrByID(comps, TokenHolderCompID));
-    walletComp.withdraw(tokenAddress, LibAccount.getOwner(comps, accID), tokenAmt);
+    walletComp.withdraw(tokenAddress, to, tokenAmt);
     removeReceipt(comps, receiptID);
 
     // logging redundant info to withdraw() for better traceability
@@ -232,6 +234,10 @@ library LibTokenPortal {
 
   ////////////////
   // CHECKERS
+
+  function getReceiptAccount(IUintComp comps, uint256 receiptID) internal view returns (uint256) {
+    return OwnerComponent(getAddrByID(comps, OwnerCompID)).get(receiptID);
+  }
 
   function verifyReceiptOwner(IUintComp comps, uint256 accID, uint256 receiptID) internal view {
     if (OwnerComponent(getAddrByID(comps, OwnerCompID)).get(receiptID) != accID)

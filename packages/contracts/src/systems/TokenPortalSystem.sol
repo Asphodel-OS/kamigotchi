@@ -7,10 +7,14 @@ import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { AuthRoles } from "libraries/utils/AuthRoles.sol";
 import { LibAccount } from "libraries/LibAccount.sol";
 import { LibDisabled } from "libraries/utils/LibDisabled.sol";
+import { LibFlag } from "libraries/LibFlag.sol";
 import { LibItem } from "libraries/LibItem.sol";
 import { LibTokenPortal } from "libraries/LibTokenPortal.sol";
 
 uint256 constant ID = uint256(keccak256("system.erc20.portal"));
+
+// marks a receipt whose claim pays the account's operator wallet instead of its owner
+string constant OPERATOR_LANE_FLAG = "PORTAL_TO_OPERATOR";
 
 /// @notice System for bridging in ERC20 tokens into the game world (as an item).
 /** @dev
@@ -73,12 +77,40 @@ contract TokenPortalSystem is System, AuthRoles {
     LibAccount.updateLastTs(components, accID);
   }
 
-  /// @notice execute a pending Withdrawal Receipt; must be owner
+  /// @notice initialize a withdrawal paid to the account's operator wallet on claim
+  /// @dev operator- or owner-signed; the payout address is resolved at claim time, so
+  /// rotating the operator during the delay redirects (or voids) a pending receipt
+  function withdrawToOperator(
+    uint32 itemIndex,
+    uint256 itemAmt
+  ) public onlyEnabled returns (uint256 receiptID) {
+    uint256 accID = getAccByOperatorOrOwner();
+
+    address tokenAddress = itemAddrs[itemIndex];
+    require(tokenAddress != address(0), "Token Portal: item not registered");
+
+    int32 scale = itemScales[itemIndex];
+    receiptID = LibTokenPortal.withdraw(
+      world,
+      components,
+      accID,
+      itemIndex,
+      itemAmt,
+      tokenAddress,
+      scale
+    );
+    LibFlag.set(components, receiptID, OPERATOR_LANE_FLAG, true);
+    LibAccount.updateLastTs(components, accID);
+  }
+
+  /// @notice execute a pending Withdrawal Receipt
+  /// @dev owner receipts: owner-signed, paid to the owner. operator-lane receipts: owner-
+  /// or operator-signed, paid to the current operator
   /// @dev data logging may be wrong if itemScales entry is deleted,
   /// but token amounts and claim flow should resolve correctly
   function claim(uint256 receiptID) public onlyEnabled {
-    uint256 accID = LibAccount.getByOwner(components, msg.sender);
-    LibTokenPortal.verifyReceiptOwner(components, accID, receiptID);
+    bool toOperator = LibFlag.has(components, receiptID, OPERATOR_LANE_FLAG);
+    uint256 accID = toOperator ? verifyLaneCaller(receiptID) : verifyOwnerCaller(receiptID);
     LibDisabled.verifyEnabled(components, receiptID);
     LibTokenPortal.verifyTimeEnd(components, receiptID);
 
@@ -88,17 +120,26 @@ contract TokenPortalSystem is System, AuthRoles {
     address tokenAddress = itemAddrs[itemIndex]; // token address as known by Portal (overrides Receipt)
     require(tokenAddress != address(0), "Token Portal: item not registered");
 
+    address to;
+    if (toOperator) {
+      to = LibAccount.getOperator(components, accID);
+      require(to != address(0), "Token Portal: no operator");
+    } else {
+      to = LibAccount.getOwner(components, accID);
+    }
+
     int32 scale = itemScales[itemIndex];
-    LibTokenPortal.claim(world, components, receiptID, tokenAddress, scale);
+    LibTokenPortal.claim(world, components, receiptID, tokenAddress, scale, to);
+    if (toOperator) LibFlag.remove(components, receiptID, OPERATOR_LANE_FLAG);
     LibAccount.updateLastTs(components, accID);
   }
 
-  /// @notice cancel a pending Withdrawal Receipt; must be owner
+  /// @notice cancel a pending Withdrawal Receipt; owner, or operator for operator-lane receipts
   /// @dev data logging may be wrong if itemScales entry is deleted,
   /// but token amounts and claim flow should resolve correctly
   function cancel(uint256 receiptID) public onlyEnabled {
-    uint256 accID = LibAccount.getByOwner(components, msg.sender);
-    LibTokenPortal.verifyReceiptOwner(components, accID, receiptID);
+    bool toOperator = LibFlag.has(components, receiptID, OPERATOR_LANE_FLAG);
+    uint256 accID = toOperator ? verifyLaneCaller(receiptID) : verifyOwnerCaller(receiptID);
     LibDisabled.verifyEnabled(components, receiptID);
 
     uint32 itemIndex = LibItem.getIndex(components, receiptID);
@@ -106,6 +147,7 @@ contract TokenPortalSystem is System, AuthRoles {
 
     int32 scale = itemScales[itemIndex];
     LibTokenPortal.cancel(world, components, receiptID, scale);
+    if (toOperator) LibFlag.remove(components, receiptID, OPERATOR_LANE_FLAG);
     LibAccount.updateLastTs(components, accID);
   }
 
@@ -129,6 +171,7 @@ contract TokenPortalSystem is System, AuthRoles {
     int32 scale = itemScales[itemIndex];
     LibDisabled.set(components, receiptID, false);
     LibTokenPortal.cancel(world, components, receiptID, scale);
+    LibFlag.remove(components, receiptID, OPERATOR_LANE_FLAG);
   }
 
   /// @notice toggle the Portal functionality on or off, as Owner only
@@ -180,6 +223,30 @@ contract TokenPortalSystem is System, AuthRoles {
     LibItem.unsetERC20(components, index);
     delete itemAddrs[index];
     delete itemScales[index];
+  }
+
+  //////////////////
+  // CHECKERS
+
+  /// @dev the sender's account, preferring its operator role
+  function getAccByOperatorOrOwner() internal view returns (uint256) {
+    if (LibAccount.operatorInUse(components, msg.sender))
+      return LibAccount.getByOperator(components, msg.sender);
+    return LibAccount.getByOwner(components, msg.sender);
+  }
+
+  /// @dev owner receipts keep the original rule: the receipt's account owner must sign
+  function verifyOwnerCaller(uint256 receiptID) internal view returns (uint256 accID) {
+    accID = LibAccount.getByOwner(components, msg.sender);
+    LibTokenPortal.verifyReceiptOwner(components, accID, receiptID);
+  }
+
+  /// @dev operator-lane receipts accept the receipt account's owner or current operator
+  function verifyLaneCaller(uint256 receiptID) internal view returns (uint256 accID) {
+    accID = LibTokenPortal.getReceiptAccount(components, receiptID);
+    bool allowed = msg.sender == LibAccount.getOwner(components, accID) ||
+      msg.sender == LibAccount.getOperator(components, accID);
+    if (!allowed) revert("not receipt owner");
   }
 
   //////////////////
