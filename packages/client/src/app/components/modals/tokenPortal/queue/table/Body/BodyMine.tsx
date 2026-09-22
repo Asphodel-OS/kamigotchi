@@ -28,6 +28,7 @@ export const BodyMine = ({
     getItemByIndex: (index: number) => Item;
     getTokenConversion: (receipt: PortalReceipt) => number;
     getAccountByID: (id: EntityID) => Account;
+    isOperatorLane: (receipt: PortalReceipt) => boolean;
   };
   state: {
     visible: boolean;
@@ -35,7 +36,7 @@ export const BodyMine = ({
 }) => {
   const { cancel, claim } = actions;
   const { receipts, config } = data;
-  const { getItemByIndex, getTokenConversion } = utils;
+  const { getItemByIndex, getTokenConversion, isOperatorLane } = utils;
   const { visible } = state;
 
   /////////////////
@@ -93,7 +94,13 @@ export const BodyMine = ({
             <TextTooltip text={[getDate(r.Timestamp, false)]}>
               <Field width={4}>{getDate(r.Timestamp, true)}</Field>
             </TextTooltip>
-            <Field width={5}>{r.IsWithdrawal ? 'Withdrawal' : 'Deposit'}</Field>
+            <Field width={5}>
+              {!r.IsWithdrawal
+                ? 'Deposit'
+                : isOperatorLane(r)
+                  ? 'Withdrawal → operator'
+                  : 'Withdrawal'}
+            </Field>
             <Field width={2}>
               <TextTooltip text={[getTokenMeta(item).symbol]} alignText={'right'}>
                 <Icon src={getTokenMeta(item).icon} onClick={() => getTokenMeta(item).onBuy()} />

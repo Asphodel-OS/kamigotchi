@@ -13,14 +13,16 @@ import { getKamidenClient } from 'clients/kamiden';
 import { PortalReceipt, TokenPortalRequest } from 'clients/kamiden/proto';
 import { ONYX_INDEX } from 'constants/items';
 import { EntityID, EntityIndex } from 'engine/recs';
+import { formatEntityID } from 'engine/utils';
 import { Account, NullAccount, queryAccountFromEmbedded } from 'network/shapes/Account';
+import { getFlagFromHash } from 'network/shapes/Flag';
 import { Item, NullItem, queryItems } from 'network/shapes/Item';
 import { getCompAddr } from 'network/shapes/utils';
 import { playClick } from 'utils/sounds';
 import { getHelpText } from './constants';
 import { Queue } from './queue';
 import { Swap } from './swap';
-import { Mode } from './swap/types';
+import { Destination, Mode } from './swap/types';
 import {
   findWalletPair,
   fmtTokenAmt,
@@ -28,6 +30,9 @@ import {
   getTokenMeta,
   isPortalItem,
 } from './utils';
+
+// receipts flagged on chain to pay the operator wallet instead of the owner
+const OPERATOR_LANE_FLAG = 'PORTAL_TO_OPERATOR';
 
 // kamiswap (marketplace) tab pastels: blue for deposit, orange for withdraw
 const DEPOSIT_BLUE = '#E0EEFF';
@@ -62,6 +67,13 @@ export const TokenPortalModal: UIComponent = {
           getItem: (entity: EntityIndex) => _getItem(world, components, entity),
           getItemByIndex: (index: number) => _getItemByIndex(world, components, index),
           queryTokenItems: () => queryItems(components, { registry: true, type: 'ERC20' }),
+          isOperatorLane: (receipt: PortalReceipt) =>
+            getFlagFromHash(
+              world,
+              components,
+              formatEntityID(BigInt(receipt.ReceiptID)) as EntityID,
+              OPERATOR_LANE_FLAG
+            ).has,
         },
       };
     })();
@@ -69,9 +81,9 @@ export const TokenPortalModal: UIComponent = {
     /////////////////
     // INSTANTIATIONS
 
-    const { actions } = network;
+    const { actions, api: burnerAPI } = network;
     const { accountEntity, config, spenderAddr } = data;
-    const { getAccount, getItem, queryTokenItems } = utils;
+    const { getAccount, getItem, queryTokenItems, isOperatorLane } = utils;
 
     const apis = useNetwork((s) => s.apis);
     const selectedAddress = useNetwork((s) => s.selectedAddress);
@@ -166,25 +178,35 @@ export const TokenPortalModal: UIComponent = {
       });
     };
 
-    // initiate a withdraw by creating a time-locked withdrawal receipt
-    const withdrawTx = async (item: Item, amt: number) => {
-      const api = apis.get(selectedAddress);
+    // initiate a withdraw by creating a time-locked withdrawal receipt. the owner
+    // lane signs with the connected wallet; the operator lane signs with the burner
+    const withdrawTx = async (item: Item, amt: number, destination: Destination) => {
+      const toOperator = destination === 'OPERATOR';
+      const api = toOperator ? burnerAPI.player : apis.get(selectedAddress);
       if (!api) return console.error(`API not established for ${selectedAddress}`);
 
       const tokenAmt = fmtTokenAmt(getResultWithdraw(config, amt), item);
+      const target = toOperator ? 'operator wallet' : 'wallet';
 
       // construct the transaction and push it to the queue
       const tx = actions.add({
-        action: 'TokenWithdraw',
+        action: toOperator ? 'TokenWithdrawToOperator' : 'TokenWithdraw',
         params: [item.index, amt],
-        description: `Withdrawing ${amt} ${item.name} for ${tokenAmt} ${getTokenMeta(item).symbol}`,
-        execute: async () => api.portal.ERC20.withdraw(item.index, amt),
+        description: `Withdrawing ${amt} ${item.name} for ${tokenAmt} ${getTokenMeta(item).symbol} to ${target}`,
+        execute: async () =>
+          toOperator
+            ? api.portal.ERC20.withdrawToOperator(item.index, amt)
+            : api.portal.ERC20.withdraw(item.index, amt),
       });
     };
 
+    // operator-lane receipts are driven by the burner so the operator completes the loop alone
+    const receiptAPI = (receipt: PortalReceipt) =>
+      isOperatorLane(receipt) ? burnerAPI.player : apis.get(selectedAddress);
+
     // claim a withdrawal receipt whose time has come
     const claimTx = async (receipt: PortalReceipt) => {
-      const api = apis.get(selectedAddress);
+      const api = receiptAPI(receipt);
       if (!api) return console.error(`API not established for ${selectedAddress}`);
 
       // construct the transaction and push it to the queue
@@ -198,7 +220,7 @@ export const TokenPortalModal: UIComponent = {
 
     // cancel a withdrawal receipt
     const cancelTx = async (receipt: PortalReceipt) => {
-      const api = apis.get(selectedAddress);
+      const api = receiptAPI(receipt);
       if (!api) return console.error(`API not established for ${selectedAddress}`);
 
       // construct the transaction and push it to the queue
@@ -328,7 +350,7 @@ export const TokenPortalModal: UIComponent = {
                 deposit: depositTx,
                 withdraw: withdrawTx,
               }}
-              data={{ config, inventory: account.inventories ?? [] }}
+              data={{ config, inventory: account.inventories ?? [], account }}
               state={{ mode, selected }}
             />
             <Rule />

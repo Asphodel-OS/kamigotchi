@@ -7,7 +7,7 @@ import { StepButton, Text } from 'app/components/library';
 import { useTokens } from 'app/stores';
 import { GasConstants } from 'constants/gas';
 import { Tokens } from 'constants/tokens';
-import { Inventory, Item } from 'network/shapes';
+import { Account, Inventory, Item } from 'network/shapes';
 import { playClick } from 'utils/sounds';
 import {
   findWalletPair,
@@ -17,7 +17,7 @@ import {
   getSwapRate,
   getTokenMeta,
 } from '../utils';
-import { Mode } from './types';
+import { Destination, Mode } from './types';
 
 // depositing the gas token itself must leave the owner wallet enough to keep
 // signing: the MAX chip and the cap hold back this much ETH
@@ -46,11 +46,12 @@ export const Swap = ({
   actions: {
     approve: (item: Item, amt: number) => Promise<void>;
     deposit: (item: Item, amt: number, convertAmt: number) => Promise<void>;
-    withdraw: (item: Item, amt: number) => Promise<void>;
+    withdraw: (item: Item, amt: number, destination: Destination) => Promise<void>;
   };
   data: {
     config: PortalConfigs;
     inventory: Inventory[];
+    account: Account;
   };
   state: {
     mode: Mode;
@@ -58,7 +59,7 @@ export const Swap = ({
   };
 }) => {
   const { approve, deposit, withdraw } = actions;
-  const { config, inventory } = data;
+  const { config, inventory, account } = data;
   const { mode, selected } = state;
   // wallet balance/allowance of whichever portal token is selected. TokenChecker
   // keeps every supported token in the balances map, keyed by address
@@ -71,6 +72,13 @@ export const Swap = ({
   // DEPOSIT: whole tokens paid in. WITHDRAW: item units withdrawn.
   const [amt, setAmt] = useState<number>(0);
   useEffect(() => setAmt(0), [mode, selected.index]);
+
+  // withdrawals of the gas token may pay the operator wallet directly (agent gas lane).
+  // the contract is item-agnostic; the UI offers the lane for ETH only
+  const [destination, setDestination] = useState<Destination>('OWNER');
+  useEffect(() => setDestination('OWNER'), [selected.index]);
+  const laneAvailable = mode === 'WITHDRAW' && isGasToken;
+  const toOperator = laneAvailable && destination === 'OPERATOR';
 
   /////////////////
   // INTERPRETATION
@@ -113,9 +121,15 @@ export const Swap = ({
       }
       deposit(selected, receiveItems, depositUnits);
     } else {
-      withdraw(selected, amt);
+      withdraw(selected, amt, toOperator ? 'OPERATOR' : 'OWNER');
     }
     setAmt(0);
+  };
+
+  const pickDestination = (d: Destination) => {
+    if (d === destination) return;
+    playClick();
+    setDestination(d);
   };
 
   /////////////////
@@ -157,7 +171,11 @@ export const Swap = ({
     <SideBlock>
       <HeadRow>
         <Text size={0.95}>
-          {mode === 'DEPOSIT' ? `You're paying (wallet)` : `You're receiving (wallet)`}
+          {mode === 'DEPOSIT'
+            ? `You're paying (wallet)`
+            : toOperator
+              ? `You're receiving (operator wallet)`
+              : `You're receiving (wallet)`}
         </Text>
         <Text size={0.75} color='#999'>
           wallet: {wallet.balance.toFixed(scale > 0 ? Math.min(scale, 5) : 0)} {token.symbol}
@@ -197,7 +215,30 @@ export const Swap = ({
         </>
       )}
 
+      {laneAvailable && (
+        <DestinationRow>
+          <Text size={0.75} color='#888'>
+            pay out to
+          </Text>
+          <DestinationChip $active={destination === 'OWNER'} onClick={() => pickDestination('OWNER')}>
+            owner wallet
+          </DestinationChip>
+          <DestinationChip
+            $active={destination === 'OPERATOR'}
+            onClick={() => pickDestination('OPERATOR')}
+          >
+            operator wallet
+          </DestinationChip>
+        </DestinationRow>
+      )}
+
       <Info>
+        {toOperator && (
+          <Text size={0.72} color='#888'>
+            claim pays the operator wallet active at claim time ({account.operatorAddress.slice(0, 6)}…
+            {account.operatorAddress.slice(-4)}); the operator key can withdraw and claim on its own
+          </Text>
+        )}
         {mode === 'DEPOSIT' && isGasToken && (
           <Text size={0.72} color='#888'>
             max leaves {GAS_RESERVE_ETH} ETH in your wallet for gas
@@ -444,6 +485,29 @@ const Info = styled.div`
   flex-direction: column;
   gap: 0.4vh;
   padding: 0 0.2vw;
+`;
+
+const DestinationRow = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 0.5vw;
+  padding: 0 0.2vw;
+`;
+
+const DestinationChip = styled.button<{ $active: boolean }>`
+  height: 1.8vw;
+  padding: 0 0.6vw;
+  border: 0.1vw solid ${({ $active }) => ($active ? '#a0c0e8' : '#ccc')};
+  border-radius: 0.4vw;
+  background: ${({ $active }) => ($active ? '#e8f0fe' : '#fafafa')};
+  color: #555;
+  font-family: Pixel;
+  font-size: 0.65vw;
+  cursor: pointer;
+  pointer-events: auto;
+  &:hover {
+    border-color: #a0c0e8;
+  }
 `;
 
 const MaxChip = styled.button`

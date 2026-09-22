@@ -31,6 +31,7 @@ export const Table = ({
   utils: {
     getItemByIndex: (index: number) => Item;
     getAccountByID: (id: EntityID) => Account;
+    isOperatorLane: (receipt: PortalReceipt) => boolean;
   };
 }) => {
   const { myReceipts, othersReceipts, config, account } = data;
