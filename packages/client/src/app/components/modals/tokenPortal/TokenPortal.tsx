@@ -188,11 +188,15 @@ export const TokenPortalModal: UIComponent = {
       });
     };
 
-    // initiate a withdraw by creating a time-locked withdrawal receipt. the owner
-    // lane signs with the connected wallet; the operator lane signs with the burner
+    // the operator lane signs with the burner while it is the account's current operator;
+    // after a rotation the burner is unauthorized, so the connected owner wallet signs
+    const burnerIsOperator =
+      (account.operatorAddress ?? '').toLowerCase() === burnerAddress.toLowerCase();
+
+    // initiate a withdraw by creating a time-locked withdrawal receipt
     const withdrawTx = async (item: Item, amt: number, destination: Destination) => {
       const toOperator = destination === 'OPERATOR';
-      const api = toOperator ? burnerAPI.player : apis.get(selectedAddress);
+      const api = toOperator && burnerIsOperator ? burnerAPI.player : apis.get(selectedAddress);
       if (!api) return console.error(`API not established for ${selectedAddress}`);
 
       const tokenAmt = fmtTokenAmt(getResultWithdraw(config, amt), item);
@@ -210,10 +214,6 @@ export const TokenPortalModal: UIComponent = {
       });
     };
 
-    // operator-lane receipts are driven by the burner so the operator completes the loop
-    // alone; after a rotation the burner is no longer authorized, so the owner signs instead
-    const burnerIsOperator =
-      (account.operatorAddress ?? '').toLowerCase() === burnerAddress.toLowerCase();
     const receiptAPI = (receipt: PortalReceipt) =>
       isOperatorLane(receipt) && burnerIsOperator ? burnerAPI.player : apis.get(selectedAddress);
 
