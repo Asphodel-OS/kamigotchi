@@ -3,6 +3,8 @@ pragma solidity >=0.8.28;
 
 import "./MintTemplate.t.sol";
 
+import { Kami721 } from "tokens/Kami721.sol";
+import { LibKami721 } from "libraries/LibKami721.sol";
 import { TraitWeights } from "systems/_721BatchMinterSystem.sol";
 import { ID as IndexBackgroundCompID } from "components/IndexBackgroundComponent.sol";
 import { ID as IndexBodyCompID } from "components/IndexBodyComponent.sol";
@@ -134,14 +136,19 @@ contract BatchMinterTest is MintTemplate {
     }
     __721BatchMinterSystem.batchMint(144); // max left: 100 (total 22122)
 
-    vm.expectRevert("Kami721: max supply reached");
-    __721BatchMinterSystem.batchMint(101);
+    Kami721 nft = LibKami721.getContract(components);
+    uint256 maxSupply = nft.MAX_SUPPLY();
+    assertEq(nft.totalSupply(), maxSupply - 100, "unexpected supply before the cap");
 
-    __721BatchMinterSystem.batchMint(98);
-    __721BatchMinterSystem.batchMint(1);
-    vm.expectRevert("Kami721: max supply reached");
-    __721BatchMinterSystem.batchMint(2);
-    __721BatchMinterSystem.batchMint(1);
+    // asking for more than remains mints only what is left, rather than reverting
+    uint256[] memory clamped = __721BatchMinterSystem.batchMint(101);
+    assertEq(clamped.length, 100, "expected the batch to clamp to remaining supply");
+    assertEq(nft.totalSupply(), maxSupply, "expected max supply");
+
+    // at the cap every further batch is skipped entirely
+    uint256[] memory none = __721BatchMinterSystem.batchMint(2);
+    assertEq(none.length, 0, "expected no mints past max supply");
+    assertEq(nft.totalSupply(), maxSupply, "supply moved past max");
 
     vm.stopPrank();
   }

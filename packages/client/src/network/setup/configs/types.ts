@@ -15,4 +15,5 @@ export type NetworkConfig = {
   faucetServiceUrl?: string;
   snapshotServiceUrl?: string;
   streamServiceUrl?: string;
+  stateCdnUrl?: string;
 };
