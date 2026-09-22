@@ -342,6 +342,30 @@
       "stateMutability": "nonpayable"
     },
     {
+      "type": "function",
+      "name": "withdrawToOperator",
+      "inputs": [
+        {
+          "name": "itemIndex",
+          "type": "uint32",
+          "internalType": "uint32"
+        },
+        {
+          "name": "itemAmt",
+          "type": "uint256",
+          "internalType": "uint256"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "receiptID",
+          "type": "uint256",
+          "internalType": "uint256"
+        }
+      ],
+      "stateMutability": "nonpayable"
+    },
+    {
       "type": "event",
       "name": "OwnershipHandoverCanceled",
       "inputs": [
@@ -436,6 +460,7 @@
     "setItem(uint32,address,int32)": "21321390",
     "transferOwnership(address)": "f2fde38b",
     "unsetItem(uint32)": "7f17d8f5",
-    "withdraw(uint32,uint256)": "0e19dc3a"
+    "withdraw(uint32,uint256)": "0e19dc3a",
+    "withdrawToOperator(uint32,uint256)": "8b39e1a0"
   }
 }

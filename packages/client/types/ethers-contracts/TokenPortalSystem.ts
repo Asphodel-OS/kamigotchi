@@ -49,6 +49,7 @@ export interface TokenPortalSystemInterface extends Interface {
       | "transferOwnership"
       | "unsetItem"
       | "withdraw"
+      | "withdrawToOperator"
   ): FunctionFragment;
 
   getEvent(
@@ -136,6 +137,10 @@ export interface TokenPortalSystemInterface extends Interface {
     functionFragment: "withdraw",
     values: [BigNumberish, BigNumberish]
   ): string;
+  encodeFunctionData(
+    functionFragment: "withdrawToOperator",
+    values: [BigNumberish, BigNumberish]
+  ): string;
 
   decodeFunctionResult(
     functionFragment: "adminCancel",
@@ -187,6 +192,10 @@ export interface TokenPortalSystemInterface extends Interface {
   ): Result;
   decodeFunctionResult(functionFragment: "unsetItem", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "withdraw", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "withdrawToOperator",
+    data: BytesLike
+  ): Result;
 }
 
 export namespace OwnershipHandoverCanceledEvent {
@@ -365,6 +374,12 @@ export interface TokenPortalSystem extends BaseContract {
     "nonpayable"
   >;
 
+  withdrawToOperator: TypedContractMethod<
+    [itemIndex: BigNumberish, itemAmt: BigNumberish],
+    [bigint],
+    "nonpayable"
+  >;
+
   getFunction<T extends ContractMethod = ContractMethod>(
     key: string | FunctionFragment
   ): T;
@@ -445,6 +460,13 @@ export interface TokenPortalSystem extends BaseContract {
   ): TypedContractMethod<[index: BigNumberish], [void], "nonpayable">;
   getFunction(
     nameOrSignature: "withdraw"
+  ): TypedContractMethod<
+    [itemIndex: BigNumberish, itemAmt: BigNumberish],
+    [bigint],
+    "nonpayable"
+  >;
+  getFunction(
+    nameOrSignature: "withdrawToOperator"
   ): TypedContractMethod<
     [itemIndex: BigNumberish, itemAmt: BigNumberish],
     [bigint],

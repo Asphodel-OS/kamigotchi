@@ -32,6 +32,7 @@ export interface _KamiMarketRegistrySystemInterface extends Interface {
       | "execute"
       | "owner"
       | "ownershipHandoverExpiresAt"
+      | "rebuildListingIndex"
       | "renounceOwnership"
       | "requestOwnershipHandover"
       | "setEnabled"
@@ -64,6 +65,10 @@ export interface _KamiMarketRegistrySystemInterface extends Interface {
   encodeFunctionData(
     functionFragment: "ownershipHandoverExpiresAt",
     values: [AddressLike]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "rebuildListingIndex",
+    values: [BigNumberish[]]
   ): string;
   encodeFunctionData(
     functionFragment: "renounceOwnership",
@@ -108,6 +113,10 @@ export interface _KamiMarketRegistrySystemInterface extends Interface {
   decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "ownershipHandoverExpiresAt",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "rebuildListingIndex",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -245,6 +254,12 @@ export interface _KamiMarketRegistrySystem extends BaseContract {
     "view"
   >;
 
+  rebuildListingIndex: TypedContractMethod<
+    [ids: BigNumberish[]],
+    [void],
+    "nonpayable"
+  >;
+
   renounceOwnership: TypedContractMethod<[], [void], "payable">;
 
   requestOwnershipHandover: TypedContractMethod<[], [void], "payable">;
@@ -295,6 +310,9 @@ export interface _KamiMarketRegistrySystem extends BaseContract {
   getFunction(
     nameOrSignature: "ownershipHandoverExpiresAt"
   ): TypedContractMethod<[pendingOwner: AddressLike], [bigint], "view">;
+  getFunction(
+    nameOrSignature: "rebuildListingIndex"
+  ): TypedContractMethod<[ids: BigNumberish[]], [void], "nonpayable">;
   getFunction(
     nameOrSignature: "renounceOwnership"
   ): TypedContractMethod<[], [void], "payable">;
