@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
+import { formatEther } from 'viem';
+import { useBalance, useWatchBlockNumber } from 'wagmi';
 
 import { PortalConfigs } from 'app/cache/config';
 import { getInventoryBalance } from 'app/cache/inventory';
@@ -56,11 +58,12 @@ export const Swap = ({
   state: {
     mode: Mode;
     selected: Item;
+    destination: Destination;
   };
 }) => {
   const { approve, deposit, withdraw } = actions;
   const { config, inventory, account } = data;
-  const { mode, selected } = state;
+  const { mode, selected, destination } = state;
   // wallet balance/allowance of whichever portal token is selected. TokenChecker
   // keeps every supported token in the balances map, keyed by address
   const balances = useTokens((s) => s.balances);
@@ -73,12 +76,18 @@ export const Swap = ({
   const [amt, setAmt] = useState<number>(0);
   useEffect(() => setAmt(0), [mode, selected.index]);
 
-  // withdrawals of the gas token may pay the operator wallet directly (agent gas lane).
-  // the contract is item-agnostic; the UI offers the lane for ETH only
-  const [destination, setDestination] = useState<Destination>('OWNER');
-  useEffect(() => setDestination('OWNER'), [selected.index]);
-  const laneAvailable = mode === 'WITHDRAW' && isGasToken;
-  const toOperator = laneAvailable && destination === 'OPERATOR';
+  const toOperator = mode === 'WITHDRAW' && destination === 'OPERATOR';
+
+  // on the operator route the wallet card reports the operator's native ETH, refreshed
+  // per block like the gas tank modal; the owner route keeps the token store's balance
+  const { data: operatorBalance, refetch: refetchOperatorBalance } = useBalance({
+    address: account.operatorAddress,
+    query: { enabled: toOperator },
+  });
+  useWatchBlockNumber({ enabled: toOperator, onBlockNumber: () => refetchOperatorBalance() });
+  const shownWalletBalance = toOperator
+    ? Number(formatEther(operatorBalance?.value ?? 0n))
+    : wallet.balance;
 
   /////////////////
   // INTERPRETATION
@@ -126,12 +135,6 @@ export const Swap = ({
     setAmt(0);
   };
 
-  const pickDestination = (d: Destination) => {
-    if (d === destination) return;
-    playClick();
-    setDestination(d);
-  };
-
   /////////////////
   // DISPLAY
 
@@ -146,11 +149,11 @@ export const Swap = ({
   const itemCard = (
     <SideBlock>
       <HeadRow>
-        <Text size={0.95}>
-          {mode === 'DEPOSIT' ? `You're receiving (in-game)` : `You're withdrawing (in-game)`}
+        <Text size={0.75}>
+          {mode === 'DEPOSIT' ? `You're receiving (ingame)` : `You're withdrawing (ingame)`}
         </Text>
-        <Text size={0.75} color='#999'>
-          balance: {itemBalance} (~{fmtTokenAmt(itemBalance, selected)} {token.symbol})
+        <Text size={0.65} color='#999'>
+          balance: {itemBalance} (~{fmtTokenAmt(itemBalance, selected, 3)} {token.symbol})
         </Text>
       </HeadRow>
       <TradeCard>
@@ -170,15 +173,16 @@ export const Swap = ({
   const tokenCard = (
     <SideBlock>
       <HeadRow>
-        <Text size={0.95}>
+        <Text size={0.75}>
           {mode === 'DEPOSIT'
             ? `You're paying (wallet)`
             : toOperator
-              ? `You're receiving (operator wallet)`
+              ? `You're receiving (operator)`
               : `You're receiving (wallet)`}
         </Text>
-        <Text size={0.75} color='#999'>
-          wallet: {wallet.balance.toFixed(scale > 0 ? Math.min(scale, 5) : 0)} {token.symbol}
+        <Text size={0.65} color='#999'>
+          {toOperator ? 'operator' : 'wallet'}:{' '}
+          {shownWalletBalance.toFixed(scale > 0 ? Math.min(scale, 3) : 0)} {token.symbol}
         </Text>
       </HeadRow>
       <TradeCard>
@@ -195,7 +199,9 @@ export const Swap = ({
             step={depositStep(scale)}
           />
         ) : (
-          <OutputField>{amt > 0 ? `~${(receivedUnits / rate).toFixed(scale)}` : '0'}</OutputField>
+          <OutputField>
+            {amt > 0 ? `~${(receivedUnits / rate).toFixed(Math.min(scale, 5))}` : '0'}
+          </OutputField>
         )}
       </TradeCard>
     </SideBlock>
@@ -215,30 +221,7 @@ export const Swap = ({
         </>
       )}
 
-      {laneAvailable && (
-        <DestinationRow>
-          <Text size={0.75} color='#888'>
-            pay out to
-          </Text>
-          <DestinationChip $active={destination === 'OWNER'} onClick={() => pickDestination('OWNER')}>
-            owner wallet
-          </DestinationChip>
-          <DestinationChip
-            $active={destination === 'OPERATOR'}
-            onClick={() => pickDestination('OPERATOR')}
-          >
-            operator wallet
-          </DestinationChip>
-        </DestinationRow>
-      )}
-
       <Info>
-        {toOperator && (
-          <Text size={0.72} color='#888'>
-            claim pays the operator wallet active at claim time ({account.operatorAddress.slice(0, 6)}…
-            {account.operatorAddress.slice(-4)}); the operator key can withdraw and claim on its own
-          </Text>
-        )}
         {mode === 'DEPOSIT' && isGasToken && (
           <Text size={0.72} color='#888'>
             max leaves {GAS_RESERVE_ETH} ETH in your wallet for gas
@@ -485,29 +468,6 @@ const Info = styled.div`
   flex-direction: column;
   gap: 0.4vh;
   padding: 0 0.2vw;
-`;
-
-const DestinationRow = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 0.5vw;
-  padding: 0 0.2vw;
-`;
-
-const DestinationChip = styled.button<{ $active: boolean }>`
-  height: 1.8vw;
-  padding: 0 0.6vw;
-  border: 0.1vw solid ${({ $active }) => ($active ? '#a0c0e8' : '#ccc')};
-  border-radius: 0.4vw;
-  background: ${({ $active }) => ($active ? '#e8f0fe' : '#fafafa')};
-  color: #555;
-  font-family: Pixel;
-  font-size: 0.65vw;
-  cursor: pointer;
-  pointer-events: auto;
-  &:hover {
-    border-color: #a0c0e8;
-  }
 `;
 
 const MaxChip = styled.button`

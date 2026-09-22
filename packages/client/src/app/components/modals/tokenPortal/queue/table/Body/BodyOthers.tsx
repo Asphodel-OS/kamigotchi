@@ -25,13 +25,14 @@ export const BodyOthers = ({
     getItemByIndex: (index: number) => Item;
     getTokenConversion: (receipt: PortalReceipt) => number;
     getAccountByID: (id: EntityID) => Account;
+    isOperatorLane: (receipt: PortalReceipt) => boolean;
   };
   state: {
     visible: boolean;
   };
 }) => {
   const { receipts, config } = data;
-  const { getItemByIndex, getTokenConversion, getAccountByID } = utils;
+  const { getItemByIndex, getTokenConversion, getAccountByID, isOperatorLane } = utils;
   const { visible } = state;
 
   const selectAccount = useSelected((s) => s.setAccount);
@@ -109,7 +110,10 @@ export const BodyOthers = ({
               </TextTooltip>
             </Field>
             <Field width={3.5}>{getTokenConversion(r)}</Field>
-            <Field width={4}>{getStatus(r)}</Field>
+            <Field width={4}>
+              {getStatus(r)}
+              {isOperatorLane(r) && <Sub>→ operator</Sub>}
+            </Field>
           </Row>
         );
       })}
@@ -120,7 +124,6 @@ export const BodyOthers = ({
 const Container = styled.div<{ visible?: boolean }>`
   display: ${({ visible = true }) => (visible ? 'flex' : 'none')};
   position: relative;
-  max-height: 100%;
   width: 100%;
 
   padding: 0.6vw 0;
@@ -133,11 +136,17 @@ const Row = styled.div`
   position: relative;
   width: 96%;
   height: 2.4vw;
+  flex-shrink: 0;
 
   display: flex;
   flex-flow: row nowrap;
   justify-content: space-around;
   align-items: center;
+`;
+
+const Sub = styled.div`
+  font-size: 0.5vw;
+  color: #888;
 `;
 
 const Field = styled.div<{ width: number }>`

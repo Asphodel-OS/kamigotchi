@@ -12,6 +12,7 @@ import { TriggerIcons } from 'assets/images/icons/triggers';
 import { getKamidenClient } from 'clients/kamiden';
 import { PortalReceipt, TokenPortalRequest } from 'clients/kamiden/proto';
 import { ONYX_INDEX } from 'constants/items';
+import { Tokens } from 'constants/tokens';
 import { EntityID, EntityIndex } from 'engine/recs';
 import { formatEntityID } from 'engine/utils';
 import { Account, NullAccount, queryAccountFromEmbedded } from 'network/shapes/Account';
@@ -38,6 +39,8 @@ const OPERATOR_LANE_FLAG = 'PORTAL_TO_OPERATOR';
 const DEPOSIT_BLUE = '#E0EEFF';
 const GREEN = '#C2F0C2';
 const WITHDRAW_ORANGE = '#FFF0E0';
+const ROUTE_OWNER_LILAC = '#EDE4FF';
+const ROUTE_OPERATOR_MINT = '#E0F5EE';
 
 const KamidenClient = getKamidenClient();
 
@@ -96,6 +99,9 @@ export const TokenPortalModal: UIComponent = {
     const [myReceipts, setMyReceipts] = useState<PortalReceipt[]>([]);
     const [othersReceipts, setOthersReceipts] = useState<PortalReceipt[]>([]);
     const [mode, setMode] = useState<Mode>('DEPOSIT');
+    // withdrawals of the gas token may pay the operator wallet (agent gas lane). the
+    // contract is item-agnostic; the UI offers the lane for ETH only
+    const [destination, setDestination] = useState<Destination>('OWNER');
     const [showQueue, setShowQueue] = useState<boolean>(false);
     const [tick, setTick] = useState(Date.now());
 
@@ -133,12 +139,15 @@ export const TokenPortalModal: UIComponent = {
       getTokenHistory(account.id);
     }, [accountEntity]);
 
-    // query for the list of Receipts
-    // TODO: set up a caching for receipts
+    // refresh receipts and the account (shard balances) while open. the account is
+    // re-read so a deposit or withdraw shows in the balance line without a reopen
     useEffect(() => {
       if (!isOpen) return;
       const tickSeconds = Math.floor(tick / 1000);
-      if (tickSeconds % 5 === 0) getTokenHistory(account.id);
+      if (tickSeconds % 5 === 0) {
+        getTokenHistory(account.id);
+        if (accountEntity) setAccount(getAccount());
+      }
     }, [isOpen, tick]);
 
     /////////////////
@@ -170,7 +179,7 @@ export const TokenPortalModal: UIComponent = {
       const tokenAmt = fmtTokenAmt(convertAmt, item);
 
       // construct the transaction and push it to the queue
-      const tx = actions.add({
+      actions.add({
         action: 'TokenDeposit',
         params: [item.index, amt],
         description: `Depositing ${tokenAmt} ${getTokenMeta(item).symbol} for ${amt} ${item.name}`,
@@ -189,7 +198,7 @@ export const TokenPortalModal: UIComponent = {
       const target = toOperator ? 'operator wallet' : 'wallet';
 
       // construct the transaction and push it to the queue
-      const tx = actions.add({
+      actions.add({
         action: toOperator ? 'TokenWithdrawToOperator' : 'TokenWithdraw',
         params: [item.index, amt],
         description: `Withdrawing ${amt} ${item.name} for ${tokenAmt} ${getTokenMeta(item).symbol} to ${target}`,
@@ -210,7 +219,7 @@ export const TokenPortalModal: UIComponent = {
       if (!api) return console.error(`API not established for ${selectedAddress}`);
 
       // construct the transaction and push it to the queue
-      const tx = actions.add({
+      actions.add({
         action: 'TokenReceiptClaim',
         params: [receipt.ReceiptID],
         description: `Claiming withdrawal of ${describeReceipt(receipt)}`,
@@ -224,7 +233,7 @@ export const TokenPortalModal: UIComponent = {
       if (!api) return console.error(`API not established for ${selectedAddress}`);
 
       // construct the transaction and push it to the queue
-      const tx = actions.add({
+      actions.add({
         action: 'TokenReceiptCancel',
         params: [receipt.ReceiptID],
         description: `Canceling withdrawal of ${describeReceipt(receipt)}`,
@@ -250,6 +259,16 @@ export const TokenPortalModal: UIComponent = {
       if (item.index === selected.index) return;
       playClick();
       setSelected(item);
+      setDestination('OWNER');
+    };
+
+    const isGasToken =
+      (selected.token?.address ?? '').toLowerCase() === Tokens.ETH.address.toLowerCase();
+    const laneAvailable = mode === 'WITHDRAW' && isGasToken;
+
+    const switchDestination = (d: Destination) => {
+      playClick();
+      setDestination(d);
     };
 
     async function getTokenHistory(accountId: string) {
@@ -282,6 +301,7 @@ export const TokenPortalModal: UIComponent = {
     const switchMode = (m: Mode) => {
       playClick();
       setMode(m);
+      setDestination('OWNER');
     };
 
     // IconButton plays the click sound itself
@@ -344,6 +364,27 @@ export const TokenPortalModal: UIComponent = {
                 Withdraw
               </TabButton>
             </Tabs>
+            {laneAvailable && (
+              <SubTabs>
+                <TabButton
+                  $color={ROUTE_OWNER_LILAC}
+                  $active={destination === 'OWNER'}
+                  onClick={() => switchDestination('OWNER')}
+                  disabled={destination === 'OWNER'}
+                >
+                  to Owner
+                </TabButton>
+                <TabButton
+                  $color={ROUTE_OPERATOR_MINT}
+                  $active={destination === 'OPERATOR'}
+                  onClick={() => switchDestination('OPERATOR')}
+                  disabled={destination === 'OPERATOR'}
+                  style={{ borderRight: 'none' }}
+                >
+                  to Operator
+                </TabButton>
+              </SubTabs>
+            )}
             <Swap
               actions={{
                 approve: approveTx,
@@ -351,7 +392,7 @@ export const TokenPortalModal: UIComponent = {
                 withdraw: withdrawTx,
               }}
               data={{ config, inventory: account.inventories ?? [], account }}
-              state={{ mode, selected }}
+              state={{ mode, selected, destination: laneAvailable ? destination : 'OWNER' }}
             />
             <Rule />
             <BottomRow>
@@ -484,6 +525,11 @@ const Tabs = styled.div`
   background-color: white;
   display: flex;
   flex-flow: row nowrap;
+`;
+
+// payout route tabs: a separate row under the deposit/withdraw tabs
+const SubTabs = styled(Tabs)`
+  border-radius: 0.3vw;
 `;
 
 const TabButton = styled.button<{ $color: string; $active: boolean }>`

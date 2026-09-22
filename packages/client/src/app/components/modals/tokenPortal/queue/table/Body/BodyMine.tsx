@@ -140,7 +140,6 @@ export const BodyMine = ({
 const Container = styled.div<{ visible?: boolean }>`
   display: ${({ visible = true }) => (visible ? 'flex' : 'none')};
   position: relative;
-  max-height: 100%;
   width: 100%;
   padding: 0.6vw 0;
   flex-flow: column nowrap;
@@ -152,6 +151,7 @@ const Row = styled.div`
   position: relative;
   width: 96%;
   height: 2.4vw;
+  flex-shrink: 0;
 
   flex-flow: row nowrap;
   justify-content: space-around;

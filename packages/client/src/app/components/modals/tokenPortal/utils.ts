@@ -67,10 +67,12 @@ export const findWalletPair = (
   return undefined;
 };
 
-// item units -> whole tokens, shown at the item's scale (1 ETH = 1e5 shards -> 5 dp)
-export const fmtTokenAmt = (units: number, item: Item) => {
+// item units -> whole tokens, shown at the item's scale (1 ETH = 1e5 shards -> 5 dp),
+// or fewer decimals where space is tight
+export const fmtTokenAmt = (units: number, item: Item, maxDecimals?: number) => {
   const scale = item.token?.scale ?? 0;
-  return (units / 10 ** scale).toFixed(scale);
+  const dp = maxDecimals === undefined ? scale : Math.min(scale, maxDecimals);
+  return (units / 10 ** scale).toFixed(dp);
 };
 
 // get the necessary deposit balance to achieve the target balance (in item units)
