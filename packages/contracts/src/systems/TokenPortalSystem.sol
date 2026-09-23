@@ -26,6 +26,7 @@ contract TokenPortalSystem is System, AuthRoles {
   // store item's token address/conversion rate locally, no dependence on registries
   mapping(uint32 => address) public itemAddrs;
   mapping(uint32 => int32) public itemScales;
+  mapping(uint32 => bool) public laneItems; // items withdrawable through the operator lane
   bool public isEnabled;
 
   constructor(IWorld _world, address _components) System(_world, _components) {}
@@ -84,10 +85,11 @@ contract TokenPortalSystem is System, AuthRoles {
     uint32 itemIndex,
     uint256 itemAmt
   ) public onlyEnabled returns (uint256 receiptID) {
-    uint256 accID = getAccByOperatorOrOwner();
+    uint256 accID = getAccByOwnerOrOperator();
 
     address tokenAddress = itemAddrs[itemIndex];
     require(tokenAddress != address(0), "Token Portal: item not registered");
+    require(laneItems[itemIndex], "Token Portal: item not on the operator lane");
 
     int32 scale = itemScales[itemIndex];
     receiptID = LibTokenPortal.withdraw(
@@ -109,8 +111,7 @@ contract TokenPortalSystem is System, AuthRoles {
   /// @dev data logging may be wrong if itemScales entry is deleted,
   /// but token amounts and claim flow should resolve correctly
   function claim(uint256 receiptID) public onlyEnabled {
-    bool toOperator = LibFlag.has(components, receiptID, OPERATOR_LANE_FLAG);
-    uint256 accID = toOperator ? verifyLaneCaller(receiptID) : verifyOwnerCaller(receiptID);
+    (bool toOperator, uint256 accID, address operator) = resolveReceiptCaller(receiptID);
     LibDisabled.verifyEnabled(components, receiptID);
     LibTokenPortal.verifyTimeEnd(components, receiptID);
 
@@ -122,15 +123,15 @@ contract TokenPortalSystem is System, AuthRoles {
 
     address to;
     if (toOperator) {
-      to = LibAccount.getOperator(components, accID);
-      require(to != address(0), "Token Portal: no operator");
+      require(operator != address(0), "Token Portal: no operator");
+      to = operator;
     } else {
       to = LibAccount.getOwner(components, accID);
     }
 
+    // the lane flag is kept after settlement so history keeps the payout route
     int32 scale = itemScales[itemIndex];
-    LibTokenPortal.claim(world, components, receiptID, tokenAddress, scale, to);
-    if (toOperator) LibFlag.remove(components, receiptID, OPERATOR_LANE_FLAG);
+    LibTokenPortal.claim(world, components, receiptID, accID, itemIndex, tokenAddress, scale, to);
     LibAccount.updateLastTs(components, accID);
   }
 
@@ -138,16 +139,14 @@ contract TokenPortalSystem is System, AuthRoles {
   /// @dev data logging may be wrong if itemScales entry is deleted,
   /// but token amounts and claim flow should resolve correctly
   function cancel(uint256 receiptID) public onlyEnabled {
-    bool toOperator = LibFlag.has(components, receiptID, OPERATOR_LANE_FLAG);
-    uint256 accID = toOperator ? verifyLaneCaller(receiptID) : verifyOwnerCaller(receiptID);
+    (, uint256 accID, ) = resolveReceiptCaller(receiptID);
     LibDisabled.verifyEnabled(components, receiptID);
 
     uint32 itemIndex = LibItem.getIndex(components, receiptID);
     require(itemIndex != 0, "Item Registry: item not registered");
 
     int32 scale = itemScales[itemIndex];
-    LibTokenPortal.cancel(world, components, receiptID, scale);
-    if (toOperator) LibFlag.remove(components, receiptID, OPERATOR_LANE_FLAG);
+    LibTokenPortal.cancel(world, components, receiptID, accID, itemIndex, scale);
     LibAccount.updateLastTs(components, accID);
   }
 
@@ -167,16 +166,23 @@ contract TokenPortalSystem is System, AuthRoles {
 
   /// @notice cancel a Withdrawal Receipt, as an admin
   function adminCancel(uint256 receiptID) public onlyAdmin(components) {
+    uint256 accID = LibTokenPortal.getReceiptAccount(components, receiptID);
+    require(accID != 0, "Token Portal: no receipt");
     uint32 itemIndex = LibItem.getIndex(components, receiptID);
     int32 scale = itemScales[itemIndex];
     LibDisabled.set(components, receiptID, false);
-    LibTokenPortal.cancel(world, components, receiptID, scale);
-    LibFlag.remove(components, receiptID, OPERATOR_LANE_FLAG);
+    LibTokenPortal.cancel(world, components, receiptID, accID, itemIndex, scale);
   }
 
   /// @notice toggle the Portal functionality on or off, as Owner only
   function adminToggleEnabled(bool enabled) public onlyOwner {
     isEnabled = enabled;
+  }
+
+  /// @notice allow or forbid an item on the operator lane, as Owner only
+  function setLaneItem(uint32 index, bool enabled) public onlyOwner {
+    require(itemAddrs[index] != address(0), "Token Portal: item not registered");
+    laneItems[index] = enabled;
   }
 
   //////////////////
@@ -223,30 +229,35 @@ contract TokenPortalSystem is System, AuthRoles {
     LibItem.unsetERC20(components, index);
     delete itemAddrs[index];
     delete itemScales[index];
+    delete laneItems[index];
   }
 
   //////////////////
   // CHECKERS
 
-  /// @dev the sender's account, preferring its operator role
-  function getAccByOperatorOrOwner() internal view returns (uint256) {
-    if (LibAccount.operatorInUse(components, msg.sender))
-      return LibAccount.getByOperator(components, msg.sender);
-    return LibAccount.getByOwner(components, msg.sender);
+  /// @dev the sender's account, its own account first: an owner address must never be
+  /// routed to an account that merely named it as operator
+  function getAccByOwnerOrOperator() internal view returns (uint256) {
+    if (LibAccount.isAccount(components, uint256(uint160(msg.sender))))
+      return LibAccount.getByOwner(components, msg.sender);
+    return LibAccount.getByOperator(components, msg.sender);
   }
 
-  /// @dev owner receipts keep the original rule: the receipt's account owner must sign
-  function verifyOwnerCaller(uint256 receiptID) internal view returns (uint256 accID) {
-    accID = LibAccount.getByOwner(components, msg.sender);
-    LibTokenPortal.verifyReceiptOwner(components, accID, receiptID);
-  }
-
-  /// @dev operator-lane receipts accept the receipt account's owner or current operator
-  function verifyLaneCaller(uint256 receiptID) internal view returns (uint256 accID) {
+  /// @dev who may settle a receipt. owner receipts: the account owner. operator-lane
+  /// receipts: the account owner or its current operator (returned, for the payout)
+  function resolveReceiptCaller(
+    uint256 receiptID
+  ) internal view returns (bool toOperator, uint256 accID, address operator) {
     accID = LibTokenPortal.getReceiptAccount(components, receiptID);
-    bool allowed = msg.sender == LibAccount.getOwner(components, accID) ||
-      msg.sender == LibAccount.getOperator(components, accID);
-    if (!allowed) revert("not receipt owner");
+    if (accID == 0) revert("not receipt owner");
+    toOperator = LibFlag.has(components, receiptID, OPERATOR_LANE_FLAG);
+    address owner = LibAccount.getOwner(components, accID);
+    if (toOperator) {
+      operator = LibAccount.getOperator(components, accID);
+      if (msg.sender != owner && msg.sender != operator) revert("not receipt owner");
+    } else if (msg.sender != owner) {
+      revert("not receipt owner");
+    }
   }
 
   //////////////////

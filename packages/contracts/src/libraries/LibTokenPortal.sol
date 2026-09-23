@@ -162,17 +162,18 @@ library LibTokenPortal {
   /// @dev tax already handled during Receipt generation (withdraw step)
   /// @dev address/scale are read directly from TokenPortalSystem storage
   /// @param to destination wallet, resolved by the calling system (owner or operator lane)
+  /// @dev accID and itemIndex are passed in: the system already read them for its checks
   function claim(
     IWorld world,
     IUintComp comps,
     uint256 receiptID,
+    uint256 accID,
+    uint32 itemIndex,
     address tokenAddress,
     int32 scale,
     address to
   ) public {
-    uint256 accID = OwnerComponent(getAddrByID(comps, OwnerCompID)).get(receiptID);
     uint256 tokenAmt = ValueComponent(getAddrByID(comps, ValueCompID)).get(receiptID);
-    uint32 itemIndex = IndexItemComponent(getAddrByID(comps, ItemIndexCompID)).get(receiptID);
     uint256 itemAmt = LibERC20.toGameUnits(tokenAmt, scale);
 
     // clear the receipt before the token transfer so a re-entering token cannot claim twice
@@ -188,11 +189,16 @@ library LibTokenPortal {
 
   /// @notice cancel a pending Withdrawal Receipt, return items
   /// @dev no refund on export tax
-  function cancel(IWorld world, IUintComp comps, uint256 receiptID, int32 scale) public {
-    uint256 accID = OwnerComponent(getAddrByID(comps, OwnerCompID)).get(receiptID);
+  function cancel(
+    IWorld world,
+    IUintComp comps,
+    uint256 receiptID,
+    uint256 accID,
+    uint32 itemIndex,
+    int32 scale
+  ) public {
     address tokenAddr = TokenAddressComponent(getAddrByID(comps, TokenAddrCompID)).get(receiptID);
     uint256 tokenAmt = ValueComponent(getAddrByID(comps, ValueCompID)).get(receiptID);
-    uint32 itemIndex = IndexItemComponent(getAddrByID(comps, ItemIndexCompID)).get(receiptID);
     uint256 itemAmt = LibERC20.toGameUnits(tokenAmt, scale);
 
     // put items back in world and clear receipt
@@ -235,8 +241,9 @@ library LibTokenPortal {
   ////////////////
   // CHECKERS
 
+  /// @dev zero when the receipt does not exist (settled or never created)
   function getReceiptAccount(IUintComp comps, uint256 receiptID) internal view returns (uint256) {
-    return OwnerComponent(getAddrByID(comps, OwnerCompID)).get(receiptID);
+    return OwnerComponent(getAddrByID(comps, OwnerCompID)).safeGet(receiptID);
   }
 
   function verifyReceiptOwner(IUintComp comps, uint256 accID, uint256 receiptID) internal view {

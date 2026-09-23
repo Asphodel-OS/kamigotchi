@@ -15,6 +15,8 @@ contract AccountSetOperatorSystem is System {
   function execute(bytes memory arguments) public returns (bytes memory) {
     address operator = abi.decode(arguments, (address));
     if (LibAccount.operatorInUse(components, operator)) revert("Account: Operator already in use");
+    if (LibAccount.isAccount(components, uint256(uint160(operator))))
+      revert("Account: Operator is an account owner");
 
     uint256 accID = LibAccount.getByOwner(components, msg.sender);
 

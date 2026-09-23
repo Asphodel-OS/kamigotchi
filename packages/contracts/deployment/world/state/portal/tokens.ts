@@ -74,3 +74,16 @@ export async function initTokens(api: AdminAPI, indices: number[]) {
 export async function toggleEnabled(api: AdminAPI, enabled: boolean) {
   await api.portal.token.toggleEnabled(enabled);
 }
+
+// allow or forbid items on the operator lane (system storage: re-run after a portal redeploy)
+export async function setLaneItems(api: AdminAPI, indices: number[], enabled: boolean) {
+  console.log(`\n==${enabled ? 'ENABLING' : 'DISABLING'} PORTAL OPERATOR LANE==`);
+  for (let i = 0; i < indices.length; i++) {
+    try {
+      console.log(`Setting operator lane for item ${indices[i]} to ${enabled}`);
+      await api.portal.token.setLane(indices[i], enabled);
+    } catch {
+      console.error('Could not set operator lane for item ' + indices[i]);
+    }
+  }
+}
