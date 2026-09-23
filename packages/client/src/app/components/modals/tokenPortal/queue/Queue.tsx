@@ -25,6 +25,7 @@ export const Queue = ({
     getItemByIndex: (index: number) => Item;
     getAccountByID: (id: EntityID) => Account;
     isOperatorLane: (receipt: PortalReceipt) => boolean;
+    getEndTs: (receipt: PortalReceipt) => number;
   };
 }) => {
   /////////////////

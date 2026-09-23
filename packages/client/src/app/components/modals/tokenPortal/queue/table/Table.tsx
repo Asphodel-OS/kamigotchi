@@ -32,6 +32,7 @@ export const Table = ({
     getItemByIndex: (index: number) => Item;
     getAccountByID: (id: EntityID) => Account;
     isOperatorLane: (receipt: PortalReceipt) => boolean;
+    getEndTs: (receipt: PortalReceipt) => number;
   };
 }) => {
   const { myReceipts, othersReceipts, config, account } = data;

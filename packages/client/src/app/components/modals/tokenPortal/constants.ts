@@ -1,4 +1,6 @@
 import { PortalConfigs } from 'app/cache/config';
+import { Item } from 'network/shapes';
+import { getTokenMeta } from './utils';
 
 // "12h" / "2d" / "60s": the delay in whichever unit divides it cleanly
 const fmtDelay = (seconds: number) => {
@@ -10,10 +12,17 @@ const fmtDelay = (seconds: number) => {
 
 // tooltip copy for the header help chip. taxes and delay read from the live
 // portal config so the numbers can never drift from what the world charges
-export const getHelpText = (config: PortalConfigs) => {
+export const getHelpText = (config: PortalConfigs, items: Item[]) => {
   const imp = config.tax.import;
   const exp = config.tax.export;
   const delay = fmtDelay(config.delay ?? 0);
+  // the flat tax is `flat` shards, worth flat / 10^scale of each token
+  const flatPerToken = items
+    .map((item) => {
+      const scale = item.token?.scale ?? 0;
+      return `${(exp.flat / 10 ** scale).toFixed(scale)} ${getTokenMeta(item).symbol} for ${item.name}s`;
+    })
+    .join(', ');
   return [
     'You can deposit and withdraw supported',
     'tokens ($ONYX, $ETH) through the Token Portal.',
@@ -29,8 +38,8 @@ export const getHelpText = (config: PortalConfigs) => {
     '\n',
     `Import tax: ${imp.rate * 100}% + ${imp.flat} shard flat per deposit.`,
     `Export tax: ${exp.rate * 100}% + ${exp.flat} shard flat per withdrawal.`,
-    'The flat part is one shard of the token you move:',
-    '0.01 $ONYX for Onyx Shards, 0.00001 $ETH for Ether Shards.',
+    `The flat part is ${exp.flat} shard of the token you move:`,
+    `${flatPerToken}.`,
     'Taxes are non-refundable and subject to change.',
     '\n',
     'Thank you for your patronage ^^',

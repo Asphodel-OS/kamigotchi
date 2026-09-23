@@ -26,13 +26,14 @@ export const BodyOthers = ({
     getTokenConversion: (receipt: PortalReceipt) => number;
     getAccountByID: (id: EntityID) => Account;
     isOperatorLane: (receipt: PortalReceipt) => boolean;
+    getEndTs: (receipt: PortalReceipt) => number;
   };
   state: {
     visible: boolean;
   };
 }) => {
   const { receipts, config } = data;
-  const { getItemByIndex, getTokenConversion, getAccountByID, isOperatorLane } = utils;
+  const { getItemByIndex, getTokenConversion, getAccountByID, isOperatorLane, getEndTs } = utils;
   const { visible } = state;
 
   const selectAccount = useSelected((s) => s.setAccount);
@@ -71,8 +72,8 @@ export const BodyOthers = ({
     if (receipt.IsClaimed) return 'Claimed';
 
     const now = Math.floor(Date.now() / 1000);
-    const endTs = Number(receipt.Timestamp) + config.delay;
-    if (now > endTs) return 'Ready';
+    const endTs = getEndTs(receipt);
+    if (now >= endTs) return 'Ready';
 
     return getCountdown(endTs);
   };

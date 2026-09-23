@@ -1,4 +1,6 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
+import { formatEther } from 'viem';
+import { useBalance, useWatchBlockNumber } from 'wagmi';
 import styled from 'styled-components';
 import { v4 as uuid } from 'uuid';
 
@@ -11,9 +13,10 @@ import { useNetwork, useTokens, useVisibility } from 'app/stores';
 import { TriggerIcons } from 'assets/images/icons/triggers';
 import { getKamidenClient } from 'clients/kamiden';
 import { PortalReceipt, TokenPortalRequest } from 'clients/kamiden/proto';
+import { GasConstants } from 'constants/gas';
 import { ONYX_INDEX } from 'constants/items';
 import { Tokens } from 'constants/tokens';
-import { EntityID, EntityIndex } from 'engine/recs';
+import { EntityID, EntityIndex, getComponentValue } from 'engine/recs';
 import { formatEntityID } from 'engine/utils';
 import { Account, NullAccount, queryAccountFromEmbedded } from 'network/shapes/Account';
 import { getFlagFromHash } from 'network/shapes/Flag';
@@ -70,13 +73,19 @@ export const TokenPortalModal: UIComponent = {
           getItem: (entity: EntityIndex) => _getItem(world, components, entity),
           getItemByIndex: (index: number) => _getItemByIndex(world, components, index),
           queryTokenItems: () => queryItems(components, { registry: true, type: 'ERC20' }),
-          isOperatorLane: (receipt: PortalReceipt) =>
+          readLane: (receiptID: string) =>
             getFlagFromHash(
               world,
               components,
-              formatEntityID(BigInt(receipt.ReceiptID)) as EntityID,
+              formatEntityID(BigInt(receiptID)) as EntityID,
               OPERATOR_LANE_FLAG
             ).has,
+          // the receipt's on-chain end time; undefined once the receipt entity is gone
+          readEndTs: (receiptID: string) => {
+            const entity = world.entityToIndex.get(formatEntityID(BigInt(receiptID)) as EntityID);
+            if (entity === undefined) return undefined;
+            return getComponentValue(components.TimeEnd, entity)?.value as number | undefined;
+          },
         },
       };
     })();
@@ -86,7 +95,7 @@ export const TokenPortalModal: UIComponent = {
 
     const { actions, api: burnerAPI } = network;
     const { accountEntity, config, spenderAddr } = data;
-    const { getAccount, getItem, queryTokenItems, isOperatorLane } = utils;
+    const { getAccount, getItem, queryTokenItems, readLane, readEndTs } = utils;
 
     const apis = useNetwork((s) => s.apis);
     const selectedAddress = useNetwork((s) => s.selectedAddress);
@@ -105,6 +114,28 @@ export const TokenPortalModal: UIComponent = {
     const [destination, setDestination] = useState<Destination>('OWNER');
     const [showQueue, setShowQueue] = useState<boolean>(false);
     const [tick, setTick] = useState(Date.now());
+
+    // per-receipt lane lookups hash and query state, so they are resolved once per
+    // receipt list rather than on every one-second re-render
+    const laneByReceipt = useMemo(() => {
+      const map = new Map<string, boolean>();
+      for (const r of myReceipts.concat(othersReceipts)) map.set(r.ReceiptID, readLane(r.ReceiptID));
+      return map;
+    }, [myReceipts, othersReceipts]);
+    const isOperatorLane = (receipt: PortalReceipt) => laneByReceipt.get(receipt.ReceiptID) ?? false;
+
+    // readiness follows the receipt's own end time: the delay config can change while
+    // receipts are pending, and a receipt keeps the delay it was created under
+    const getEndTs = (receipt: PortalReceipt) =>
+      readEndTs(receipt.ReceiptID) ?? Number(receipt.Timestamp) + config.delay;
+
+    // the operator wallet's gas, so lane txs fall back to the owner when the burner is dry
+    const { data: operatorBalance, refetch: refetchOperatorBalance } = useBalance({
+      address: account.operatorAddress,
+      query: { enabled: isOpen },
+    });
+    useWatchBlockNumber({ enabled: isOpen, onBlockNumber: () => refetchOperatorBalance() });
+    const operatorEth = Number(formatEther(operatorBalance?.value ?? 0n));
 
     /////////////////
     // SUBSCRIPTIONS
@@ -188,15 +219,16 @@ export const TokenPortalModal: UIComponent = {
       });
     };
 
-    // the operator lane signs with the burner while it is the account's current operator;
-    // after a rotation the burner is unauthorized, so the connected owner wallet signs
+    // the operator lane signs with the burner while it is the account's current operator
+    // and can pay for gas; otherwise the connected owner wallet, authorized for every lane call
     const burnerIsOperator =
       (account.operatorAddress ?? '').toLowerCase() === burnerAddress.toLowerCase();
+    const burnerSigns = burnerIsOperator && operatorEth >= GasConstants.Warning;
 
     // initiate a withdraw by creating a time-locked withdrawal receipt
     const withdrawTx = async (item: Item, amt: number, destination: Destination) => {
       const toOperator = destination === 'OPERATOR';
-      const api = toOperator && burnerIsOperator ? burnerAPI.player : apis.get(selectedAddress);
+      const api = toOperator && burnerSigns ? burnerAPI.player : apis.get(selectedAddress);
       if (!api) return console.error(`API not established for ${selectedAddress}`);
 
       const tokenAmt = fmtTokenAmt(getResultWithdraw(config, amt), item);
@@ -215,7 +247,7 @@ export const TokenPortalModal: UIComponent = {
     };
 
     const receiptAPI = (receipt: PortalReceipt) =>
-      isOperatorLane(receipt) && burnerIsOperator ? burnerAPI.player : apis.get(selectedAddress);
+      isOperatorLane(receipt) && burnerSigns ? burnerAPI.player : apis.get(selectedAddress);
 
     // claim a withdrawal receipt whose time has come
     const claimTx = async (receipt: PortalReceipt) => {
@@ -318,7 +350,7 @@ export const TokenPortalModal: UIComponent = {
           <PortalHeader>
             <HeaderIcon src={getTokenMeta(selected).icon} alt='Token Portal' />
             <HeaderTitle>Token Portal</HeaderTitle>
-            <HelpChip tooltip={{ text: getHelpText(config), size: 0.6 }} size={1.2} />
+            <HelpChip tooltip={{ text: getHelpText(config, options), size: 0.6 }} size={1.2} />
           </PortalHeader>
         }
         canExit
@@ -422,7 +454,7 @@ export const TokenPortalModal: UIComponent = {
                   cancel: cancelTx,
                 }}
                 data={{ myReceipts, othersReceipts, config, account }}
-                utils={utils}
+                utils={{ ...utils, isOperatorLane, getEndTs }}
               />
             )}
           </Container>

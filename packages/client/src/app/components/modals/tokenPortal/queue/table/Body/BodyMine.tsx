@@ -29,6 +29,7 @@ export const BodyMine = ({
     getTokenConversion: (receipt: PortalReceipt) => number;
     getAccountByID: (id: EntityID) => Account;
     isOperatorLane: (receipt: PortalReceipt) => boolean;
+    getEndTs: (receipt: PortalReceipt) => number;
   };
   state: {
     visible: boolean;
@@ -36,7 +37,7 @@ export const BodyMine = ({
 }) => {
   const { cancel, claim } = actions;
   const { receipts, config } = data;
-  const { getItemByIndex, getTokenConversion, isOperatorLane } = utils;
+  const { getItemByIndex, getTokenConversion, isOperatorLane, getEndTs } = utils;
   const { visible } = state;
 
   /////////////////
@@ -50,7 +51,7 @@ export const BodyMine = ({
   // check whether a Receipt is claimable
   const isClaimable = (receipt: PortalReceipt) => {
     const nowSec = Math.floor(Date.now() / 1000);
-    return nowSec >= Number(receipt.Timestamp) + config.delay;
+    return nowSec >= getEndTs(receipt);
   };
 
   // get the tooltip for a Receipt Claim
@@ -66,8 +67,8 @@ export const BodyMine = ({
     if (receipt.IsClaimed) return 'Claimed';
 
     const now = Math.floor(Date.now() / 1000);
-    const endTs = Number(receipt.Timestamp) + config.delay;
-    if (now > endTs) return 'Ready';
+    const endTs = getEndTs(receipt);
+    if (now >= endTs) return 'Ready';
 
     return getCountdown(endTs);
   };
