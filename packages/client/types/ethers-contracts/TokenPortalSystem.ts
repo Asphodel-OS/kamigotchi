@@ -41,14 +41,17 @@ export interface TokenPortalSystemInterface extends Interface {
       | "isEnabled"
       | "itemAddrs"
       | "itemScales"
+      | "laneItems"
       | "owner"
       | "ownershipHandoverExpiresAt"
       | "renounceOwnership"
       | "requestOwnershipHandover"
       | "setItem"
+      | "setLaneItem"
       | "transferOwnership"
       | "unsetItem"
       | "withdraw"
+      | "withdrawToOperator"
   ): FunctionFragment;
 
   getEvent(
@@ -107,6 +110,10 @@ export interface TokenPortalSystemInterface extends Interface {
     functionFragment: "itemScales",
     values: [BigNumberish]
   ): string;
+  encodeFunctionData(
+    functionFragment: "laneItems",
+    values: [BigNumberish]
+  ): string;
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "ownershipHandoverExpiresAt",
@@ -125,6 +132,10 @@ export interface TokenPortalSystemInterface extends Interface {
     values: [BigNumberish, AddressLike, BigNumberish]
   ): string;
   encodeFunctionData(
+    functionFragment: "setLaneItem",
+    values: [BigNumberish, boolean]
+  ): string;
+  encodeFunctionData(
     functionFragment: "transferOwnership",
     values: [AddressLike]
   ): string;
@@ -134,6 +145,10 @@ export interface TokenPortalSystemInterface extends Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "withdraw",
+    values: [BigNumberish, BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "withdrawToOperator",
     values: [BigNumberish, BigNumberish]
   ): string;
 
@@ -167,6 +182,7 @@ export interface TokenPortalSystemInterface extends Interface {
   decodeFunctionResult(functionFragment: "isEnabled", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "itemAddrs", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "itemScales", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "laneItems", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "ownershipHandoverExpiresAt",
@@ -182,11 +198,19 @@ export interface TokenPortalSystemInterface extends Interface {
   ): Result;
   decodeFunctionResult(functionFragment: "setItem", data: BytesLike): Result;
   decodeFunctionResult(
+    functionFragment: "setLaneItem",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "transferOwnership",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "unsetItem", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "withdraw", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "withdrawToOperator",
+    data: BytesLike
+  ): Result;
 }
 
 export namespace OwnershipHandoverCanceledEvent {
@@ -333,6 +357,8 @@ export interface TokenPortalSystem extends BaseContract {
 
   itemScales: TypedContractMethod<[arg0: BigNumberish], [bigint], "view">;
 
+  laneItems: TypedContractMethod<[arg0: BigNumberish], [boolean], "view">;
+
   owner: TypedContractMethod<[], [string], "view">;
 
   ownershipHandoverExpiresAt: TypedContractMethod<
@@ -351,6 +377,12 @@ export interface TokenPortalSystem extends BaseContract {
     "nonpayable"
   >;
 
+  setLaneItem: TypedContractMethod<
+    [index: BigNumberish, enabled: boolean],
+    [void],
+    "nonpayable"
+  >;
+
   transferOwnership: TypedContractMethod<
     [newOwner: AddressLike],
     [void],
@@ -360,6 +392,12 @@ export interface TokenPortalSystem extends BaseContract {
   unsetItem: TypedContractMethod<[index: BigNumberish], [void], "nonpayable">;
 
   withdraw: TypedContractMethod<
+    [itemIndex: BigNumberish, itemAmt: BigNumberish],
+    [bigint],
+    "nonpayable"
+  >;
+
+  withdrawToOperator: TypedContractMethod<
     [itemIndex: BigNumberish, itemAmt: BigNumberish],
     [bigint],
     "nonpayable"
@@ -419,6 +457,9 @@ export interface TokenPortalSystem extends BaseContract {
     nameOrSignature: "itemScales"
   ): TypedContractMethod<[arg0: BigNumberish], [bigint], "view">;
   getFunction(
+    nameOrSignature: "laneItems"
+  ): TypedContractMethod<[arg0: BigNumberish], [boolean], "view">;
+  getFunction(
     nameOrSignature: "owner"
   ): TypedContractMethod<[], [string], "view">;
   getFunction(
@@ -438,6 +479,13 @@ export interface TokenPortalSystem extends BaseContract {
     "nonpayable"
   >;
   getFunction(
+    nameOrSignature: "setLaneItem"
+  ): TypedContractMethod<
+    [index: BigNumberish, enabled: boolean],
+    [void],
+    "nonpayable"
+  >;
+  getFunction(
     nameOrSignature: "transferOwnership"
   ): TypedContractMethod<[newOwner: AddressLike], [void], "payable">;
   getFunction(
@@ -445,6 +493,13 @@ export interface TokenPortalSystem extends BaseContract {
   ): TypedContractMethod<[index: BigNumberish], [void], "nonpayable">;
   getFunction(
     nameOrSignature: "withdraw"
+  ): TypedContractMethod<
+    [itemIndex: BigNumberish, itemAmt: BigNumberish],
+    [bigint],
+    "nonpayable"
+  >;
+  getFunction(
+    nameOrSignature: "withdrawToOperator"
   ): TypedContractMethod<
     [itemIndex: BigNumberish, itemAmt: BigNumberish],
     [bigint],

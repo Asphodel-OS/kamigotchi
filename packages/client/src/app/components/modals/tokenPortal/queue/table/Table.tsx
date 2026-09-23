@@ -31,6 +31,8 @@ export const Table = ({
   utils: {
     getItemByIndex: (index: number) => Item;
     getAccountByID: (id: EntityID) => Account;
+    isOperatorLane: (receipt: PortalReceipt) => boolean;
+    getEndTs: (receipt: PortalReceipt) => number;
   };
 }) => {
   const { myReceipts, othersReceipts, config, account } = data;
@@ -135,17 +137,19 @@ export const Table = ({
         data={{ mode }}
         state={{ sort, setSort }}
       />
-      <BodyMine
-        actions={actions}
-        data={{ receipts: sorted, config }}
-        utils={{ ...utils, getTokenConversion }}
-        state={{ visible: mode === 'MINE' }}
-      />
-      <BodyOthers
-        data={{ receipts: sorted, config, account }}
-        utils={{ ...utils, getTokenConversion }}
-        state={{ visible: mode === 'OTHERS' }}
-      />
+      <Scroll>
+        <BodyMine
+          actions={actions}
+          data={{ receipts: sorted, config }}
+          utils={{ ...utils, getTokenConversion }}
+          state={{ visible: mode === 'MINE' }}
+        />
+        <BodyOthers
+          data={{ receipts: sorted, config, account }}
+          utils={{ ...utils, getTokenConversion }}
+          state={{ visible: mode === 'OTHERS' }}
+        />
+      </Scroll>
       <Footer state={{ mode, setMode }} />
     </Container>
   );
@@ -154,10 +158,19 @@ export const Table = ({
 const Container = styled.div`
   position: relative;
   width: 100%;
-  max-height: 42vh;
+  display: flex;
   flex-flow: column nowrap;
   justify-content: flex-start;
   align-items: center;
+  overflow: hidden;
+`;
+
+// four rows tall (rows are 2.4vw plus the body padding); the rest scrolls here so
+// the Mine/Others footer below never leaves the modal
+const Scroll = styled.div`
+  width: 100%;
+  height: calc(4 * 2.4vw + 1.2vw);
+  flex: 0 0 auto;
   overflow-y: auto;
 
   scrollbar-width: none;

@@ -917,6 +917,7 @@
       "name": "TokenPortalSystem",
       "writeAccess": [
         "EntityType",
+        "HasFlag",
         "IDOwnsInventory",
         "IDOwnsWithdrawal",
         "IndexItem",

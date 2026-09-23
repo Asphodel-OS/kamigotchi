@@ -21,6 +21,8 @@ contract AccountRegisterSystem is System {
     // address uniqueness constraints
     if (LibAccount.ownerInUse(components, msg.sender)) revert("Account: exists for Owner");
     if (LibAccount.operatorInUse(components, operator)) revert("Account: exists for Operator");
+    if (LibAccount.isAccount(components, uint256(uint160(operator))))
+      revert("Account: Operator is an account owner");
 
     // check for naming constraints
     if (bytes(name).length == 0) revert("Account: name cannot be empty");
