@@ -2,7 +2,9 @@
 pragma solidity >=0.8.28;
 
 import "tests/utils/SetupTemplate.t.sol";
+import { Vm } from "forge-std/Vm.sol";
 
+import { ID as HasFlagCompID } from "components/HasFlagComponent.sol";
 import { LibFlag } from "libraries/LibFlag.sol";
 import { LibTokenPortal, RESERVE_ACC } from "libraries/LibTokenPortal.sol";
 import { OPERATOR_LANE_FLAG, TokenPortalSystem } from "systems/TokenPortalSystem.sol";
@@ -23,6 +25,7 @@ contract TokenPortalTest is SetupTemplate {
     _createGenericItem(tokenItem, string("ERC20"));
     vm.startPrank(deployer);
     _TokenPortalSystem.setItem(tokenItem, address(token), 3);
+    _TokenPortalSystem.setLaneItem(tokenItem, true);
     _TokenPortalSystem.adminToggleEnabled(true); // portal boots disabled
     vm.stopPrank();
 
@@ -250,7 +253,11 @@ contract TokenPortalTest is SetupTemplate {
     _TokenPortalSystem.claim(receiptID);
     assertEq(token.balanceOf(alice.operator), 6 ether, "operator not paid");
     assertEq(token.balanceOf(alice.owner), 0, "owner paid on operator lane");
-    assertFalse(LibFlag.has(components, receiptID, OPERATOR_LANE_FLAG), "lane flag not cleared");
+    assertTrue(LibFlag.has(components, receiptID, OPERATOR_LANE_FLAG), "lane flag lost on settle");
+    // a settled receipt cannot be claimed again, flag or not
+    vm.prank(alice.operator);
+    vm.expectRevert("not receipt owner");
+    _TokenPortalSystem.claim(receiptID);
   }
 
   /// @notice the owner may drive an operator-lane receipt; the payout still goes to the operator
@@ -274,10 +281,10 @@ contract TokenPortalTest is SetupTemplate {
 
     _setTime(block.timestamp + LibTokenPortal.calcWithdrawalDelay(components));
     vm.prank(alice.operator);
-    vm.expectRevert("Account: no account detected");
+    vm.expectRevert("not receipt owner");
     _TokenPortalSystem.claim(receiptID);
     vm.prank(alice.operator);
-    vm.expectRevert("Account: no account detected");
+    vm.expectRevert("not receipt owner");
     _TokenPortalSystem.cancel(receiptID);
 
     vm.prank(alice.owner);
@@ -341,7 +348,6 @@ contract TokenPortalTest is SetupTemplate {
     vm.prank(alice.owner);
     _TokenPortalSystem.cancel(receiptID);
     assertEq(_getItemBal(alice, tokenItem), units);
-    assertFalse(LibFlag.has(components, receiptID, OPERATOR_LANE_FLAG));
   }
 
   /// @notice the operator can cancel its own lane receipt; the shards return to the account
@@ -354,19 +360,98 @@ contract TokenPortalTest is SetupTemplate {
     vm.prank(alice.operator);
     _TokenPortalSystem.cancel(receiptID);
     assertEq(_getItemBal(alice, tokenItem), units);
-    assertFalse(LibFlag.has(components, receiptID, OPERATOR_LANE_FLAG));
   }
 
-  /// @notice admin cancel also clears the lane flag
-  function testOperatorLane_adminCancelClearsFlag() public {
+  /// @notice admin cancel returns the shards on either lane and never touches the flag
+  function testOperatorLane_adminCancel() public {
+    uint256 units = _fund(alice, 2 ether);
+    vm.prank(alice.operator);
+    uint256 laneReceipt = _TokenPortalSystem.withdrawToOperator(tokenItem, units / 2);
+    uint256 ownerReceipt = _initiateWithdraw(alice, tokenItem, units / 2);
+
+    vm.startPrank(deployer);
+    _TokenPortalSystem.adminCancel(laneReceipt);
+    vm.recordLogs();
+    _TokenPortalSystem.adminCancel(ownerReceipt);
+    vm.stopPrank();
+    assertEq(_getItemBal(alice, tokenItem), units);
+    assertFalse(LibFlag.has(components, ownerReceipt, OPERATOR_LANE_FLAG));
+    // no flag write for an owner receipt: no log from the flag component
+    address flagComp = getAddrByID(components, HasFlagCompID);
+    Vm.Log[] memory logs = vm.getRecordedLogs();
+    for (uint256 i; i < logs.length; i++) assertTrue(logs[i].emitter != flagComp, "flag write");
+
+    vm.prank(deployer);
+    vm.expectRevert("Token Portal: no receipt");
+    _TokenPortalSystem.adminCancel(laneReceipt);
+  }
+
+  /// @notice an account owner cannot be named as another account's operator, so the
+  ///         owner-first resolution can never route an owner to a stranger's account
+  function testOperatorLane_ownerCannotBeHijackedAsOperator() public {
+    vm.prank(bob.owner);
+    vm.expectRevert("Account: Operator is an account owner");
+    _AccountSetOperatorSystem.executeTyped(alice.owner);
+
+    address fresh = address(0xF4E5);
+    vm.prank(fresh);
+    vm.expectRevert("Account: Operator is an account owner");
+    _AccountRegisterSystem.executeTyped(alice.owner, "fresh");
+
+    uint256 units = _fund(alice, 1 ether);
+    vm.prank(alice.owner);
+    uint256 receiptID = _TokenPortalSystem.withdrawToOperator(tokenItem, units);
+    assertEq(LibTokenPortal.getReceiptAccount(components, receiptID), alice.id);
+  }
+
+  /// @notice only items enabled for the lane can use it; the owner lane is unaffected
+  function testOperatorLane_itemGate() public {
+    uint32 otherItem = 12;
+    OpenMintable other = new OpenMintable("other", "OTH");
+    _createGenericItem(otherItem, string("ERC20"));
+    vm.prank(deployer);
+    _TokenPortalSystem.setItem(otherItem, address(other), 2);
+    uint256 units = LibERC20.toGameUnits(1 ether, 2);
+    other.mint(alice.owner, 1 ether);
+    _approveERC20(address(other), alice.owner);
+    _deposit(alice, otherItem, units);
+
+    vm.prank(alice.operator);
+    vm.expectRevert("Token Portal: item not on the operator lane");
+    _TokenPortalSystem.withdrawToOperator(otherItem, units);
+    _initiateWithdraw(alice, otherItem, units);
+
+    vm.prank(deployer);
+    vm.expectRevert("Token Portal: item not registered");
+    _TokenPortalSystem.setLaneItem(999, true);
+  }
+
+  /// @notice a paused lane receipt cannot be claimed; the portal switch gates settlement too
+  function testOperatorLane_pauseAndSwitch() public {
     uint256 units = _fund(alice, 1 ether);
     vm.prank(alice.operator);
     uint256 receiptID = _TokenPortalSystem.withdrawToOperator(tokenItem, units);
+    _setTime(block.timestamp + LibTokenPortal.calcWithdrawalDelay(components));
 
     vm.prank(deployer);
-    _TokenPortalSystem.adminCancel(receiptID);
-    assertEq(_getItemBal(alice, tokenItem), units);
-    assertFalse(LibFlag.has(components, receiptID, OPERATOR_LANE_FLAG));
+    _TokenPortalSystem.adminPause(receiptID);
+    vm.prank(alice.operator);
+    vm.expectRevert();
+    _TokenPortalSystem.claim(receiptID);
+    vm.prank(deployer);
+    _TokenPortalSystem.adminUnpause(receiptID);
+
+    vm.prank(deployer);
+    _TokenPortalSystem.adminToggleEnabled(false);
+    vm.prank(alice.operator);
+    vm.expectRevert("Token Portal: disabled");
+    _TokenPortalSystem.claim(receiptID);
+    vm.prank(deployer);
+    _TokenPortalSystem.adminToggleEnabled(true);
+
+    vm.prank(alice.operator);
+    _TokenPortalSystem.claim(receiptID);
+    assertEq(token.balanceOf(alice.operator), 1 ether);
   }
 
   /// @notice the lane is gated by the same portal switch and item registration
@@ -383,26 +468,37 @@ contract TokenPortalTest is SetupTemplate {
     _TokenPortalSystem.withdrawToOperator(tokenItem, 1);
   }
 
-  /// @notice a token that re-enters claim during transfer cannot be paid twice
-  function testTokenPortal_claimIsReentrancySafe() public {
+  /// @notice a token that re-enters claim during its transfer is paid once. the token is
+  ///         alice's operator so the re-entrant claim passes auth, and the vault holds
+  ///         more than her receipt so a double pay would not fail on balance
+  function testTokenPortal_laneClaimIsReentrancySafe() public {
     ReentrantToken evil = new ReentrantToken(_TokenPortalSystem);
-    uint32 evilItem = 12;
+    uint32 evilItem = 13;
     _createGenericItem(evilItem, string("ERC20"));
-    vm.prank(deployer);
+    vm.startPrank(deployer);
     _TokenPortalSystem.setItem(evilItem, address(evil), 3);
+    _TokenPortalSystem.setLaneItem(evilItem, true);
+    vm.stopPrank();
+    vm.prank(alice.owner);
+    _AccountSetOperatorSystem.executeTyped(address(evil));
 
     uint256 units = LibERC20.toGameUnits(4 ether, 3);
     evil.mint(alice.owner, 4 ether);
     _approveERC20(address(evil), alice.owner);
     _deposit(alice, evilItem, units);
-    uint256 receiptID = _initiateWithdraw(alice, evilItem, units);
+    evil.mint(bob.owner, 4 ether);
+    _approveERC20(address(evil), bob.owner);
+    _deposit(bob, evilItem, units);
+
+    vm.prank(alice.owner);
+    uint256 receiptID = _TokenPortalSystem.withdrawToOperator(evilItem, units);
     evil.arm(receiptID);
 
     _setTime(block.timestamp + LibTokenPortal.calcWithdrawalDelay(components));
     vm.prank(alice.owner);
     _TokenPortalSystem.claim(receiptID);
-    assertEq(evil.balanceOf(alice.owner), 4 ether, "paid other than once");
     assertTrue(evil.reentered(), "re-entry path not exercised");
+    assertEq(evil.balanceOf(address(evil)), 4 ether, "paid other than once");
   }
 
   //////////////////
