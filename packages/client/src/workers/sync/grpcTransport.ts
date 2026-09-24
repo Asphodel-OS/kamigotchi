@@ -1,23 +1,23 @@
 import { grpc } from '@improbable-eng/grpc-web';
 
 /**
- * Returns the appropriate gRPC transport based on browser
- * - FetchReadableStreamTransport for Safari/iOS (WebKit WebSocket bugs in workers)
- * - WebsocketTransport for Chromium-based browsers
+ * gRPC-web transport for every browser.
+ *
+ * FetchReadableStreamTransport rides plain HTTP, so the browser negotiates
+ * Accept-Encoding / Content-Encoding itself and the snapshot service's gzip
+ * (kamigaze pkg/grpc/server.go withGzip) applies to the ~145MB cold GetState.
+ * WebsocketTransport bypasses HTTP content-encoding entirely, so Chromium users
+ * on it received the state uncompressed. All kamigaze/kamiden RPCs are
+ * server-streaming only, which fetch supports; nothing needs WebSocket.
  */
 export function getGrpcTransport(): grpc.TransportFactory {
-  if (isSafariOrIOS()) {
-    console.log('[grpc] Using FetchReadableStreamTransport for Safari/iOS');
-    return grpc.FetchReadableStreamTransport({ credentials: 'omit' });
-  }
-
-  console.log('[grpc] Using WebsocketTransport');
-  return grpc.WebsocketTransport();
+  return grpc.FetchReadableStreamTransport({ credentials: 'omit' });
 }
 
 /**
  * Detects if the current browser is Safari or an iOS WebKit wrapper.
- * Needed because WebKit's WebSocket implementation inside workers is unreliable.
+ * Used by the wallet connector and RPC provider setup to avoid WebKit
+ * WebSocket quirks.
  */
 export function isSafariOrIOS(): boolean {
   if (typeof navigator === 'undefined') return false;
