@@ -372,7 +372,7 @@ async function fetchStateValues({
         removals: false,
       }),
     processChunk: async (chunk) => {
-      await storeStateValues(stateCache, chunk.state, decode);
+      storeStateValues(stateCache, chunk.state, decode);
       if (chunk.lastBlockNumber > stateCache.lastStateValuesBlock) {
         stateCache.lastStateValuesBlock = chunk.lastBlockNumber;
       }
