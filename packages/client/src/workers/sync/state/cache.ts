@@ -193,7 +193,7 @@ export const storeEntities = (stateCache: StateCache, entities: Entity[]) => {
 };
 
 // decode and cache values received from Kamigaze
-export const storeValues = async (
+export const storeValues = (
   stateCache: StateCache,
   values: State[],
   decode: ReturnType<typeof createDecode>
@@ -212,7 +212,7 @@ export const storeValues = async (
   for (const event of values) {
     const { packedIdx, data } = event;
     const componentIdx = unpackTuple(packedIdx)[0];
-    const value = await decode(stateCache.components[componentIdx], data);
+    const value = decode(stateCache.components[componentIdx], data);
     valueCache.set(packedIdx, value);
   }
 

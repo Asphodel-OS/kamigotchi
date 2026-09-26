@@ -25,7 +25,7 @@ export const createDecode = () => {
   decoders[SYSTEMS_KEY] = createDecoder(['value'], [13]); // world.component.systems
 
   // generate the decode function components
-  async function decode(componentID: string, data: BytesLike): Promise<ComponentValue> {
+  function decode(componentID: string, data: BytesLike): ComponentValue {
     if (!decoders[componentID]) {
       const compID = componentID as keyof typeof ComponentsSchema;
       let schema = ComponentsSchema[compID];

@@ -202,7 +202,7 @@ function createRawStream(
     from(response)
       .pipe(
         concatMap(async (responseChunk) => {
-          let events = await transformWorldEvents(responseChunk);
+          let events = transformWorldEvents(responseChunk);
 
           if (trackingState.isFirstMessage) {
             trackingState.isFirstMessage = false;
