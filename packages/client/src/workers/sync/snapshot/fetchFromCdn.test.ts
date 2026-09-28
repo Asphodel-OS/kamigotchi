@@ -93,7 +93,7 @@ const chunkBytes = (block: number): Record<string, Uint8Array> => {
 // stored passes undefined to the real decoder, which misses ComponentsSchema and falls
 // back to the bool decoder — silently decoding the whole image wrong. A stub that ignored
 // its component argument would stay green through exactly that reordering.
-const decode = (async (component: string, data: Uint8Array) =>
+const decode = ((component: string, data: Uint8Array) =>
   `${component}:${uint8ArrayToHexString(data)}`) as unknown as ReturnType<typeof createDecode>;
 
 const noop = () => {};

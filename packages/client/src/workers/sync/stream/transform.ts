@@ -18,7 +18,7 @@ export type TransformWorldEvents = ReturnType<typeof createTransformWorldEvents>
  * @returns Function to transform World contract events from a stream service.
  */
 export const createTransformWorldEvents = (decode: Decode) => {
-  return async (message: StreamResponse): Promise<NetworkComponentUpdate[]> => {
+  return (message: StreamResponse): NetworkComponentUpdate[] => {
     const { blockNumber, ecsEvents } = message;
 
     const convertedEcsEvents: NetworkComponentUpdate[] = [];
@@ -35,7 +35,7 @@ export const createTransformWorldEvents = (decode: Decode) => {
 
       const value =
         ecsEvent.eventType === 'ComponentValueSet'
-          ? await decode(component, ecsEvent.value)
+          ? decode(component, ecsEvent.value)
           : undefined;
 
       // Since ECS events are coming in ordered over the wire, we check if the following event has a

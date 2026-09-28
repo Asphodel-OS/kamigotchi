@@ -76,7 +76,7 @@ export function createVisibilityHandler<C extends Components>(
       try {
         const response = await client.getEventsSince({ sinceBlock: lastKnownBlock });
         log.debug(`[Visibility] Got ${response.events.length} gap events from main thread`);
-        const events = await parseGetEventsSinceResponse(
+        const events = parseGetEventsSinceResponse(
           response,
           decode,
           lastKnownBlock,

@@ -46,7 +46,7 @@ export async function fetchGapEvents(
     const gapResponse = await client.getEventsSince({
       sinceBlock: fromBlock,
     });
-    const events = await parseGetEventsSinceResponse(gapResponse, decode, fromBlock, '[Worker]');
+    const events = parseGetEventsSinceResponse(gapResponse, decode, fromBlock, '[Worker]');
     log.debug(
       `[gapfill] ${new Date().toISOString()} Got ${events.length} events from Kamigaze - latestBlock ${gapResponse.latestBlock}`
     );
@@ -92,12 +92,12 @@ export async function fetchGapEvents(
  * @param blockNumber Block number to assign to events (defaults to 0)
  * @returns Array of NetworkComponentUpdate events
  */
-export async function parseGetEventsSinceResponse(
+export function parseGetEventsSinceResponse(
   response: GetEventsSinceResponse,
   decode: Decode,
   blockNumber: number = 0,
   source: string
-): Promise<NetworkComponentUpdate[]> {
+): NetworkComponentUpdate[] {
   const { events } = response;
   const updates: NetworkComponentUpdate[] = [];
 
@@ -109,7 +109,7 @@ export async function parseGetEventsSinceResponse(
 
     const value =
       ecsEvent.eventType === 'ComponentValueSet'
-        ? await decode(component, ecsEvent.value!)
+        ? decode(component, ecsEvent.value!)
         : undefined;
 
     const lastEventInTx = events[i + 1]?.txHash !== ecsEvent.txHash;
