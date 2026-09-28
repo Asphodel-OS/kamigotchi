@@ -9,7 +9,7 @@ export const Footer = ({
 }) => {
 
   const openBaselineDocs = () => {
-    window.open('https://www.baseline.markets/', '_blank');
+    window.open('https://www.baseline.markets/', '_blank', 'noopener,noreferrer');
   };
 
   const getPercent = () => {
