@@ -51,6 +51,7 @@ import {
   saveStateCacheToStore,
   StateCache,
   storeStateEvents,
+  trimToKamigazeIndices,
 } from './state';
 import {
   createStream,
@@ -148,12 +149,11 @@ export class SyncWorker<C extends Components> implements DoWork<Input, NetworkEv
   /**
    * Start the sync process.
    * 1. Get config
-   * 2. Load historic state from snapshotter or IndexedDB cache
-   * 3. Save snapshot to IndexedDB
-   * 4. Start the live sync from streamer/rpc
-   * 5. Fill the live-sync state gap since start
-   * 6. Initialize world
-   * 7. Keep in sync with streamer/rpc
+   * 2. Load historic state from snapshotter or IndexedDB cache (provider connects meanwhile)
+   * 3. Start the live sync from streamer/rpc
+   * 4. Fill the live-sync state gap since start
+   * 5. Initialize world
+   * 6. Keep in sync with streamer/rpc, save state cache to IndexedDB in the background
    */
   private async init() {
     // init() can re-run on retry (see the INITIALIZE catch below); clear so measure()
@@ -193,18 +193,16 @@ export class SyncWorker<C extends Components> implements DoWork<Input, NetworkEv
       msg: 'Starting State Sync',
       percentage: 0,
     });
-    const { providers } = await createReconnectingProvider(computed(() => config.provider));
-    const provider = providers.get().json;
-    const indexedDB = await getStateStore(chainId, worldContract.address, IDB_VERSION);
-    const decode = createDecode();
-    const fetchWorldEvents = createFetchWorldEventsInBlockRange(
-      provider,
-      worldContract,
-      providerOptions?.batch,
-      decode
+    const providerReady = createReconnectingProvider(computed(() => config.provider)).then(
+      (reconnecting) => {
+        performance.mark('provider-ready');
+        return reconnecting;
+      }
     );
-
-    const { blockNumber$ } = createBlockNumberStream(providers);
+    // Awaited only when the stream starts; without a handler a rejection landing during the
+    // IDB/Kamigaze load would be reported as unhandled before that await rethrows it.
+    providerReady.catch(() => {});
+    const decode = createDecode();
 
     /*
      * LOAD INITIAL STATE (BACKFILL)
@@ -215,6 +213,7 @@ export class SyncWorker<C extends Components> implements DoWork<Input, NetworkEv
     this.setLoadingState({ state: SyncState.BACKFILL, percentage: 0 });
 
     this.setLoadingState({ msg: 'Loading State Cache', percentage: 0 });
+    const indexedDB = await getStateStore(chainId, worldContract.address, IDB_VERSION);
     let initialState = await loadStateCacheFromStore(indexedDB);
     console.log('INITIAL STATE (PRE-SYNC)', getStateReport(initialState));
 
@@ -296,28 +295,10 @@ export class SyncWorker<C extends Components> implements DoWork<Input, NetworkEv
       console.log('INITIAL STATE (POST-SYNC)', getStateReport(initialState));
     }
 
-    performance.mark('idb-save');
-    /*
-     * SAVE SNAPSHOT TO INDEXEDDB
-     * - Persist snapshot before starting live sync
-     * - This ensures we can resume from lastKamigazeBlock on failure
-     */
-    this.setLoadingState({ msg: 'Saving State Cache', percentage: 0 });
-    try {
-      await saveStateCacheToStore(indexedDB, initialState);
-    } catch (e) {
-      console.error('Failed to save snapshot to IndexedDB', e);
-      this.setLoadingState({
-        state: SyncState.FAILED,
-        msg: 'Failed to save state cache',
-      });
-      return;
-    }
     performance.mark('stream');
 
     /*
      * START LIVE SYNC
-     * - Start after snapshot is saved
      * - Buffer events while filling gap
      */
     this.setLoadingState({
@@ -325,6 +306,17 @@ export class SyncWorker<C extends Components> implements DoWork<Input, NetworkEv
       msg: 'Initializing Event Streams',
       percentage: 0,
     });
+    const { providers } = await providerReady;
+    performance.mark('provider-waited');
+    const provider = providers.get().json;
+    const fetchWorldEvents = createFetchWorldEventsInBlockRange(
+      provider,
+      worldContract,
+      providerOptions?.batch,
+      decode
+    );
+    const { blockNumber$ } = createBlockNumberStream(providers);
+
     let outputLiveEvents = false;
     const stateCache = { current: initialState };
 
@@ -464,15 +456,29 @@ export class SyncWorker<C extends Components> implements DoWork<Input, NetworkEv
     if (import.meta.env.DEV) this.stateCache = stateCache.current;
 
     performance.measure('connection', 'connecting', 'setup');
-    performance.measure('setup', 'setup', 'idb-read');
+    performance.measure('provider', 'setup', 'provider-ready');
     performance.measure('idb-read', 'idb-read', 'fetch');
-    performance.measure('fetch', 'fetch', 'idb-save');
-    performance.measure('idb-save', 'idb-save', 'stream');
-    performance.measure('stream', 'stream', 'gapfill');
+    performance.measure('fetch', 'fetch', 'stream');
+    performance.measure('provider-wait', 'stream', 'provider-waited');
+    performance.measure('stream', 'provider-waited', 'gapfill');
     performance.measure('gapfill', 'gapfill', 'init');
     performance.measure('emit', 'init', 'live');
     performance.measure('live', 'connecting', 'live');
     console.log(performance.getEntriesByType('measure'));
+
+    /*
+     * SAVE STATE CACHE TO INDEXEDDB
+     * - Off the critical path: a failed save only means the next boot fetches more
+     */
+    performance.mark('idb-save');
+    saveStateCacheToStore(indexedDB, trimToKamigazeIndices(stateCache.current))
+      .then(() => {
+        performance.mark('idb-saved');
+        console.log(performance.measure('idb-save', 'idb-save', 'idb-saved'));
+      })
+      .catch((e) => log.warn('[state] failed to save state cache to IndexedDB', e));
+    // IDB structured-clones on put(), so this is how long the save blocked this thread
+    console.log(performance.measure('idb-save-clone', 'idb-save'));
   }
 
   public work(input$: Observable<Input>): Observable<NetworkEvent<C>[]> {
