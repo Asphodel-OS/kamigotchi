@@ -12,6 +12,7 @@ import {
   configEntityId,
   entriesFor,
   listingPrices,
+  ownershipClosure,
   registryBuckets,
   scanCache,
   tradeOrders,
@@ -99,6 +100,25 @@ describe('walk', () => {
     const cache = world();
     const { B } = accountBuckets(scanCache(cache, WALK_IDS), fixture.account);
     expect(idsOf(cache, B)).toEqual(['0x7b1', '0x7b2']);
+  });
+
+  it('puts entities owned by a registry entity in R1', () => {
+    const cache = world();
+    const { R1 } = registryBuckets(scanCache(cache, WALK_IDS), []);
+    expect(R1.has(cache.entityToIndex.get('0x621')!)).toBe(true);
+    expect(R1.has(cache.entityToIndex.get('0x631')!)).toBe(true);
+  });
+
+  it("follows ownership transitively: a harvest's tax and a trade's escrow inventory", () => {
+    const cache = world();
+    const scan = scanCache(cache, WALK_IDS);
+    const depth = (id: string) =>
+      ownershipClosure(scan, fixture.account).get(cache.entityToIndex.get(id)!);
+    expect(depth('0x7c0')).toBe(3);
+    expect(depth('0xa01')).toBe(2);
+    const other = accountBuckets(scan, '0xb0b').H;
+    expect(other.has(cache.entityToIndex.get('0x7c0')!)).toBe(false);
+    expect(other.has(cache.entityToIndex.get('0xa01')!)).toBe(false);
   });
 
   it('classifies address registries, global singletons and listing prices as registry', () => {

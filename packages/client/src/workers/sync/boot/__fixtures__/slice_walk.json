@@ -24,7 +24,10 @@
     "Type": "component.type",
     "Decay": "component.decay",
     "Period": "component.period",
-    "Rate": "component.rate"
+    "Rate": "component.rate",
+    "IDOwnsTax": "component.id.tax.owns",
+    "IDOwnsFlag": "component.id.flag.owns",
+    "IndexAccount": "component.index.account"
   },
   "account": "0xa11ce",
   "configIds": ["0xff259602c74c97d099e9877fc461da5dabfd702fe30b6f01802afe3ff724160e"],
@@ -113,7 +116,26 @@
     ["0x48e01b57661cc503bf1f97345f7ed30638d0f5b495a6793c4ade87600dabaf39", "Period", 60],
     ["0x48e01b57661cc503bf1f97345f7ed30638d0f5b495a6793c4ade87600dabaf39", "Rate", 2],
     ["0x810", "EntityType", "KAMI"],
-    ["0x810", "IDOwnsKami", "0x9ac4a"]
+    ["0x810", "IDOwnsKami", "0x9ac4a"],
+    ["0x7c0", "EntityType", "TAX"],
+    ["0x7c0", "IDOwnsTax", "0x703"],
+    ["0xa01", "EntityType", "INVENTORY"],
+    ["0xa01", "IDOwnsInventory", "0xa00"],
+    ["0xb01", "EntityType", "INVENTORY"],
+    ["0xb01", "IDOwnsInventory", "0xb00"],
+    ["0x620", "EntityType", "POOL"],
+    ["0x621", "EntityType", "INVENTORY"],
+    ["0x621", "IDOwnsInventory", "0x620"],
+    ["0x630", "IsRegistry", true],
+    ["0x630", "EntityType", "ITEM"],
+    ["0x631", "IDOwnsFlag", "0x630"],
+    ["0xacc0", "IndexAccount", 7],
+    ["0xacc0", "Name", "legacy"],
+    ["0xacc1", "EntityType", "INVENTORY"],
+    ["0xacc1", "IDOwnsInventory", "0xacc0"],
+    ["0xdea0", "Name", "nobody"],
+    ["0xdea1", "EntityType", "INVENTORY"],
+    ["0xdea1", "IDOwnsInventory", "0xdea0"]
   ],
   "expected": {
     "registry": [
@@ -136,7 +158,11 @@
       "0x374f77fd91ca497b9d8f70644bf6c249a45dcdb2f190513e3c4752611148546f",
       "0x610",
       "0x69be4f25d748f1e4b100cfb35bc98128d7430cce9573d2807228edb8908e8cf5",
-      "0x48e01b57661cc503bf1f97345f7ed30638d0f5b495a6793c4ade87600dabaf39"
+      "0x48e01b57661cc503bf1f97345f7ed30638d0f5b495a6793c4ade87600dabaf39",
+      "0x620",
+      "0x621",
+      "0x630",
+      "0x631"
     ],
     "account": [
       "0xa11ce",
@@ -152,7 +178,9 @@
       "0x7b2",
       "0xa00",
       "0x2efd0d2b350c24791820318a0bf3f3993eb5ea9f9b2c0ace11128ca3e79d6c75",
-      "0x201e08a482e0b72cb0cf210f620d5f7439aedb6768f6356210bb1bae0cf5158d"
+      "0x201e08a482e0b72cb0cf210f620d5f7439aedb6768f6356210bb1bae0cf5158d",
+      "0x7c0",
+      "0xa01"
     ],
     "unwalked": [
       "0x900",
@@ -163,14 +191,20 @@
       "0xb00",
       "0x7aaaa0a43421770fd6063821da6457c511a019d47dd240c5810b659534c9b255",
       "0xdb0ae7d130de52bb05bca67a3151dc75f0e8222f6e156515f97fbfe9d96fa04f",
-      "0x810"
+      "0x810",
+      "0xb01",
+      "0xacc0",
+      "0xacc1",
+      "0xdea0",
+      "0xdea1"
     ],
     "otherAccount": [
       "0xb0b",
       "0x800",
       "0xb00",
       "0x7aaaa0a43421770fd6063821da6457c511a019d47dd240c5810b659534c9b255",
-      "0xdb0ae7d130de52bb05bca67a3151dc75f0e8222f6e156515f97fbfe9d96fa04f"
+      "0xdb0ae7d130de52bb05bca67a3151dc75f0e8222f6e156515f97fbfe9d96fa04f",
+      "0xb01"
     ]
   }
 }

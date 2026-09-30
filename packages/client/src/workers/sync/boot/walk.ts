@@ -217,6 +217,8 @@ export const registryBuckets = (scan: Scan, configIds: string[]) => {
   const R1 = new Set<number>();
   for (const parent of R0) {
     for (const child of scan.anchoredTo.get(entities[parent]!) ?? []) R1.add(child);
+    // registry-owned: pool reserves and locked shares, item flags
+    for (const owned of scan.linksTo.get(entities[parent]!) ?? []) R1.add(owned);
     if (scan.entityType.get(parent) !== 'LISTING') continue;
     for (const price of listingPrices(entities[parent]!)) {
       const priceIdx = indexOf(scan.cache, price);
@@ -238,6 +240,25 @@ export const registryBuckets = (scan: Scan, configIds: string[]) => {
   return { R0, R1, R2, R3 };
 };
 
+// Reverse-link closure from the account: every entity whose link component points at the
+// account or, transitively, at an entity already in the closure (account -> kami -> harvest
+// -> tax, account -> trade -> escrow inventory). Maps entity -> hop count from the account.
+export const ownershipClosure = (scan: Scan, accountId: string) => {
+  const { entities } = scan.cache;
+  const depth = new Map<number, number>();
+  let frontier = scan.linksTo.get(formatEntityID(accountId)) ?? [];
+  for (let hop = 1; frontier.length > 0; hop++) {
+    const next: number[] = [];
+    for (const entity of frontier) {
+      if (depth.has(entity)) continue;
+      depth.set(entity, hop);
+      for (const child of scan.linksTo.get(entities[entity]!) ?? []) next.push(child);
+    }
+    frontier = next;
+  }
+  return depth;
+};
+
 export const accountBuckets = (scan: Scan, accountId: string) => {
   const { cache } = scan;
   const { entities } = cache;
@@ -247,36 +268,33 @@ export const accountBuckets = (scan: Scan, accountId: string) => {
   const self = indexOf(cache, account);
   if (self != null) A.add(self);
 
-  const H1 = new Set(scan.linksTo.get(account) ?? []);
-
-  const K = [...H1].filter((e) => scan.ownsKami.has(e));
-  const H2 = new Set<number>();
-  for (const kami of K) {
-    for (const entity of scan.linksTo.get(entities[kami]!) ?? []) H2.add(entity);
-  }
+  const H = new Set(ownershipClosure(scan, account).keys());
+  if (self != null) H.delete(self);
+  const K = [...H].filter((e) => scan.ownsKami.has(e));
 
   const D = new Set<number>();
-  for (const quest of H1) {
-    if (!scan.ownsQuest.has(quest)) continue;
-    for (const entity of scan.anchoredTo.get(snapshotAnchor(entities[quest]!)) ?? []) D.add(entity);
+  const addAll = (ids: string[]) => {
+    for (const id of ids) {
+      const entity = indexOf(cache, id);
+      if (entity != null) D.add(entity);
+    }
+  };
+  for (const entity of H) {
+    if (scan.ownsQuest.has(entity)) {
+      for (const snapshot of scan.anchoredTo.get(snapshotAnchor(entities[entity]!)) ?? []) {
+        D.add(snapshot);
+      }
+    }
+    if (scan.ownsTrade.has(entity)) addAll(tradeOrders(entities[entity]!));
   }
   for (const [goal, type] of scan.entityType) {
-    if (type !== 'GOAL') continue;
-    const contribution = indexOf(cache, goalContribution(entities[goal]!, account));
-    if (contribution != null) D.add(contribution);
-  }
-  for (const trade of H1) {
-    if (!scan.ownsTrade.has(trade)) continue;
-    for (const order of tradeOrders(entities[trade]!)) {
-      const orderIdx = indexOf(cache, order);
-      if (orderIdx != null) D.add(orderIdx);
-    }
+    if (type === 'GOAL') addAll([goalContribution(entities[goal]!, account)]);
   }
 
   // permanent bonuses anchor to a player entity (e.g. a skill instance); temporary ones to
   // bonusEndAnchor(endType, holder) for a holder that is the account or one of its kamis
   const B = new Set<number>();
-  for (const parent of union(A, H1, H2)) {
+  for (const parent of union(A, H)) {
     for (const bonus of scan.anchoredTo.get(entities[parent]!) ?? []) B.add(bonus);
   }
   for (const holder of [account, ...K.map((kami) => entities[kami]!)]) {
@@ -285,7 +303,7 @@ export const accountBuckets = (scan: Scan, accountId: string) => {
     }
   }
 
-  return { A, H1, H2, D, B };
+  return { A, H, D, B };
 };
 
 export const union = (...sets: Set<number>[]) => {
