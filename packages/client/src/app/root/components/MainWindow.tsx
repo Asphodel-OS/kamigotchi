@@ -4,8 +4,10 @@ import styled from 'styled-components';
 import { allComponents } from 'app/components';
 
 export const MainWindow = observer(({ ready }: { ready: boolean }) => {
-  // this includes the LoadingState and ActionQueue components when not ready
-  const renderedComponents = ready ? allComponents : allComponents.slice(0, 5);
+  // wallet login needs no synced state, so players can connect while the world is still loading
+  const renderedComponents = ready
+    ? allComponents
+    : allComponents.filter((c, i) => i < 5 || c.uiComponent.id === 'WalletConnecter');
 
   return (
     <UIGrid>

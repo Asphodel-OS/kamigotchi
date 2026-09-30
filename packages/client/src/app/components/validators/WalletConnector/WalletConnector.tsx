@@ -177,6 +177,9 @@ export const WalletConnecter: UIComponent = {
       await addNetworkAPI(injectedWallet);
       const provider = await injectedWallet.getEthereumProvider();
       setSigner(await new ethers.BrowserProvider(provider).getSigner());
+      try {
+        localStorage.setItem('lastAccount', injectedWallet.address.toLowerCase());
+      } catch {}
       setIsUpdating(false);
     };
 

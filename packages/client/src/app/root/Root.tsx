@@ -34,7 +34,6 @@ export const Root = observer(
     useEffect(() => {
       mountReact.current = (mounted: boolean) => setMounted(mounted);
       setLayers.current = (layers: Layers) => _setLayers(layers);
-      localStorage.removeItem('wagmi.store');
     }, []);
 
     // show boot screen until network is loaded
@@ -55,9 +54,7 @@ export const Root = observer(
 
     const showBootScreen = !mounted || !layers;
 
-    return showBootScreen ? (
-      <BootScreen status='' />
-    ) : (
+    return (
       <PrivyProvider
         appId={import.meta.env.VITE_PRIVY_APP_ID}
         clientId={import.meta.env.VITE_PRIVY_CLIENT_ID}
@@ -66,9 +63,13 @@ export const Root = observer(
         <WagmiProvider config={wagmiConfig}>
           <QueryClientProvider client={tanstackClient}>
             <InterwovenKitProvider disableAnalytics>
-              <NetworkContext.Provider value={layers}>
-                <MainWindow ready={ready} />
-              </NetworkContext.Provider>
+              {showBootScreen ? (
+                <BootScreen status='' />
+              ) : (
+                <NetworkContext.Provider value={layers}>
+                  <MainWindow ready={ready} />
+                </NetworkContext.Provider>
+              )}
             </InterwovenKitProvider>
           </QueryClientProvider>
         </WagmiProvider>
