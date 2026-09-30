@@ -18,7 +18,9 @@ export function boot() {
   if (!rootElement) return console.warn('React root not found');
 
   // wagmi mounts with the boot screen now, so a stale store must be gone before its first read
-  localStorage.removeItem('wagmi.store');
+  try {
+    localStorage.removeItem('wagmi.store');
+  } catch {}
   const root = ReactDOM.createRoot(rootElement);
   root.render(<Root setLayers={setLayers} mountReact={mountReact} />);
 }
