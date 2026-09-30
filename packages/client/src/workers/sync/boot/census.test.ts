@@ -42,6 +42,21 @@ describe('runCensus', () => {
       { signature: 'EntityType+IdSource+IdTarget', count: 1, rows: 3, sample: '0x900' },
       { signature: 'EntityType+IDAnchor+IdSource', count: 1, rows: 3, sample: '0x901' },
       { signature: 'Value', count: 1, rows: 1, sample: fixture.expected.unwalked[2] },
+      { signature: 'EntityType+IDOwnsKami', count: 1, rows: 2, sample: '0x810' },
+    ]);
+    expect(result.residualLinks).toEqual([
+      {
+        link: 'IDAnchor -> unknown-entity',
+        count: 1,
+        sampleEntity: '0x901',
+        sampleTarget: '0xe1d',
+      },
+      {
+        link: 'IDOwnsKami -> unknown-entity',
+        count: 1,
+        sampleEntity: '0x810',
+        sampleTarget: '0x9ac4a',
+      },
     ]);
   });
 });

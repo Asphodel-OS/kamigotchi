@@ -17,7 +17,14 @@
     "IDOwnsInventory": "component.id.inventory.owns",
     "IDOwnsTrade": "component.id.trade.owns",
     "IDOwnsSkill": "component.id.skill.owns",
-    "Subtype": "component.subtype"
+    "Subtype": "component.subtype",
+    "SystemsRegistry": "world.component.systems",
+    "Weights": "component.weights",
+    "TimeStart": "component.Time.Start",
+    "Type": "component.type",
+    "Decay": "component.decay",
+    "Period": "component.period",
+    "Rate": "component.rate"
   },
   "account": "0xa11ce",
   "configIds": ["0xff259602c74c97d099e9877fc461da5dabfd702fe30b6f01802afe3ff724160e"],
@@ -93,7 +100,20 @@
     ["0x7aaaa0a43421770fd6063821da6457c511a019d47dd240c5810b659534c9b255", "Keys", [1]],
     ["0x7aaaa0a43421770fd6063821da6457c511a019d47dd240c5810b659534c9b255", "Values", [1]],
     ["0xdb0ae7d130de52bb05bca67a3151dc75f0e8222f6e156515f97fbfe9d96fa04f", "Keys", [2]],
-    ["0xdb0ae7d130de52bb05bca67a3151dc75f0e8222f6e156515f97fbfe9d96fa04f", "Values", [1]]
+    ["0xdb0ae7d130de52bb05bca67a3151dc75f0e8222f6e156515f97fbfe9d96fa04f", "Values", [1]],
+    ["0xc0de", "SystemsRegistry", "0x5157"],
+    ["0x7c8949c76a5bc171ea150c71a6b53ccd26363f610c2bf1eb7215962e17a9ffda", "Keys", [1, 2]],
+    ["0x7c8949c76a5bc171ea150c71a6b53ccd26363f610c2bf1eb7215962e17a9ffda", "Weights", [9, 1]],
+    ["0x374f77fd91ca497b9d8f70644bf6c249a45dcdb2f190513e3c4752611148546f", "TimeStart", 1700000000],
+    ["0x374f77fd91ca497b9d8f70644bf6c249a45dcdb2f190513e3c4752611148546f", "Values", [3, 4]],
+    ["0x610", "EntityType", "LISTING"],
+    ["0x69be4f25d748f1e4b100cfb35bc98128d7430cce9573d2807228edb8908e8cf5", "Type", "FIXED"],
+    ["0x48e01b57661cc503bf1f97345f7ed30638d0f5b495a6793c4ade87600dabaf39", "Type", "GDA"],
+    ["0x48e01b57661cc503bf1f97345f7ed30638d0f5b495a6793c4ade87600dabaf39", "Decay", 5],
+    ["0x48e01b57661cc503bf1f97345f7ed30638d0f5b495a6793c4ade87600dabaf39", "Period", 60],
+    ["0x48e01b57661cc503bf1f97345f7ed30638d0f5b495a6793c4ade87600dabaf39", "Rate", 2],
+    ["0x810", "EntityType", "KAMI"],
+    ["0x810", "IDOwnsKami", "0x9ac4a"]
   ],
   "expected": {
     "registry": [
@@ -110,7 +130,13 @@
       "0x502",
       "0xff259602c74c97d099e9877fc461da5dabfd702fe30b6f01802afe3ff724160e",
       "0x600",
-      "0x301"
+      "0x301",
+      "0xc0de",
+      "0x7c8949c76a5bc171ea150c71a6b53ccd26363f610c2bf1eb7215962e17a9ffda",
+      "0x374f77fd91ca497b9d8f70644bf6c249a45dcdb2f190513e3c4752611148546f",
+      "0x610",
+      "0x69be4f25d748f1e4b100cfb35bc98128d7430cce9573d2807228edb8908e8cf5",
+      "0x48e01b57661cc503bf1f97345f7ed30638d0f5b495a6793c4ade87600dabaf39"
     ],
     "account": [
       "0xa11ce",
@@ -136,7 +162,8 @@
       "0x800",
       "0xb00",
       "0x7aaaa0a43421770fd6063821da6457c511a019d47dd240c5810b659534c9b255",
-      "0xdb0ae7d130de52bb05bca67a3151dc75f0e8222f6e156515f97fbfe9d96fa04f"
+      "0xdb0ae7d130de52bb05bca67a3151dc75f0e8222f6e156515f97fbfe9d96fa04f",
+      "0x810"
     ],
     "otherAccount": [
       "0xb0b",

@@ -11,6 +11,7 @@ import {
   accountBuckets,
   configEntityId,
   entriesFor,
+  listingPrices,
   registryBuckets,
   scanCache,
   tradeOrders,
@@ -49,6 +50,9 @@ describe('walk', () => {
       '0xf9b94d2a933222e58f90359e8ec33041c5f08d7bc4304958d1c52c21991da575'
     );
     expect(WALK_IDS.links).toHaveLength(13);
+    expect(WALK_IDS.SystemsRegistry).toBe(
+      '0x017c816a964927a00e050edd780dcf113ca2756dfa9e9fda94a05c140d9317b0'
+    );
   });
 
   it('walks the registry', () => {
@@ -95,6 +99,17 @@ describe('walk', () => {
     const cache = world();
     const { B } = accountBuckets(scanCache(cache, WALK_IDS), fixture.account);
     expect(idsOf(cache, B)).toEqual(['0x7b1', '0x7b2']);
+  });
+
+  it('classifies address registries, global singletons and listing prices as registry', () => {
+    const cache = world();
+    const { R0, R1, R3 } = registryBuckets(scanCache(cache, WALK_IDS), []);
+    const has = (set: Set<number>, entityId: string) => set.has(cache.entityToIndex.get(entityId)!);
+    expect(has(R0, '0xc0de')).toBe(true);
+    const named = (name: string) => '0x' + BigInt(id(name)).toString(16);
+    expect(has(R3, named('droptable.sacrifice.normal'))).toBe(true);
+    expect(has(R3, named('newbie.vendor'))).toBe(true);
+    for (const price of listingPrices('0x610')) expect(has(R1, price)).toBe(true);
   });
 
   it('derives config ids the way the contracts and deploy tooling do', () => {

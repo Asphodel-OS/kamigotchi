@@ -21,6 +21,9 @@ export const WALK_IDS = {
   IDOwnsQuest: componentId('component.id.quest.owns'),
   IDOwnsTrade: componentId('component.id.trade.owns'),
   Subtype: componentId('component.subtype'),
+  // system and component address registries, which the tx queue resolves systems through
+  SystemsRegistry: componentId('world.component.systems'),
+  ComponentsRegistry: componentId('world.component.components'),
   links: [
     'component.id.equipment.owns',
     'component.id.flag.owns',
@@ -64,6 +67,25 @@ export const goalContribution = (goalId: string, accountId: string) =>
     )
   );
 
+// Fixed-id global entities with no type or registry marker (`uint256(keccak256(name))`):
+// sacrifice droptables (LibSacrifice.sol:33-35), the newbie vendor and its TWAP
+// (_NewbieVendorRegistrySystem.sol:16-17) and the kami market listing index
+// (LibKamiMarketIndex.sol:24)
+export const GLOBAL_SINGLETONS = [
+  'droptable.sacrifice.normal',
+  'droptable.sacrifice.uncommon',
+  'droptable.sacrifice.rare',
+  'newbie.vendor',
+  'newbie.vendor.twap',
+  'kami.market.listing.index',
+].map((name) => formatEntityID(id(name)));
+
+// LibListingRegistry.genBuyID / genSellID: a listing's price entities
+export const listingPrices = (listingId: string) =>
+  ['listing.buy', 'listing.sell'].map((prefix) =>
+    formatEntityID(solidityPackedKeccak256(['string', 'uint256'], [prefix, listingId]))
+  );
+
 export const configEntityId = (name: string) =>
   formatEntityID(solidityPackedKeccak256(['string', 'string'], ['is.config', name]));
 
@@ -88,6 +110,7 @@ export const bonusEndAnchor = (endType: string, holderId: string) =>
 export type Scan = {
   cache: StateCache;
   isRegistry: Set<number>;
+  addressRegistry: Set<number>;
   entityType: Map<number, string>;
   logicType: Set<number>;
   linked: Set<number>;
@@ -120,11 +143,14 @@ export const scanCache = (cache: StateCache, ids: WalkIds): Scan => {
   const ownsQuest = idx(ids.IDOwnsQuest);
   const ownsTrade = idx(ids.IDOwnsTrade);
   const subtype = idx(ids.Subtype);
+  const systemsRegistry = idx(ids.SystemsRegistry);
+  const componentsRegistry = idx(ids.ComponentsRegistry);
   const links = new Set(ids.links.map(idx));
 
   const scan: Scan = {
     cache,
     isRegistry: new Set(),
+    addressRegistry: new Set(),
     entityType: new Map(),
     logicType: new Set(),
     linked: new Set(),
@@ -152,6 +178,9 @@ export const scanCache = (cache: StateCache, ids: WalkIds): Scan => {
     else if (component === anchor) push(scan.anchoredTo, value, entity);
     else if (component === logicType) scan.logicType.add(entity);
     else if (component === subtype) subtypes.set(entity, value);
+    else if (component === systemsRegistry || component === componentsRegistry) {
+      scan.addressRegistry.add(entity);
+    }
 
     if (links.has(component)) {
       scan.linked.add(entity);
@@ -182,17 +211,22 @@ const indexOf = (cache: StateCache, entityId: string) =>
 export const registryBuckets = (scan: Scan, configIds: string[]) => {
   const { entities } = scan.cache;
 
-  const R0 = new Set(scan.isRegistry);
+  const R0 = union(scan.isRegistry, scan.addressRegistry);
   for (const [entity, type] of scan.entityType) if (REGISTRY_TYPES.has(type)) R0.add(entity);
 
   const R1 = new Set<number>();
   for (const parent of R0) {
     for (const child of scan.anchoredTo.get(entities[parent]!) ?? []) R1.add(child);
+    if (scan.entityType.get(parent) !== 'LISTING') continue;
+    for (const price of listingPrices(entities[parent]!)) {
+      const priceIdx = indexOf(scan.cache, price);
+      if (priceIdx != null) R1.add(priceIdx);
+    }
   }
   for (const entity of scan.logicType) if (!scan.linked.has(entity)) R1.add(entity);
 
   const R3 = new Set<number>();
-  for (const configId of configIds) {
+  for (const configId of [...configIds, ...GLOBAL_SINGLETONS]) {
     const entity = indexOf(scan.cache, configId);
     if (entity != null) R3.add(entity);
   }

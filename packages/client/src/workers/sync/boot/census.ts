@@ -1,9 +1,10 @@
 import { unpackTuple } from '@mud-classic/utils';
-import { formatComponentID } from 'engine/utils';
+import { formatComponentID, formatEntityID } from 'engine/utils';
 
 import { StateCache } from '../state/cache';
 import {
   accountBuckets,
+  bonusEndAnchor,
   REGISTRY_TYPES,
   registryBuckets,
   scanCache,
@@ -79,8 +80,10 @@ export const runCensus = (cache: StateCache, input: CensusInput) => {
   }
 
   const residual = new Map<string, { count: number; rows: number; sample: string }>();
+  const residualEntities = new Set<number>();
   for (const [entity, stats] of perEntity) {
     if (walked.has(entity)) continue;
+    residualEntities.add(entity);
     const signature = [...new Set(stats.components.map(componentName))].sort().join('+');
     const group = residual.get(signature);
     if (group) {
@@ -94,10 +97,15 @@ export const runCensus = (cache: StateCache, input: CensusInput) => {
     .map(([signature, group]) => ({ signature, ...group }))
     .sort((a, b) => b.count - a.count);
 
+  const residualLinks = residualLinkTable(cache, scan, residualEntities, componentName);
+  const configFound = (input.configIds ?? []).filter((id) =>
+    cache.entityToIndex.has(formatEntityID(id))
+  ).length;
+
   console.log(
     `[census] snapshot as of LIVE (not updated after) account=${input.accountId ?? 'none'} ` +
-      `accounts=${accounts} ` +
-      `configIds=${input.configIds?.length ?? 0} configFound=${registry.R3.size} ms=${Math.round(performance.now() - started)}`
+      `accounts=${accounts} configIds=${input.configIds?.length ?? 0} ` +
+      `configFound=${configFound} ms=${Math.round(performance.now() - started)}`
   );
   console.table(bucketTable);
   console.log(
@@ -105,6 +113,48 @@ export const runCensus = (cache: StateCache, input: CensusInput) => {
     linkedRegistryTypes.slice(0, SAMPLE_LIMIT)
   );
   console.table(residualTable);
+  console.log('[census] residual entities by link/anchor component -> target kind');
+  console.table(residualLinks);
 
-  return { buckets: bucketTable, linkedRegistryTypes, residual: residualTable };
+  return { buckets: bucketTable, linkedRegistryTypes, residual: residualTable, residualLinks };
+};
+
+// Explains why linked residuals were not walked: what their link (or IDAnchor) points at.
+// A target is 'zero', an EntityType, 'untyped-entity', a bonus end anchor of an ACCOUNT/KAMI
+// holder, or 'unknown-entity' (a hash with no rows of its own).
+const residualLinkTable = (
+  cache: StateCache,
+  scan: ReturnType<typeof scanCache>,
+  residualEntities: Set<number>,
+  componentName: (idx: number) => string
+) => {
+  const idx = (componentId: string) => cache.componentToIndex.get(componentId) ?? -1;
+  const traced = new Set([...WALK_IDS.links, WALK_IDS.IDAnchor].map(idx));
+
+  const endAnchors = new Map<string, string>();
+  for (const [entity, type] of scan.entityType) {
+    if (type !== 'ACCOUNT' && type !== 'KAMI') continue;
+    for (const endType of scan.bonusEndTypes) {
+      endAnchors.set(bonusEndAnchor(endType, cache.entities[entity]!), `bonus-end-anchor:${type}`);
+    }
+  }
+  const targetKind = (target: string) => {
+    if (/^0x0*$/.test(target)) return 'zero';
+    const entity = cache.entityToIndex.get(target);
+    if (entity != null) return scan.entityType.get(entity) ?? 'untyped-entity';
+    return endAnchors.get(target) ?? 'unknown-entity';
+  };
+
+  const groups = new Map<string, { count: number; sampleEntity: string; sampleTarget: string }>();
+  for (const [key, row] of cache.state) {
+    const [component, entity] = unpackTuple(key);
+    if (!traced.has(component) || !residualEntities.has(entity)) continue;
+    const target = String((row as { value?: unknown }).value);
+    const group = `${componentName(component)} -> ${targetKind(target)}`;
+    const existing = groups.get(group);
+    if (existing) existing.count++;
+    else
+      groups.set(group, { count: 1, sampleEntity: cache.entities[entity]!, sampleTarget: target });
+  }
+  return [...groups].map(([link, group]) => ({ link, ...group })).sort((a, b) => b.count - a.count);
 };
