@@ -41,7 +41,7 @@ describe('runCensus', () => {
     expect(result.residual).toEqual([
       { signature: 'EntityType+IdSource+IdTarget', count: 1, rows: 3, sample: '0x900' },
       { signature: 'EntityType+IDAnchor+IdSource', count: 1, rows: 3, sample: '0x901' },
-      { signature: 'Value', count: 1, rows: 1, sample: fixture.expected.unwalked[4] },
+      { signature: 'Value', count: 1, rows: 1, sample: fixture.expected.unwalked[2] },
     ]);
   });
 });

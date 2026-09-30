@@ -14,7 +14,10 @@
     "IDOwnsQuest": "component.id.quest.owns",
     "IdHolder": "component.id.holder",
     "CacheOperator": "component.cache.operator",
-    "IDOwnsInventory": "component.id.inventory.owns"
+    "IDOwnsInventory": "component.id.inventory.owns",
+    "IDOwnsTrade": "component.id.trade.owns",
+    "IDOwnsSkill": "component.id.skill.owns",
+    "Subtype": "component.subtype"
   },
   "account": "0xa11ce",
   "configIds": ["0xff259602c74c97d099e9877fc461da5dabfd702fe30b6f01802afe3ff724160e"],
@@ -51,7 +54,7 @@
     ["0x701", "EntityType", "INVENTORY"],
     ["0x701", "IDOwnsInventory", "0xa11ce"],
     ["0x702", "EntityType", "SKILL"],
-    ["0x702", "IdHolder", "0x700"],
+    ["0x702", "IDOwnsSkill", "0x700"],
     ["0x703", "EntityType", "HARVEST"],
     ["0x703", "IdHolder", "0x700"],
     ["0x704", "EntityType", "QUEST"],
@@ -68,7 +71,29 @@
     ["0x901", "EntityType", "BONUS"],
     ["0x901", "IdSource", "0x300"],
     ["0x901", "IDAnchor", "0xe1d"],
-    ["0x2a04722f559858d1681db603ec87265f36ca7e4a85b0027b4e5022619ffc76ea", "Value", 2]
+    ["0x2a04722f559858d1681db603ec87265f36ca7e4a85b0027b4e5022619ffc76ea", "Value", 2],
+    ["0x301", "IsRegistry", true],
+    ["0x301", "EntityType", "BONUS"],
+    ["0x301", "IDAnchor", "0x203"],
+    ["0x301", "Subtype", "UPON_HARVEST_ACTION"],
+    ["0x7b1", "IdSource", "0x300"],
+    ["0x7b1", "IDAnchor", "0x702"],
+    ["0x7b1", "Value", 1],
+    ["0x7b2", "IdSource", "0x301"],
+    ["0x7b2", "IDAnchor", "0x289309a939b2c6293d36e1b7fe8728f8bbf18f32a7fbcdfc79a43df175ceb11a"],
+    ["0x7b2", "Value", 1],
+    ["0xa00", "EntityType", "TRADE"],
+    ["0xa00", "IDOwnsTrade", "0xa11ce"],
+    ["0x2efd0d2b350c24791820318a0bf3f3993eb5ea9f9b2c0ace11128ca3e79d6c75", "Keys", [1]],
+    ["0x2efd0d2b350c24791820318a0bf3f3993eb5ea9f9b2c0ace11128ca3e79d6c75", "Values", [5]],
+    ["0x201e08a482e0b72cb0cf210f620d5f7439aedb6768f6356210bb1bae0cf5158d", "Keys", [2]],
+    ["0x201e08a482e0b72cb0cf210f620d5f7439aedb6768f6356210bb1bae0cf5158d", "Values", [3]],
+    ["0xb00", "EntityType", "TRADE"],
+    ["0xb00", "IDOwnsTrade", "0xb0b"],
+    ["0x7aaaa0a43421770fd6063821da6457c511a019d47dd240c5810b659534c9b255", "Keys", [1]],
+    ["0x7aaaa0a43421770fd6063821da6457c511a019d47dd240c5810b659534c9b255", "Values", [1]],
+    ["0xdb0ae7d130de52bb05bca67a3151dc75f0e8222f6e156515f97fbfe9d96fa04f", "Keys", [2]],
+    ["0xdb0ae7d130de52bb05bca67a3151dc75f0e8222f6e156515f97fbfe9d96fa04f", "Values", [1]]
   ],
   "expected": {
     "registry": [
@@ -84,7 +109,8 @@
       "0x501",
       "0x502",
       "0xff259602c74c97d099e9877fc461da5dabfd702fe30b6f01802afe3ff724160e",
-      "0x600"
+      "0x600",
+      "0x301"
     ],
     "account": [
       "0xa11ce",
@@ -95,14 +121,29 @@
       "0x703",
       "0x704",
       "0x705",
-      "0x5e94545c919ecbc5c975d295883c4e613c084eabff6cd4f97edc69930dcd4877"
+      "0x5e94545c919ecbc5c975d295883c4e613c084eabff6cd4f97edc69930dcd4877",
+      "0x7b1",
+      "0x7b2",
+      "0xa00",
+      "0x2efd0d2b350c24791820318a0bf3f3993eb5ea9f9b2c0ace11128ca3e79d6c75",
+      "0x201e08a482e0b72cb0cf210f620d5f7439aedb6768f6356210bb1bae0cf5158d"
     ],
     "unwalked": [
-      "0xb0b",
-      "0x800",
       "0x900",
       "0x901",
-      "0x2a04722f559858d1681db603ec87265f36ca7e4a85b0027b4e5022619ffc76ea"
+      "0x2a04722f559858d1681db603ec87265f36ca7e4a85b0027b4e5022619ffc76ea",
+      "0xb0b",
+      "0x800",
+      "0xb00",
+      "0x7aaaa0a43421770fd6063821da6457c511a019d47dd240c5810b659534c9b255",
+      "0xdb0ae7d130de52bb05bca67a3151dc75f0e8222f6e156515f97fbfe9d96fa04f"
+    ],
+    "otherAccount": [
+      "0xb0b",
+      "0x800",
+      "0xb00",
+      "0x7aaaa0a43421770fd6063821da6457c511a019d47dd240c5810b659534c9b255",
+      "0xdb0ae7d130de52bb05bca67a3151dc75f0e8222f6e156515f97fbfe9d96fa04f"
     ]
   }
 }

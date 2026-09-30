@@ -1,6 +1,6 @@
 import { formatEntityID } from 'engine/utils';
 
-import { StateEvent } from '../state/types';
+import { NetworkComponentUpdate } from 'workers/types';
 import { WALK_IDS } from './walk';
 
 export type RouteState = {
@@ -9,22 +9,36 @@ export type RouteState = {
   playerIds: Set<string>;
   emittedEntities: Set<string>;
   // log events of entities unknown to canonical, kept only so a later link can flush them
-  held: Map<string, StateEvent[]>;
+  held: Map<string, NetworkComponentUpdate[]>;
+  // entities created and linked to the player in the open tx, flushed once that tx closes
+  ready: Set<string>;
+  openTx?: string;
   isKnown: (entityId: string) => boolean;
   merged: boolean;
 };
 
 const LINKS = new Set(WALK_IDS.links);
 
-const linkValue = (event: StateEvent) =>
+const linkValue = (event: NetworkComponentUpdate) =>
   LINKS.has(event.component) ? (event.value as { value?: string } | undefined)?.value : undefined;
 
-const isCreation = (event: StateEvent) =>
+const isCreation = (event: NetworkComponentUpdate) =>
   event.component === WALK_IDS.EntityType && event.value != null;
 
-const linksTo = (event: StateEvent, ids: Set<string>) => {
+const linksTo = (event: NetworkComponentUpdate, ids: Set<string>) => {
   const link = linkValue(event);
   return link != null && ids.has(link);
+};
+
+const closeTx = (s: RouteState) => {
+  const flushed: NetworkComponentUpdate[] = [];
+  for (const entity of s.ready) {
+    flushed.push(...s.held.get(entity)!);
+    s.held.delete(entity);
+    s.emittedEntities.add(entity);
+  }
+  s.ready.clear();
+  return flushed;
 };
 
 /**
@@ -32,31 +46,36 @@ const linksTo = (event: StateEvent, ids: Set<string>) => {
  * now in log order ([] = hold); every event is also in the live log, so anything held is
  * emitted by the final merge.
  *
- * An entity is flushed only once the log holds both its creation (an EntityType set) and a
- * link to the player: then all its rows are in the log and it is complete. "Unknown to
- * canonical" alone is not enough: on warm boot canonical is an older IDB save, so an entity
- * created since then has its creation rows in the gap/delta, not the log. Pre-existing and
- * such unknown-but-not-created-here entities are held until the final merge.
+ * An entity unknown to canonical is flushed only when the log holds both its creation (an
+ * EntityType set) and a link to the player, and only after the tx that made it so has
+ * closed, so all of that tx's rows for it (e.g. a harvest's IdSource after its IdHolder) go
+ * out together. "Unknown to canonical" alone is not enough: on warm boot canonical is an
+ * older IDB save, so an entity created since has its creation rows in the gap/delta.
+ *
+ * A tx closes when an event of another tx arrives. lastEventInTx cannot mark it: kamigaze
+ * streams one log per message and the transform sets it per message, so it is always true
+ * on the gRPC stream. The last tx before a quiet stream therefore waits for the next event
+ * or the final merge.
  *
  * Mutates s.
  */
-export const routeLive = (event: StateEvent, s: RouteState): StateEvent[] => {
+export const routeLive = (event: NetworkComponentUpdate, s: RouteState) => {
   if (s.merged) return [event];
+  const emit = event.txHash !== s.openTx ? closeTx(s) : [];
+  s.openTx = event.txHash;
+
   const entity = formatEntityID(event.entity);
-  if (s.emittedEntities.has(entity)) return [event];
-  if (s.isKnown(entity)) return [];
+  if (s.emittedEntities.has(entity)) return [...emit, event];
+  if (s.isKnown(entity)) return emit;
 
   const held = s.held.get(entity) ?? [];
   held.push(event);
-  if (!held.some(isCreation) || !held.some((e) => linksTo(e, s.playerIds))) {
-    s.held.set(entity, held);
-    return [];
+  s.held.set(entity, held);
+  if (!s.ready.has(entity) && held.some(isCreation) && held.some((e) => linksTo(e, s.playerIds))) {
+    s.ready.add(entity);
+    const ownedByAccount = (e: NetworkComponentUpdate) =>
+      e.component === WALK_IDS.IDOwnsKami && linkValue(e) === s.accountId;
+    if (held.some(ownedByAccount)) s.playerIds.add(entity);
   }
-
-  s.held.delete(entity);
-  s.emittedEntities.add(entity);
-  const ownedByAccount = (e: StateEvent) =>
-    e.component === WALK_IDS.IDOwnsKami && linkValue(e) === s.accountId;
-  if (held.some(ownedByAccount)) s.playerIds.add(entity);
-  return held;
+  return emit;
 };

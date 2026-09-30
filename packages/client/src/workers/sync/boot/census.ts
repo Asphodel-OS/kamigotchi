@@ -97,7 +97,7 @@ export const runCensus = (cache: StateCache, input: CensusInput) => {
   console.log(
     `[census] snapshot as of LIVE (not updated after) account=${input.accountId ?? 'none'} ` +
       `accounts=${accounts} ` +
-      `configIds=${input.configIds?.length ?? 0} ms=${Math.round(performance.now() - started)}`
+      `configIds=${input.configIds?.length ?? 0} configFound=${registry.R3.size} ms=${Math.round(performance.now() - started)}`
   );
   console.table(bucketTable);
   console.log(

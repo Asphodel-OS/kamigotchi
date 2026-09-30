@@ -145,13 +145,18 @@ export async function setupMUDNetwork<
   }
 
   if (import.meta.env.DEV) {
-    (window as any).__census = (configIds?: string[]) =>
+    (window as any).__census = async (configIds?: string[]) => {
+      const [{ CONFIG_FIELDS }, { configEntityId }] = await Promise.all([
+        import('constants/configFields'),
+        import('workers/sync/boot/walk'),
+      ]);
       input$.next({
         type: InputType.Census,
         accountId: localStorage.getItem('lastAccount') ?? undefined,
-        configIds,
+        configIds: configIds ?? CONFIG_FIELDS.map(configEntityId),
         names: mappings as Record<string, string>,
       });
+    };
   }
 
   // allows us to create arbitrary System Executor instances by just passing in a Network

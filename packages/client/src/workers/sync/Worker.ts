@@ -160,6 +160,7 @@ export class SyncWorker<C extends Components> implements DoWork<Input, NetworkEv
     // below only ever resolves marks from this run.
     performance.clearMarks();
     performance.clearMeasures();
+    if (import.meta.env.DEV) this.stateCache = undefined;
     performance.mark('connecting');
     this.setLoadingState({ state: SyncState.CONNECTING, msg: 'Connecting..', percentage: 0 });
 
