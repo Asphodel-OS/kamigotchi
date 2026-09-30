@@ -151,6 +151,10 @@ export class SyncWorker<C extends Components> implements DoWork<Input, NetworkEv
    * 7. Keep in sync with streamer/rpc
    */
   private async init() {
+    // init() can re-run on retry (see the INITIALIZE catch below); clear so measure()
+    // below only ever resolves marks from this run.
+    performance.clearMarks();
+    performance.clearMeasures();
     performance.mark('connecting');
     this.setLoadingState({ state: SyncState.CONNECTING, msg: 'Connecting..', percentage: 0 });
 
@@ -201,13 +205,14 @@ export class SyncWorker<C extends Components> implements DoWork<Input, NetworkEv
      * - use IndexedDB Storage state cache if not expired
      * - otherwise retrieve from snapshot service
      */
-    performance.mark('backfill');
+    performance.mark('idb-read');
     this.setLoadingState({ state: SyncState.BACKFILL, percentage: 0 });
 
     this.setLoadingState({ msg: 'Loading State Cache', percentage: 0 });
     let initialState = await loadStateCacheFromStore(indexedDB);
     console.log('INITIAL STATE (PRE-SYNC)', getStateReport(initialState));
 
+    performance.mark('fetch');
     const kamigazeClient = snapshotUrl ? createSnapshotClient(snapshotUrl) : undefined;
     const setPercentage = (percentage: number) => this.setLoadingState({ percentage });
     const setMessage = (msg: string) => this.setLoadingState({ msg });
@@ -285,6 +290,7 @@ export class SyncWorker<C extends Components> implements DoWork<Input, NetworkEv
       console.log('INITIAL STATE (POST-SYNC)', getStateReport(initialState));
     }
 
+    performance.mark('idb-save');
     /*
      * SAVE SNAPSHOT TO INDEXEDDB
      * - Persist snapshot before starting live sync
@@ -450,10 +456,13 @@ export class SyncWorker<C extends Components> implements DoWork<Input, NetworkEv
     outputLiveEvents = true;
 
     performance.measure('connection', 'connecting', 'setup');
-    performance.measure('setup', 'setup', 'backfill');
-    performance.measure('backfill', 'backfill', 'gapfill');
+    performance.measure('setup', 'setup', 'idb-read');
+    performance.measure('idb-read', 'idb-read', 'fetch');
+    performance.measure('fetch', 'fetch', 'idb-save');
+    performance.measure('idb-save', 'idb-save', 'gapfill');
     performance.measure('gapfill', 'gapfill', 'init');
-    performance.measure('initialization', 'init', 'live');
+    performance.measure('emit', 'init', 'live');
+    performance.measure('live', 'connecting', 'live');
     console.log(performance.getEntriesByType('measure'));
   }
 
