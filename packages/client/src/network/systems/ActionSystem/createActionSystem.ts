@@ -1,5 +1,6 @@
 import { useAccount } from 'app/stores/account';
 import { logTxErrorToDB } from 'clients/kamiden/txErrorLogger';
+import { GodID, SyncState } from 'engine/constants';
 import { getRevertReason } from 'engine/queue/utils';
 import {
   EntityID,
@@ -29,6 +30,54 @@ export function createActionSystem<M = undefined>(
 ) {
   const Action = defineActionComponent<M>(world);
   const requests = new Map<EntityIndex, ActionRequest>();
+
+  // [tier] txlag telemetry: sync-send returns the mined tx and the worker stream reduces it
+  // independently, so either side can land first; negative ms means the ECS saw it first.
+  // Every tx in the world is reduced, not just ours, so reduced-first entries only live for
+  // the length of that race.
+  const MINED_MAX_AGE_MS = 5 * 60 * 1000;
+  const REDUCED_MAX_AGE_MS = 30 * 1000;
+  const txMinedAt = new Map<string, number>();
+  const txReducedAt = new Map<string, number>();
+
+  function isSyncLive(): boolean {
+    const loadingState = world.components.find((c) => c.id === 'LoadingState');
+    const godEntity = world.entityToIndex.get(GodID);
+    if (!loadingState || godEntity == null) return false;
+    return (getComponentValue(loadingState, godEntity) as any)?.state === SyncState.LIVE;
+  }
+
+  function logTxLag(minedAt: number, reducedAt: number) {
+    log.info(`[tier] txlag ms=${(reducedAt - minedAt).toFixed(0)} live=${isSyncLive()}`);
+  }
+
+  // Map iteration follows insertion order and timestamps only grow, so the oldest are first.
+  function remember(times: Map<string, number>, hash: string, maxAgeMs: number) {
+    const now = performance.now();
+    for (const [oldHash, at] of times) {
+      if (now - at < maxAgeMs) break;
+      times.delete(oldHash);
+    }
+    times.delete(hash);
+    times.set(hash, now);
+  }
+
+  function onTxMined(hash: string) {
+    const reducedAt = txReducedAt.get(hash);
+    if (reducedAt === undefined) return remember(txMinedAt, hash, MINED_MAX_AGE_MS);
+    txReducedAt.delete(hash);
+    logTxLag(performance.now(), reducedAt);
+  }
+
+  function onTxReduced(hash: string) {
+    const minedAt = txMinedAt.get(hash);
+    if (minedAt === undefined) return remember(txReducedAt, hash, REDUCED_MAX_AGE_MS);
+    txMinedAt.delete(hash);
+    logTxLag(minedAt, performance.now());
+  }
+
+  const txLagSub = txReduced$.subscribe(onTxReduced);
+  world.registerDisposer(() => txLagSub.unsubscribe());
 
   /**
    * Schedules an Action from an ActionRequest and schedules it for execution.
@@ -90,7 +139,9 @@ export function createActionSystem<M = undefined>(
       updateAction({ state: ActionState.WaitingForTxEvents }); // pending
 
       if (tx) {
-        updateAction({ txHash: (tx as any).hash });
+        const txHash = (tx as any).hash;
+        updateAction({ txHash });
+        onTxMined(txHash);
       }
 
       updateAction({ state: ActionState.Complete });
