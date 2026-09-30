@@ -34,6 +34,7 @@ import {
   NetworkEvents,
   SyncWorkerConfig,
 } from '../types';
+import type { CensusInput } from './boot/census';
 import { bridgeBoot } from './bridge';
 import {
   createSnapshotClient,
@@ -48,6 +49,7 @@ import {
   getStateStore,
   loadStateCacheFromStore,
   saveStateCacheToStore,
+  StateCache,
   storeStateEvents,
 } from './state';
 import {
@@ -70,18 +72,20 @@ export enum InputType {
   Config,
   Wake,
   BlockUpdate,
+  Census,
 }
 export type Config = { type: InputType.Config; data: SyncWorkerConfig };
 export type Ack = { type: InputType.Ack };
 export type Wake = { type: InputType.Wake; timestamp: number };
 export type BlockUpdate = { type: InputType.BlockUpdate; blockNumber: number };
+export type Census = { type: InputType.Census } & CensusInput;
 export const ack = { type: InputType.Ack as const };
 export const createWake = (): Wake => ({ type: InputType.Wake, timestamp: Date.now() });
 export const createBlockUpdate = (blockNumber: number): BlockUpdate => ({
   type: InputType.BlockUpdate,
   blockNumber,
 });
-export type Input = Config | Ack | Wake | BlockUpdate;
+export type Input = Config | Ack | Wake | BlockUpdate | Census;
 
 export class SyncWorker<C extends Components> implements DoWork<Input, NetworkEvent<C>[]> {
   private input$ = new Subject<Input>();
@@ -91,6 +95,7 @@ export class SyncWorker<C extends Components> implements DoWork<Input, NetworkEv
   private lastMessageTime = Date.now();
   private syncState: SyncStatus = { state: SyncState.CONNECTING, msg: '', percentage: 0 };
   private config?: SyncWorkerConfig;
+  private stateCache?: StateCache;
 
   private retryCount = 0;
   private retryDelays = [5000, 15000, 30000, 30000, 30000]; // ms
@@ -455,6 +460,7 @@ export class SyncWorker<C extends Components> implements DoWork<Input, NetworkEv
     );
 
     outputLiveEvents = true;
+    if (import.meta.env.DEV) this.stateCache = stateCache.current;
 
     performance.measure('connection', 'connecting', 'setup');
     performance.measure('setup', 'setup', 'idb-read');
@@ -487,6 +493,14 @@ export class SyncWorker<C extends Components> implements DoWork<Input, NetworkEv
       }
       if (e.type === InputType.BlockUpdate) {
         this.blockUpdate$.next(e.blockNumber);
+        return;
+      }
+      if (import.meta.env.DEV && e.type === InputType.Census) {
+        const cache = this.stateCache;
+        if (!cache) return console.warn('[census] state cache is not loaded until LIVE');
+        import('./boot/census')
+          .then(({ runCensus }) => runCensus(cache, e))
+          .catch((error) => log.warn('[census] failed', error));
         return;
       }
       this.input$.next(e);

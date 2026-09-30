@@ -144,6 +144,16 @@ export async function setupMUDNetwork<
     });
   }
 
+  if (import.meta.env.DEV) {
+    (window as any).__census = (configIds?: string[]) =>
+      input$.next({
+        type: InputType.Census,
+        accountId: localStorage.getItem('lastAccount') ?? undefined,
+        configIds,
+        names: mappings as Record<string, string>,
+      });
+  }
+
   // allows us to create arbitrary System Executor instances by just passing in a Network
   function createTxQueue(network: Network) {
     const { txQueue } = createSystemExecutor<SystemTypes>(
