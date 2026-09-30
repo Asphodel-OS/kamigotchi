@@ -121,6 +121,31 @@ export const storeEvents = (stateCache: StateCache, events: StateEvent[]) => {
   }
 };
 
+// Gap and live events append ids Kamigaze had not indexed yet. The next boot's delta
+// splices those tails and refills them in Kamigaze's own order, so state keyed by the
+// local tail indices would then point at other ids. Dropping them is safe: they all
+// changed after lastKamigazeBlock, so the next delta or gap brings them back.
+export const trimToKamigazeIndices = (stateCache: StateCache): StateCache => {
+  const { components, entities, lastKamigazeComponent, lastKamigazeEntity } = stateCache;
+  const hasLocalTail =
+    components.length > lastKamigazeComponent + 1 || entities.length > lastKamigazeEntity + 1;
+  if (!hasLocalTail) return stateCache;
+
+  const state: StateEntry = new Map();
+  for (const [key, value] of stateCache.state) {
+    const [componentIdx, entityIdx] = unpackTuple(key);
+    if (componentIdx <= lastKamigazeComponent && entityIdx <= lastKamigazeEntity) {
+      state.set(key, value);
+    }
+  }
+  return {
+    ...stateCache,
+    components: components.slice(0, lastKamigazeComponent + 1),
+    entities: entities.slice(0, lastKamigazeEntity + 1),
+    state,
+  };
+};
+
 // cache the block number of a Kamigaze response
 export const storeBlock = (stateCache: StateCache, block: BlockResponse) => {
   stateCache.blockNumber = block.blockNumber;
