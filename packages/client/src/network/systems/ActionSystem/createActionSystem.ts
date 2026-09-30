@@ -33,7 +33,10 @@ export function createActionSystem<M = undefined>(
 
   // [tier] txlag telemetry: sync-send returns the mined tx and the worker stream reduces it
   // independently, so either side can land first; negative ms means the ECS saw it first.
-  const TX_LAG_TIMEOUT_MS = 5 * 60 * 1000;
+  // Every tx in the world is reduced, not just ours, so reduced-first entries only live for
+  // the length of that race.
+  const MINED_MAX_AGE_MS = 5 * 60 * 1000;
+  const REDUCED_MAX_AGE_MS = 30 * 1000;
   const txMinedAt = new Map<string, number>();
   const txReducedAt = new Map<string, number>();
 
@@ -48,21 +51,27 @@ export function createActionSystem<M = undefined>(
     log.info(`[tier] txlag ms=${(reducedAt - minedAt).toFixed(0)} live=${isSyncLive()}`);
   }
 
-  function remember(times: Map<string, number>, hash: string) {
-    times.set(hash, performance.now());
-    setTimeout(() => times.delete(hash), TX_LAG_TIMEOUT_MS);
+  // Map iteration follows insertion order and timestamps only grow, so the oldest are first.
+  function remember(times: Map<string, number>, hash: string, maxAgeMs: number) {
+    const now = performance.now();
+    for (const [oldHash, at] of times) {
+      if (now - at < maxAgeMs) break;
+      times.delete(oldHash);
+    }
+    times.delete(hash);
+    times.set(hash, now);
   }
 
   function onTxMined(hash: string) {
     const reducedAt = txReducedAt.get(hash);
-    if (reducedAt === undefined) return remember(txMinedAt, hash);
+    if (reducedAt === undefined) return remember(txMinedAt, hash, MINED_MAX_AGE_MS);
     txReducedAt.delete(hash);
     logTxLag(performance.now(), reducedAt);
   }
 
   function onTxReduced(hash: string) {
     const minedAt = txMinedAt.get(hash);
-    if (minedAt === undefined) return remember(txReducedAt, hash);
+    if (minedAt === undefined) return remember(txReducedAt, hash, REDUCED_MAX_AGE_MS);
     txMinedAt.delete(hash);
     logTxLag(minedAt, performance.now());
   }

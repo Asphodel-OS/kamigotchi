@@ -307,6 +307,7 @@ export class SyncWorker<C extends Components> implements DoWork<Input, NetworkEv
       });
       return;
     }
+    performance.mark('stream');
 
     /*
      * START LIVE SYNC
@@ -459,7 +460,8 @@ export class SyncWorker<C extends Components> implements DoWork<Input, NetworkEv
     performance.measure('setup', 'setup', 'idb-read');
     performance.measure('idb-read', 'idb-read', 'fetch');
     performance.measure('fetch', 'fetch', 'idb-save');
-    performance.measure('idb-save', 'idb-save', 'gapfill');
+    performance.measure('idb-save', 'idb-save', 'stream');
+    performance.measure('stream', 'stream', 'gapfill');
     performance.measure('gapfill', 'gapfill', 'init');
     performance.measure('emit', 'init', 'live');
     performance.measure('live', 'connecting', 'live');
