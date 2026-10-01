@@ -265,7 +265,7 @@ export const fetchFromCdn = async (
         t.protoMs += performance.now() - protoStart;
 
         const applyStart = performance.now();
-        await storeStateValues(cache, state, decode);
+        storeStateValues(cache, state, decode);
         t.valuesApplyMs += performance.now() - applyStart;
         t.valueRows += state.length;
 

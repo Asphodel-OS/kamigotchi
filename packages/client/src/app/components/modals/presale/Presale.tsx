@@ -113,7 +113,7 @@ export const Presale: UIComponent = {
     };
 
     const openOnyxDocs = () => {
-      window.open('https://docs.kamigotchi.io/onyx', '_blank');
+      window.open('https://docs.kamigotchi.io/onyx', '_blank', 'noopener,noreferrer');
     };
 
     /////////////////
