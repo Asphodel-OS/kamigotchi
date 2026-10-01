@@ -96,6 +96,19 @@
     },
     {
       "type": "function",
+      "name": "rebuildListingIndex",
+      "inputs": [
+        {
+          "name": "ids",
+          "type": "uint256[]",
+          "internalType": "uint256[]"
+        }
+      ],
+      "outputs": [],
+      "stateMutability": "nonpayable"
+    },
+    {
+      "type": "function",
       "name": "renounceOwnership",
       "inputs": [],
       "outputs": [],
@@ -265,6 +278,7 @@
     "execute(bytes)": "09c5eabe",
     "owner()": "8da5cb5b",
     "ownershipHandoverExpiresAt(address)": "fee81cf4",
+    "rebuildListingIndex(uint256[])": "0c1b3835",
     "renounceOwnership()": "715018a6",
     "requestOwnershipHandover()": "25692962",
     "setEnabled(bool)": "328d8f72",

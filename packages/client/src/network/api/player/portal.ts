@@ -16,6 +16,11 @@ export const portalAPI = (systems: any) => {
     return systems['system.erc20.portal'].withdraw(itemIndex, itemAmt);
   };
 
+  // operator lane: the claim pays the account's operator wallet. operator- or owner-signed
+  const withdrawERC20ToOperator = (itemIndex: number, itemAmt: number) => {
+    return systems['system.erc20.portal'].withdrawToOperator(itemIndex, itemAmt);
+  };
+
   const claimERC20 = (receiptID: BigNumberish) => {
     return systems['system.erc20.portal'].claim(receiptID);
   };
@@ -73,6 +78,7 @@ export const portalAPI = (systems: any) => {
     ERC20: {
       deposit: depositERC20,
       withdraw: withdrawERC20,
+      withdrawToOperator: withdrawERC20ToOperator,
       claim: claimERC20,
       cancel: cancelERC20,
     },

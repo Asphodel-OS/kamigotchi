@@ -49,6 +49,18 @@ export function portalAPI(generateCallData: GenerateCallData, compiledCalls: str
     compiledCalls.push(callData);
   }
 
+  // allow or forbid an item on the operator lane
+  async function setLaneItem(index: number, enabled: boolean) {
+    const callData = generateCallData(
+      'system.erc20.portal',
+      [index, enabled],
+      'setLaneItem',
+      undefined,
+      '800000'
+    );
+    compiledCalls.push(callData);
+  }
+
   // turn the portal off or on
   async function toggleEnabled(enabled: boolean) {
     const callData = generateCallData(
@@ -64,6 +76,7 @@ export function portalAPI(generateCallData: GenerateCallData, compiledCalls: str
   return {
     token: {
       toggleEnabled: toggleEnabled,
+      setLane: setLaneItem,
       init: initItems,
       set: setItem,
       unset: unsetItem,

@@ -49,6 +49,7 @@ import energy_drink from './energy_drink.png';
 import essence_of_daffodil from './essence_of_daffodil.png';
 import essence_of_hearing from './essence_of_hearing.png';
 import essence_of_sight from './essence_of_sight.png';
+import ether_shard from './ether_shard.png';
 import essence_of_smell from './essence_of_smell.png';
 import essence_of_taste from './essence_of_taste.png';
 import essence_of_thought from './essence_of_thought.png';
@@ -231,6 +232,7 @@ export const ItemImages = {
   essence_of_daffodil: essence_of_daffodil,
   essence_of_hearing: essence_of_hearing,
   essence_of_sight: essence_of_sight,
+  ether_shard: ether_shard,
   essence_of_smell: essence_of_smell,
   essence_of_taste: essence_of_taste,
   essence_of_thought: essence_of_thought,

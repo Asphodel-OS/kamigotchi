@@ -4,12 +4,11 @@ import { Configs } from 'app/cache/config/portal';
 import { IconButton, TextTooltip } from 'app/components/library';
 import { PlaceholderIcon } from 'assets/images/icons';
 import { ActionIcons } from 'assets/images/icons/actions';
-import { TokenIcons } from 'assets/images/tokens';
 import { PortalReceipt } from 'clients/kamiden/proto';
 import { EntityID } from 'engine/recs';
 import { Account, Item } from 'network/shapes';
 import { getCountdown } from 'utils/time';
-import { openBaselineLink } from '../../../utils';
+import { getTokenMeta } from '../../../utils';
 
 export const BodyMine = ({
   actions,
@@ -29,6 +28,8 @@ export const BodyMine = ({
     getItemByIndex: (index: number) => Item;
     getTokenConversion: (receipt: PortalReceipt) => number;
     getAccountByID: (id: EntityID) => Account;
+    isOperatorLane: (receipt: PortalReceipt) => boolean;
+    getEndTs: (receipt: PortalReceipt) => number;
   };
   state: {
     visible: boolean;
@@ -36,7 +37,7 @@ export const BodyMine = ({
 }) => {
   const { cancel, claim } = actions;
   const { receipts, config } = data;
-  const { getItemByIndex, getTokenConversion } = utils;
+  const { getItemByIndex, getTokenConversion, isOperatorLane, getEndTs } = utils;
   const { visible } = state;
 
   /////////////////
@@ -50,7 +51,7 @@ export const BodyMine = ({
   // check whether a Receipt is claimable
   const isClaimable = (receipt: PortalReceipt) => {
     const nowSec = Math.floor(Date.now() / 1000);
-    return nowSec >= Number(receipt.Timestamp) + config.delay;
+    return nowSec >= getEndTs(receipt);
   };
 
   // get the tooltip for a Receipt Claim
@@ -66,8 +67,8 @@ export const BodyMine = ({
     if (receipt.IsClaimed) return 'Claimed';
 
     const now = Math.floor(Date.now() / 1000);
-    const endTs = Number(receipt.Timestamp) + config.delay;
-    if (now > endTs) return 'Ready';
+    const endTs = getEndTs(receipt);
+    if (now >= endTs) return 'Ready';
 
     return getCountdown(endTs);
   };
@@ -94,13 +95,16 @@ export const BodyMine = ({
             <TextTooltip text={[getDate(r.Timestamp, false)]}>
               <Field width={4}>{getDate(r.Timestamp, true)}</Field>
             </TextTooltip>
-            <Field width={5}>{r.IsWithdrawal ? 'Withdrawal' : 'Deposit'}</Field>
+            <Field width={5}>
+              {!r.IsWithdrawal
+                ? 'Deposit'
+                : isOperatorLane(r)
+                  ? 'Withdrawal → operator'
+                  : 'Withdrawal'}
+            </Field>
             <Field width={2}>
-              <TextTooltip text={['$ONYX']} alignText={'right'}>
-                <Icon
-                  src={TokenIcons.onyx}
-                  onClick={() => openBaselineLink(item?.token?.address ?? '')}
-                />
+              <TextTooltip text={[getTokenMeta(item).symbol]} alignText={'right'}>
+                <Icon src={getTokenMeta(item).icon} onClick={() => getTokenMeta(item).onBuy()} />
               </TextTooltip>
             </Field>
             <Field width={3.5}>{getTokenConversion(r)}</Field>
@@ -137,7 +141,6 @@ export const BodyMine = ({
 const Container = styled.div<{ visible?: boolean }>`
   display: ${({ visible = true }) => (visible ? 'flex' : 'none')};
   position: relative;
-  max-height: 100%;
   width: 100%;
   padding: 0.6vw 0;
   flex-flow: column nowrap;
@@ -149,6 +152,7 @@ const Row = styled.div`
   position: relative;
   width: 96%;
   height: 2.4vw;
+  flex-shrink: 0;
 
   flex-flow: row nowrap;
   justify-content: space-around;

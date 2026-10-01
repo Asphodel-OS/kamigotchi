@@ -23,12 +23,11 @@ export const Footer = ({ state }: { state: { mode: Filter; setMode: (mode: Filte
 };
 
 const Container = styled.div`
-  position: sticky;
+  position: relative;
   background-color: rgb(221, 221, 221);
-  bottom: 0;
   width: 100%;
   height: 3vw;
-  opacity: 0.9;
+  flex-shrink: 0;
 
   display: flex;
   flex-flow: row nowrap;

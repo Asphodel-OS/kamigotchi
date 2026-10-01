@@ -60,7 +60,7 @@ import {
   unsetPortalTokens,
 } from './state';
 import { disableItems, enableItems } from './state/items';
-import { togglePortal } from './state/portal';
+import { setPortalLaneItems, togglePortal } from './state/portal';
 import { disableQuests, enableQuests } from './state/quests/quests';
 import { cancelTrades, completeTrades } from './state/trades';
 
@@ -164,6 +164,10 @@ export class WorldState {
       init: (indices: number[]) => this.genCalls((api) => initPortalTokens(api, indices)),
       set: (indices: number[]) => this.genCalls((api) => setPortalTokens(api, indices)),
       unset: (indices: number[]) => this.genCalls((api) => unsetPortalTokens(api, indices)),
+      laneEnable: (indices: number[]) =>
+        this.genCalls((api) => setPortalLaneItems(api, indices, true)),
+      laneDisable: (indices: number[]) =>
+        this.genCalls((api) => setPortalLaneItems(api, indices, false)),
     } as SubFunc,
     quests: {
       init: (indices?: number[]) => this.genCalls((api) => initQuests(api, indices)),

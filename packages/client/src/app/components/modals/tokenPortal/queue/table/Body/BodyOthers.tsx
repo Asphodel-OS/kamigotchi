@@ -3,14 +3,13 @@ import styled from 'styled-components';
 import { Configs } from 'app/cache/config/portal';
 import { TextTooltip } from 'app/components/library';
 import { useSelected, useVisibility } from 'app/stores';
-import { TokenIcons } from 'assets/images/tokens';
 import { PortalReceipt } from 'clients/kamiden/proto';
 import { EntityID } from 'engine/recs';
 import { formatEntityID } from 'engine/utils';
 import { Account, Item } from 'network/shapes';
 import { playClick } from 'utils/sounds';
 import { getCountdown } from 'utils/time';
-import { openBaselineLink } from '../../../utils';
+import { getTokenMeta } from '../../../utils';
 
 export const BodyOthers = ({
   data,
@@ -26,13 +25,15 @@ export const BodyOthers = ({
     getItemByIndex: (index: number) => Item;
     getTokenConversion: (receipt: PortalReceipt) => number;
     getAccountByID: (id: EntityID) => Account;
+    isOperatorLane: (receipt: PortalReceipt) => boolean;
+    getEndTs: (receipt: PortalReceipt) => number;
   };
   state: {
     visible: boolean;
   };
 }) => {
   const { receipts, config } = data;
-  const { getItemByIndex, getTokenConversion, getAccountByID } = utils;
+  const { getItemByIndex, getTokenConversion, getAccountByID, isOperatorLane, getEndTs } = utils;
   const { visible } = state;
 
   const selectAccount = useSelected((s) => s.setAccount);
@@ -71,8 +72,8 @@ export const BodyOthers = ({
     if (receipt.IsClaimed) return 'Claimed';
 
     const now = Math.floor(Date.now() / 1000);
-    const endTs = Number(receipt.Timestamp) + config.delay;
-    if (now > endTs) return 'Ready';
+    const endTs = getEndTs(receipt);
+    if (now >= endTs) return 'Ready';
 
     return getCountdown(endTs);
   };
@@ -105,15 +106,15 @@ export const BodyOthers = ({
               </Field>
             </TextTooltip>
             <Field width={2}>
-              <TextTooltip text={['$ONYX']} alignText={'right'}>
-                <Icon
-                  src={TokenIcons.onyx}
-                  onClick={() => openBaselineLink(item?.token?.address ?? '')}
-                />
+              <TextTooltip text={[getTokenMeta(item).symbol]} alignText={'right'}>
+                <Icon src={getTokenMeta(item).icon} onClick={() => getTokenMeta(item).onBuy()} />
               </TextTooltip>
             </Field>
             <Field width={3.5}>{getTokenConversion(r)}</Field>
-            <Field width={4}>{getStatus(r)}</Field>
+            <Field width={4}>
+              {getStatus(r)}
+              {isOperatorLane(r) && <Sub>→ operator</Sub>}
+            </Field>
           </Row>
         );
       })}
@@ -124,7 +125,6 @@ export const BodyOthers = ({
 const Container = styled.div<{ visible?: boolean }>`
   display: ${({ visible = true }) => (visible ? 'flex' : 'none')};
   position: relative;
-  max-height: 100%;
   width: 100%;
 
   padding: 0.6vw 0;
@@ -137,11 +137,17 @@ const Row = styled.div`
   position: relative;
   width: 96%;
   height: 2.4vw;
+  flex-shrink: 0;
 
   display: flex;
   flex-flow: row nowrap;
   justify-content: space-around;
   align-items: center;
+`;
+
+const Sub = styled.div`
+  font-size: 0.5vw;
+  color: #888;
 `;
 
 const Field = styled.div<{ width: number }>`

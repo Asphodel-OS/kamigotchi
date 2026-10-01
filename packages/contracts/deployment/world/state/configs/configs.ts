@@ -42,11 +42,11 @@ export async function initTestingConfigs(api: AdminAPI) {
   await api.config.set.number('PORTAL_TOKEN_EXPORT_DELAY', 60); // measured in seconds (1 minute)
   await api.config.set.array('PORTAL_ITEM_EXPORT_TAX', [
     1, // flat tax (in resulting item)
-    100, // % tax in basis points
+    50, // % tax in basis points
   ]);
   await api.config.set.array('PORTAL_ITEM_IMPORT_TAX', [
     1, // flat tax (in resulting item)
-    100, // % tax in basis points
+    50, // % tax in basis points
   ]);
 }
 
@@ -156,14 +156,14 @@ export async function initLiquidation(api: AdminAPI) {
 }
 
 export async function initPortal(api: AdminAPI) {
-  await api.config.set.number('PORTAL_TOKEN_EXPORT_DELAY', 1 * 24 * 3600); // measured in seconds (1 day)
+  await api.config.set.number('PORTAL_TOKEN_EXPORT_DELAY', 12 * 3600); // measured in seconds (12 hours)
   await api.config.set.array('PORTAL_ITEM_EXPORT_TAX', [
     1, // flat tax (in resulting item)
-    100, // % in basis points
+    50, // % in basis points
   ]);
   await api.config.set.array('PORTAL_ITEM_IMPORT_TAX', [
     1, // flat tax (in resulting item)
-    100, // % in basis points
+    50, // % in basis points
   ]);
 }
 
