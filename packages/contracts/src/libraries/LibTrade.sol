@@ -125,7 +125,7 @@ library LibTrade {
   }
 
   /// @notice execute a Sell Order (transfers items between Sell Order and Taker)
-  /// @dev trade tax is processed and logged here
+  /// @dev trade tax is burned from the Trade's escrow and logged here
   /// @dev handles data logging
   function executeSellOrder(IUintComp comps, uint256 tradeID, uint256 takerID) internal {
     uint256 id = genSellAnchor(tradeID);
@@ -143,6 +143,7 @@ library LibTrade {
       tax = calcTax(comps, indices[i], amts[i]);
       if (tax > 0) {
         amts[i] -= tax;
+        LibInventory.decFor(comps, tradeID, indices[i], tax); // burn, else it strands in escrow
         LibData.inc(comps, takerID, indices[i], "TRADE_TAX", tax);
       }
     }
@@ -160,6 +161,7 @@ library LibTrade {
     // process orders
     completeBuyOrder(comps, id, makerID);
     completeSellOrder(comps, id, makerID);
+    burnResidue(comps, id);
 
     // strip the rest of the data
     LibEntityType.remove(comps, id);
@@ -169,24 +171,32 @@ library LibTrade {
   }
 
   /// @notice complete a Buy Order (transfers items from Trade to Maker, cleanup)
-  /// @dev trade tax is processed and logged here
+  /// @dev trade tax is burned from the Trade's escrow and logged here
   function completeBuyOrder(IUintComp comps, uint256 tradeID, uint256 makerID) internal {
     uint256 id = genBuyAnchor(tradeID);
     uint32[] memory indices = KeysComponent(getAddrByID(comps, KeysCompID)).extract(id);
     uint256[] memory amts = ValuesComponent(getAddrByID(comps, ValuesCompID)).extract(id);
 
-    // adjust and data-log tax on the trade order's buy side
+    // adjust, burn and data-log tax on the trade order's buy side
     uint256 tax;
     for (uint256 i; i < indices.length; i++) {
       tax = calcTax(comps, indices[i], amts[i]);
       if (tax > 0) {
         amts[i] -= tax;
+        LibInventory.decFor(comps, tradeID, indices[i], tax); // burn, else it strands in escrow
         LibData.inc(comps, makerID, indices[i], "TRADE_TAX", tax);
       }
     }
 
     // transfer Buy Order items from Trade to Maker
     LibInventory.transferFor(comps, tradeID, makerID, indices, amts);
+  }
+
+  /// @notice burn any MUSU left in a settled Trade's escrow so no inventory outlives the Trade
+  /// @dev only reachable with unburned sell-side tax (trades executed by older code) or MUSU sent to the Trade
+  function burnResidue(IUintComp comps, uint256 tradeID) internal {
+    uint256 residue = LibInventory.getBalanceOf(comps, tradeID, MUSU_INDEX);
+    if (residue > 0) LibInventory.decFor(comps, tradeID, MUSU_INDEX, residue);
   }
 
   /// @notice complete a Sell Order (cleanup, sell side should already be fulfilled)
