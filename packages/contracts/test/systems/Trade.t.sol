@@ -4,7 +4,7 @@ pragma solidity >=0.8.28;
 import "tests/utils/SetupTemplate.t.sol";
 
 /// @notice tests for Trade system
-/// @dev TODO: test fees, taxation, data logging and max trades per account
+/// @dev TODO: test fees, data logging and max trades per account
 contract TradeTest is SetupTemplate {
   function setUp() public override {
     super.setUp();
@@ -144,7 +144,116 @@ contract TradeTest is SetupTemplate {
   }
 
   /////////////////
+  // TAX
+
+  /// @notice maker sells MUSU: tax is burned at execute and the escrow is left empty
+  function testTradeTaxBurnedOnSellSide() public {
+    _setTradeTax();
+    _giveItem(alice, MUSU_INDEX, 10_000);
+    _giveItem(bob, 2, 5);
+    uint256 countBefore = _getItemCount(MUSU_INDEX);
+
+    uint256 tradeID = _createTrade(alice, 2, 5, MUSU_INDEX, 10_000, 0);
+    _executeTrade(bob, tradeID);
+    assertEq(_getItemBal(bob, MUSU_INDEX), 9_900);
+    assertEq(_getItemBal(tradeID, MUSU_INDEX), 0);
+    assertTrue(!LibEntityType.has(components, LibInventory.genID(tradeID, MUSU_INDEX)));
+    assertEq(_getItemCount(MUSU_INDEX), countBefore - 100);
+    assertEq(LibData.get(components, bob.id, MUSU_INDEX, "TRADE_TAX"), 100);
+
+    _completeTrade(alice, tradeID);
+    assertEq(_getItemBal(alice, 2), 5);
+    assertEq(LibInventory.getAllForHolder(components, tradeID).length, 0);
+    assertEq(_getItemCount(MUSU_INDEX), countBefore - 100);
+  }
+
+  /// @notice maker buys with MUSU: tax is burned at complete and the escrow is left empty
+  function testTradeTaxBurnedOnBuySide() public {
+    _setTradeTax();
+    _giveItem(alice, 2, 5);
+    _giveItem(bob, MUSU_INDEX, 10_000);
+    uint256 countBefore = _getItemCount(MUSU_INDEX);
+
+    uint256 tradeID = _createTrade(alice, MUSU_INDEX, 10_000, 2, 5, 0);
+    _executeTrade(bob, tradeID);
+    assertEq(_getItemBal(bob, MUSU_INDEX), 0);
+    assertEq(_getItemBal(tradeID, MUSU_INDEX), 10_000);
+    assertEq(_getItemCount(MUSU_INDEX), countBefore);
+
+    _completeTrade(alice, tradeID);
+    assertEq(_getItemBal(alice, MUSU_INDEX), 9_900);
+    assertTrue(!LibEntityType.has(components, LibInventory.genID(tradeID, MUSU_INDEX)));
+    assertEq(LibInventory.getAllForHolder(components, tradeID).length, 0);
+    assertEq(_getItemCount(MUSU_INDEX), countBefore - 100);
+    assertEq(LibData.get(components, alice.id, MUSU_INDEX, "TRADE_TAX"), 100);
+  }
+
+  /// @notice a trade executed by the old code still holds its sell-side tax: complete burns it
+  function testTradeCompleteBurnsLegacyResidue() public {
+    _setTradeTax();
+    _giveItem(alice, MUSU_INDEX, 10_000);
+    _giveItem(bob, 2, 5);
+    uint256 countBefore = _getItemCount(MUSU_INDEX);
+
+    uint256 tradeID = _createTrade(alice, 2, 5, MUSU_INDEX, 10_000, 0);
+    _executeTrade(bob, tradeID);
+
+    // recreate the old post-execute state: 100 tax left in escrow, still counted in ITEM_COUNT
+    vm.startPrank(deployer);
+    LibInventory.incFor(components, tradeID, MUSU_INDEX, 100);
+    vm.stopPrank();
+    assertEq(_getItemCount(MUSU_INDEX), countBefore);
+
+    _completeTrade(alice, tradeID);
+    assertEq(_getItemBal(alice, 2), 5);
+    assertEq(_getItemBal(bob, MUSU_INDEX), 9_900);
+    assertEq(LibInventory.getAllForHolder(components, tradeID).length, 0);
+    assertEq(_getItemCount(MUSU_INDEX), countBefore - 100);
+  }
+
+  /// @notice any amount, either side: payout + burn = traded amount, nothing left in escrow
+  function testFuzzTradeTaxLeavesNoEscrow(uint256 amt, bool makerSellsMusu) public {
+    amt = bound(amt, 1, 1e15);
+    uint256 tax = (amt * 10) / 1000;
+    _setTradeTax();
+
+    uint256 tradeID;
+    if (makerSellsMusu) {
+      _giveItem(alice, MUSU_INDEX, amt);
+      _giveItem(bob, 2, 1);
+      uint256 countBefore = _getItemCount(MUSU_INDEX);
+      tradeID = _createTrade(alice, 2, 1, MUSU_INDEX, amt, 0);
+      _executeTrade(bob, tradeID);
+      _completeTrade(alice, tradeID);
+      assertEq(_getItemBal(bob, MUSU_INDEX), amt - tax);
+      assertEq(_getItemCount(MUSU_INDEX), countBefore - tax);
+    } else {
+      _giveItem(alice, 2, 1);
+      _giveItem(bob, MUSU_INDEX, amt);
+      uint256 countBefore = _getItemCount(MUSU_INDEX);
+      tradeID = _createTrade(alice, MUSU_INDEX, amt, 2, 1, 0);
+      _executeTrade(bob, tradeID);
+      _completeTrade(alice, tradeID);
+      assertEq(_getItemBal(alice, MUSU_INDEX), amt - tax);
+      assertEq(_getItemCount(MUSU_INDEX), countBefore - tax);
+    }
+    assertEq(LibInventory.getAllForHolder(components, tradeID).length, 0);
+  }
+
+  /////////////////
   // HELPERS
+
+  // 1%, as configured on prod: amt * 10 / 10^3
+  function _setTradeTax() internal {
+    uint32[8] memory taxConfig;
+    taxConfig[0] = 3;
+    taxConfig[1] = 10;
+    _setConfig("TRADE_TAX_RATE", taxConfig);
+  }
+
+  function _getItemCount(uint32 index) internal view returns (uint256) {
+    return LibData.get(components, 0, index, "ITEM_COUNT");
+  }
 
   function _createTrade(
     PlayerAccount memory acc,
