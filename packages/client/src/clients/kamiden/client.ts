@@ -1,8 +1,8 @@
+import { grpc } from '@improbable-eng/grpc-web';
 import { createChannel, createClient } from 'nice-grpc-web';
 
 import { KamidenServiceClient, KamidenServiceDefinition } from './proto';
 import { FeedCallbacks, MessageCallbacks } from './subscriptions';
-import { getGrpcTransport } from '../../workers/sync/grpcTransport';
 
 let Client: KamidenServiceClient | null = null;
 
@@ -10,9 +10,12 @@ export function getClient(): KamidenServiceClient | null {
   if (!import.meta.env.VITE_KAMIGAZE_URL) return Client; // null when kamigaze url is not set
 
   if (!Client) {
+    // Stage 1 of the transport migration: kamiden runs on the main thread and is
+    // unary-heavy, so it moves to fetch first. The worker's kamigaze client stays
+    // on getGrpcTransport()'s Safari/WebSocket split until stage 2.
     const channel = createChannel(
-      import.meta.env.VITE_KAMIGAZE_URL, //, //'http://localhost:82',
-      getGrpcTransport()
+      import.meta.env.VITE_KAMIGAZE_URL,
+      grpc.FetchReadableStreamTransport({ credentials: 'omit' })
     );
     Client = createClient(KamidenServiceDefinition, channel);
 
