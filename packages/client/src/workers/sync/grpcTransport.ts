@@ -1,18 +1,12 @@
 import { grpc } from '@improbable-eng/grpc-web';
 
 /**
- * Returns the appropriate gRPC transport based on browser
- * - FetchReadableStreamTransport for Safari/iOS (WebKit WebSocket bugs in workers)
- * - WebsocketTransport for Chromium-based browsers
+ * gRPC-web transport for all browsers.
+ * Fetch multiplexes every RPC onto the browser's existing HTTP/2 connection;
+ * the WebSocket transport opened a fresh TCP+TLS handshake per call.
  */
 export function getGrpcTransport(): grpc.TransportFactory {
-  if (isSafariOrIOS()) {
-    console.log('[grpc] Using FetchReadableStreamTransport for Safari/iOS');
-    return grpc.FetchReadableStreamTransport({ credentials: 'omit' });
-  }
-
-  console.log('[grpc] Using WebsocketTransport');
-  return grpc.WebsocketTransport();
+  return grpc.FetchReadableStreamTransport({ credentials: 'omit' });
 }
 
 /**

@@ -5,12 +5,12 @@ import { KamigazeServiceClient, KamigazeServiceDefinition } from './proto';
 
 let Client: KamigazeServiceClient | null = null;
 
-// Reuse clients by URL to avoid recreating channels on each call
+// Connection reuse is the browser's (HTTP/2), not this map's: it only shares one client
+// object per endpoint.
 const clientsByUrl = new Map<string, KamigazeServiceClient>();
 
 /**
  * Get or create a KamigazeServiceClient for a given URL.
- * Clients are reused by URL to preserve gRPC channels across reconnections.
  */
 export function createKamigazeClient(url: string): KamigazeServiceClient {
   const existing = clientsByUrl.get(url);
