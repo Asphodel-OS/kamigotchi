@@ -1,5 +1,6 @@
 import { baseGasPrice, DefaultChain } from 'constants/chains';
 import {
+  BrowserProvider,
   keccak256,
   Overrides,
   Provider,
@@ -16,6 +17,10 @@ const RECONCILE_POLL_MS = 2_500;
 const RECONCILE_JITTER_MS = 500;
 
 const sleep = (ms: number) => new Promise<void>((resolve) => setTimeout(resolve, ms));
+
+function isBrowserWalletSigner(signer: Signer): boolean {
+  return signer.provider instanceof BrowserProvider;
+}
 
 function normalizeMessage(error: any): string {
   return `${error?.shortMessage || ''} ${error?.reason || ''} ${error?.message || ''}`.toLowerCase();
@@ -280,6 +285,16 @@ export async function sendTx(
 
   log.time.info('[queue] Signing tx');
   let signedTx, txHash, from, nonce;
+
+  if (isBrowserWalletSigner(signer)) {
+    log.time.info('[queue] Sending tx via wallet provider');
+    const response = await signer.sendTransaction(txData);
+    const receipt = await response.wait();
+    if (!receipt) {
+      throw new Error('Transaction receipt is null');
+    }
+    return receipt;
+  }
 
   try {
     nonce = toNonceNumber(txData.nonce);

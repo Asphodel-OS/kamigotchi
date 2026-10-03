@@ -1,16 +1,15 @@
 import {
   ConnectedWallet,
   getEmbeddedConnectedWallet,
+  useConnectWallet,
   usePrivy,
   useWallets,
 } from '@privy-io/react-auth';
-import { switchChain } from '@wagmi/core';
 import { ethers } from 'ethers';
 import { isEqual } from 'lodash';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { Address } from 'viem';
-import { useConnect, useAccount as useWagmiAccount } from 'wagmi';
 import { isSafariOrIOS } from 'workers/sync/grpcTransport';
 
 import { ActionButton, ValidatorWrapper } from 'app/components/library';
@@ -18,7 +17,6 @@ import { useLayers } from 'app/root/hooks';
 import { UIComponent } from 'app/root/types';
 import { emptyAccountDetails, useNetwork, useAccount as usePlayerAccount, useVisibility } from 'app/stores';
 import { getInjectedWallet } from 'app/utils';
-import { wagmiConfig } from 'clients/wagmi';
 import { DefaultChain } from 'constants/chains';
 import { createNetworkInstance, updateNetworkLayer } from 'network/';
 import { NameCache, OperatorCache, OwnerCache } from 'network/shapes/Account';
@@ -36,10 +34,13 @@ export const WalletConnecter: UIComponent = {
   // positioning controlled by validator wrapper
   Render: () => {
     const { network } = useLayers();
-    const { address: wagmiAddress, chain, isConnected } = useWagmiAccount();
-    const { connectors, connect } = useConnect();
     const { ready, authenticated, login, logout } = usePrivy();
+    const { connectWallet } = useConnectWallet();
     const { wallets, ready: walletsReady } = useWallets();
+    const injectedWallet = getInjectedWallet(wallets);
+    const isConnected = Boolean(injectedWallet);
+    const injectedWalletChainId = injectedWallet?.chainId;
+    const walletAddress = injectedWallet?.address;
 
     const { apis, addAPI } = useNetwork();
     const { burnerAddress, setBurnerAddress, setSelectedAddress, setSigner } = useNetwork();
@@ -58,7 +59,7 @@ export const WalletConnecter: UIComponent = {
     // update network settings/validations on relevant network updates
     useEffect(() => {
       if (!ready || !walletsReady) return;
-      const chainMatches = chain?.id === DefaultChain.id;
+      const chainMatches = injectedWalletChainId === `eip155:${DefaultChain.id}`;
       if (!isConnected) {
         setState('disconnected');
         setSelectedAddress('0x000000000000000000000000000000000000dEaD');
@@ -69,13 +70,13 @@ export const WalletConnecter: UIComponent = {
       if (!isEqual(validations, { authenticated, chainMatches })) {
         setValidations({ authenticated, chainMatches });
       }
-    }, [ready, authenticated, isConnected, chain, wallets, walletsReady]);
+    }, [ready, authenticated, isConnected, injectedWalletChainId, wallets, walletsReady]);
 
     // check whether the connected chain is correct
     useEffect(() => {
-      const isCorrectChain = chain?.id === DefaultChain.id;
+      const isCorrectChain = injectedWalletChainId === `eip155:${DefaultChain.id}`;
       if (isCorrectChain != chainMatches) setChainMatches(isCorrectChain);
-    }, [chain, isConnected]);
+    }, [injectedWalletChainId, isConnected]);
 
     // reset account state and query caches on logout so that re-login
     // with a different wallet triggers a fresh account lookup.
@@ -144,21 +145,16 @@ export const WalletConnecter: UIComponent = {
         return;
       }
 
-      // when a wallet mismatch is detected between privy and wagmi
-      const injectedWallet = getInjectedWallet(wallets);
-      if (injectedWallet) {
-        const injectedAddress = injectedWallet.address;
-        if (injectedAddress !== wagmiAddress) {
-          console.warn(`Change in injected wallet detected. Logging out.`);
-          logout();
-          return;
-        }
+      // when the connected wallet no longer matches the authenticated user
+      if (injectedWallet && !injectedWallet.linked) {
+        console.warn(`Change in injected wallet detected. Logging out.`);
+        logout();
+        return;
       }
     }, [
       isConnected,
       authenticated,
-      wallets,
-      wagmiAddress,
+      injectedWallet,
       bridgeFlowActive,
     ]);
 
@@ -212,17 +208,18 @@ export const WalletConnecter: UIComponent = {
       }
     };
 
-    // NOTE: connect() fails silently if user has no connectors (connector[0] == null)
-    // On desktop with extensions: use connectWallet() for direct wallet connection
-    // On iOS/Safari: use login() which shows list walletList from privy config
+    // Use Privy's wallet connection UI rather than Wagmi's generic injected connector.
+    // This is more reliable for extensions that are discoverable via Privy but do not
+    // expose a targetless `window.ethereum` provider for Wagmi's `injected()`.
     const handleClick = () => {
       if (state === 'disconnected') {
-        if (!isSafariOrIOS() && connectors?.[0]) connect({ connector: connectors[0] });
+        if (!isSafariOrIOS()) connectWallet();
         else login();
       } else if (state === 'wrongChain') {
-        switchChain(wagmiConfig, { chainId: DefaultChain.id });
+        void injectedWallet?.switchChain(DefaultChain.id);
       } else if (state === 'unauthenticated') {
-        login();
+        if (injectedWallet) void injectedWallet.loginOrLink();
+        else login();
       }
     };
 
