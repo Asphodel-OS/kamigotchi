@@ -7,13 +7,14 @@ type Mode = 'TypeDrop' | 'MyKamis' | 'Activity' | 'LevelGate';
 
 const VIPP_INDEX = 2;
 
-// activity grade tints: some, busy (>= 1.5x average), hot (>= 4x average)
-const ACTIVITY_COLORS = ['', '#7fcf8a', '#f2bf3a', '#ee7b7b'];
+// activity icon hues by grade, as the old count views: 1 plain, 2 yellow (>= 1.5x avg), 3 red (>= 4x)
+const ACTIVITY_HUES: (number | undefined)[] = [undefined, undefined, 10, -40];
 
 export interface Activity {
   kamis: number;
   operators: number;
-  level: number;
+  kamiLevel: number;
+  operatorLevel: number;
 }
 
 export interface NodeLook {
@@ -68,10 +69,14 @@ export const GridFilter = ({ data }: Props) => {
     const activity = activityMap.get(roomIndex);
     if (!activity) return null;
     return (
-      <LevelTint $color={ACTIVITY_COLORS[activity.level]}>
-        {activity.kamis > 0 && <TopLeftIcon src={KamiIcon} $slot={0} />}
-        {activity.operators > 0 && <BottomRightIcon src={OperatorIcon} />}
-      </LevelTint>
+      <IconLayer>
+        {activity.kamis > 0 && (
+          <TopLeftIcon src={KamiIcon} $slot={0} $hue={ACTIVITY_HUES[activity.kamiLevel]} />
+        )}
+        {activity.operators > 0 && (
+          <BottomRightIcon src={OperatorIcon} $hue={ACTIVITY_HUES[activity.operatorLevel]} />
+        )}
+      </IconLayer>
     );
   }
 
@@ -110,22 +115,35 @@ const LevelBadge = styled.div<{ $color: string }>`
   text-shadow: 0 0.08vw 0 #000;
 `;
 
+// untinted layer for icon-only views
+const IconLayer = styled.div`
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+`;
+
+// recolors an icon (same filter the old count views used); undefined keeps it as drawn
+const hueFilter = (hue?: number) =>
+  hue === undefined ? '' : `sepia(1) saturate(500%) hue-rotate(${hue}deg)`;
+
 // top-left icon(s): slot 0 = single, 1/2 = two side by side (dual affinity)
-const TopLeftIcon = styled.img<{ $slot: number }>`
+const TopLeftIcon = styled.img<{ $slot: number; $hue?: number }>`
   position: absolute;
   top: 6%;
   left: ${({ $slot }) => ($slot === 2 ? '32%' : '5%')};
   width: ${({ $slot }) => ($slot === 0 ? '52%' : '38%')};
+  ${({ $hue }) => ($hue === undefined ? '' : `filter: ${hueFilter($hue)};`)}
   pointer-events: none;
 `;
 
 // bottom-right icon, layered over the top-left one
-const BottomRightIcon = styled.img`
+const BottomRightIcon = styled.img<{ $hue?: number }>`
   position: absolute;
   right: 6%;
   bottom: 6%;
   width: 50%;
-  filter: drop-shadow(0 0.08vw 0.1vw rgba(0, 0, 0, 0.45));
+  filter: ${({ $hue }) => `${hueFilter($hue)} drop-shadow(0 0.08vw 0.1vw rgba(0, 0, 0, 0.45))`};
   pointer-events: none;
   z-index: 1;
 `;

@@ -128,7 +128,7 @@ export const Grid = ({
   }, [rooms]);
 
   // activity view only: kamis on each node and operators in each room, each graded against
-  // its average over active rooms; the room takes the busier grade (1 some, 2 busy, 3 hot)
+  // its own average over active rooms (1 some, 2 busy, 3 hot)
   const activityMap = useMemo(() => {
     const map = new Map<number, Activity>();
     if (mode[0] !== 'Activity') return map;
@@ -158,8 +158,10 @@ export const Grid = ({
     const operatorAvg = operatorRooms ? operatorSum / operatorRooms : 0;
     const grade = (n: number, avg: number) => (!n ? 0 : n >= 4 * avg ? 3 : n >= 1.5 * avg ? 2 : 1);
     counts.forEach(({ kamis, operators }, index) => {
-      const level = Math.max(grade(kamis, kamiAvg), grade(operators, operatorAvg));
-      if (level) map.set(index, { kamis, operators, level });
+      if (!kamis && !operators) return;
+      const kamiLevel = grade(kamis, kamiAvg);
+      const operatorLevel = grade(operators, operatorAvg);
+      map.set(index, { kamis, operators, kamiLevel, operatorLevel });
     });
     return map;
   }, [mode, rooms, tick, queryNodeByIndex, queryNodeKamis, queryRoomAccounts]);
