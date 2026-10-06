@@ -366,14 +366,18 @@ export const Grid = ({
                       : []
                   }
                   title={
-                    <>
-                      {room.name}
-                      {isRoomBlocked(room) ? ' (blocked)' : ''}
-                      {questTargetMap.has(room.index) && <TitleMarkIcon src={ExclamIcon} alt='' />}
+                    <TitleBlock>
+                      <RoomName>
+                        {room.name}
+                        {questTargetMap.has(room.index) && (
+                          <TitleMarkIcon src={ExclamIcon} alt='' />
+                        )}
+                      </RoomName>
+                      {isRoomBlocked(room) && <BlockedTag>blocked</BlockedTag>}
                       {(levelCapMap.get(room.index) ?? 0) > 0 && (
                         <TitleSubtext>Max kami level {levelCapMap.get(room.index)}</TitleSubtext>
                       )}
-                    </>
+                    </TitleBlock>
                   }
                   maxWidth={25}
                   grow
@@ -507,11 +511,26 @@ const MarkerIcon = styled.img`
 `;
 
 // level gate note under the room tooltip title
-// unitless line-height: the title sets an absolute vw line-height this would inherit
-const TitleSubtext = styled.div`
-  margin-top: 0.15vw;
+// room tooltip title: unitless line-heights override the tooltip's absolute vw one
+const TitleBlock = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.15vw;
+  line-height: 1.25;
+`;
+
+const RoomName = styled.div`
+  font-size: 1.15em;
+`;
+
+const BlockedTag = styled.div`
   font-size: 0.6em;
-  line-height: 1.3;
+  color: #b55;
+`;
+
+const TitleSubtext = styled.div`
+  font-size: 0.6em;
   color: #999;
 `;
 
@@ -520,6 +539,7 @@ const TitleMarkIcon = styled.img`
   width: 1.5vw;
   height: 1.5vw;
   margin-left: 0.5vw;
+  vertical-align: middle;
   image-rendering: pixelated;
 `;
 
