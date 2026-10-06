@@ -149,6 +149,27 @@ export async function initGoals(api: AdminAPI) {
   //   await api.goal.enable(7);
 
   //   await api.goal.create(
+  //     12,
+  //     'Staking a Claim',
+  //     `A small sign rises from the fork in the path. The sign's face is carved with the image of a snake. A message is engraved in very small letters below:\n\n"Mina Shirohebi has staked a claim on this parcel of land. She plans to open a new branch of her famous convenience store in this very location! We are now accepting offerings."`,
+  //     18,
+  //     'ITEM',
+  //     'CURR_MIN',
+  //     MUSU_INDEX,
+  //     15000000
+  //   );
+  //   await api.goal.add.reward.display(12, 'New shop in caves');
+  //   await api.goal.add.reward.basic(12, 'Bronze', 50000, 'ITEM', 11402, 3);
+  //   await api.goal.add.reward.basic(12, 'Bronze', 50000, 'ITEM', 11404, 5);
+  //   await api.goal.add.reward.basic(12, 'Bronze', 50000, 'LOYALTY', 1, 2);
+  //   await api.goal.add.reward.basic(12, 'Silver', 100000, 'ITEM', 11411, 3);
+  //   await api.goal.add.reward.basic(12, 'Silver', 100000, 'ITEM', 11, 1);
+  //   await api.goal.add.reward.basic(12, 'Silver', 100000, 'LOYALTY', 1, 2);
+  //   await api.goal.add.reward.basic(12, 'Gold', 300000, 'ITEM', 21005, 1);
+  //   await api.goal.add.reward.basic(12, 'Gold', 300000, 'LOYALTY', 1, 2);
+  //   await api.goal.enable(12);
+
+  //   await api.goal.create(
   //     13,
   //     'Secret of the Ooze',
   //     `The headless man speaks through a frowning mask. \n\n"Our concerns lie only with the Kami. However, you may wish to use this temple for another purpose. This dark pool beneath the Wheel was once used as a means of transportation. Should you choose, you may restore this function. Contribute more of the fuliginous ooze, and the current will flow once again."`,
@@ -156,14 +177,17 @@ export async function initGoals(api: AdminAPI) {
   //     'ITEM',
   //     'CURR_MIN',
   //     1203,
-  //     99
+  //     50
   //   );
   //   await api.goal.add.reward.display(13, 'Fast Travel unlocked between Room 19 and Room 59');
-  //   await api.goal.add.reward.basic(13, 'Bronze', 1, 'ITEM', 11214, 13);
-  //   await api.goal.add.reward.basic(13, 'Bronze', 1, 'ITEM', 21204, 6);
-  //   await api.goal.add.reward.basic(13, 'Silver', 3, 'ITEM', 11002, 13);
-  //   await api.goal.add.reward.basic(13, 'Silver', 3, 'ITEM', 1007, 4);
-  //   await api.goal.add.reward.basic(13, 'Gold', 5, 'ITEM', 12, 1);
+  //   await api.goal.add.reward.basic(13, 'Bronze', 1, 'ITEM', 11214, 15);
+  //   await api.goal.add.reward.basic(13, 'Bronze', 1, 'ITEM', 21204, 30);
+  //   await api.goal.add.reward.basic(13, 'Silver', 2, 'ITEM', 11214, 20);
+  //   await api.goal.add.reward.basic(13, 'Silver', 2, 'ITEM', 11002, 30);
+  //   await api.goal.add.reward.basic(13, 'Silver', 2, 'ITEM', 11502, 2);
+  //   await api.goal.add.reward.basic(13, 'Gold', 3, 'ITEM', 12, 1);
+  //   await api.goal.add.reward.basic(13, 'Gold', 3, 'ITEM', 11214, 25);
+  //   await api.goal.add.reward.basic(13, 'Gold', 3, 'ITEM', 11, 15);
   //   await api.goal.enable(13);
 
   // Tremors co-op: live on creation, so it is created at launch, after the node changes
