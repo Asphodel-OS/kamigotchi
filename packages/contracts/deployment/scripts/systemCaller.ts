@@ -37,10 +37,12 @@ export const parseArgs = (args: any[]) => {
       // allow for injections, when solidity logic is needed to derive an argument
       return arg.replace('INJECT: ', '');
     }
-    if (typeof arg === 'string' && !arg.includes('[') && !arg.startsWith('0x'))
-      // if string, and not array or starts with 0x
-      return `\\"${arg}\\"`; // converting to string literal
-    else return arg;
+    if (typeof arg === 'string' && !arg.includes('[') && !arg.startsWith('0x')) {
+      // if string, and not array or starts with 0x: convert to a string literal.
+      // plain literals reject non-ASCII (e.g. nbsp, curly quotes), so those use unicode"..."
+      const prefix = /[^\x00-\x7F]/.test(arg) ? 'unicode' : '';
+      return `${prefix}\\"${arg}\\"`;
+    } else return arg;
   });
 };
 
