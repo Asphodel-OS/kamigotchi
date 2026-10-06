@@ -507,9 +507,11 @@ const MarkerIcon = styled.img`
 `;
 
 // level gate note under the room tooltip title
+// unitless line-height: the title sets an absolute vw line-height this would inherit
 const TitleSubtext = styled.div`
-  margin-top: 0.3vw;
+  margin-top: 0.15vw;
   font-size: 0.6em;
+  line-height: 1.3;
   color: #999;
 `;
 
