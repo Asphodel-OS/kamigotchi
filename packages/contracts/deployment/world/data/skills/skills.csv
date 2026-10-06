@@ -1,28 +1,28 @@
 ﻿.,Index,Name,Tree,Tier,Tree req,Max,Cost,Effect,Value,Units,Exclusion,Description
-,111,Aggression,Predator,1,0,5,1,SVS,1,Stat,,"It’s possible to deliberately stoke the fires of Violence in Kami by traumatizing them in a very specific set of ways. "
+,111,Aggression,Predator,1,0,5,1,SVS,1,Stat,,"It’s possible to deliberately stoke the fires of Violence in Kami by traumatizing them in a very specific set of ways."
 ,112,Grit,Predator,1,0,5,1,SHS,10,Stat,,Refusal to die is a healthy trait.
 ,113,Mercenary,Predator,1,0,5,1,ASR,0.02,Percent,,"""Why not make some money while we’re at it?”"
 ,121,Professional,Predator,2,5,5,1,ATR,0.05,Percent,,A true professional understands how to play to their strengths.
 ,122,Cruelty,Predator,2,5,5,1,ATS,0.02,Percent,,"Baby shark, doo-doo, doo-doo, doo-doo."
 ,123,Sniper,Predator,2,5,5,1,CS,-10,Seconds,,Careful assessment can allow a Kami to move into a Node more quickly. A product of experience…
-,131,Warmonger,Predator,3,15,1,1,SVS,3,Stat,"132, 133","More fighting, more violence, more fighting, more violence. "
+,131,Warmonger,Predator,3,15,1,1,SVS,3,Stat,"132, 133","More fighting, more violence, more fighting, more violence."
 ,132,Vampire,Predator,3,15,1,1,DSR,0.06,Percent,"131, 133","Edward Kamin, but sexier…"
 ,133,Bandit,Predator,3,15,1,1,ASR,0.06,Percent,"131, 132",It isn’t so much a profession as it is a way of life.
-,141,Hungry,Predator,4,20,5,1,SPS,1,Stat,,"You just want it more. "
-,142,Brutality,Predator,4,20,5,1,ATS,0.02,Percent,,"Sheer will-to-hurt continues to go a long way. "
+,141,Hungry,Predator,4,20,5,1,SPS,1,Stat,,"You just want it more."
+,142,Brutality,Predator,4,20,5,1,ATS,0.02,Percent,,"Sheer will-to-hurt continues to go a long way."
 ,143,Marksman,Predator,4,20,5,1,CS,-10,Seconds,,"Though the craft has evolved with its medium, swift killing remains a cherished art form."
 ,151,Specialist,Predator,5,30,5,1,ATR,0.05,Percent,,Some Kami are particularly talented at preying on the weaknesses of others. They’re just like human beings in that way.
-,152,First Aid,Predator,5,30,5,1,DSR,0.02,Percent,,"Your Kami is always ready to bandage up in case of a counter-liquidation…. Meaning they can hold on to a little more musu. "
-,153,Bounty Hunter,Predator,5,30,5,1,ASR,0.02,Percent,,"Your Kami is really, really good at milking all possible profit from their targets. "
-,161,Warlord,Predator,6,40,1,1,SVS,5,Stat,"162, 163","A paragon of pure aggression. This Kamigotchi will overpower almost any other when it comes to raw strength. "
-,162,Lethality,Predator,6,40,1,1,ATS,0.1,Percent,"161, 163","Liquidating a Kamigotchi requires a certain firmness of intent. This is that kind of intent. "
-,163,Assassin,Predator,6,40,1,1,CS,-50,Seconds,"161, 162","A fully-trained Assassin can enter a node almost instantly. The complacent should live in fear.  "
+,152,First Aid,Predator,5,30,5,1,DSR,0.02,Percent,,"Your Kami is always ready to bandage up in case of a counter-liquidation…. Meaning they can hold on to a little more musu."
+,153,Bounty Hunter,Predator,5,30,5,1,ASR,0.02,Percent,,"Your Kami is really, really good at milking all possible profit from their targets."
+,161,Warlord,Predator,6,40,1,1,SVS,5,Stat,"162, 163","A paragon of pure aggression. This Kamigotchi will overpower almost any other when it comes to raw strength."
+,162,Lethality,Predator,6,40,1,1,ATS,0.1,Percent,"161, 163","Liquidating a Kamigotchi requires a certain firmness of intent. This is that kind of intent."
+,163,Assassin,Predator,6,40,1,1,CS,-50,Seconds,"161, 162","A fully-trained Assassin can enter a node almost instantly. The complacent should live in fear."
 ,211,Self Care,Enlightened,1,0,5,1,RMB,0.05,Percent,,Did you drink water today? Please drink water.
 ,212,Cardio,Enlightened,1,0,5,1,SHS,10,Stat,,"While Kamigotchi aren’t exactly material beings, regular exercise has been proven to improve their stamina. We’re not sure why."
 ,213,Good Constitution,Enlightened,1,0,5,1,HFB,0.06,Percent,,"Some texts from the old world refer to a similar concept, roughly translated as “breedability.”"
-,221,Focus,Enlightened,2,5,5,1,HBB,0.04,Percent,,"It’s important to focus one’s mind on the bags. "
+,221,Focus,Enlightened,2,5,5,1,HBB,0.04,Percent,,"It’s important to focus one’s mind on the bags."
 ,222,Meditative Breathing,Enlightened,2,5,5,1,DTS,0.02,Percent,,"The Buteyko method emphasizes the importance of nasal breathing, which protects the airways by humidifying, warming, and cleaning the air entering the lungs."
-,223,Concentration,Enlightened,2,5,5,1,SB,-0.025,Percent,,"With enough concentration Kamigotchi can stave off their own death if only for a bit longer. "
+,223,Concentration,Enlightened,2,5,5,1,SB,-0.025,Percent,,"With enough concentration Kamigotchi can stave off their own death if only for a bit longer."
 ,231,Sleep Hygiene,Enlightened,3,15,1,1,RMB,0.15,Percent,"232, 233",An element of self care. Investing in it is known to help recover one’s energy levels and physical health.
 ,232,Warmup Exercise,Enlightened,3,15,1,1,HIB,15,MUSU/hr,"231, 233",Even a light warmup can offer a significant edge in physically intensive activities.
 ,233,Advanced Mewing,Enlightened,3,15,1,1,HFB,0.18,Percent,"231, 232",Your jawline never looked so good.
@@ -31,9 +31,9 @@
 ,243,Endurance,Enlightened,4,20,5,1,SB,-0.025,Percent,,"Like many of life’s trials, Musu harvesting is often more of a marathon than a sprint."
 ,251,Regeneration,Enlightened,5,30,5,1,RMB,0.05,Percent,,Wolverine can do it. Starfish and salamanders can too. Stop saying “can’t” you pathetic nugget.
 ,252,Workout Routine,Enlightened,5,30,5,1,HIB,5,MUSU/hr,,5 day split for the Serious builders.
-,253,Productivity,Enlightened,5,30,5,1,HFB,0.06,Percent,,"You get things done. "
-,261,Wu Wei,Enlightened,6,40,1,1,HBB,0.2,Percent,"262, 263","Mastery of action-without-action allows you to make a little more money, with no effort. Not bad. "
-,262,Spin Class,Enlightened,6,40,1,1,SHS,50,Stat,"261, 262","Cardio for the hardcore. "
+,253,Productivity,Enlightened,5,30,5,1,HFB,0.06,Percent,,"You get things done."
+,261,Wu Wei,Enlightened,6,40,1,1,HBB,0.2,Percent,"262, 263","Mastery of action-without-action allows you to make a little more money, with no effort. Not bad."
+,262,Spin Class,Enlightened,6,40,1,1,SHS,50,Stat,"261, 262","Cardio for the hardcore."
 ,263,Immortality,Enlightened,6,40,1,1,SB,-0.125,Percent,"261, 262",In the same way that gliding is flying.
 ,311,Defensiveness,Guardian,1,0,5,1,SYS,1,Stat,,Training a Kamigotchi in a certain degree of closed-mindedness can help to maintain inner peace.
 ,312,Toughness,Guardian,1,0,5,1,SHS,10,Stat,,Without any milk.
@@ -42,27 +42,27 @@
 ,322,Vigor,Guardian,2,5,5,1,SHS,10,Stat,,"All forms, especially libido, are a sign of good health."
 ,323,Armor,Guardian,2,5,5,1,DTS,0.02,Percent,,Hard body. Battle tested. Able-to-take-a-beating kinda Kami.
 ,331,Anxiety,Guardian,3,15,1,1,SYS,3,Stat,"332, 333",aaaaAAAAaaaAaAAaAaaaaa
-,332,Die Hard,Guardian,3,15,1,1,SB,-0.075,Percent,"331, 333","Survival is one thing, but another is knowing how to die effectively. "
+,332,Die Hard,Guardian,3,15,1,1,SB,-0.075,Percent,"331, 333","Survival is one thing, but another is knowing how to die effectively."
 ,333,Loyalty,Guardian,3,15,1,1,HIB,15,MUSU/hr,"331, 332",bark bark arf grrr awoof awooo
 ,341,Flawless,Guardian,4,20,5,1,DTR,0.05,Percent,,They don’t want you to know your Kami can just wake up like this.
-,342,Dedication,Guardian,4,20,5,1,HIB,5,MUSU/hr,,"Your Kami shows up 5 minutes early to literally everything. "
+,342,Dedication,Guardian,4,20,5,1,HIB,5,MUSU/hr,,"Your Kami shows up 5 minutes early to literally everything."
 ,343,Shielding,Guardian,4,20,5,1,DTS,0.02,Percent,,Back in my day this used to cost 30 tree branches and 50 firewood.
-,351,Powerhouse,Guardian,5,30,5,1,SVS,1,Stat,,"All that intensive physical training has built up some Violence… "
-,352,Hefty,Guardian,5,30,5,1,SHS,10,Stat,,"Raw physical mass can be a form of talent, too. "
-,353,Fortress,Guardian,5,30,5,1,DTS,0.02,Percent,,"Unbreakable. "
+,351,Powerhouse,Guardian,5,30,5,1,SVS,1,Stat,,"All that intensive physical training has built up some Violence…"
+,352,Hefty,Guardian,5,30,5,1,SHS,10,Stat,,"Raw physical mass can be a form of talent, too."
+,353,Fortress,Guardian,5,30,5,1,DTS,0.02,Percent,,"Unbreakable."
 ,361,Neurosis,Guardian,6,40,1,1,SYS,5,Stat,"362, 363",“Not a radical loss of touch with reality.”
-,362,Undying,Guardian,6,40,1,1,SB,-0.125,Percent,"361, 363","Your Kami gets every single ounce of juice from their Health points. "
+,362,Undying,Guardian,6,40,1,1,SB,-0.125,Percent,"361, 363","Your Kami gets every single ounce of juice from their Health points."
 ,363,Obsession,Guardian,6,40,1,1,HIB,25,MUSU/hr,"361, 362",Compulsive and intrusive. But hardly a disorder.
 ,411,Acquisitiveness,Harvester,1,0,5,1,SPS,1,Stat,,The children long for the mines…
-,412,Mogging,Harvester,1,0,5,1,SHS,10,Stat,,"Good fashion choices can be the first step on the road to massively outsized gains. "
+,412,Mogging,Harvester,1,0,5,1,SHS,10,Stat,,"Good fashion choices can be the first step on the road to massively outsized gains."
 ,413,Greed,Harvester,1,0,5,1,HBB,0.04,Percent,,Your Kami just want it more.
 ,421,Wide Portfolio,Harvester,2,5,5,1,SB,-0.025,Percent,,Negatively correlated assets have proven a great way to diversify risk in your Kamigotchi’s holdings.
-,422,Side Hustles,Harvester,2,5,5,1,HFB,0.06,Percent,,"Your Kamigotchi has learned to drive taxi while harvesting, increasing their MUSU gains. "
+,422,Side Hustles,Harvester,2,5,5,1,HFB,0.06,Percent,,"Your Kamigotchi has learned to drive taxi while harvesting, increasing their MUSU gains."
 ,423,Hedging,Harvester,2,5,5,1,DSR,0.02,Percent,,Go ahead. Announce your sexuality on an immutable ledger.
 ,431,Technical Analysis,Harvester,3,15,1,1,SPS,3,Stat,"432, 433","Your Kami keeps muttering about Fibonacci retracement levels. You think it may have some form of schizophrenia, but it’s making more money this way."
 ,432,Daylight Savings,Harvester,3,15,1,1,DTS,0.06,Percent,"431, 433",Leopold II. Hideki Tojo. George Hudson.
-,433,Leverage,Harvester,3,15,1,1,HBB,0.12,Percent,"431, 432","You know how to maximise your own use of time and energy. "
-,441,Opportunist,Harvester,4,20,5,1,SVS,1,Stat,,"Sometimes, the competition just leave themselves open. "
+,433,Leverage,Harvester,3,15,1,1,HBB,0.12,Percent,"431, 432","You know how to maximise your own use of time and energy."
+,441,Opportunist,Harvester,4,20,5,1,SVS,1,Stat,,"Sometimes, the competition just leave themselves open."
 ,442,Trading Courses,Harvester,4,20,5,1,HFB,0.06,Percent,,Market capitalization? Enterprise value? he bit da wa?
 ,443,Index Funds,Harvester,4,20,5,1,SYS,1,Stat,,A way to inject some Harmony into the portfolio…
 ,451,Time in the Market,Harvester,5,30,5,1,SB,-0.025,Percent,,Always wins in the end.
@@ -70,4 +70,4 @@
 ,453,Stimulants,Harvester,5,30,5,1,HBB,0.04,Percent,,"For men destined to define eras and change history, who will be remembered for millennia to come."
 ,461,Intelligent Investor,Harvester,6,40,1,1,SPS,5,Stat,"462, 463",Benjamin Graham. Jim Simons. Roaring Kitty.
 ,462,Paid Groupchat,Harvester,6,40,1,1,HFB,0.3,Percent,"461, 463",You know it’s good. Otherwise they wouldn’t charge you.
-,463,Coward,Harvester,6,40,1,1,DSR,0.1,Percent,"461, 462","What can we say? Are you actually going to choose this? We’re sure your parents still love you. "
+,463,Coward,Harvester,6,40,1,1,DSR,0.1,Percent,"461, 462","What can we say? Are you actually going to choose this? We’re sure your parents still love you."
