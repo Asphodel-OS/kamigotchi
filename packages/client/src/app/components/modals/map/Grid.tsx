@@ -7,9 +7,8 @@ import { Account } from 'app/cache/account';
 import { TextTooltip } from 'app/components/library';
 import { DropdownToggle } from 'app/components/library/buttons/DropdownToggle';
 import { triggerNodeModal } from 'app/triggers';
-import { HelpMenuIcons } from 'assets/images/help';
 import { insectIcon } from 'assets/images/icons/affinities';
-import { ExclamIcon, KamiIcon, OperatorIcon } from 'assets/images/icons/menu';
+import { ExclamIcon, KamiIcon } from 'assets/images/icons/menu';
 import { ExpIcon, StaminaIcon } from 'assets/images/icons/stats';
 import { mapBackgrounds } from 'assets/images/map';
 import { Zones } from 'constants/zones';
@@ -18,19 +17,17 @@ import { BaseKami } from 'network/shapes/Kami/types';
 import { Node } from 'network/shapes/Node';
 import { checkQuestObjective, getQuest, queryOngoingQuests } from 'network/shapes/Quest';
 import { calculatePathStaminaCost, findPath, NullRoom, Room } from 'network/shapes/Room';
-import { DetailedEntity } from 'network/shapes/utils';
+import { DetailedEntity, getAffinityImage } from 'network/shapes/utils';
 import { playClick } from 'utils/sounds';
-import { GridFilter } from './GridFilter';
+import { GridFilter, NodeLook } from './GridFilter';
 import { GridTooltip } from './GridTooltip';
 import { TileContextMenu } from './TileContextMenu';
 
-type Mode = 'RoomType' | 'KamiCount' | 'OperatorCount' | 'MyKamis' | 'LevelGate';
+type Mode = 'TypeDrop' | 'MyKamis' | 'LevelGate';
 
 const options = [
   { text: 'My Kamis', img: KamiIcon, object: 'MyKamis' },
-  { text: 'Room Type', img: insectIcon, object: 'RoomType' },
-  { text: 'Kami Count', img: HelpMenuIcons.kamis, object: 'KamiCount' },
-  { text: 'Operator Count', img: OperatorIcon, object: 'OperatorCount' },
+  { text: 'Type and Drop', img: insectIcon, object: 'TypeDrop' },
   { text: 'Level Gating', img: ExpIcon, object: 'LevelGate' },
 ];
 
@@ -108,17 +105,25 @@ export const Grid = ({
     return map;
   }, [rooms, account.id]);
 
-  // max kami level per node room, from its LEVEL CURR_MAX harvest requirement (0 = ungated)
-  const levelCapMap = useMemo(() => {
-    const map = new Map<number, number>();
+  // per node room: max kami level from its LEVEL CURR_MAX harvest requirement (0 = ungated),
+  // plus affinity icons and yield item for the type and drop view
+  const { levelCapMap, nodeLookMap } = useMemo(() => {
+    const levelCapMap = new Map<number, number>();
+    const nodeLookMap = new Map<number, NodeLook>();
     rooms.forEach((room) => {
       if (!room.index || !queryNodeByIndex(room.index)) return;
-      const cap = getNode(room.index).requirements?.find(
+      const node = getNode(room.index);
+      const cap = node.requirements?.find(
         (req) => req.target.type === 'LEVEL' && req.logic === 'CURR_MAX'
       );
-      map.set(room.index, Number(cap?.target.value ?? 0));
+      levelCapMap.set(room.index, Number(cap?.target.value ?? 0));
+      nodeLookMap.set(room.index, {
+        affinityIcons: node.affinity.map((aff) => getAffinityImage(aff)),
+        yieldIndex: node.drops[0]?.index ?? 0,
+        yieldImage: node.drops[0]?.image ?? '',
+      });
     });
-    return map;
+    return { levelCapMap, nodeLookMap };
   }, [rooms]);
 
   // set the grid whenever the room zone changes
@@ -287,41 +292,6 @@ export const Grid = ({
     return options;
   }, [contextMenu, network, roomIndex, account.stamina.total, handleAutoTravel, isViewingDifferentZone]);
 
-  // populate the GridFilter details for room stats
-  const { kamiCountMap, operatorCountMap, kamiAverage, operatorAverage } = useMemo(() => {
-    const kamiCountMap = new Map<number, number>();
-    const operatorCountMap = new Map<number, number>();
-
-    let totalKamis = 0;
-    let roomsWithKamis = 0;
-    let totalPlayers = 0;
-    let roomsWithPlayers = 0;
-
-    rooms.forEach((room) => {
-      if (!room.index) return;
-
-      const kamis = queryNodeKamis(queryNodeByIndex(room.index));
-      kamiCountMap.set(room.index, kamis.length);
-      if (kamis.length > 0) {
-        totalKamis += kamis.length;
-        roomsWithKamis++;
-      }
-
-      const players = queryRoomAccounts(room.index);
-      operatorCountMap.set(room.index, players.length);
-      if (players.length > 0) {
-        totalPlayers += players.length;
-        roomsWithPlayers++;
-      }
-    });
-    return {
-      kamiCountMap,
-      operatorCountMap,
-      kamiAverage: roomsWithKamis && totalKamis / roomsWithKamis,
-      operatorAverage: roomsWithPlayers && totalPlayers / roomsWithPlayers,
-    };
-  }, [rooms, tick, queryNodeByIndex, queryNodeKamis, queryRoomAccounts]);
-
   /////////////////
   // RENDER
 
@@ -409,13 +379,9 @@ export const Grid = ({
                         optionSelected: mode[0],
                         roomIndex: room.index,
                         yourKamiIconsMap,
-                        kamiCountMap,
-                        operatorCountMap,
-                        kamiAverage,
-                        operatorAverage,
                         levelCapMap,
+                        nodeLookMap,
                       }}
-                      utils={{ getNode }}
                     />
                   </Tile>
                 </TextTooltip>

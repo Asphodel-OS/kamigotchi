@@ -1,46 +1,35 @@
 import styled from 'styled-components';
 
-import { HelpMenuIcons } from 'assets/images/help';
-import { KamiIcon, OperatorIcon } from 'assets/images/icons/menu';
-import { getAffinityImage } from 'network/shapes/utils';
+import { KamiIcon } from 'assets/images/icons/menu';
 import { FloatingOnMap } from './FloatingOnMap';
 
-type Mode = 'RoomType' | 'KamiCount' | 'OperatorCount' | 'MyKamis' | 'LevelGate';
+type Mode = 'TypeDrop' | 'MyKamis' | 'LevelGate';
+
+const VIPP_INDEX = 2;
+
+export interface NodeLook {
+  affinityIcons: string[];
+  yieldIndex: number;
+  yieldImage: string;
+}
 
 interface Props {
   data: {
     optionSelected: Mode;
-    kamiCountMap: Map<number, number>;
-    operatorCountMap: Map<number, number>;
-    kamiAverage: number;
-    operatorAverage: number;
     roomIndex: number;
     yourKamiIconsMap: Map<number, string[]>;
     levelCapMap: Map<number, number>;
-  };
-
-  utils: {
-    getNode: (index: number) => { affinity: string[] };
+    nodeLookMap: Map<number, NodeLook>;
   };
 }
 
-export const GridFilter = (props: Props) => {
-  const { data, utils } = props;
-  const { getNode } = utils;
-  const {
-    optionSelected,
-    roomIndex,
-    yourKamiIconsMap,
-    kamiCountMap,
-    operatorCountMap,
-    kamiAverage,
-    operatorAverage,
-    levelCapMap,
-  } = data;
+export const GridFilter = ({ data }: Props) => {
+  const { optionSelected, roomIndex, yourKamiIconsMap, levelCapMap, nodeLookMap } = data;
+  if (!roomIndex) return null;
 
   if (optionSelected === 'LevelGate') {
     const cap = levelCapMap.get(roomIndex);
-    if (!roomIndex || cap === undefined) return null;
+    if (cap === undefined) return null;
     const color = getCapColor(cap);
     return (
       <LevelTint $color={color}>
@@ -49,35 +38,22 @@ export const GridFilter = (props: Props) => {
     );
   }
 
-  const getColorForOption = (): number => {
-    const getColor = (value: number, average: number) => {
-      if (value > 4 * average) return -40; // red, high count;
-      if (value >= 1.5 * average) return 10; // yellow, equal or above average but not high count
-      return 0; // no color, below average
-    };
-    if (optionSelected === 'KamiCount') {
-      return getColor(kamiCountMap.get(roomIndex) ?? 0, kamiAverage);
-    }
-    if (optionSelected === 'OperatorCount') {
-      return getColor(operatorCountMap.get(roomIndex) ?? 0, operatorAverage);
-    }
-    return 0;
-  };
+  if (optionSelected === 'TypeDrop') {
+    const look = nodeLookMap.get(roomIndex);
+    if (!look) return null;
+    const color = look.yieldIndex === VIPP_INDEX ? '#f4a3a3' : '#f2d27a';
+    const dual = look.affinityIcons.length > 1;
+    return (
+      <LevelTint $color={color}>
+        {look.affinityIcons.map((icon, i) => (
+          <TypeIcon key={i} src={icon} $slot={dual ? i + 1 : 0} />
+        ))}
+        {look.yieldImage && <DropIcon src={look.yieldImage} />}
+      </LevelTint>
+    );
+  }
 
-  const getIcon = (): string | string[] | null => {
-    const map: Record<Mode, string | string[] | null> = {
-      MyKamis: yourKamiIconsMap.has(roomIndex) ? KamiIcon : null,
-      RoomType: getNode(roomIndex).affinity.map((aff) => getAffinityImage(aff)),
-      KamiCount: (kamiCountMap.get(roomIndex) ?? 0) > 0 ? HelpMenuIcons.kamis : null,
-      OperatorCount: (operatorCountMap.get(roomIndex) ?? 0) > 0 ? OperatorIcon : null,
-      LevelGate: null,
-    };
-    return roomIndex !== 0 ? map[optionSelected] : null;
-  };
-
-  const icon = getIcon();
-
-  return icon ? <FloatingOnMap icon={icon} color={getColorForOption()} /> : null;
+  return yourKamiIconsMap.has(roomIndex) ? <FloatingOnMap icon={KamiIcon} color={0} /> : null;
 };
 
 // tint by protection tier: ungated (tint only, no badge), newbie ring, mid tier, anything higher
@@ -110,4 +86,24 @@ const LevelBadge = styled.div<{ $color: string }>`
   line-height: 1;
   white-space: nowrap;
   text-shadow: 0 0.08vw 0 #000;
+`;
+
+// type icon(s) top-left: slot 0 = single affinity, 1/2 = dual affinity side by side
+const TypeIcon = styled.img<{ $slot: number }>`
+  position: absolute;
+  top: 6%;
+  left: ${({ $slot }) => ($slot === 2 ? '32%' : '5%')};
+  width: ${({ $slot }) => ($slot === 0 ? '52%' : '38%')};
+  pointer-events: none;
+`;
+
+// yield item bottom-right, layered over the type icon
+const DropIcon = styled.img`
+  position: absolute;
+  right: 6%;
+  bottom: 6%;
+  width: 50%;
+  filter: drop-shadow(0 0.08vw 0.1vw rgba(0, 0, 0, 0.45));
+  pointer-events: none;
+  z-index: 1;
 `;
