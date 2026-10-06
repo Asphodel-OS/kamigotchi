@@ -1,9 +1,11 @@
+import styled from 'styled-components';
+
 import { HelpMenuIcons } from 'assets/images/help';
 import { KamiIcon, OperatorIcon } from 'assets/images/icons/menu';
 import { getAffinityImage } from 'network/shapes/utils';
 import { FloatingOnMap } from './FloatingOnMap';
 
-type Mode = 'RoomType' | 'KamiCount' | 'OperatorCount' | 'MyKamis';
+type Mode = 'RoomType' | 'KamiCount' | 'OperatorCount' | 'MyKamis' | 'LevelGate';
 
 interface Props {
   data: {
@@ -14,6 +16,7 @@ interface Props {
     operatorAverage: number;
     roomIndex: number;
     yourKamiIconsMap: Map<number, string[]>;
+    levelCapMap: Map<number, number>;
   };
 
   utils: {
@@ -32,7 +35,19 @@ export const GridFilter = (props: Props) => {
     operatorCountMap,
     kamiAverage,
     operatorAverage,
+    levelCapMap,
   } = data;
+
+  if (optionSelected === 'LevelGate') {
+    const cap = levelCapMap.get(roomIndex);
+    if (!roomIndex || !cap) return null;
+    const color = getCapColor(cap);
+    return (
+      <LevelTint $color={color}>
+        <LevelBadge $color={color}>{cap}</LevelBadge>
+      </LevelTint>
+    );
+  }
 
   const getColorForOption = (): number => {
     const getColor = (value: number, average: number) => {
@@ -55,6 +70,7 @@ export const GridFilter = (props: Props) => {
       RoomType: getNode(roomIndex).affinity.map((aff) => getAffinityImage(aff)),
       KamiCount: (kamiCountMap.get(roomIndex) ?? 0) > 0 ? HelpMenuIcons.kamis : null,
       OperatorCount: (operatorCountMap.get(roomIndex) ?? 0) > 0 ? OperatorIcon : null,
+      LevelGate: null,
     };
     return roomIndex !== 0 ? map[optionSelected] : null;
   };
@@ -63,3 +79,33 @@ export const GridFilter = (props: Props) => {
 
   return icon ? <FloatingOnMap icon={icon} color={getColorForOption()} /> : null;
 };
+
+// tint by protection tier: newbie ring, mid tier, anything higher
+const getCapColor = (cap: number) => {
+  if (cap <= 15) return '#6cc46c';
+  if (cap <= 35) return '#f0a43c';
+  return '#e0605a';
+};
+
+const LevelTint = styled.div<{ $color: string }>`
+  position: absolute;
+  inset: 0;
+  background-color: ${({ $color }) => `${$color}59`};
+  pointer-events: none;
+  z-index: 1;
+`;
+
+// corner placement keeps the centered quest marker visible
+const LevelBadge = styled.div<{ $color: string }>`
+  position: absolute;
+  right: 6%;
+  bottom: 6%;
+  padding: 0.15vw 0.3vw;
+  border: 0.12vw solid #000;
+  border-radius: 0.3vw;
+  background-color: ${({ $color }) => $color};
+  color: #fff;
+  font-size: 0.8vw;
+  line-height: 1;
+  text-shadow: 0 0.08vw 0 #000;
+`;

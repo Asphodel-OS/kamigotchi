@@ -10,7 +10,7 @@ import { triggerNodeModal } from 'app/triggers';
 import { HelpMenuIcons } from 'assets/images/help';
 import { insectIcon } from 'assets/images/icons/affinities';
 import { ExclamIcon, KamiIcon, OperatorIcon } from 'assets/images/icons/menu';
-import { StaminaIcon } from 'assets/images/icons/stats';
+import { ExpIcon, StaminaIcon } from 'assets/images/icons/stats';
 import { mapBackgrounds } from 'assets/images/map';
 import { Zones } from 'constants/zones';
 import { Allo } from 'network/shapes/Allo';
@@ -24,13 +24,14 @@ import { GridFilter } from './GridFilter';
 import { GridTooltip } from './GridTooltip';
 import { TileContextMenu } from './TileContextMenu';
 
-type Mode = 'RoomType' | 'KamiCount' | 'OperatorCount' | 'MyKamis';
+type Mode = 'RoomType' | 'KamiCount' | 'OperatorCount' | 'MyKamis' | 'LevelGate';
 
 const options = [
   { text: 'My Kamis', img: KamiIcon, object: 'MyKamis' },
   { text: 'Room Type', img: insectIcon, object: 'RoomType' },
   { text: 'Kami Count', img: HelpMenuIcons.kamis, object: 'KamiCount' },
   { text: 'Operator Count', img: OperatorIcon, object: 'OperatorCount' },
+  { text: 'Level Gating', img: ExpIcon, object: 'LevelGate' },
 ];
 
 export const Grid = ({
@@ -106,6 +107,19 @@ export const Grid = ({
     });
     return map;
   }, [rooms, account.id]);
+
+  // max kami level per gated room, from the node's LEVEL CURR_MAX harvest requirement
+  const levelCapMap = useMemo(() => {
+    const map = new Map<number, number>();
+    rooms.forEach((room) => {
+      if (!room.index) return;
+      const cap = getNode(room.index).requirements?.find(
+        (req) => req.target.type === 'LEVEL' && req.logic === 'CURR_MAX'
+      );
+      if (cap?.target.value) map.set(room.index, Number(cap.target.value));
+    });
+    return map;
+  }, [rooms]);
 
   // set the grid whenever the room zone changes
   const grid = useMemo(() => {
@@ -356,6 +370,9 @@ export const Grid = ({
                       {room.name}
                       {isRoomBlocked(room) ? ' (blocked)' : ''}
                       {questTargetMap.has(room.index) && <TitleMarkIcon src={ExclamIcon} alt='' />}
+                      {levelCapMap.has(room.index) && (
+                        <TitleSubtext>Max kami level {levelCapMap.get(room.index)}</TitleSubtext>
+                      )}
                     </>
                   }
                   maxWidth={25}
@@ -392,6 +409,7 @@ export const Grid = ({
                         operatorCountMap,
                         kamiAverage,
                         operatorAverage,
+                        levelCapMap,
                       }}
                       utils={{ getNode }}
                     />
@@ -486,6 +504,13 @@ const MarkerIcon = styled.img`
   height: 2.25vw;
   display: block;
   image-rendering: pixelated;
+`;
+
+// level gate note under the room tooltip title
+const TitleSubtext = styled.div`
+  margin-top: 0.3vw;
+  font-size: 0.6em;
+  color: #999;
 `;
 
 // inline marker for the room tooltip title
