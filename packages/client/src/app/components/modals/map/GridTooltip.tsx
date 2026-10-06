@@ -143,7 +143,6 @@ const OwnedIcon = styled.img`
 
 const Icon = styled.img`
   width: 1.4vw;
-  image-rendering: pixelated;
 `;
 
 const Ellipsis = styled.span`
