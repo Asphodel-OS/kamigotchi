@@ -170,7 +170,7 @@ export async function initGoals(api: AdminAPI) {
   await api.goal.create(
     14,
     'Tremors',
-    `MENU: “My sensors keep picking up tremors, and they all point to one spot: right under the sacrarium. Something foul and dreaming is restless down there.”\n\nMENU: “The quakes shook loose a ton of rubble, so the good stuff in the caves is buried under heaps of junk now. Even the castle’s hoard got shaken into piles of old coin. Scavenging in both just got a lot harder. Pool your MUSU here and help me find out what’s stirring.”`,
+    `MENU: “My sensors keep picking up tremors, and they all point to one spot: right under the Sacrarium. Something foul is dreaming down there. It seems restless.”\n\nMENU: “The quakes shook loose a ton of rubble, so the good stuff in the caves is buried under heaps of junk now. Even the castle’s hoard got shaken into piles of old coin. Scavenging in both just got a lot harder. Pool your MUSU here and help me find out what’s stirring.”`,
     11,
     'ITEM',
     'CURR_MIN',
