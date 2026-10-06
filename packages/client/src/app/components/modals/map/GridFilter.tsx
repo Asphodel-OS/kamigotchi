@@ -41,7 +41,7 @@ export const GridFilter = ({ data }: Props) => {
   if (optionSelected === 'TypeDrop') {
     const look = nodeLookMap.get(roomIndex);
     if (!look) return null;
-    const color = look.yieldIndex === VIPP_INDEX ? '#f4a3a3' : '#f2d27a';
+    const color = look.yieldIndex === VIPP_INDEX ? '#ee7b7b' : '#f2bf3a';
     const dual = look.affinityIcons.length > 1;
     return (
       <LevelTint $color={color}>
