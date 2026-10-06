@@ -1,11 +1,20 @@
 import styled from 'styled-components';
 
-import { KamiIcon } from 'assets/images/icons/menu';
+import { KamiIcon, OperatorIcon } from 'assets/images/icons/menu';
 import { FloatingOnMap } from './FloatingOnMap';
 
-type Mode = 'TypeDrop' | 'MyKamis' | 'LevelGate';
+type Mode = 'TypeDrop' | 'MyKamis' | 'Activity' | 'LevelGate';
 
 const VIPP_INDEX = 2;
+
+// activity grade tints: some, busy (>= 1.5x average), hot (>= 4x average)
+const ACTIVITY_COLORS = ['', '#7fcf8a', '#f2bf3a', '#ee7b7b'];
+
+export interface Activity {
+  kamis: number;
+  operators: number;
+  level: number;
+}
 
 export interface NodeLook {
   affinityIcons: string[];
@@ -20,11 +29,13 @@ interface Props {
     yourKamiIconsMap: Map<number, string[]>;
     levelCapMap: Map<number, number>;
     nodeLookMap: Map<number, NodeLook>;
+    activityMap: Map<number, Activity>;
   };
 }
 
 export const GridFilter = ({ data }: Props) => {
-  const { optionSelected, roomIndex, yourKamiIconsMap, levelCapMap, nodeLookMap } = data;
+  const { optionSelected, roomIndex, yourKamiIconsMap, levelCapMap, nodeLookMap, activityMap } =
+    data;
   if (!roomIndex) return null;
 
   if (optionSelected === 'LevelGate') {
@@ -46,9 +57,20 @@ export const GridFilter = ({ data }: Props) => {
     return (
       <LevelTint $color={color}>
         {look.affinityIcons.map((icon, i) => (
-          <TypeIcon key={i} src={icon} $slot={dual ? i + 1 : 0} />
+          <TopLeftIcon key={i} src={icon} $slot={dual ? i + 1 : 0} />
         ))}
-        {look.yieldImage && <DropIcon src={look.yieldImage} />}
+        {look.yieldImage && <BottomRightIcon src={look.yieldImage} />}
+      </LevelTint>
+    );
+  }
+
+  if (optionSelected === 'Activity') {
+    const activity = activityMap.get(roomIndex);
+    if (!activity) return null;
+    return (
+      <LevelTint $color={ACTIVITY_COLORS[activity.level]}>
+        {activity.kamis > 0 && <TopLeftIcon src={KamiIcon} $slot={0} />}
+        {activity.operators > 0 && <BottomRightIcon src={OperatorIcon} />}
       </LevelTint>
     );
   }
@@ -88,8 +110,8 @@ const LevelBadge = styled.div<{ $color: string }>`
   text-shadow: 0 0.08vw 0 #000;
 `;
 
-// type icon(s) top-left: slot 0 = single affinity, 1/2 = dual affinity side by side
-const TypeIcon = styled.img<{ $slot: number }>`
+// top-left icon(s): slot 0 = single, 1/2 = two side by side (dual affinity)
+const TopLeftIcon = styled.img<{ $slot: number }>`
   position: absolute;
   top: 6%;
   left: ${({ $slot }) => ($slot === 2 ? '32%' : '5%')};
@@ -97,8 +119,8 @@ const TypeIcon = styled.img<{ $slot: number }>`
   pointer-events: none;
 `;
 
-// yield item bottom-right, layered over the type icon
-const DropIcon = styled.img`
+// bottom-right icon, layered over the top-left one
+const BottomRightIcon = styled.img`
   position: absolute;
   right: 6%;
   bottom: 6%;

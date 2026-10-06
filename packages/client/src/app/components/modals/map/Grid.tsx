@@ -8,7 +8,7 @@ import { TextTooltip } from 'app/components/library';
 import { DropdownToggle } from 'app/components/library/buttons/DropdownToggle';
 import { triggerNodeModal } from 'app/triggers';
 import { insectIcon } from 'assets/images/icons/affinities';
-import { ExclamIcon, KamiIcon } from 'assets/images/icons/menu';
+import { ExclamIcon, KamiIcon, OperatorIcon } from 'assets/images/icons/menu';
 import { ExpIcon, StaminaIcon } from 'assets/images/icons/stats';
 import { mapBackgrounds } from 'assets/images/map';
 import { Zones } from 'constants/zones';
@@ -19,15 +19,16 @@ import { checkQuestObjective, getQuest, queryOngoingQuests } from 'network/shape
 import { calculatePathStaminaCost, findPath, NullRoom, Room } from 'network/shapes/Room';
 import { DetailedEntity, getAffinityImage } from 'network/shapes/utils';
 import { playClick } from 'utils/sounds';
-import { GridFilter, NodeLook } from './GridFilter';
+import { Activity, GridFilter, NodeLook } from './GridFilter';
 import { GridTooltip } from './GridTooltip';
 import { TileContextMenu } from './TileContextMenu';
 
-type Mode = 'TypeDrop' | 'MyKamis' | 'LevelGate';
+type Mode = 'TypeDrop' | 'MyKamis' | 'Activity' | 'LevelGate';
 
 const options = [
   { text: 'My Kamis', img: KamiIcon, object: 'MyKamis' },
   { text: 'Type and Drop', img: insectIcon, object: 'TypeDrop' },
+  { text: 'Activity', img: OperatorIcon, object: 'Activity' },
   { text: 'Level Gating', img: ExpIcon, object: 'LevelGate' },
 ];
 
@@ -125,6 +126,43 @@ export const Grid = ({
     });
     return { levelCapMap, nodeLookMap };
   }, [rooms]);
+
+  // activity view only: kamis on each node and operators in each room, each graded against
+  // its average over active rooms; the room takes the busier grade (1 some, 2 busy, 3 hot)
+  const activityMap = useMemo(() => {
+    const map = new Map<number, Activity>();
+    if (mode[0] !== 'Activity') return map;
+
+    const counts = new Map<number, { kamis: number; operators: number }>();
+    let kamiSum = 0;
+    let kamiRooms = 0;
+    let operatorSum = 0;
+    let operatorRooms = 0;
+    rooms.forEach((room) => {
+      if (!room.index) return;
+      const nodeEntity = queryNodeByIndex(room.index);
+      const kamis = nodeEntity ? queryNodeKamis(nodeEntity).length : 0;
+      const operators = queryRoomAccounts(room.index).length;
+      counts.set(room.index, { kamis, operators });
+      if (kamis) {
+        kamiSum += kamis;
+        kamiRooms++;
+      }
+      if (operators) {
+        operatorSum += operators;
+        operatorRooms++;
+      }
+    });
+
+    const kamiAvg = kamiRooms ? kamiSum / kamiRooms : 0;
+    const operatorAvg = operatorRooms ? operatorSum / operatorRooms : 0;
+    const grade = (n: number, avg: number) => (!n ? 0 : n >= 4 * avg ? 3 : n >= 1.5 * avg ? 2 : 1);
+    counts.forEach(({ kamis, operators }, index) => {
+      const level = Math.max(grade(kamis, kamiAvg), grade(operators, operatorAvg));
+      if (level) map.set(index, { kamis, operators, level });
+    });
+    return map;
+  }, [mode, rooms, tick, queryNodeByIndex, queryNodeKamis, queryRoomAccounts]);
 
   // set the grid whenever the room zone changes
   const grid = useMemo(() => {
@@ -381,6 +419,7 @@ export const Grid = ({
                         yourKamiIconsMap,
                         levelCapMap,
                         nodeLookMap,
+                        activityMap,
                       }}
                     />
                   </Tile>
