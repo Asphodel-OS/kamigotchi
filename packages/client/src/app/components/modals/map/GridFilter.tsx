@@ -40,11 +40,13 @@ export const GridFilter = (props: Props) => {
 
   if (optionSelected === 'LevelGate') {
     const cap = levelCapMap.get(roomIndex);
-    if (!roomIndex || !cap) return null;
+    if (!roomIndex || cap === undefined) return null;
     const color = getCapColor(cap);
     return (
       <LevelTint $color={color}>
-        <LevelBadge $color={color}>{cap}</LevelBadge>
+        <LevelBadge $color={color} $small={!cap}>
+          {cap || 'None'}
+        </LevelBadge>
       </LevelTint>
     );
   }
@@ -80,8 +82,9 @@ export const GridFilter = (props: Props) => {
   return icon ? <FloatingOnMap icon={icon} color={getColorForOption()} /> : null;
 };
 
-// tint by protection tier: newbie ring, mid tier, anything higher
+// tint by protection tier: ungated, newbie ring, mid tier, anything higher
 const getCapColor = (cap: number) => {
+  if (!cap) return '#9cc9f0';
   if (cap <= 15) return '#6cc46c';
   if (cap <= 35) return '#f0a43c';
   return '#e0605a';
@@ -96,7 +99,7 @@ const LevelTint = styled.div<{ $color: string }>`
 `;
 
 // corner placement keeps the centered quest marker visible
-const LevelBadge = styled.div<{ $color: string }>`
+const LevelBadge = styled.div<{ $color: string; $small?: boolean }>`
   position: absolute;
   right: 6%;
   bottom: 6%;
@@ -105,7 +108,8 @@ const LevelBadge = styled.div<{ $color: string }>`
   border-radius: 0.3vw;
   background-color: ${({ $color }) => $color};
   color: #fff;
-  font-size: 0.8vw;
+  font-size: ${({ $small }) => ($small ? 0.6 : 0.8)}vw;
   line-height: 1;
+  white-space: nowrap;
   text-shadow: 0 0.08vw 0 #000;
 `;

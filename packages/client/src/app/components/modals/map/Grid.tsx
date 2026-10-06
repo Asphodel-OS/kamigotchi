@@ -108,15 +108,15 @@ export const Grid = ({
     return map;
   }, [rooms, account.id]);
 
-  // max kami level per gated room, from the node's LEVEL CURR_MAX harvest requirement
+  // max kami level per node room, from its LEVEL CURR_MAX harvest requirement (0 = ungated)
   const levelCapMap = useMemo(() => {
     const map = new Map<number, number>();
     rooms.forEach((room) => {
-      if (!room.index) return;
+      if (!room.index || !queryNodeByIndex(room.index)) return;
       const cap = getNode(room.index).requirements?.find(
         (req) => req.target.type === 'LEVEL' && req.logic === 'CURR_MAX'
       );
-      if (cap?.target.value) map.set(room.index, Number(cap.target.value));
+      map.set(room.index, Number(cap?.target.value ?? 0));
     });
     return map;
   }, [rooms]);
@@ -370,7 +370,7 @@ export const Grid = ({
                       {room.name}
                       {isRoomBlocked(room) ? ' (blocked)' : ''}
                       {questTargetMap.has(room.index) && <TitleMarkIcon src={ExclamIcon} alt='' />}
-                      {levelCapMap.has(room.index) && (
+                      {(levelCapMap.get(room.index) ?? 0) > 0 && (
                         <TitleSubtext>Max kami level {levelCapMap.get(room.index)}</TitleSubtext>
                       )}
                     </>
