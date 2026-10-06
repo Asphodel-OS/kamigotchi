@@ -25,6 +25,9 @@ import { TileContextMenu } from './TileContextMenu';
 
 type Mode = 'TypeDrop' | 'MyKamis' | 'Activity' | 'LevelGate';
 
+// operators count toward activity only if they acted within this window (on-chain LastTime, seconds)
+const ACTIVE_WINDOW_S = 30 * 24 * 3600;
+
 const options = [
   { text: 'My Kamis', img: KamiIcon, object: 'MyKamis' },
   { text: 'Type and Drop', img: insectIcon, object: 'TypeDrop' },
@@ -62,6 +65,7 @@ export const Grid = ({
     parseAllos: (scavAllo: Allo[]) => DetailedEntity[];
     queryScavInstance: (index: number, holderID: EntityID) => EntityIndex | undefined;
     getValue: (entity: EntityIndex) => number;
+    getLastTime: (entity: EntityIndex) => number;
   };
   network: {
     world: any;
@@ -79,6 +83,7 @@ export const Grid = ({
     parseAllos,
     queryScavInstance,
     getValue,
+    getLastTime,
   } = utils;
 
   const [kamiEntities, setKamiEntities] = useState<EntityIndex[]>([]);
@@ -127,8 +132,8 @@ export const Grid = ({
     return { levelCapMap, nodeLookMap };
   }, [rooms]);
 
-  // activity view only: kamis on each node and operators in each room, each graded against
-  // its own average over active rooms (1 some, 2 busy, 3 hot)
+  // activity view only: kamis on each node and operators in each room (accounts that acted in the
+  // last 30 days), each graded against its own average over active rooms (1 some, 2 busy, 3 hot)
   const activityMap = useMemo(() => {
     const map = new Map<number, Activity>();
     if (mode[0] !== 'Activity') return map;
@@ -138,11 +143,14 @@ export const Grid = ({
     let kamiRooms = 0;
     let operatorSum = 0;
     let operatorRooms = 0;
+    const activeSince = tick / 1000 - ACTIVE_WINDOW_S;
     rooms.forEach((room) => {
       if (!room.index) return;
       const nodeEntity = queryNodeByIndex(room.index);
       const kamis = nodeEntity ? queryNodeKamis(nodeEntity).length : 0;
-      const operators = queryRoomAccounts(room.index).length;
+      const operators = queryRoomAccounts(room.index).filter(
+        (acc) => getLastTime(acc) >= activeSince
+      ).length;
       counts.set(room.index, { kamis, operators });
       if (kamis) {
         kamiSum += kamis;
@@ -164,7 +172,7 @@ export const Grid = ({
       map.set(index, { kamis, operators, kamiLevel, operatorLevel });
     });
     return map;
-  }, [mode, rooms, tick, queryNodeByIndex, queryNodeKamis, queryRoomAccounts]);
+  }, [mode, rooms, tick, queryNodeByIndex, queryNodeKamis, queryRoomAccounts, getLastTime]);
 
   // set the grid whenever the room zone changes
   const grid = useMemo(() => {

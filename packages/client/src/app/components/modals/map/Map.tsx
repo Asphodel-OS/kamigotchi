@@ -29,7 +29,7 @@ import {
 } from 'network/shapes/Node';
 import { Room, canEnterRoom as _canEnterRoom, queryRooms } from 'network/shapes/Room';
 import { queryScavInstance as _queryScavInstance } from 'network/shapes/Scavenge';
-import { getValue as _getValue } from 'network/shapes/utils/component';
+import { getLastTime as _getLastTime, getValue as _getValue } from 'network/shapes/utils/component';
 import { Grid } from './Grid';
 
 export const MapModal: UIComponent = {
@@ -55,6 +55,7 @@ export const MapModal: UIComponent = {
         parseAllos,
         queryScavInstance,
         getValue,
+        getLastTime,
         getSextantBalance,
       },
     } = (() => {
@@ -88,6 +89,7 @@ export const MapModal: UIComponent = {
           queryScavInstance: (index: number, holderID: EntityID) =>
             _queryScavInstance(world, 'NODE', index, holderID),
           getValue: (entity: EntityIndex) => _getValue(components, entity),
+          getLastTime: (entity: EntityIndex) => _getLastTime(components, entity),
           getSextantBalance: () =>
             getItemBalance(world, components, world.entities[accountEntity], SEXTANT_INDEX),
         },
@@ -241,6 +243,7 @@ export const MapModal: UIComponent = {
             parseAllos,
             queryScavInstance,
             getValue,
+            getLastTime,
           }}
           network={{
             world: network.world,
