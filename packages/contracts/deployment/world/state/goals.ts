@@ -1,4 +1,5 @@
 import { AdminAPI } from '../api';
+import { MUSU_INDEX } from './utils';
 
 export async function initGoals(api: AdminAPI) {
   //   await api.goal.create(
@@ -123,46 +124,73 @@ export async function initGoals(api: AdminAPI) {
   //   await api.goal.add.reward.basic(6, 'Gold', 42, 'ITEM', 11502, 10);
   //   await api.goal.enable(6);
 
-  await api.goal.create(
-    7,
-    'Titanic Offering',
-    `You should be able to squeeze past that hand, but the darkness is impenetrable. It's almost like a physical barrier.
-      Maybe something in these caves can light it up. Even if we don't get through, we can get a peek.`,
-    85,
-    'ITEM',
-    'CURR_MIN',
-    6003,
-    2000
-  );
-  await api.goal.add.reward.display(7, 'Door Unlock');
-  await api.goal.add.reward.basic(7, 'Bronze', 7, 'LOYALTY', 1, 3);
-  await api.goal.add.reward.basic(7, 'Bronze', 7, 'ITEM', 11020, 10);
-  await api.goal.add.reward.basic(7, 'Bronze', 7, 'ITEM', 21003, 10);
-  await api.goal.add.reward.basic(7, 'Silver', 23, 'LOYALTY', 1, 3);
-  await api.goal.add.reward.basic(7, 'Silver', 23, 'ITEM', 11020, 20);
-  await api.goal.add.reward.basic(7, 'Silver', 23, 'ITEM', 21003, 15);
-  await api.goal.add.reward.basic(7, 'Gold', 42, 'LOYALTY', 1, 3);
-  await api.goal.add.reward.basic(7, 'Gold', 42, 'ITEM', 11020, 30);
-  await api.goal.add.reward.basic(7, 'Gold', 42, 'ITEM', 21003, 25);
-  await api.goal.enable(7);
+  // goals up to 13 are all complete on PROD; commented so `goals init` only creates new goals
+  //   await api.goal.create(
+  //     7,
+  //     'Titanic Offering',
+  //     `You should be able to squeeze past that hand, but the darkness is impenetrable. It's almost like a physical barrier.
+  //       Maybe something in these caves can light it up. Even if we don't get through, we can get a peek.`,
+  //     85,
+  //     'ITEM',
+  //     'CURR_MIN',
+  //     6003,
+  //     2000
+  //   );
+  //   await api.goal.add.reward.display(7, 'Door Unlock');
+  //   await api.goal.add.reward.basic(7, 'Bronze', 7, 'LOYALTY', 1, 3);
+  //   await api.goal.add.reward.basic(7, 'Bronze', 7, 'ITEM', 11020, 10);
+  //   await api.goal.add.reward.basic(7, 'Bronze', 7, 'ITEM', 21003, 10);
+  //   await api.goal.add.reward.basic(7, 'Silver', 23, 'LOYALTY', 1, 3);
+  //   await api.goal.add.reward.basic(7, 'Silver', 23, 'ITEM', 11020, 20);
+  //   await api.goal.add.reward.basic(7, 'Silver', 23, 'ITEM', 21003, 15);
+  //   await api.goal.add.reward.basic(7, 'Gold', 42, 'LOYALTY', 1, 3);
+  //   await api.goal.add.reward.basic(7, 'Gold', 42, 'ITEM', 11020, 30);
+  //   await api.goal.add.reward.basic(7, 'Gold', 42, 'ITEM', 21003, 25);
+  //   await api.goal.enable(7);
 
+  //   await api.goal.create(
+  //     13,
+  //     'Secret of the Ooze',
+  //     `The headless man speaks through a frowning mask. \n\n"Our concerns lie only with the Kami. However, you may wish to use this temple for another purpose. This dark pool beneath the Wheel was once used as a means of transportation. Should you choose, you may restore this function. Contribute more of the fuliginous ooze, and the current will flow once again."`,
+  //     19,
+  //     'ITEM',
+  //     'CURR_MIN',
+  //     1203,
+  //     99
+  //   );
+  //   await api.goal.add.reward.display(13, 'Fast Travel unlocked between Room 19 and Room 59');
+  //   await api.goal.add.reward.basic(13, 'Bronze', 1, 'ITEM', 11214, 13);
+  //   await api.goal.add.reward.basic(13, 'Bronze', 1, 'ITEM', 21204, 6);
+  //   await api.goal.add.reward.basic(13, 'Silver', 3, 'ITEM', 11002, 13);
+  //   await api.goal.add.reward.basic(13, 'Silver', 3, 'ITEM', 1007, 4);
+  //   await api.goal.add.reward.basic(13, 'Gold', 5, 'ITEM', 12, 1);
+  //   await api.goal.enable(13);
+
+  // Tremors co-op: live on creation, so it is created at launch, after the node changes
   await api.goal.create(
-    13,
-    'Secret of the Ooze',
-    `The headless man speaks through a frowning mask. \n\n"Our concerns lie only with the Kami. However, you may wish to use this temple for another purpose. This dark pool beneath the Wheel was once used as a means of transportation. Should you choose, you may restore this function. Contribute more of the fuliginous ooze, and the current will flow once again."`,
-    19,
+    14,
+    'Tremors',
+    `MENU: “My sensors keep picking up tremors, and they all point to one spot: right under the sacrarium. Something foul and dreaming is restless down there.”\n\nMENU: “The quakes shook loose a ton of rubble, so the good stuff in the caves is buried under heaps of junk now. Even the castle’s hoard got shaken into piles of old coin. Scavenging in both just got a lot harder. Pool your MUSU here and help me find out what’s stirring.”`,
+    11,
     'ITEM',
     'CURR_MIN',
-    1203,
-    99
+    MUSU_INDEX,
+    35_000_000
   );
-  await api.goal.add.reward.display(13, 'Fast Travel unlocked between Room 19 and Room 59');
-  await api.goal.add.reward.basic(13, 'Bronze', 1, 'ITEM', 11214, 13);
-  await api.goal.add.reward.basic(13, 'Bronze', 1, 'ITEM', 21204, 6);
-  await api.goal.add.reward.basic(13, 'Silver', 3, 'ITEM', 11002, 13);
-  await api.goal.add.reward.basic(13, 'Silver', 3, 'ITEM', 1007, 4);
-  await api.goal.add.reward.basic(13, 'Gold', 5, 'ITEM', 12, 1);
-  await api.goal.enable(13);
+  await api.goal.add.reward.display(14, 'Seismic monitoring online.');
+  await api.goal.add.reward.basic(14, 'Bronze', 250_000, 'ITEM', 21003, 10); // Wonder Egg
+  await api.goal.add.reward.basic(14, 'Bronze', 250_000, 'ITEM', 11312, 20); // Honeydew Scale
+  await api.goal.add.reward.basic(14, 'Bronze', 250_000, 'ITEM', 11313, 10); // Golden Apple
+  await api.goal.add.reward.basic(14, 'Bronze', 250_000, 'REPUTATION', 1, 3); // Agency
+  await api.goal.add.reward.basic(14, 'Silver', 500_000, 'ITEM', 21003, 10);
+  await api.goal.add.reward.basic(14, 'Silver', 500_000, 'ITEM', 6006, 10); // Essence of Thought
+  await api.goal.add.reward.basic(14, 'Silver', 500_000, 'ITEM', 1007, 10); // Red Amber Crystal
+  await api.goal.add.reward.basic(14, 'Silver', 500_000, 'REPUTATION', 1, 3);
+  await api.goal.add.reward.basic(14, 'Gold', 2_000_000, 'ITEM', 100011, 1); // "Homecoming" Data Chip
+  await api.goal.add.reward.basic(14, 'Gold', 2_000_000, 'ITEM', 21003, 15);
+  await api.goal.add.reward.basic(14, 'Gold', 2_000_000, 'ITEM', 6006, 20);
+  await api.goal.add.reward.basic(14, 'Gold', 2_000_000, 'ITEM', 11412, 10); // Flash Talisman
+  await api.goal.add.reward.basic(14, 'Gold', 2_000_000, 'REPUTATION', 1, 3);
 
   //   await api.goal.create(
   //     8,
