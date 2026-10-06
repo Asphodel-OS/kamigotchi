@@ -175,7 +175,7 @@ export async function initGoals(api: AdminAPI) {
     'ITEM',
     'CURR_MIN',
     MUSU_INDEX,
-    35_000_000
+    50_000_000
   );
   await api.goal.add.reward.display(14, 'Seismic monitoring online.');
   await api.goal.add.reward.basic(14, 'Bronze', 250_000, 'ITEM', 21003, 10); // Wonder Egg
