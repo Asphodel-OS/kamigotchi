@@ -17,7 +17,12 @@ export const ExpandableIconButton = ({
   const orientation = button.scaleOrientation ?? 'vw';
 
   return (
-    <ButtonExtension {...extension} radius={`${radius}${orientation}`}>
+    // a disabled button also disables its panel, so the panel can't act on the button's behalf
+    <ButtonExtension
+      {...extension}
+      disabled={button.disabled || extension.disabled}
+      radius={`${radius}${orientation}`}
+    >
       <IconButton {...button} radius={radius} />
     </ButtonExtension>
   );

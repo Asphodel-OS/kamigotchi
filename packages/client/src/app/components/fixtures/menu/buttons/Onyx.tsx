@@ -8,8 +8,7 @@ import { useLayers } from 'app/root/hooks';
 import { useAccount, useTokens, useVisibility } from 'app/stores';
 import { TokenIcons } from 'assets/images/tokens';
 import { Tokens } from 'constants/tokens';
-import { getComponentValue } from 'engine/recs';
-import { queryAccountFromEmbedded } from 'network/shapes/Account';
+import { getComponentValue, hasComponent } from 'engine/recs';
 import { queryReceiptsByAccount } from 'network/shapes/Portal';
 
 const BURN_ADDRESS = '0x000000000000000000000000000000000000dead';
@@ -21,6 +20,7 @@ export const OnyxMenuButton = () => {
   const { network } = useLayers();
   const balances = useTokens((s) => s.balances);
 
+  const accountID = useAccount((s) => s.account.id);
   const operatorAddress = useAccount((s) => s.account.operatorAddress);
   const hasOperator = operatorAddress.toLowerCase() !== BURN_ADDRESS;
   const portalIsOpen = useVisibility((s) => s.modals.tokenPortal);
@@ -56,25 +56,56 @@ export const OnyxMenuButton = () => {
   // CLAIM READINESS
 
   // a withdrawal receipt lives on chain from withdraw until claim/cancel, so any of the
-  // account's receipts past its end time is claimable. re-checked each second to catch expiry
+  // account's receipts past its end time is claimable. event driven rather than polled:
+  // recomputed when a receipt is created/removed (OwnsWithdrawalID) or gets its end time
+  // (TimeEnd, set right after), plus one timer for the next pending receipt's end time
   useEffect(() => {
-    const { world, components } = network;
-    const check = () => {
-      const accountEntity = queryAccountFromEmbedded(network);
-      if (!accountEntity) return setClaimReady(false);
-      const nowSec = Math.floor(Date.now() / 1000);
-      const receipts = queryReceiptsByAccount(components, world.entities[accountEntity]);
-      setClaimReady(
-        receipts.some((receipt) => {
-          const endTs = getComponentValue(components.TimeEnd, receipt)?.value;
-          return endTs !== undefined && nowSec >= Number(endTs);
-        })
-      );
+    const { components } = network;
+    const { OwnsWithdrawalID, TimeEnd } = components;
+    let timerId: ReturnType<typeof setTimeout> | undefined;
+    let queued = false;
+
+    const update = () => {
+      clearTimeout(timerId);
+      if (!accountID) return setClaimReady(false);
+
+      const nowSec = Date.now() / 1000;
+      const receipts = queryReceiptsByAccount(components, accountID);
+      const endTimes = receipts
+        .map((receipt) => getComponentValue(TimeEnd, receipt)?.value)
+        .filter((endTs) => endTs !== undefined)
+        .map(Number);
+      setClaimReady(endTimes.some((endTs) => nowSec >= endTs));
+
+      const nextEnd = Math.min(...endTimes.filter((endTs) => endTs > nowSec));
+      if (Number.isFinite(nextEnd)) {
+        // setTimeout overflows past ~24.8 days; a capped timer just re-arms on firing
+        const delayMs = Math.min((nextEnd - nowSec) * 1000 + 250, 2 ** 31 - 1);
+        timerId = setTimeout(update, delayMs);
+      }
     };
-    check();
-    const timerId = setInterval(check, 1000);
-    return () => clearInterval(timerId);
-  }, [network]);
+
+    // updates arrive in bursts (initial sync, multi-component writes); recompute once per burst
+    const queueUpdate = () => {
+      if (queued) return;
+      queued = true;
+      queueMicrotask(() => {
+        queued = false;
+        update();
+      });
+    };
+
+    update();
+    const receiptSub = OwnsWithdrawalID.update$.subscribe(queueUpdate);
+    const endTimeSub = TimeEnd.update$.subscribe(({ entity }) => {
+      if (hasComponent(OwnsWithdrawalID, entity)) queueUpdate(); // TimeEnd is shared with other entities
+    });
+    return () => {
+      clearTimeout(timerId);
+      receiptSub.unsubscribe();
+      endTimeSub.unsubscribe();
+    };
+  }, [network, accountID]);
 
   const togglePortal = () => setModals({ tokenPortal: !portalIsOpen });
 
