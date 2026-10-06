@@ -1,5 +1,6 @@
 import { AdminAPI, createAdminAPI } from './api';
 import {
+  addNodeRequirements,
   addNodeScavenges,
   deleteAuctions,
   deleteFactions,
@@ -154,6 +155,8 @@ export class WorldState {
       addScavenges: (indices?: number[]) => this.genCalls((api) => addNodeScavenges(api, indices)),
       reviseScavenges: (indices?: number[]) =>
         this.genCalls((api) => reviseNodeScavenges(api, indices)),
+      addRequirements: (indices: number[]) =>
+        this.genCalls((api) => addNodeRequirements(api, indices)),
     } as SubFunc,
     mint: {
       init: () => this.genCalls((api) => initGachaPool(api, 333)),

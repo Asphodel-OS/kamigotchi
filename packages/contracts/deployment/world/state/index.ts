@@ -123,6 +123,7 @@ export { deleteQuests, initQuests, reviseQuests } from './quests';
 export { deleteRecipes, initRecipes, reviseRecipes } from './recipes/recipes';
 export { deleteRelationships, initRelationships } from './relationships';
 export {
+  addNodeRequirements,
   addNodeScavenges,
   deleteNodes,
   deleteRooms,

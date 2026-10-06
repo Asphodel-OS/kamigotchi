@@ -1,4 +1,5 @@
 export {
+  addNodeRequirements,
   addNodeScavenges,
   deleteNodes,
   initNodes,
