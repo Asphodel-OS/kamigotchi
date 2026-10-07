@@ -20,7 +20,7 @@
       "Prefer free local edits (recolours, removing pixels, pasting regions back, restoring original areas) with Python. Only use SpriteCook when new content has to be drawn."
     ],
     "setup_per_teammate": [
-      "Connect the SpriteCook plugin/MCP (npx spritecook-mcp setup) and confirm with get_credit_balance.",
+      "Install the SpriteCook Claude Code plugin: run '/plugin marketplace add SpriteCook/claude-plugin', then '/plugin install spritecook@spritecook', restart Claude Code and sign in to SpriteCook when asked (or via /mcp). Confirm with get_credit_balance. Also install Pillow for the clean-up script (pip install pillow).",
       "Ask for the user's GitHub name; it is their account key.",
       "list_projects; if there is no 'Kamigotchi' project, create_project(name='Kamigotchi'). Record it under accounts.<github-name>.spritecook_project.",
       "For every style_references entry: check that sha256(source)[:12] == sha12 (tell the user if not); create_asset_upload(file_name, content_type='image/png', display_name=label, project_id, pixel=true); PUT the bytes to upload_url with the returned Content-Type (expect 200, print nothing else); finalize_asset_upload(upload_token); store the asset_id under asset_ids.<github-name>. Uploads cost 0 credits.",
