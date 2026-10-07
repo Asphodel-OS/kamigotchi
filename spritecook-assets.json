@@ -59,7 +59,8 @@
       "Untouched areas are identical to the source (edits).",
       "style_rules are respected.",
       "Sprites that are transparent in the game come out with a transparent background (the script warns if --remove-bg is missing).",
-      "Room edits: all three phase backgrounds (playtest-a/b/c) are delivered and line up pixel for pixel. Compare every edited object with the same object in that phase's original (leaves, roofs, water, foam must use that phase's colours for that object), and fix wrong pixels locally."
+      "Room edits: all three phase backgrounds (playtest-a/b/c) are delivered and line up pixel for pixel. Compare every edited object with the same object in that phase's original (leaves, roofs, water, foam must use that phase's colours for that object), and fix wrong pixels locally.",
+      "Room edits: follow phase_review_checklist for every phase before showing the result."
     ],
     "logging": [
       "edit_sources entry: {label, asset_ids:{<github-name>:id}, source (repo-relative or file name), in_repo, sha12}.",
@@ -72,6 +73,23 @@
       "The free plan allows 1 saved preset and 1 job at a time. Uploads are free. No storage limits are published.",
       "The SpriteCook ToS license covers storing and processing uploads 'to provide and improve the Service': upload only what a task needs, not the whole game.",
       "A low-quality edit plus local clean-up is usually enough for small sprites and 128x128 backgrounds."
+    ],
+    "room_edit_order": [
+      "1. Ask the user which phase to edit (usually Evenfall, playtest-b) and agree that the other two phases will be converted afterwards.",
+      "2. SpriteCook draws shapes only: one change per job, low quality, edit source uploaded at 8x.",
+      "3. Snap to native size and palette, then paste back only the edited regions (--keep-box or a mask). Untouched areas must be identical to the source.",
+      "4. Iterate on that one phase with the user until it is approved. Make small fixes locally (free).",
+      "5. Convert to the other phases: --phase-from/--phase-to.",
+      "6. Per-object fixes in each converted phase: trace objects that share colours with water/sky (roofs, wood) and recolour them from that phase's original object; then --restrict each object box to that phase's allowed colours (see phase_rules).",
+      "7. --despeckle (edited pixels only), then --audit as a hint.",
+      "8. Review close-ups of every edited object in every phase against the same object in that phase's original, then show the user all three phases side by side (nearest-neighbour, 3-4x)."
+    ],
+    "phase_review_checklist": [
+      "For EACH phase and EACH edited object (leaves, rocks/boulders, roofs, wood, water, foam, cracks), list the colours it uses and compare with the same object in that phase's original. Any colour the original object does not use is wrong.",
+      "Look for: water colours on roofs or wood, orange on Daylight leaves, green/orange/red on rocks, single stray pixels in water, leftover colours just outside an object's outline.",
+      "Fix with --restrict per object box (boxes kept clear of other objects), or with a traced mask for irregular objects; trace separate pieces separately so gaps between them stay background.",
+      "--audit only marks unusual colour combinations. It cannot catch wrong colours that the original also uses next to each other elsewhere, so the close-up review is mandatory.",
+      "Shorelines and other edges between edited and restored areas must not be straight box edges: when pasting rectangles back, break the seam with a gently rounded 0-3 px edge (change at most 1 px per column, soft bumps, not spikes) in the dark outline colour #573359."
     ]
   },
   "accounts": {
@@ -463,7 +481,8 @@
       "gpt-image-2 repaints the whole image, so keep the original everywhere except the edited regions: --keep-box x0,y0,x1,y1 (repeatable).",
       "New pure-black pixels (#30111c) are recoloured to the outline purple #573359 automatically (--keep-black to skip).",
       "Check: output size equals native size, colour count stays within the palette, no semi-transparent pixels.",
-      "Room phases: --phase-from <edited phase original> --phase-to <target phase original> converts a finished edit to another phase. Unedited pixels are copied exactly from the target original. Thin edited details (highlights, roof tiles, specks; anything not part of a solid 3x3 block of its colour) are recoloured by context, i.e. how the same colour next to the same neighbouring colours is drawn in the originals, because one colour can split into several in another phase (Evenfall orange = Daylight leaf green or lake blue). Larger areas follow connected or nearby unedited pixels. About 98% accurate on hidden blocks. Always review the result against the target original."
+      "Room phases: --phase-from <edited phase original> --phase-to <target phase original> converts a finished edit to another phase. Unedited pixels are copied exactly from the target original. Thin edited details (highlights, roof tiles, specks; anything not part of a solid 3x3 block of its colour) are recoloured by context, i.e. how the same colour next to the same neighbouring colours is drawn in the originals, because one colour can split into several in another phase (Evenfall orange = Daylight leaf green or lake blue). Larger areas follow connected or nearby unedited pixels. About 98% accurate on hidden blocks. Always review the result against the target original.",
+      "Fix mode for finished images (no resize/snap): --restrict x0,y0,x1,y1=#hex,... (or =original, =original@box) keeps only allowed colours in a box; --despeckle removes stray edited pixels; --audit MARKED.png marks unusual colour combinations (a hint only)."
     ]
   },
   "style_rules": [
@@ -819,10 +838,10 @@
         {
           "file": "playtest-b-tremors-v18.png",
           "in_repo": false,
-          "sha12": "c5d1ee307b66"
+          "sha12": "f55b65022907"
         }
       ],
-      "made_with": "local edit only (no credits)",
+      "made_with": "local edit only (no credits); later: rounded shoreline under the trunk (all phases)",
       "status": "current"
     },
     {
@@ -837,7 +856,7 @@
         {
           "file": "playtest-a-tremors-v18.png",
           "in_repo": false,
-          "sha12": "25d475df8db7"
+          "sha12": "cdb8c634e21c"
         }
       ],
       "status": "current"
@@ -854,7 +873,7 @@
         {
           "file": "playtest-c-tremors-v18.png",
           "in_repo": false,
-          "sha12": "47c43c2e2dcb"
+          "sha12": "0bdef317cf12"
         },
         {
           "file": "playtest-c-tremors-v18-previous.png",
@@ -866,5 +885,28 @@
       "status": "current"
     }
   ],
-  "edits_note": "Edit history for the waterfall room backgrounds (packages/client/src/assets/images/rooms/11_waterfall/backgrounds/). Current: playtest-a-tremors-v18.png (Daylight), playtest-b-tremors-v18.png (Evenfall), playtest-c-tremors-v18.png (Moonside); local, not committed. v13 was reverted and deleted."
+  "edits_note": "Edit history for the waterfall room backgrounds (packages/client/src/assets/images/rooms/11_waterfall/backgrounds/). Current: playtest-a-tremors-v18.png (Daylight), playtest-b-tremors-v18.png (Evenfall), playtest-c-tremors-v18.png (Moonside); local, not committed. v13 was reverted and deleted.",
+  "phase_rules": {
+    "_note": "Colours per object and phase for room backgrounds, learned on 11_waterfall (verify against each room's own originals; other rooms may differ).",
+    "daylight (playtest-a)": [
+      "Leaves: greens only (#4d6963, #5d995c highlights; outline #573359); no orange.",
+      "Rocks: #825b70, #573359, #bd9d9d highlights; no orange, green or red.",
+      "Water: #727fb5 lake, #78b6cc ripples; foam #ede8c5.",
+      "Shrine roof: #8a3b66 / #d44c79 tiles, #573359 outline; walls #bd9d9d."
+    ],
+    "evenfall (playtest-b)": [
+      "Leaves: #4d6963 with #eb9465 / #bd685b orange highlights; outline #573359.",
+      "Rocks: #825b70, #573359, #bd685b highlights.",
+      "Water: #d44c79 lake, #eb9465 / #645094 ripples; foam #f0d375."
+    ],
+    "moonside (playtest-c)": [
+      "Rocks: #645094, #573359, #9153a3 highlights; no red.",
+      "Water: #727fb5 lake; foam #f0b395.",
+      "Shrine roof stays red (#8a3b66 / #d44c79)."
+    ],
+    "all phases": [
+      "Rocks never use #8a3b66 (roofs, fence and tree-trunk shading only).",
+      "New outlines and cracks use #573359, never black."
+    ]
+  }
 }

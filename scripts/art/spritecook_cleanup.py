@@ -30,6 +30,17 @@ Examples:
 
   # make an 8x nearest-neighbour copy to upload as an edit source
   python3 scripts/art/spritecook_cleanup.py playtest-b.png upload_x8.png --upscale 8
+
+Fix mode (finished, native-size images; nothing is resized or snapped):
+  # in this rock box (kept clear of trees and grass) only the Daylight rock colours are allowed
+  python3 scripts/art/spritecook_cleanup.py day.png day.png --original playtest-a.png \\
+      --restrict 24,0,67,36=#825b70,#573359,#bd9d9d
+  # or allow whatever the original uses in a reference area (careful: it may include moss etc.)
+  python3 scripts/art/spritecook_cleanup.py day.png day.png --original playtest-a.png \\
+      --restrict 24,0,67,36=original@112,0,128,40
+  # remove stray single pixels from the edit, and mark anything suspicious for review
+  python3 scripts/art/spritecook_cleanup.py day.png day.png --original playtest-a.png \\
+      --despeckle --audit day-audit.png
 """
 import argparse
 import json
@@ -212,6 +223,130 @@ def parse_box(text):
     return x0, y0, x1, y1
 
 
+def parse_restrict(text):
+    """'x0,y0,x1,y1=#hex,#hex' | 'x0,y0,x1,y1=original' | 'x0,y0,x1,y1=original@ox0,oy0,ox1,oy1'."""
+    box, _, allowed = text.partition('=')
+    if not allowed:
+        raise argparse.ArgumentTypeError('expected BOX=COLOURS, BOX=original or BOX=original@BOX')
+    if allowed.startswith('original'):
+        src = allowed.partition('@')[2]
+        return parse_box(box), ('original', parse_box(src) if src else parse_box(box))
+    return parse_box(box), ('colours', {hex_to_rgb(c) for c in allowed.split(',')})
+
+
+def restrict_colours(img, rules, orig):
+    """Inside each box, recolour pixels whose colour is not allowed.
+
+    A disallowed pixel takes the most common allowed colour around it (filled from
+    the edges inwards); allowed colours come from a list or from a region of the
+    original. This removes e.g. orange or green specks from rocks, or water
+    colours from a roof.
+    """
+    img = img.convert('RGBA')
+    px = img.load()
+    total = 0
+    for (x0, y0, x1, y1), (kind, spec) in rules:
+        if kind == 'original':
+            if orig is None:
+                raise SystemExit('--restrict ...=original needs --original')
+            ox0, oy0, ox1, oy1 = spec
+            op = orig.load()
+            allowed = {op[x, y][:3] for y in range(oy0, oy1) for x in range(ox0, ox1) if op[x, y][3] >= 128}
+        else:
+            allowed = spec
+        todo = {(x, y) for y in range(y0, y1) for x in range(x0, x1)
+                if px[x, y][3] >= 128 and px[x, y][:3] not in allowed}
+        total += len(todo)
+        for _ in range(max(x1 - x0, y1 - y0)):
+            if not todo:
+                break
+            done = {}
+            for x, y in todo:
+                near = Counter(px[i, j][:3] for i in (x - 1, x, x + 1) for j in (y - 1, y, y + 1)
+                               if (i, j) not in todo and 0 <= i < img.width and 0 <= j < img.height
+                               and px[i, j][3] >= 128 and px[i, j][:3] in allowed)
+                if near:
+                    done[(x, y)] = near.most_common(1)[0][0]
+            if not done:
+                break
+            for p, c in done.items():
+                px[p] = c + (255,)
+            todo -= set(done)
+        if todo:  # isolated from any allowed colour: use the box's most common allowed colour
+            fallback = Counter(px[x, y][:3] for y in range(y0, y1) for x in range(x0, x1) if px[x, y][:3] in allowed)
+            c = fallback.most_common(1)[0][0] if fallback else sorted(allowed)[0]
+            for p in todo:
+                px[p] = c + (255,)
+    return img, total
+
+
+def despeckle(img, orig):
+    """Edited pixels completely surrounded by one other colour take that colour.
+
+    Only pixels that differ from the original are touched, so deliberate single-pixel
+    details of the original art are safe.
+    """
+    img = img.convert('RGBA')
+    px, op = img.load(), orig.load()
+    w, h = img.size
+    fixed = 0
+    for _ in range(2):
+        changes = {}
+        for y in range(1, h - 1):
+            for x in range(1, w - 1):
+                c = px[x, y]
+                if c == op[x, y] or c[3] < 128:
+                    continue
+                nb = {px[x + i, y + j] for i in (-1, 0, 1) for j in (-1, 0, 1) if i or j}
+                if len(nb) == 1 and c not in nb:
+                    changes[(x, y)] = nb.pop()
+        for p, c in changes.items():
+            px[p] = c
+        fixed += len(changes)
+        if not changes:
+            break
+    return img, fixed
+
+
+def audit(img, orig):
+    """Mark (yellow) edited pixels that sit in unusual colour combinations.
+
+    A pixel is flagged when at least two of its neighbouring colours are (almost)
+    never next to its colour anywhere in the original, and similar pixels are close
+    by (clusters, not single edge pixels). This is a review hint, not a check:
+    wrong colours that the original also uses next to each other elsewhere (green
+    moss on a rock, an orange leaf in a daylight tree) are not caught, so always
+    review close-ups of every edited object as well.
+    """
+    img = img.convert('RGBA')
+    px, op = img.load(), orig.load()
+    w, h = img.size
+    def nbs(src, x, y):
+        return {src[x + i, y + j][:3] for i in (-1, 0, 1) for j in (-1, 0, 1)
+                if (i or j) and 0 <= x + i < w and 0 <= y + j < h}
+    pairs = Counter()
+    for y in range(h):
+        for x in range(w):
+            c = op[x, y][:3]
+            for n in nbs(op, x, y):
+                if n != c:
+                    pairs[(c, n)] += 1
+    flag = set()
+    for y in range(h):
+        for x in range(w):
+            c = px[x, y]
+            if c[3] < 128 or c == op[x, y]:
+                continue
+            if sum(1 for n in nbs(px, x, y) if n != c[:3] and pairs[(c[:3], n)] < 2) >= 2:
+                flag.add((x, y))
+    flag = {p for p in flag if sum((p[0] + i, p[1] + j) in flag for i in range(-2, 3) for j in range(-2, 3)) >= 3}
+    marked = img.convert('RGB').copy()
+    mp = marked.load()
+    for p in flag:
+        mp[p] = (255, 255, 0)
+    return marked, len(flag)
+
+
 def main(argv=None):
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument('input', help='raw SpriteCook PNG (or any PNG with --upscale)')
@@ -230,9 +365,37 @@ def main(argv=None):
     ap.add_argument('--upscale', type=int, help='only make an Nx nearest-neighbour copy (for uploading) and exit')
     ap.add_argument('--phase-from', help='original background of the phase that was edited (e.g. playtest-b.png)')
     ap.add_argument('--phase-to', help='original background of the phase to produce (e.g. playtest-a.png); input = the finished edit')
+    ap.add_argument('--restrict', action='append', type=parse_restrict, default=[],
+                    help='fix mode: x0,y0,x1,y1=#hex,#hex (or =original, or =original@x0,y0,x1,y1): inside the box only '
+                         'these colours are allowed; other pixels take the surrounding allowed colour (repeatable)')
+    ap.add_argument('--despeckle', action='store_true',
+                    help='fix mode: edited pixels surrounded by one other colour take that colour (needs --original)')
+    ap.add_argument('--audit', metavar='MARKED.png',
+                    help='fix mode: write a copy with unusual colour combinations marked in yellow and print how many '
+                         '(needs --original). A review hint only: always also check close-ups of each edited object')
     args = ap.parse_args(argv)
 
     img = Image.open(args.input)
+    if args.restrict or args.despeckle or args.audit:
+        # fix mode: works on a finished, native-size image; nothing is resized or snapped
+        orig = Image.open(args.original).convert('RGBA') if args.original else None
+        if (args.despeckle or args.audit) and orig is None:
+            ap.error('--despeckle and --audit need --original')
+        if orig is not None and orig.size != img.size:
+            ap.error(f'size mismatch: input {img.size}, original {orig.size}')
+        out = img.convert('RGBA')
+        if args.restrict:
+            out, n = restrict_colours(out, args.restrict, orig)
+            print(f'restrict: {n} off-palette pixels recoloured')
+        if args.despeckle:
+            out, n = despeckle(out, orig)
+            print(f'despeckle: {n} stray pixels removed')
+        out.save(args.output)
+        if args.audit:
+            marked, n = audit(out, orig)
+            marked.save(args.audit)
+            print(f'audit: {n} suspicious pixels marked in {args.audit}')
+        return 0
     if args.phase_from or args.phase_to:
         if not (args.phase_from and args.phase_to):
             ap.error('--phase-from and --phase-to go together')
