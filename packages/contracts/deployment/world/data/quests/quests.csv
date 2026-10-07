@@ -562,7 +562,7 @@ MINA: “They are quite plentiful, though. And honestly delightful.""
 MINA: “Scavenge some and you’ll see what I mean.”","MINA: “See? Practically effortless to acquire.”
 MINA: “You’re likely to find more the deeper you go into the caves.”
 MINA: “It’s a common flower that grows more easily in the dark.”",Complete MSQ053,Scavenge 10 Blue Pansy,2x Elders Loyalty
-MSQ055,55,In Game,Stop and Smell the Lotus,No,MAIN,MINA,"MINA: “In the underground lake at the bottom of these caves, you can find lotus flowers of uncommon size.”
+MSQ055,55,To Update,Stop and Smell the Lotus,No,MAIN,MINA,"MINA: “In the underground lake at the bottom of these caves, you can find lotus flowers of uncommon size.”
 MINA: “Do you see how their blossoms are shaped? Those shapes create eddies in the $MUSU currents.”
 MINA: “If you remember your lessons, you’ll know that means they’re a potential source of sensory essences.”
 MINA: “It’s pretty strange to find two different essences so close to each other.”
@@ -1812,6 +1812,11 @@ ROB: “Maybe you folks all just look alike.”
 ROB: “Could be I look different from time to time.”
 ROB: “Does it even matter? How ‘bout this?”
 ROB: “I had one of these burgers in my pocket. You can have it.”",Complete SQ802,Move to Restricted Area,1x Cheeseburger
+SQ900,3900,To Deploy,Warm Your Hands,Yes,SIDE,,"Something is pulling me toward the old graves. I can’t say why.
+The souls that used to pass that way have stopped coming, and the ones left behind are cold.
+My hands already know what to do: three sticks, a small fire, an offering for the lost.","The flames take the offering and burn brighter than three sticks should.
+Something is left in the ashes: a card, warm, with a figure rising out of a fire.
+The pull is gone. It will be back tomorrow.",,"Move to the Trash-Strewn Graves,Give 3 Wooden Sticks",1x ”Melkarth’s Heroic Awakening” Spell Card
 SQ998,3998,In Game,Hidden GEM,No,SIDE,MENU,"MENU: “Whoa! Stop right there!”
 MENU: “That machine in your inventory, it’s spinning up!”
 MENU: “I think it’s responding to an energy field in these caves!”
