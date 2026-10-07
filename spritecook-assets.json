@@ -470,7 +470,10 @@
     "Native size, no upscaling, no anti-aliasing, no semi-transparent pixels.",
     "New outlines, cracks and lines use #573359, never black.",
     "Tree leaves use the original canopy colours only: #4d6963 with #eb9465 / #bd685b highlights, #573359 for outlines and cluster lines; no bright green #5d995c.",
-    "Skill icons: one strict 24-colour palette (palettes.skills)."
+    "Skill icons: one strict 24-colour palette (palettes.skills).",
+    "Daylight phase (playtest-a): tree leaves use greens only (#4d6963 + #5d995c highlights), no orange; the orange leaf highlights belong to Evenfall.",
+    "Daylight phase (playtest-a): rocks use #825b70 / #573359 with #bd9d9d highlights; no orange (#bd685b) and no green on rocks.",
+    "Rocks never use the red #8a3b66 (that is for roofs, the fence and tree-trunk shading)."
   ],
   "costs": {
     "as_of": "2026-10-06",
@@ -828,13 +831,13 @@
       "phase_from": "packages/client/src/assets/images/rooms/11_waterfall/backgrounds/playtest-b.png",
       "phase_to": "packages/client/src/assets/images/rooms/11_waterfall/backgrounds/playtest-a.png",
       "credits": 0,
-      "made_with": "local phase conversion (spritecook_cleanup.py --phase-from/--phase-to, context-aware) + shrine recoloured from the original shrine's colours + gap fix",
+      "made_with": "local phase conversion (spritecook_cleanup.py --phase-from/--phase-to, context-aware) + shrine recoloured from the original shrine's colours + gap fix + leaf oranges to #5d995c (Daylight leaves are greens only) + rock wall cleaned (no orange/green) + red removed from rocks",
       "asset_ids": {},
       "outputs": [
         {
           "file": "playtest-a-tremors-v18.png",
           "in_repo": false,
-          "sha12": "d7ee27e406d7"
+          "sha12": "25d475df8db7"
         }
       ],
       "status": "current"
@@ -845,13 +848,13 @@
       "phase_from": "packages/client/src/assets/images/rooms/11_waterfall/backgrounds/playtest-b.png",
       "phase_to": "packages/client/src/assets/images/rooms/11_waterfall/backgrounds/playtest-c.png",
       "credits": 0,
-      "made_with": "local phase conversion (spritecook_cleanup.py --phase-from/--phase-to, context-aware) + shrine recoloured from the original shrine's colours + gap fix",
+      "made_with": "local phase conversion (spritecook_cleanup.py --phase-from/--phase-to, context-aware) + shrine recoloured from the original shrine's colours + gap fix + red removed from rocks",
       "asset_ids": {},
       "outputs": [
         {
           "file": "playtest-c-tremors-v18.png",
           "in_repo": false,
-          "sha12": "25b309a2b2f4"
+          "sha12": "47c43c2e2dcb"
         },
         {
           "file": "playtest-c-tremors-v18-previous.png",
