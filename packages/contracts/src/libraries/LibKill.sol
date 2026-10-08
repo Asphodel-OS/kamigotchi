@@ -16,7 +16,7 @@ import { LibData } from "libraries/LibData.sol";
 import { LibEmitter } from "libraries/utils/LibEmitter.sol";
 import { LibExperience } from "libraries/LibExperience.sol";
 import { LibHarvest } from "libraries/LibHarvest.sol";
-import { LibInventory, MUSU_INDEX, OBOL_INDEX } from "libraries/LibInventory.sol";
+import { LibInventory, OBOL_INDEX } from "libraries/LibInventory.sol";
 import { LibNode } from "libraries/LibNode.sol";
 import { LibKami } from "libraries/LibKami.sol";
 import { LibPhase } from "libraries/utils/LibPhase.sol";
@@ -47,11 +47,11 @@ library LibKill {
   /////////////////
   // INTERACTIONS
 
-  /// @notice send salvage back to victim's owner
-  function sendSalvage(IUintComp comps, uint256 victimID, uint256 amt) internal {
+  /// @notice send salvage back to victim's owner, in the node's yield item
+  function sendSalvage(IUintComp comps, uint256 victimID, uint32 itemIndex, uint256 amt) internal {
     if (amt == 0) return;
     uint256 accID = LibKami.getAccount(comps, victimID);
-    LibInventory.incFor(comps, accID, MUSU_INDEX, amt);
+    LibInventory.incFor(comps, accID, itemIndex, amt);
     LibExperience.inc(comps, victimID, amt);
   }
 
