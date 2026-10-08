@@ -1812,11 +1812,11 @@ ROB: “Maybe you folks all just look alike.”
 ROB: “Could be I look different from time to time.”
 ROB: “Does it even matter? How ‘bout this?”
 ROB: “I had one of these burgers in my pocket. You can have it.”",Complete SQ802,Move to Restricted Area,1x Cheeseburger
-SQ900,3900,To Deploy,Warm Your Hands,Yes,SIDE,,"Something is pulling me toward the old graves. I can’t say why.
-The souls that used to pass that way have stopped coming, and the ones left behind are cold.
-My hands already know what to do: three sticks, a small fire, an offering for the lost.","The flames take the offering and burn brighter than three sticks should.
-Something is left in the ashes: a card, warm, with a figure rising out of a fire.
-The pull is gone. It will be back tomorrow.",,"Move to the Trash-Strewn Graves,Give 3 Wooden Sticks",1x ”Melkarth’s Heroic Awakening” Spell Card
+SQ900,3900,To Deploy,Warm Your Hands,Yes,SIDE,MENU,"MENU: “Operator, something’s tugging at my sensors. It points back to the old graves.”
+MENU: “Mina said there were no lost souls left there. Not even remnants. So what’s calling?”
+MENU: “Whatever it is, it feels cold. Bring three sticks and let’s give it a fire.”","MENU: “Whoa. That’s a lot of flame for three sticks.”
+MENU: “There’s something in the ashes… a card. It’s warm. Looks like someone climbing out of a fire.”
+MENU: “The tug’s gone quiet. I bet it’ll be back tomorrow.”",,"Move to the Trash-Strewn Graves,Give 3 Wooden Sticks",1x ”Melkarth’s Heroic Awakening” Spell Card
 SQ998,3998,In Game,Hidden GEM,No,SIDE,MENU,"MENU: “Whoa! Stop right there!”
 MENU: “That machine in your inventory, it’s spinning up!”
 MENU: “I think it’s responding to an energy field in these caves!”

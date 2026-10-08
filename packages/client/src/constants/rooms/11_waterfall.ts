@@ -1,15 +1,16 @@
+import { triggerGoalModal } from 'app/triggers/triggerGoalModal';
 import { triggerPetNamingModal } from 'app/triggers/triggerPetNamingModal';
 import {
-  bgPlaytestDay,
-  bgPlaytestEvening,
-  bgPlaytestNight,
+  bgTremorsDay,
+  bgTremorsEvening,
+  bgTremorsNight,
 } from 'assets/images/rooms/11_waterfall';
 import { glitter } from 'assets/sound/ost';
 import { Room } from './types';
 
 export const room11: Room = {
   index: 11,
-  backgrounds: [bgPlaytestDay, bgPlaytestEvening, bgPlaytestNight],
+  backgrounds: [bgTremorsDay, bgTremorsEvening, bgTremorsNight],
   music: {
     key: 'glitter',
     path: glitter,
@@ -28,7 +29,7 @@ export const room11: Room = {
     {
       name: 'small shrine',
       coordinates: { x1: 39, y1: 62, x2: 77, y2: 108 },
-      dialogue: 112,
+      onClick: () => triggerGoalModal([14]),
     },
     {
       name: 'waterfall',
