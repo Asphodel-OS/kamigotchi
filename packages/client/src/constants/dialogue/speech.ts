@@ -1,10 +1,16 @@
-import { getNpcPfp } from './npcPfp';
+import { getNpcPfp, getNpcPfpZoom } from './npcPfp';
 import { getNpcByName } from './npcsCsvHandler';
 import { DialogueNode } from './types';
 
 type Npc = NonNullable<DialogueNode['npc']>;
 
-export type SpeechLine = { speaker?: string; npc?: Npc; pfp?: string; text: string };
+export type SpeechLine = {
+  speaker?: string;
+  npc?: Npc;
+  pfp?: string;
+  pfpZoom?: number;
+  text: string;
+};
 export type SpeechGroup = SpeechLine & { lines: { text: string; index: number }[] };
 
 const SPEAKER_TAG = /^([A-Za-z][A-Za-z0-9 .'-]{0,23}):\s*(.+)$/;
@@ -21,6 +27,7 @@ export const parseSpeechLine = (raw: string): SpeechLine => {
     speaker: npc?.name ?? tag,
     npc,
     pfp: npc ? (getNpcPfp(npc.name) ?? npc.img) : undefined,
+    pfpZoom: npc ? getNpcPfpZoom(npc.name) : 1,
     text: rest.replace(WRAPPING_QUOTES, ''),
   };
 };

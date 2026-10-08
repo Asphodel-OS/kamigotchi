@@ -24,7 +24,11 @@ export const SpeechCard = ({
     <Row>
       {group.pfp && (
         <Portrait style={{ background: `color-mix(in srgb, ${color} 16%, white)` }}>
-          <img src={group.pfp} alt={group.speaker} />
+          <img
+            src={group.pfp}
+            alt={group.speaker}
+            style={group.pfpZoom ? { transform: `scale(${group.pfpZoom})` } : undefined}
+          />
         </Portrait>
       )}
       <Body>

@@ -7,5 +7,12 @@ const MoodPfps: Record<string, string> = {
   [NpcImages['dimidiatus_frown.png']]: NpcPfps['dimidiatus b'],
 };
 
+// zoom inside the portrait frame for headshots with extra margin
+const PfpZoom: Record<string, number> = {
+  menu: 1.2,
+};
+
 export const getNpcPfp = (name: string, moodImg?: string): string | undefined =>
   (moodImg && MoodPfps[moodImg]) || NpcPfps[name.trim().toLowerCase()];
+
+export const getNpcPfpZoom = (name: string): number => PfpZoom[name.trim().toLowerCase()] ?? 1;
