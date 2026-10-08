@@ -4,13 +4,10 @@ import styled from 'styled-components';
 import { Palette } from 'app/components/library/pastel';
 import { SpeechTypewriter } from './SpeechTypewriter';
 
-export type DialogueMode = 'INTRO' | 'OUTRO';
-
+// intro dialogue, then (once the quest is complete) a divider and the outro dialogue below it
 export const Dialogue = ({
   text,
   completionText = '',
-  mode,
-  retrigger,
   isComplete,
   isAccepted,
   justCompleted,
@@ -19,8 +16,6 @@ export const Dialogue = ({
 }: {
   text: string;
   completionText?: string;
-  mode: DialogueMode;
-  retrigger: number;
   isModalOpen: boolean;
   isComplete: boolean;
   isAccepted: boolean;
@@ -32,7 +27,7 @@ export const Dialogue = ({
 
   useEffect(() => {
     userScrolledRef.current = false;
-  }, [isModalOpen, mode]);
+  }, [isModalOpen, justCompleted]);
 
   // follow the typed text unless the reader scrolled up
   const followText = useCallback(() => {
@@ -46,31 +41,32 @@ export const Dialogue = ({
     userScrolledRef.current = Math.abs(el.scrollHeight - el.clientHeight - el.scrollTop) >= 50;
   };
 
-  const Content = () => {
-    if (mode === 'INTRO')
-      return (
-        <SpeechTypewriter
-          text={text}
-          animate={!isAccepted}
-          retrigger={`${isModalOpen}${retrigger}`}
-          onUpdate={followText}
-        />
-      );
-    if (!isComplete) return <Empty>Empty for now, finish this quest and maybe then...</Empty>;
-    return (
-      <SpeechTypewriter
-        text={completionText}
-        animate={justCompleted}
-        retrigger={`${isModalOpen}${retrigger}${justCompleted}`}
-        onUpdate={followText}
-        onAllLinesComplete={onOutroFinished}
-      />
-    );
-  };
+  const showOutro = isComplete && !!completionText;
 
   return (
     <Scroll ref={scrollRef} onScroll={handleScroll}>
-      <Card>{Content()}</Card>
+      <Card>
+        <SpeechTypewriter
+          text={text}
+          animate={!isAccepted}
+          retrigger={`${isModalOpen}`}
+          onUpdate={followText}
+        />
+      </Card>
+      {showOutro && (
+        <>
+          <Divider>Quest completed</Divider>
+          <Card>
+            <SpeechTypewriter
+              text={completionText}
+              animate={justCompleted}
+              retrigger={`${isModalOpen}${justCompleted}`}
+              onUpdate={followText}
+              onAllLinesComplete={onOutroFinished}
+            />
+          </Card>
+        </>
+      )}
     </Scroll>
   );
 };
@@ -80,6 +76,10 @@ const Scroll = styled.div`
   min-height: 0;
   overflow-y: auto;
   padding: 1vw 1.2vw;
+
+  display: flex;
+  flex-direction: column;
+  gap: 0.9vw;
 
   scrollbar-width: thin;
   scrollbar-color: #b6b6b6 transparent;
@@ -94,16 +94,29 @@ const Scroll = styled.div`
 `;
 
 const Card = styled.div`
+  flex: none;
   padding: 0.9vw;
   background: ${Palette.soft};
   border: solid ${Palette.line} 0.12vw;
   border-radius: 0.8vw;
 `;
 
-const Empty = styled.div`
-  padding: 1.5vw 0.5vw;
-  text-align: center;
+const Divider = styled.div`
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: 0.6vw;
+
   font-family: Pixel;
-  font-size: 0.7vw;
+  font-size: 0.55vw;
+  text-transform: uppercase;
+  letter-spacing: 0.06vw;
   color: ${Palette.faint};
+
+  &::before,
+  &::after {
+    content: '';
+    flex: 1;
+    border-top: solid ${Palette.line} 0.1vw;
+  }
 `;

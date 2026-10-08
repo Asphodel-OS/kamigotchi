@@ -5,7 +5,7 @@ import styled from 'styled-components';
 
 import { getItemByIndex } from 'app/cache/item';
 import { ModalWrapper } from 'app/components/library';
-import { Palette, SegmentedTabs } from 'app/components/library/pastel';
+import { Palette } from 'app/components/library/pastel';
 import { useLayers } from 'app/root/hooks';
 import { UIComponent } from 'app/root/types';
 import { useSelected, useVisibility } from 'app/stores';
@@ -30,7 +30,7 @@ import { getFromDescription } from 'network/shapes/utils/parse';
 import { useComponentEntities } from 'network/utils/hooks';
 import { playClick, playQuestaccept, playQuestcomplete } from 'utils/sounds';
 import { Bottom, QuestStatus } from './Bottom';
-import { Dialogue, DialogueMode } from './Dialogue';
+import { Dialogue } from './Dialogue';
 
 const REFRESH_INTERVAL = 3333;
 
@@ -97,8 +97,6 @@ export const QuestDetailsModal: UIComponent = {
     const [quest, setQuest] = useState<Quest>();
     const [tick, setTick] = useState(Date.now());
     const [justCompleted, setJustCompleted] = useState(false);
-    const [mode, setMode] = useState<DialogueMode>('INTRO');
-    const [toggles, setToggles] = useState(0);
 
     const timeoutRef = useRef<NodeJS.Timeout | null>(null);
     const prevCompleteRef = useRef<boolean | undefined>(undefined);
@@ -186,12 +184,6 @@ export const QuestDetailsModal: UIComponent = {
       setQuest(filtered[0]);
     }, [tick, questIndex, isModalOpen, registryEntities, ownsQuestEntities, isCompleteEntities]);
 
-    // show the outro by default once there is one to show
-    const hasOutro = !!quest?.descriptionAlt;
-    useEffect(() => {
-      if (isModalOpen) setMode(hasOutro && quest?.complete ? 'OUTRO' : 'INTRO');
-    }, [isModalOpen, hasOutro, quest?.complete]);
-
     /////////////////
     // ACTIONS
 
@@ -274,11 +266,6 @@ export const QuestDetailsModal: UIComponent = {
       return 'ONGOING';
     })();
 
-    const switchMode = (next: string) => {
-      setMode(next as DialogueMode);
-      setToggles((t) => t + 1);
-    };
-
     const TopBar = (
       <Top>
         <TopIcon src={QuestsIcon} alt='Quest' />
@@ -288,16 +275,6 @@ export const QuestDetailsModal: UIComponent = {
           </StatusRow>
           <Title>{quest.name}</Title>
         </TopText>
-        {hasOutro && (
-          <SegmentedTabs
-            tab={mode}
-            setTab={switchMode}
-            options={[
-              { key: 'INTRO', label: 'Intro' },
-              { key: 'OUTRO', label: 'Outro' },
-            ]}
-          />
-        )}
       </Top>
     );
 
@@ -341,8 +318,6 @@ export const QuestDetailsModal: UIComponent = {
           isModalOpen={isModalOpen}
           text={quest.description.replace(/\n+/g, '\n')}
           completionText={quest?.descriptionAlt?.replace(/\n+/g, '\n')}
-          mode={mode}
-          retrigger={toggles}
           isComplete={quest.complete}
           isAccepted={quest.startTime !== 0}
           justCompleted={justCompleted}
