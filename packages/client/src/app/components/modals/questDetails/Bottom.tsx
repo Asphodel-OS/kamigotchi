@@ -18,6 +18,7 @@ export const Bottom = ({
   rewards = [],
   objectives = [],
   describeEntity,
+  findRoomByName,
   burnItems,
   getItemBalance,
   questStatus,
@@ -26,6 +27,7 @@ export const Bottom = ({
   rewards?: Allo[];
   objectives?: Objective[];
   describeEntity: (type: string, index: number) => DetailedEntity;
+  findRoomByName: (name: string) => number | undefined;
   burnItems: (indices: number[], amts: number[]) => void;
   getItemBalance: (index: number) => number;
   questStatus: QuestStatus;
@@ -74,7 +76,7 @@ export const Bottom = ({
       <ObjectiveRow
         key={`obj-${i}`}
         text={obj.name}
-        icon={getObjectiveIcon(obj, describeEntity)}
+        icon={getObjectiveIcon(obj, describeEntity, findRoomByName)}
         complete={!!status?.completable}
         count={questStatus === 'ONGOING' ? count : undefined}
         action={ItemBurnButton(obj)}

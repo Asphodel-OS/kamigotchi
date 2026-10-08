@@ -27,11 +27,12 @@ export const QuestCard = ({
   utils: {
     describeEntity: (type: string, index: number) => DetailedEntity;
     getItemBalance: (index: number) => number;
+    findRoomByName: (name: string) => number | undefined;
   };
   imageCache: Map<string, JSX.Element>;
 }) => {
   const { complete, burnItems } = actions;
-  const { describeEntity, getItemBalance } = utils;
+  const { describeEntity, getItemBalance, findRoomByName } = utils;
 
   /////////////////
   // INTERPRETATION
@@ -175,7 +176,7 @@ export const QuestCard = ({
             <ObjectiveRow
               key={o.id}
               text={o.name}
-              icon={getObjectiveIcon(o, describeEntity)}
+              icon={getObjectiveIcon(o, describeEntity, findRoomByName)}
               complete={status === 'COMPLETED' || (status === 'ONGOING' && !!o.status?.completable)}
               count={getCount(o)}
               action={ItemBurnButton(o)}

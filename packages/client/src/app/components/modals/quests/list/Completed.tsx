@@ -23,11 +23,12 @@ export const CompletedQuests = ({
     populate: (quest: BaseQuest) => Quest;
     describeEntity: (type: string, index: number) => DetailedEntity;
     getItemBalance: (index: number) => number;
+    findRoomByName: (name: string) => number | undefined;
   };
   imageCache: Map<string, JSX.Element>;
   isVisible: boolean;
 }) => {
-  const { describeEntity, populate, getItemBalance } = utils;
+  const { describeEntity, populate, getItemBalance, findRoomByName } = utils;
   const questsModalVisible = useVisibility((s) => s.modals.quests);
   const [cleaned, setCleaned] = useState<Quest[]>([]);
   const [lastUpdate, setLastUpdate] = useState(0);
@@ -61,7 +62,7 @@ export const CompletedQuests = ({
           key={q.id}
           quest={q}
           status={'COMPLETED'}
-          utils={{ describeEntity, getItemBalance }}
+          utils={{ describeEntity, getItemBalance, findRoomByName }}
           actions={actions}
           imageCache={imageCache}
         />

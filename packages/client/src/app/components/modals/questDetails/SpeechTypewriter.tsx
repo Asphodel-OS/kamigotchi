@@ -1,11 +1,14 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import styled from 'styled-components';
 
 import { SpeechCard } from 'app/components/library/pastel';
 import { groupSpeech, parseSpeech } from 'constants/dialogue/speech';
 import { useTypewriter } from './Typewriter';
 
-// click-to-advance dialogue rendered as speaker cards; one line types at a time
+const LINE_PAUSE_MS = 450;
+
+// dialogue rendered as speaker cards; lines type out one after another on their own,
+// and a click finishes the current line or skips the pause before the next
 export const SpeechTypewriter = ({
   text,
   animate,
@@ -25,24 +28,22 @@ export const SpeechTypewriter = ({
   const [lineIndex, setLineIndex] = useState(0);
   const [lineFinished, setLineFinished] = useState(false);
   const [interrupted, setInterrupted] = useState(false);
+  const doneRef = useRef(false);
 
   useEffect(() => {
     setLineIndex(0);
     setLineFinished(false);
     setInterrupted(false);
+    doneRef.current = false;
   }, [retrigger, text]);
 
   const isLastLine = lineIndex >= lines.length - 1;
   const groups = groupSpeech(animate ? lines.slice(0, lineIndex + 1) : lines);
 
-  const handleClick = () => {
-    if (!animate) return;
-    if (!lineFinished) {
-      setInterrupted(true);
-      setTimeout(() => onUpdate?.(), 0);
-      return;
-    }
+  const advance = useCallback(() => {
     if (isLastLine) {
+      if (doneRef.current) return;
+      doneRef.current = true;
       onAllLinesComplete?.();
       return;
     }
@@ -50,6 +51,21 @@ export const SpeechTypewriter = ({
     setInterrupted(false);
     setLineFinished(false);
     setTimeout(() => onUpdate?.(), 0);
+  }, [isLastLine, onAllLinesComplete, onUpdate]);
+
+  // auto-advance after a short pause once the current line is typed
+  useEffect(() => {
+    if (!animate || !lineFinished) return;
+    const timer = setTimeout(advance, LINE_PAUSE_MS);
+    return () => clearTimeout(timer);
+  }, [animate, lineFinished, advance]);
+
+  const handleClick = () => {
+    if (!animate) return;
+    if (!lineFinished) {
+      setInterrupted(true);
+      setTimeout(() => onUpdate?.(), 0);
+    } else advance();
   };
 
   const handleLineComplete = useCallback(() => {
@@ -67,7 +83,6 @@ export const SpeechTypewriter = ({
         retrigger={`${retrigger}${lineIndex}`}
         onUpdate={onUpdate}
         onComplete={handleLineComplete}
-        showArrow={lineFinished && !isLastLine}
       />
     );
   };
@@ -88,7 +103,6 @@ const TypedLine = ({
   retrigger,
   onUpdate,
   onComplete,
-  showArrow,
 }: {
   text: string;
   speed: number;
@@ -96,15 +110,9 @@ const TypedLine = ({
   retrigger: string;
   onUpdate?: () => void;
   onComplete: () => void;
-  showArrow: boolean;
 }) => {
   const shown = useTypewriter(text, speed, retrigger, onUpdate, interrupted, onComplete);
-  return (
-    <>
-      {shown}
-      {showArrow && <Arrow>▸</Arrow>}
-    </>
-  );
+  return <>{shown}</>;
 };
 
 const Area = styled.div<{ clickable: boolean }>`
@@ -112,14 +120,4 @@ const Area = styled.div<{ clickable: boolean }>`
   flex-direction: column;
   gap: 0.9vw;
   cursor: ${({ clickable }) => (clickable ? 'pointer' : 'default')};
-`;
-
-const Arrow = styled.span`
-  margin-left: 0.3em;
-  animation: flicker 1s steps(1) infinite;
-  @keyframes flicker {
-    50% {
-      opacity: 0;
-    }
-  }
 `;

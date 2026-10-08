@@ -19,6 +19,7 @@ export const AvailableTab = ({
   utils: {
     describeEntity: (type: string, index: number) => DetailedEntity;
     getItemBalance: (index: number) => number;
+    findRoomByName: (name: string) => number | undefined;
   };
   imageCache: Map<string, JSX.Element>;
   isVisible: boolean;

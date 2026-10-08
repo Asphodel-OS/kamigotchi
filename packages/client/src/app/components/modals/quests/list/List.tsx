@@ -23,6 +23,7 @@ export const List = ({
   actions: QuestModalActions;
   utils: {
     getItemBalance: (index: number) => number;
+    findRoomByName: (name: string) => number | undefined;
     populate: (quest: BaseQuest) => Quest;
     parseStatus: (quest: Quest) => Quest;
     parseObjectives: (quest: Quest) => Quest;

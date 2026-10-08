@@ -26,6 +26,7 @@ import {
   queryRegistryQuests,
 } from 'network/shapes/Quest';
 import { BaseQuest } from 'network/shapes/Quest/quest';
+import { getRoomIndexByName } from 'network/shapes/Room';
 import { getFromDescription } from 'network/shapes/utils/parse';
 import { useComponentEntities } from 'network/utils/hooks';
 import { playClick, playQuestaccept, playQuestcomplete } from 'utils/sounds';
@@ -61,6 +62,7 @@ export const QuestDetailsModal: UIComponent = {
           populate: (base: BaseQuest) => populateQuest(world, components, base),
           parseObjectives: (quest: Quest) =>
             parseQuestObjectives(world, components, account, quest),
+          findRoomByName: (name: string) => getRoomIndexByName(world, components, name),
           describeEntity: (type: string, index: number) =>
             getFromDescription(world, components, type, index),
           findNextInChain: (questIndex: number) => {
@@ -85,6 +87,7 @@ export const QuestDetailsModal: UIComponent = {
       populate,
       parseObjectives,
       describeEntity,
+      findRoomByName,
       findNextInChain,
       getItem,
       getItemBalance,
@@ -269,12 +272,7 @@ export const QuestDetailsModal: UIComponent = {
     const TopBar = (
       <Top>
         <TopIcon src={QuestsIcon} alt='Quest' />
-        <TopText>
-          <StatusRow>
-            <StatusPill style={StatusColors[status]}>{StatusLabels[status]}</StatusPill>
-          </StatusRow>
-          <Title>{quest.name}</Title>
-        </TopText>
+        <Title>{quest.name}</Title>
       </Top>
     );
 
@@ -284,6 +282,7 @@ export const QuestDetailsModal: UIComponent = {
         rewards={quest.rewards}
         objectives={quest.objectives}
         describeEntity={describeEntity}
+        findRoomByName={findRoomByName}
         burnItems={burnQuestItems}
         getItemBalance={getItemBalance}
         questStatus={status}
@@ -328,29 +327,6 @@ export const QuestDetailsModal: UIComponent = {
   },
 };
 
-const StatusLabels: Record<QuestStatus, string> = {
-  AVAILABLE: 'Available',
-  ONGOING: 'In progress',
-  COMPLETED: 'Completed',
-};
-
-const StatusColors: Record<
-  QuestStatus,
-  { color: string; background: string; borderColor: string }
-> = {
-  AVAILABLE: {
-    color: '#1f6fb8',
-    background: Palette.community.bg,
-    borderColor: Palette.community.edge,
-  },
-  ONGOING: { color: '#8a6d0b', background: '#fbeebb', borderColor: '#c9a227' },
-  COMPLETED: {
-    color: Palette.progress.edge,
-    background: '#dff3e5',
-    borderColor: Palette.progress.edge,
-  },
-};
-
 const Top = styled.div`
   display: flex;
   align-items: center;
@@ -365,29 +341,9 @@ const TopIcon = styled.img`
   user-drag: none;
 `;
 
-const TopText = styled.div`
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 0.35vw;
-  min-width: 0;
-`;
-
-const StatusRow = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 0.5vw;
-`;
-
-const StatusPill = styled.span`
-  font-family: Pixel;
-  font-size: 0.5vw;
-  padding: 0.1vw 0.4vw;
-  border: solid 0.08vw;
-  border-radius: 99vw;
-`;
-
 const Title = styled.span`
+  flex: 1;
+  min-width: 0;
   font-family: Pixel;
   font-size: 1.05vw;
   line-height: 1.35;

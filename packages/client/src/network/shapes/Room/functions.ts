@@ -17,6 +17,20 @@ export const getAllRooms = (
   return getRoomsX(world, components, {}, options);
 };
 
+// room index by display name (case-insensitive); built once, room names are static registry data
+let roomIndexByName: Map<string, number> | undefined;
+export const getRoomIndexByName = (
+  world: World,
+  components: Components,
+  name: string
+): number | undefined => {
+  if (!roomIndexByName?.size) {
+    const rooms = getAllRooms(world, components);
+    roomIndexByName = new Map(rooms.map((r) => [(r.name ?? '').toLowerCase(), r.index]));
+  }
+  return roomIndexByName.get(name.trim().toLowerCase());
+};
+
 export const getRoomByIndex = (
   world: World,
   components: Components,
