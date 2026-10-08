@@ -190,7 +190,8 @@ export async function initGoals(api: AdminAPI) {
   //   await api.goal.add.reward.basic(13, 'Gold', 3, 'ITEM', 11, 15);
   //   await api.goal.enable(13);
 
-  // Tremors co-op: live on creation, so it is created at launch, after the node changes
+  // Tremors co-op: created at launch, after the node changes. The registry creates goals disabled,
+  // so it is enabled explicitly like every earlier goal
   await api.goal.create(
     14,
     'Tremors',
@@ -215,6 +216,7 @@ export async function initGoals(api: AdminAPI) {
   await api.goal.add.reward.basic(14, 'Gold', 2_000_000, 'ITEM', 6006, 20);
   await api.goal.add.reward.basic(14, 'Gold', 2_000_000, 'ITEM', 11412, 10); // Flash Talisman
   await api.goal.add.reward.basic(14, 'Gold', 2_000_000, 'REPUTATION', 1, 3);
+  await api.goal.enable(14);
 
   //   await api.goal.create(
   //     8,
@@ -300,6 +302,12 @@ export async function initGoals(api: AdminAPI) {
   //   await api.goal.add.reward.basic(11, 'Gold', 9999, 'ITEM', 11413, 25);
   //   await api.goal.add.reward.basic(11, 'Gold', 9999, 'ITEM', 21005, 1);
   //   await api.goal.enable(11);
+}
+
+export async function enableGoals(api: AdminAPI, indices: number[]) {
+  for (let i = 0; i < indices.length; i++) {
+    await api.goal.enable(indices[i]);
+  }
 }
 
 export async function deleteGoals(api: AdminAPI, indices: number[]) {

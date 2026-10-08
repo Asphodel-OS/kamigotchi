@@ -114,7 +114,7 @@ export {
 } from './configs';
 export { deleteFactions, initFactions, reviseFactions } from './factions';
 export { initGachaPool, mintToGachaPool } from './gacha';
-export { deleteGoalRewards, deleteGoals, initGoals } from './goals';
+export { deleteGoalRewards, deleteGoals, enableGoals, initGoals } from './goals';
 export { deleteItems, initItems, reviseItems } from './items';
 export { deleteListings, initListings, reviseListings } from './listings';
 export { initNpcs, initNPCDroptables, reviseNpcs } from './npcs';

@@ -6,6 +6,7 @@ import {
   deleteFactions,
   deleteGoalRewards,
   deleteGoals,
+  enableGoals,
   deleteItems,
   deleteListings,
   deleteNodes,
@@ -126,6 +127,7 @@ export class WorldState {
     goals: {
       init: () => this.genCalls(initGoals),
       delete: (indices: number[]) => this.genCalls((api) => deleteGoals(api, indices)),
+      enable: (indices: number[]) => this.genCalls((api) => enableGoals(api, indices)),
       deleteRewards: (indices: number[]) => this.genCalls((api) => deleteGoalRewards(api, indices)),
     },
     items: {
