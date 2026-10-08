@@ -182,6 +182,12 @@ loadDialogues();
 
 export const getNpcDialogueByIndex = (index: number): DialogueNode => buildDialogueNode(index);
 
+// speaker lookup for text written as "NAME: line" (e.g. goal descriptions)
+export const getNpcByName = (name: string): DialogueNode['npc'] => {
+  const index = npcIndexByName.get(name.trim().toLowerCase());
+  return index !== undefined ? npcByIndex.get(index) : undefined;
+};
+
 export const getAllNpcDialogues = (): DialogueNode[] => {
   return Array.from(dialogueByIndex.keys())
     .sort((a, b) => a - b)

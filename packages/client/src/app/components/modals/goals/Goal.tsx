@@ -5,7 +5,8 @@ import styled from 'styled-components';
 import { v4 as uuid } from 'uuid';
 
 import { getAccountByID as _getAccountByID, getAccount } from 'app/cache/account';
-import { ModalHeader, ModalWrapper } from 'app/components/library';
+import { ModalWrapper } from 'app/components/library';
+import { Palette, SegmentedTabs } from 'app/components/library/pastel';
 import { useLayers } from 'app/root/hooks';
 import { UIComponent } from 'app/root/types';
 import { useSelected, useVisibility } from 'app/stores';
@@ -25,7 +26,6 @@ import { waitForActionCompletion } from 'network/utils';
 import { Details } from './Details';
 import { Leaderboard } from './Leaderboard';
 import { Progress } from './Progress';
-import { Tabs } from './Tabs';
 
 export const GoalModal: UIComponent = {
   id: 'GoalModal',
@@ -124,54 +124,126 @@ export const GoalModal: UIComponent = {
     /////////////////
     // DISPLAY
 
-    const MainBox = () => {
-      if (goal === undefined) return <Header>Goal not found</Header>;
+    const unit = goal
+      ? getFromDescription(
+          world,
+          components,
+          goal.objective.target.type,
+          goal.objective.target.index ?? 0
+        ).name
+      : '';
 
+    const TopBar = (
+      <Top>
+        <TopIcon src={QuestsIcon} alt='Co-op Quest' />
+        <TopText>
+          <Kicker>Co-op Quest</Kicker>
+          <Title>{goal?.name ?? 'Goal not found'}</Title>
+        </TopText>
+        <SegmentedTabs
+          tab={tab}
+          setTab={setTab}
+          options={[
+            { key: 'GOAL', label: 'Goal' },
+            { key: 'LEADERBOARD', label: 'Leaderboard' },
+          ]}
+        />
+      </Top>
+    );
+
+    const Footer =
+      tab === 'GOAL' && goal ? (
+        <Progress
+          actions={{ contributeTx, claimTx }}
+          account={account}
+          accContribution={accContribution}
+          goal={goal}
+          unit={unit}
+          utils={{
+            ...utils,
+            canContribute: () => canContribute(goal),
+            canClaim: () => canClaim(goal, accContribution),
+          }}
+        />
+      ) : undefined;
+
+    const Body = () => {
+      if (goal === undefined) return <Empty>Goal not found</Empty>;
+      if (tab === 'LEADERBOARD')
+        return <Leaderboard scores={scores} myID={account.id} unit={unit} utils={utils} />;
       return (
-        <>
-          <Details
-            goal={goal}
-            getFromDescription={(type, index) => getFromDescription(world, components, type, index)}
-          />
-          <Progress
-            actions={{ contributeTx, claimTx }}
-            account={account}
-            accContribution={accContribution}
-            goal={goal}
-            utils={{
-              ...utils,
-              canContribute: () => canContribute(goal),
-              canClaim: () => canClaim(goal, accContribution),
-            }}
-          />
-        </>
+        <Details
+          goal={goal}
+          accContribution={accContribution}
+          unit={unit}
+          getFromDescription={(type, index) => getFromDescription(world, components, type, index)}
+        />
       );
     };
-
-    const LeaderboardBox = <Leaderboard scores={scores} utils={utils} />;
 
     return (
       <ModalWrapper
         id='goal'
-        header={<ModalHeader title='Co-op Quest' icon={QuestsIcon} />}
+        header={TopBar}
+        footer={Footer}
         canExit
         overlay
+        noPadding
+        showScrollBar
       >
-        <Tabs tab={tab} setTab={setTab} />
-        <Content>{tab === 'GOAL' ? MainBox() : LeaderboardBox}</Content>
+        <Content>{Body()}</Content>
       </ModalWrapper>
     );
   },
 };
 
-const Header = styled.div`
+const Top = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 0.8vw;
+  padding: 0.7vw 3.6vw 0.7vw 1.2vw;
+  user-select: none;
+`;
+
+const TopIcon = styled.img`
+  width: 2.2vw;
+  height: 2.2vw;
+  user-drag: none;
+`;
+
+const TopText = styled.div`
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3vw;
+  min-width: 0;
+`;
+
+const Kicker = styled.span`
   font-family: Pixel;
-  font-size: 1.2vw;
-  text-align: flex-start;
-  color: black;
-  padding: 0 1.5vw;
+  font-size: 0.55vw;
+  text-transform: uppercase;
+  letter-spacing: 0.06vw;
+  color: ${Palette.faint};
+`;
+
+const Title = styled.span`
+  font-family: Pixel;
+  font-size: 1.15vw;
+  color: ${Palette.ink};
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 `;
 
 const Content = styled.div`
-  padding: 1vh 0.1vw;
+  padding-top: 1vw;
+`;
+
+const Empty = styled.div`
+  padding: 3vw 1.4vw;
+  text-align: center;
+  font-family: Pixel;
+  font-size: 0.8vw;
+  color: ${Palette.muted};
 `;
