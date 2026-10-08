@@ -6,11 +6,13 @@ export { KamiBar } from './bars';
 export {
   ActionButton,
   ActionListButton,
+  ButtonExtension,
   CastItemButton,
   CircleExitButton,
   CollectButton,
   CopyButton,
   CraftButton,
+  ExpandableIconButton,
   HarvestButton,
   IconButton,
   IconListButton,
@@ -32,4 +34,5 @@ export { EmptyText, Text } from './text';
 export { ItemTooltip, TextTooltip, Tooltip, TooltipContent } from './tooltips';
 export { ValidatorWrapper } from './validators';
 
+export type { ButtonExtensionDirection, ButtonExtensionProps } from './buttons';
 export type { Option as IconListButtonOption } from './buttons/IconListButton';
