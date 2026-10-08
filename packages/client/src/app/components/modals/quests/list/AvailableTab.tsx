@@ -27,7 +27,9 @@ export const AvailableTab = ({
 
   return (
     <Container style={{ display }}>
-      {quests.length === 0 && <EmptyText text={emptyText} />}
+      {quests.length === 0 && (
+        <EmptyText text={emptyText} size={0.8} gapScale={2} textColor='#666' />
+      )}
       {quests.map((q: Quest) => (
         <QuestCard
           key={q.id}

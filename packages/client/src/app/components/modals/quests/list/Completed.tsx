@@ -53,7 +53,9 @@ export const CompletedQuests = ({
 
   return (
     <div style={{ display: isVisible ? 'block' : 'none' }}>
-      {quests.length === 0 && <EmptyText text={emptyText} />}
+      {quests.length === 0 && (
+        <EmptyText text={emptyText} size={0.8} gapScale={2} textColor='#666' />
+      )}
       {cleaned.map((q: Quest) => (
         <QuestCard
           key={q.id}

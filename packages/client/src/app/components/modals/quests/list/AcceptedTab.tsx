@@ -36,7 +36,9 @@ export const AcceptedTab = ({
 
   return (
     <Container style={{ display: isVisible ? 'block' : 'none' }}>
-      {ongoing.length === 0 && <EmptyText text={emptyText} />}
+      {ongoing.length === 0 && (
+        <EmptyText text={emptyText} size={0.8} gapScale={2} textColor='#666' />
+      )}
       <OngoingQuests
         quests={ongoing}
         actions={actions}

@@ -49,13 +49,13 @@ const Container = styled.div`
 
 const Button = styled.button`
   border: none;
-  padding: 0.5vw;
+  padding: 0.45vw;
   flex-grow: 1;
   color: black;
   justify-content: center;
 
   font-family: Pixel;
-  font-size: 1vw;
+  font-size: 0.75vw;
   text-align: center;
 
   cursor: pointer;
