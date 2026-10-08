@@ -1,6 +1,8 @@
 import { useCallback, useEffect, useRef } from 'react';
 import styled from 'styled-components';
 
+import { playClick } from 'utils/sounds';
+
 const INITIAL_DELAY_MS = 400;
 const REPEAT_INTERVAL_MS = 80;
 
@@ -29,8 +31,10 @@ export const StepButton = ({ label, onStep }: StepButtonProps) => {
     }
   }, []);
 
+  // click once per press; held repeats stay silent
   const start = useCallback(() => {
     stop();
+    playClick();
     onStepRef.current();
     timerRef.current = setTimeout(() => {
       intervalRef.current = setInterval(() => onStepRef.current(), REPEAT_INTERVAL_MS);
