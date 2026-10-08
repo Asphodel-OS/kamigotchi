@@ -194,7 +194,7 @@ export async function initGoals(api: AdminAPI) {
   await api.goal.create(
     14,
     'Tremors',
-    `MENU: “My sensors keep picking up tremors, and they all point to one spot: right under the Sacrarium. Something foul is dreaming down there. It seems restless.”\n\nMENU: “The quakes have buried the caves in rubble. Whatever was worth finding down there now sits under heaps of junk. Even the castle’s hoard has been shaken into worthless scrap coin. Scavenging won’t be easy for a while. Pool your MUSU here so I can get monitoring equipment in place and find out what’s stirring.”`,
+    `MENU: “My logs say the first tremor hit the same hour the relic left this altar. That’s no coincidence. Every quake since points to one spot: right under the Sacrarium. Something foul is dreaming down there. It seems restless.”\n\nMENU: “The quakes have buried the caves in rubble. Whatever was worth finding now sits under heaps of junk, and even the castle’s hoard has been shaken into worthless scrap coin. Pool your MUSU here so I can get monitoring equipment in place and find out what’s stirring. And who took the relic.”`,
     11,
     'ITEM',
     'CURR_MIN',
