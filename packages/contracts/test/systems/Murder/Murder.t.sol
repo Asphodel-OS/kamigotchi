@@ -60,6 +60,36 @@ contract MurderTest is SetupTemplate {
     assertFalse(LibHarvest.isActive(components, aProdID), "victim harvest not stopped");
   }
 
+  // salvage on a non-MUSU node is paid in that node's yield item
+  function testMurderSalvageNodeItem() public {
+    uint32 itemIndex = 2;
+    uint256 nodeID = _createHarvestingNode(6, 1, itemIndex, "Item Node", "yields item 2", "NORMAL");
+    uint256 victimID = _mintKami(alice);
+    uint256 killerID = _mintKami(bob);
+    _fastForward(_idleRequirement);
+
+    uint256 aProdID = _startHarvestByNodeID(victimID, nodeID);
+    _fastForward(24 hours);
+    uint256 bProdID = _startHarvestByNodeID(killerID, nodeID);
+    _fastForward(_idleRequirement);
+
+    uint256 initialBalance = _getHarvestBounty(bProdID);
+    uint256 bounty = _getHarvestBounty(aProdID);
+    uint256 salvage = LibKill.calcSalvage(components, victimID, bounty);
+    uint256 spoils = LibKill.calcSpoils(components, killerID, bounty - salvage);
+    assertGt(salvage, 0, "no salvage to check");
+
+    _liquidateHarvest(killerID, aProdID);
+
+    assertEq(_getItemBal(alice, itemIndex), salvage, "victim salvage not in node item");
+    assertEq(_getItemBal(alice, MUSU_INDEX), 0, "victim salvage paid in musu");
+    assertEq(
+      LibHarvest.getBalance(components, bProdID),
+      initialBalance + spoils,
+      "killer balance mismatch"
+    );
+  }
+
   // test that the correct account must call the liquidation
   function testMurderPermissionConstraints() public {
     uint numAccounts = 5;

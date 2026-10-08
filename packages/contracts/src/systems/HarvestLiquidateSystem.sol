@@ -10,6 +10,7 @@ import { LibBonus } from "libraries/LibBonus.sol";
 import { LibHarvest } from "libraries/LibHarvest.sol";
 import { LibKami } from "libraries/LibKami.sol";
 import { LibKill, KillLog } from "libraries/LibKill.sol";
+import { LibNode } from "libraries/LibNode.sol";
 import { LibRoom } from "libraries/LibRoom.sol";
 import { LibScore } from "libraries/LibScore.sol";
 
@@ -49,10 +50,10 @@ contract HarvestLiquidateSystem is System {
       revert("kami lacks violence (weak)");
     }
 
-    // calculate musu/experience for victim
+    // calculate salvage/experience for victim, paid in the node's yield item
     uint256 bounty = LibHarvest.getBalance(components, victimHarvID);
     uint256 salvage = LibKill.calcSalvage(components, victimID, bounty);
-    LibKill.sendSalvage(components, victimID, salvage);
+    LibKill.sendSalvage(components, victimID, LibNode.getItem(components, nodeID), salvage);
 
     // calculate musu for killer
     uint256 spoils = LibKill.calcSpoils(components, killerID, bounty - salvage);
