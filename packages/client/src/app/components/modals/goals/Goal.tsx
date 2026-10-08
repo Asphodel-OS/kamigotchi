@@ -66,6 +66,7 @@ export const GoalModal: UIComponent = {
     const [goal, setGoal] = useState<Goal>();
     const [accContribution, setAccContribution] = useState<Contribution>();
     const [scores, setScores] = useState<Score[]>([]);
+    const [tick, setTick] = useState(0);
 
     // update details based on selected
     useEffect(() => {
@@ -78,7 +79,16 @@ export const GoalModal: UIComponent = {
 
       const contributions = getContributions(goal);
       setScores(contributions);
-    }, [goalIndex, goalModalOpen, step, account.coin]);
+    }, [goalIndex, goalModalOpen, step, tick, account.coin]);
+
+    // refresh when the co-op is paused or resumed while open
+    useEffect(() => {
+      if (!goalModalOpen || !goal) return;
+      const sub = components.IsDisabled.update$.subscribe(({ entity }) => {
+        if (world.entities[entity] === goal.id) setTick((t) => t + 1);
+      });
+      return () => sub.unsubscribe();
+    }, [goalModalOpen, goal?.id]);
 
     /////////////////
     // INTERACTIONS
@@ -137,7 +147,7 @@ export const GoalModal: UIComponent = {
       <Top>
         <TopIcon src={QuestsIcon} alt='Co-op Quest' />
         <TopText>
-          <Kicker>Co-op Quest</Kicker>
+          <Kicker>Co-op Quest{goal?.disabled ? '  (paused)' : ''}</Kicker>
           <Title>{goal?.name ?? 'Goal not found'}</Title>
         </TopText>
         <SegmentedTabs

@@ -11,6 +11,7 @@ export const canContribute = (
   goal: Goal,
   account: Account
 ): [boolean, string] => {
+  if (goal.disabled) return [false, 'This co-op is paused'];
   if (goal.complete) return [false, 'Goal already completed'];
 
   if (!passesConditions(world, components, goal.requirements, account))
@@ -20,6 +21,7 @@ export const canContribute = (
 };
 
 export const canClaim = (goal: Goal, contribution: Contribution | undefined): [boolean, string] => {
+  if (goal.disabled) return [false, 'This co-op is paused'];
   if (!goal.complete) return [false, 'Goal still in progress (be patient!)'];
 
   if (!contribution || contribution.score == 0)
