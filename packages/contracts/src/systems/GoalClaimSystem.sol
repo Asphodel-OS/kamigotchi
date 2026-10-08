@@ -18,7 +18,7 @@ contract GoalClaimSystem is System {
 
     uint256 goalID = LibGoal.getByIndex(components, goalIndex);
     if (goalID == 0) revert("goal not found");
-    LibGoal.verifyEnabled(components, goalIndex);
+    LibGoal.verifyEnabled(components, goalID);
     LibGoal.verifyClaimable(components, goalID, accID);
 
     LibGoal.distributeRewards(world, components, goalIndex, goalID, accID);

@@ -20,7 +20,7 @@ contract GoalContributeSystem is System {
 
     uint256 goalID = LibGoal.getByIndex(components, goalIndex);
     if (goalID == 0) revert("goal not found");
-    LibGoal.verifyEnabled(components, goalIndex);
+    LibGoal.verifyEnabled(components, goalID);
     LibGoal.verifyContributable(components, goalIndex, goalID, accID);
 
     amt = LibGoal.contribute(components, accID, goalID, amt);

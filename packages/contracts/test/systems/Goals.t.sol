@@ -189,6 +189,41 @@ contract GoalsTest is SetupTemplate {
     }
   }
 
+  function testGoalDisabled() public {
+    uint32 goalIndex = 1;
+    _createGenericItem(100);
+    uint256 goalID = _createGoal(goalIndex, 0, Condition("ITEM", "CURR_MIN", MUSU_INDEX, 100, ""));
+    _createGoalRewardBasic(goalIndex, 50, "ITEM", 100, 1);
+    _fundAccount(accGold.index, 200);
+
+    // a disabled goal rejects contributions
+    vm.prank(deployer);
+    __GoalRegistrySystem.setDisabled(goalIndex, true);
+    vm.prank(accGold.operator);
+    vm.expectRevert("entity not enabled");
+    _GoalContributeSystem.executeTyped(goalIndex, 100);
+
+    // re-enabled, the contribution goes through and completes the goal
+    vm.prank(deployer);
+    __GoalRegistrySystem.setDisabled(goalIndex, false);
+    vm.prank(accGold.operator);
+    _GoalContributeSystem.executeTyped(goalIndex, 100);
+    _assertGoalStatus(goalID, 100, true);
+
+    // a disabled goal rejects claims, and pays out once re-enabled
+    vm.prank(deployer);
+    __GoalRegistrySystem.setDisabled(goalIndex, true);
+    vm.prank(accGold.operator);
+    vm.expectRevert("entity not enabled");
+    _GoalClaimSystem.executeTyped(goalIndex);
+
+    vm.prank(deployer);
+    __GoalRegistrySystem.setDisabled(goalIndex, false);
+    vm.prank(accGold.operator);
+    _GoalClaimSystem.executeTyped(goalIndex);
+    assertEq(LibInventory.getBalanceOf(components, accGold.id, 100), 1);
+  }
+
   function testGoalCompleteEventEmission() public {
     uint32 goalIndex = 99;
     uint256 targetAmt = 100;

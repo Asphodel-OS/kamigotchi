@@ -58,7 +58,10 @@ export const Details = ({
 
   const DescriptionBox = (
     <Box style={{ marginTop: '0' }}>
-      <TitleText>{goal.name}</TitleText>
+      <TitleText>
+        {goal.name}
+        {goal.disabled ? '  (paused)' : ''}
+      </TitleText>
       <DescriptionText>{goal.description}</DescriptionText>
     </Box>
   );

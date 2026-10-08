@@ -35,6 +35,7 @@ export const getGoalByIndex = (world: World, comps: Components, index: number): 
       requirements: [],
       tiers: [],
       complete: false,
+      disabled: false,
     };
 
   return getGoal(world, comps, entity);
