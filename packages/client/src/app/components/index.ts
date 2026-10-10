@@ -180,7 +180,7 @@ export const allComponents: UIComponentWithGrid[] = [
   },
   {
     uiComponent: GoalModal,
-    gridConfig: { colStart: 20, colEnd: 80, rowStart: 24, rowEnd: 78 },
+    gridConfig: { colStart: 25, colEnd: 75, rowStart: 14, rowEnd: 86 },
   },
   {
     uiComponent: KamiPortalModal,

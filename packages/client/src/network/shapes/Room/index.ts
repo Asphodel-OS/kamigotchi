@@ -1,6 +1,6 @@
 export { NullRoom } from './constants';
 export { getExitsFor as getExitsForRoom } from './exit';
-export { canEnterRoom, getAllRooms, getRoomByIndex } from './functions';
+export { canEnterRoom, getAllRooms, getRoomByIndex, getRoomIndexByName } from './functions';
 export { filterGates, getGates } from './gate';
 export { getRoomsX } from './getters';
 export { calculatePathStaminaCost, findPath } from './path';

@@ -23,6 +23,7 @@ export const List = ({
   actions: QuestModalActions;
   utils: {
     getItemBalance: (index: number) => number;
+    findRoomByName: (name: string) => number | undefined;
     populate: (quest: BaseQuest) => Quest;
     parseStatus: (quest: Quest) => Quest;
     parseObjectives: (quest: Quest) => Quest;
@@ -62,6 +63,6 @@ export const List = ({
 
 const Container = styled.div`
   height: 100%;
-  padding: 0.6vw;
+  padding: 0.8vw;
   user-select: none;
 `;

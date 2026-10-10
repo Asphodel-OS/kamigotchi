@@ -76,6 +76,7 @@ import heirloom_ledger from './heirloom_ledger.png';
 import heirloom_tape from './heirloom_tape.png';
 import holy_dust from './holy_dust.png';
 import holy_syrup from './holy_syrup.png';
+import homecoming_data_chip from './homecoming_data_chip.png';
 import honeydew_scale from './honeydew_scale.png';
 import hostility_potion from './hostility_potion.png';
 import ice_cream from './ice_cream.png';
@@ -259,6 +260,7 @@ export const ItemImages = {
   heirloom_tape: heirloom_tape,
   holy_dust: holy_dust,
   holy_syrup: holy_syrup,
+  homecoming_data_chip: homecoming_data_chip,
   honeydew_scale: honeydew_scale,
   hostility_potion: hostility_potion,
   ice_cream: ice_cream,

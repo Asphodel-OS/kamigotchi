@@ -1,4 +1,5 @@
 import { AdminAPI } from '../api';
+import { MUSU_INDEX } from './utils';
 
 export async function initGoals(api: AdminAPI) {
   //   await api.goal.create(
@@ -123,46 +124,99 @@ export async function initGoals(api: AdminAPI) {
   //   await api.goal.add.reward.basic(6, 'Gold', 42, 'ITEM', 11502, 10);
   //   await api.goal.enable(6);
 
-  await api.goal.create(
-    7,
-    'Titanic Offering',
-    `You should be able to squeeze past that hand, but the darkness is impenetrable. It's almost like a physical barrier.
-      Maybe something in these caves can light it up. Even if we don't get through, we can get a peek.`,
-    85,
-    'ITEM',
-    'CURR_MIN',
-    6003,
-    2000
-  );
-  await api.goal.add.reward.display(7, 'Door Unlock');
-  await api.goal.add.reward.basic(7, 'Bronze', 7, 'LOYALTY', 1, 3);
-  await api.goal.add.reward.basic(7, 'Bronze', 7, 'ITEM', 11020, 10);
-  await api.goal.add.reward.basic(7, 'Bronze', 7, 'ITEM', 21003, 10);
-  await api.goal.add.reward.basic(7, 'Silver', 23, 'LOYALTY', 1, 3);
-  await api.goal.add.reward.basic(7, 'Silver', 23, 'ITEM', 11020, 20);
-  await api.goal.add.reward.basic(7, 'Silver', 23, 'ITEM', 21003, 15);
-  await api.goal.add.reward.basic(7, 'Gold', 42, 'LOYALTY', 1, 3);
-  await api.goal.add.reward.basic(7, 'Gold', 42, 'ITEM', 11020, 30);
-  await api.goal.add.reward.basic(7, 'Gold', 42, 'ITEM', 21003, 25);
-  await api.goal.enable(7);
+  // goals up to 13 are all complete on PROD; commented so `goals init` only creates new goals
+  //   await api.goal.create(
+  //     7,
+  //     'Titanic Offering',
+  //     `You should be able to squeeze past that hand, but the darkness is impenetrable. It's almost like a physical barrier.
+  //       Maybe something in these caves can light it up. Even if we don't get through, we can get a peek.`,
+  //     85,
+  //     'ITEM',
+  //     'CURR_MIN',
+  //     6003,
+  //     2000
+  //   );
+  //   await api.goal.add.reward.display(7, 'Door Unlock');
+  //   await api.goal.add.reward.basic(7, 'Bronze', 7, 'LOYALTY', 1, 3);
+  //   await api.goal.add.reward.basic(7, 'Bronze', 7, 'ITEM', 11020, 10);
+  //   await api.goal.add.reward.basic(7, 'Bronze', 7, 'ITEM', 21003, 10);
+  //   await api.goal.add.reward.basic(7, 'Silver', 23, 'LOYALTY', 1, 3);
+  //   await api.goal.add.reward.basic(7, 'Silver', 23, 'ITEM', 11020, 20);
+  //   await api.goal.add.reward.basic(7, 'Silver', 23, 'ITEM', 21003, 15);
+  //   await api.goal.add.reward.basic(7, 'Gold', 42, 'LOYALTY', 1, 3);
+  //   await api.goal.add.reward.basic(7, 'Gold', 42, 'ITEM', 11020, 30);
+  //   await api.goal.add.reward.basic(7, 'Gold', 42, 'ITEM', 21003, 25);
+  //   await api.goal.enable(7);
 
+  //   await api.goal.create(
+  //     12,
+  //     'Staking a Claim',
+  //     `A small sign rises from the fork in the path. The sign's face is carved with the image of a snake. A message is engraved in very small letters below:\n\n"Mina Shirohebi has staked a claim on this parcel of land. She plans to open a new branch of her famous convenience store in this very location! We are now accepting offerings."`,
+  //     18,
+  //     'ITEM',
+  //     'CURR_MIN',
+  //     MUSU_INDEX,
+  //     15000000
+  //   );
+  //   await api.goal.add.reward.display(12, 'New shop in caves');
+  //   await api.goal.add.reward.basic(12, 'Bronze', 50000, 'ITEM', 11402, 3);
+  //   await api.goal.add.reward.basic(12, 'Bronze', 50000, 'ITEM', 11404, 5);
+  //   await api.goal.add.reward.basic(12, 'Bronze', 50000, 'LOYALTY', 1, 2);
+  //   await api.goal.add.reward.basic(12, 'Silver', 100000, 'ITEM', 11411, 3);
+  //   await api.goal.add.reward.basic(12, 'Silver', 100000, 'ITEM', 11, 1);
+  //   await api.goal.add.reward.basic(12, 'Silver', 100000, 'LOYALTY', 1, 2);
+  //   await api.goal.add.reward.basic(12, 'Gold', 300000, 'ITEM', 21005, 1);
+  //   await api.goal.add.reward.basic(12, 'Gold', 300000, 'LOYALTY', 1, 2);
+  //   await api.goal.enable(12);
+
+  //   await api.goal.create(
+  //     13,
+  //     'Secret of the Ooze',
+  //     `The headless man speaks through a frowning mask. \n\n"Our concerns lie only with the Kami. However, you may wish to use this temple for another purpose. This dark pool beneath the Wheel was once used as a means of transportation. Should you choose, you may restore this function. Contribute more of the fuliginous ooze, and the current will flow once again."`,
+  //     19,
+  //     'ITEM',
+  //     'CURR_MIN',
+  //     1203,
+  //     50
+  //   );
+  //   await api.goal.add.reward.display(13, 'Fast Travel unlocked between Room 19 and Room 59');
+  //   await api.goal.add.reward.basic(13, 'Bronze', 1, 'ITEM', 11214, 15);
+  //   await api.goal.add.reward.basic(13, 'Bronze', 1, 'ITEM', 21204, 30);
+  //   await api.goal.add.reward.basic(13, 'Silver', 2, 'ITEM', 11214, 20);
+  //   await api.goal.add.reward.basic(13, 'Silver', 2, 'ITEM', 11002, 30);
+  //   await api.goal.add.reward.basic(13, 'Silver', 2, 'ITEM', 11502, 2);
+  //   await api.goal.add.reward.basic(13, 'Gold', 3, 'ITEM', 12, 1);
+  //   await api.goal.add.reward.basic(13, 'Gold', 3, 'ITEM', 11214, 25);
+  //   await api.goal.add.reward.basic(13, 'Gold', 3, 'ITEM', 11, 15);
+  //   await api.goal.enable(13);
+
+  // Tremors co-op: created at launch, after the node changes. The registry creates goals disabled,
+  // so it is enabled explicitly like every earlier goal
   await api.goal.create(
-    13,
-    'Secret of the Ooze',
-    `The headless man speaks through a frowning mask. \n\n"Our concerns lie only with the Kami. However, you may wish to use this temple for another purpose. This dark pool beneath the Wheel was once used as a means of transportation. Should you choose, you may restore this function. Contribute more of the fuliginous ooze, and the current will flow once again."`,
-    19,
+    14,
+    'Tremors',
+    `MENU: “My logs say the first tremor hit the same hour the relic left this altar. That’s no coincidence. Every quake since points to one spot: right under the Sacrarium. Something foul is dreaming down there. It seems restless.”\n\nMENU: “The quakes have buried the caves in rubble. Whatever was worth finding now sits under heaps of junk, and even the castle’s hoard has been shaken into worthless scrap coin. Pool your MUSU here so I can get monitoring equipment in place and find out what’s stirring. And who took the relic.”`,
+    11,
     'ITEM',
     'CURR_MIN',
-    1203,
-    99
+    MUSU_INDEX,
+    50_000_000
   );
-  await api.goal.add.reward.display(13, 'Fast Travel unlocked between Room 19 and Room 59');
-  await api.goal.add.reward.basic(13, 'Bronze', 1, 'ITEM', 11214, 13);
-  await api.goal.add.reward.basic(13, 'Bronze', 1, 'ITEM', 21204, 6);
-  await api.goal.add.reward.basic(13, 'Silver', 3, 'ITEM', 11002, 13);
-  await api.goal.add.reward.basic(13, 'Silver', 3, 'ITEM', 1007, 4);
-  await api.goal.add.reward.basic(13, 'Gold', 5, 'ITEM', 12, 1);
-  await api.goal.enable(13);
+  await api.goal.add.reward.display(14, 'Seismic monitoring online.');
+  await api.goal.add.reward.basic(14, 'Bronze', 250_000, 'ITEM', 21003, 10); // Wonder Egg
+  await api.goal.add.reward.basic(14, 'Bronze', 250_000, 'ITEM', 11312, 20); // Honeydew Scale
+  await api.goal.add.reward.basic(14, 'Bronze', 250_000, 'ITEM', 11313, 10); // Golden Apple
+  await api.goal.add.reward.basic(14, 'Bronze', 250_000, 'REPUTATION', 1, 3); // Agency
+  await api.goal.add.reward.basic(14, 'Silver', 500_000, 'ITEM', 21003, 10);
+  await api.goal.add.reward.basic(14, 'Silver', 500_000, 'ITEM', 6006, 10); // Essence of Thought
+  await api.goal.add.reward.basic(14, 'Silver', 500_000, 'ITEM', 1007, 10); // Red Amber Crystal
+  await api.goal.add.reward.basic(14, 'Silver', 500_000, 'REPUTATION', 1, 3);
+  await api.goal.add.reward.basic(14, 'Gold', 2_000_000, 'ITEM', 100011, 1); // "Homecoming" Data Chip
+  await api.goal.add.reward.basic(14, 'Gold', 2_000_000, 'ITEM', 21003, 15);
+  await api.goal.add.reward.basic(14, 'Gold', 2_000_000, 'ITEM', 6006, 20);
+  await api.goal.add.reward.basic(14, 'Gold', 2_000_000, 'ITEM', 11412, 10); // Flash Talisman
+  await api.goal.add.reward.basic(14, 'Gold', 2_000_000, 'REPUTATION', 1, 3);
+  await api.goal.enable(14);
 
   //   await api.goal.create(
   //     8,
@@ -248,6 +302,12 @@ export async function initGoals(api: AdminAPI) {
   //   await api.goal.add.reward.basic(11, 'Gold', 9999, 'ITEM', 11413, 25);
   //   await api.goal.add.reward.basic(11, 'Gold', 9999, 'ITEM', 21005, 1);
   //   await api.goal.enable(11);
+}
+
+export async function enableGoals(api: AdminAPI, indices: number[]) {
+  for (let i = 0; i < indices.length; i++) {
+    await api.goal.enable(indices[i]);
+  }
 }
 
 export async function deleteGoals(api: AdminAPI, indices: number[]) {

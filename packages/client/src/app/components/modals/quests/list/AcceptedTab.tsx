@@ -26,6 +26,7 @@ export const AcceptedTab = ({
     parseObjectives: (quest: Quest) => Quest;
     describeEntity: (type: string, index: number) => DetailedEntity;
     getItemBalance: (index: number) => number;
+    findRoomByName: (name: string) => number | undefined;
   };
   imageCache: Map<string, JSX.Element>;
   isVisible: boolean;
@@ -36,7 +37,9 @@ export const AcceptedTab = ({
 
   return (
     <Container style={{ display: isVisible ? 'block' : 'none' }}>
-      {ongoing.length === 0 && <EmptyText text={emptyText} />}
+      {ongoing.length === 0 && (
+        <EmptyText text={emptyText} size={0.8} gapScale={2} textColor='#666' />
+      )}
       <OngoingQuests
         quests={ongoing}
         actions={actions}

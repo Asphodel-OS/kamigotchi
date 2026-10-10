@@ -24,6 +24,7 @@ import {
   queryRegistryQuests,
 } from 'network/shapes/Quest';
 import { BaseQuest } from 'network/shapes/Quest/quest';
+import { getRoomIndexByName } from 'network/shapes/Room';
 import { getIsDisabled } from 'network/shapes/utils/component';
 import { getFromDescription } from 'network/shapes/utils/parse';
 import { useComponentEntities } from 'network/utils/hooks';
@@ -56,6 +57,7 @@ export const QuestModal: UIComponent = {
         utils: {
           describeEntity: (type: string, index: number) =>
             getFromDescription(world, components, type, index),
+          findRoomByName: (name: string) => getRoomIndexByName(world, components, name),
           getBase: (entity: EntityIndex) => getBaseQuest(world, components, entity),
           getItem: (index: number) => getItemByIndex(world, components, index),
           getItemBalance: (index: number) => _getItemBalance(world, components, account.id, index),

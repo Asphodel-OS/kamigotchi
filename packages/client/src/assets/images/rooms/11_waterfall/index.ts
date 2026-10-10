@@ -3,6 +3,9 @@ import bgPlaytestDay from './backgrounds/playtest-a.png';
 import bgPlaytestEvening from './backgrounds/playtest-b.png';
 import bgPlaytestNight from './backgrounds/playtest-c.png';
 import bgPretest from './backgrounds/pretest.png';
+import bgTremorsDay from './backgrounds/tremors-a.png';
+import bgTremorsEvening from './backgrounds/tremors-b.png';
+import bgTremorsNight from './backgrounds/tremors-c.png';
 
 import objectEmaBoard from './objects/ema-board.png';
 import objectSmallShrine from './objects/small-shrine.png';
@@ -15,6 +18,9 @@ export {
   bgPlaytestEvening,
   bgPlaytestNight,
   bgPretest,
+  bgTremorsDay,
+  bgTremorsEvening,
+  bgTremorsNight,
   objectEmaBoard,
   objectSmallShrine,
   objectStoneLantern,

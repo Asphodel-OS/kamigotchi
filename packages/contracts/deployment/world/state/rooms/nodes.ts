@@ -1,3 +1,8 @@
+import { ethers } from 'ethers';
+
+import { UintCompABI } from '../../../contracts/mappings/worldABIs';
+import { getCompAddr } from '../../../utils/addresses';
+import { getProvider } from '../../../utils/chain';
 import { AdminAPI } from '../../api';
 import { getSheet, toDelete, toRevise } from '../utils';
 import { addScavengeDT, removeScavenge } from './scavenges';
@@ -136,6 +141,45 @@ export async function reviseNodeScavenges(api: AdminAPI, indices?: number[]) {
 
 ///////////////////
 // REQUIREMENTS
+
+// adds the CSV Level Limit to live nodes without a revise (no delete, harvests untouched).
+// add-only: there is no admin removal, so nodes already carrying a requirement are skipped
+export async function addNodeRequirements(api: AdminAPI, indices: number[]) {
+  if (!indices || indices.length == 0) return console.log('No nodes given: pass --args <indices>');
+  const nodesCSV = await getSheet('rooms', 'nodes');
+  if (!nodesCSV) return console.log('No rooms/nodes.csv found');
+  console.log('\n==ADDING NODE REQUIREMENTS==');
+
+  const anchorComp = new ethers.Contract(
+    await getCompAddr('component.id.anchor'),
+    UintCompABI,
+    getProvider()
+  );
+
+  for (const index of indices) {
+    const entry = nodesCSV.find((e: any) => Number(e['Index']) === index);
+    if (!entry) {
+      console.error(`Node ${index} not found in rooms/nodes.csv`);
+      continue;
+    }
+    if (entry['Level Limit'] === '') {
+      console.log(`Node ${index} has no Level Limit, skipping`);
+      continue;
+    }
+
+    // mirrors LibNode.genReqAnchor
+    const anchor = ethers.solidityPackedKeccak256(
+      ['string', 'uint32'],
+      ['node.requirement', index]
+    );
+    const existing: bigint[] = await anchorComp.getEntitiesWithValue(anchor);
+    if (existing.length > 0) {
+      console.log(`Node ${index} already has ${existing.length} requirement(s) on-chain, skipping`);
+      continue;
+    }
+    await addRequirement(api, entry);
+  }
+}
 
 // hardcoded to only allow max levels rn
 async function addRequirement(api: AdminAPI, entry: any) {

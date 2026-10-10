@@ -1,9 +1,11 @@
+import { QuestsIcon } from 'assets/images/icons/menu';
 import { EntityIndex } from 'engine/recs';
 import { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 
 import { getItemByIndex } from 'app/cache/item';
 import { ModalWrapper } from 'app/components/library';
+import { Palette } from 'app/components/library/pastel';
 import { useLayers } from 'app/root/hooks';
 import { UIComponent } from 'app/root/types';
 import { useSelected, useVisibility } from 'app/stores';
@@ -24,10 +26,11 @@ import {
   queryRegistryQuests,
 } from 'network/shapes/Quest';
 import { BaseQuest } from 'network/shapes/Quest/quest';
+import { getRoomIndexByName } from 'network/shapes/Room';
 import { getFromDescription } from 'network/shapes/utils/parse';
 import { useComponentEntities } from 'network/utils/hooks';
 import { playClick, playQuestaccept, playQuestcomplete } from 'utils/sounds';
-import { Bottom } from './Bottom';
+import { Bottom, QuestStatus } from './Bottom';
 import { Dialogue } from './Dialogue';
 
 const REFRESH_INTERVAL = 3333;
@@ -59,6 +62,7 @@ export const QuestDetailsModal: UIComponent = {
           populate: (base: BaseQuest) => populateQuest(world, components, base),
           parseObjectives: (quest: Quest) =>
             parseQuestObjectives(world, components, account, quest),
+          findRoomByName: (name: string) => getRoomIndexByName(world, components, name),
           describeEntity: (type: string, index: number) =>
             getFromDescription(world, components, type, index),
           findNextInChain: (questIndex: number) => {
@@ -83,6 +87,7 @@ export const QuestDetailsModal: UIComponent = {
       populate,
       parseObjectives,
       describeEntity,
+      findRoomByName,
       findNextInChain,
       getItem,
       getItemBalance,
@@ -257,67 +262,94 @@ export const QuestDetailsModal: UIComponent = {
 
     if (!quest) return <></>;
 
+    const status: QuestStatus = (() => {
+      if (quest.startTime === 0) return 'AVAILABLE';
+      if (quest.complete && canRepeatQuest(quest)) return 'AVAILABLE';
+      if (quest.complete) return 'COMPLETED';
+      return 'ONGOING';
+    })();
+
+    const TopBar = (
+      <Top>
+        <TopIcon src={QuestsIcon} alt='Quest' />
+        <Title>{quest.name}</Title>
+      </Top>
+    );
+
+    const isFinal = quest.complete && !canRepeatQuest(quest);
+    const Footer = (
+      <Bottom
+        rewards={quest.rewards}
+        objectives={quest.objectives}
+        describeEntity={describeEntity}
+        findRoomByName={findRoomByName}
+        burnItems={burnQuestItems}
+        getItemBalance={getItemBalance}
+        questStatus={status}
+        buttons={{
+          AcceptButton: {
+            onClick: isFinal
+              ? journeyOnwards
+              : () => {
+                  acceptQuest(quest);
+                  playQuestaccept();
+                },
+            disabled: isFinal
+              ? !findNextInChain(quest.index)
+              : quest.startTime !== 0 && !canRepeatQuest(quest),
+            label: isFinal ? 'Journey Onwards' : 'Accept',
+          },
+          CompleteButton: {
+            onClick: () => {
+              completeQuest(quest);
+              playQuestcomplete();
+            },
+            disabled: !meetsObjectives(quest) || quest.complete || quest.startTime === 0,
+            label: 'Complete',
+          },
+        }}
+      />
+    );
+
     return (
-      <ModalWrapper id='questDialogue' header={<Header>{quest?.name}</Header>} canExit noScroll>
+      <ModalWrapper id='questDialogue' header={TopBar} footer={Footer} canExit noScroll noPadding>
         <Dialogue
           isModalOpen={isModalOpen}
           text={quest.description.replace(/\n+/g, '\n')}
-          color='black'
+          completionText={quest?.descriptionAlt?.replace(/\n+/g, '\n')}
           isComplete={quest.complete}
           isAccepted={quest.startTime !== 0}
           justCompleted={justCompleted}
-          completionText={quest?.descriptionAlt?.replace(/\n+/g, '\n')}
           onOutroFinished={() => setJustCompleted(false)}
-        />
-        <Bottom
-          color='black'
-          rewards={quest.rewards}
-          objectives={quest.objectives}
-          describeEntity={describeEntity}
-          burnItems={burnQuestItems}
-          getItemBalance={getItemBalance}
-          questStatus={(() => {
-            if (quest.startTime === 0) return 'AVAILABLE';
-            if (quest.complete && canRepeatQuest(quest)) return 'AVAILABLE';
-            if (quest.complete) return 'COMPLETED';
-            return 'ONGOING';
-          })()}
-          buttons={{
-            AcceptButton: {
-              backgroundColor: '#f8f6e4',
-              onClick: quest.complete && !canRepeatQuest(quest)
-                ? journeyOnwards
-                : () => {
-                    acceptQuest(quest);
-                    playQuestaccept();
-                  },
-              disabled: quest.complete && !canRepeatQuest(quest)
-                ? !findNextInChain(quest.index)
-                : quest.startTime !== 0 && !canRepeatQuest(quest),
-              label: quest.complete && !canRepeatQuest(quest) ? 'Journey Onwards' : 'Accept',
-            },
-            CompleteButton: {
-              backgroundColor: '#f8f6e4',
-              onClick: () => {
-                completeQuest(quest);
-                playQuestcomplete();
-              },
-              disabled: !meetsObjectives(quest) || quest.complete || quest.startTime === 0,
-              label: 'Complete',
-            },
-          }}
         />
       </ModalWrapper>
     );
   },
 };
 
-const Header = styled.div<{ color?: string }>`
-  border-color: white;
-  padding: 0.7vw 1vw 0.2vw 1vw;
-  width: 95%;
-  color: ${({ color }) => color ?? 'black'};
-  font-size: 1.4vw;
-  font-weight: bold;
-  line-height: 2vw;
+const Top = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 0.8vw;
+  padding: 0.7vw 3.6vw 0.7vw 1.2vw;
+  user-select: none;
+`;
+
+const TopIcon = styled.img`
+  width: 2.2vw;
+  height: 2.2vw;
+  user-drag: none;
+`;
+
+const Title = styled.span`
+  flex: 1;
+  min-width: 0;
+  font-family: Pixel;
+  font-size: 1.05vw;
+  line-height: 1.35;
+  color: ${Palette.ink};
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 `;

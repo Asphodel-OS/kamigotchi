@@ -480,6 +480,7 @@ export const Feed = ({
           position={0}
           disabled={activeTab === 0}
           onClick={() => {
+            playClick();
             setActiveTab(0);
           }}
         >
@@ -489,6 +490,7 @@ export const Feed = ({
           position={6.3}
           disabled={activeTab === 1}
           onClick={() => {
+            playClick();
             setActiveTab(1);
           }}
         >

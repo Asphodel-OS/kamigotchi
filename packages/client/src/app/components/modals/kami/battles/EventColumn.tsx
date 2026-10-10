@@ -3,14 +3,19 @@ import styled from 'styled-components';
 import { Text, TextTooltip } from 'app/components/library';
 import { DeathIcon, KillIcon } from 'assets/images/icons/battles';
 import { Kill } from 'clients/kamiden';
-import { Kami } from 'network/shapes';
+import { Kami, Node } from 'network/shapes';
+
+// salvage pays in the node's item from the PROD HarvestLiquidateSystem upgrade (block 34199935); MUSU before
+const NODE_ITEM_SALVAGE_TS = 1791472013;
 
 export const EventColumn = ({
   kami,
   kills,
+  utils,
 }: {
   kami: Kami;
   kills: Kill[];
+  utils: { getNodeByIndex: (index: number) => Node };
 }) => {
   const getPnLString = (kill: Kill) => {
     if (kill.IsDeath) {
@@ -30,10 +35,12 @@ export const EventColumn = ({
     const bounty = parseInt(kill.Bounty);
     const salvage = parseInt(kill.Salvage);
     const spoils = parseInt(kill.Spoils);
+    const nodeItem = utils.getNodeByIndex(kill.RoomIndex).drops[0]?.name ?? 'MUSU';
+    const salvageItem = kill.Timestamp >= NODE_ITEM_SALVAGE_TS ? nodeItem : 'MUSU';
 
     const tooltip = [`${eventType} with ${healthSync}/${healthTotal}HP (${healthPercent}%)`];
-    if (kill.IsDeath) tooltip.push(`${salvage}/${bounty} musu salvaged`);
-    else tooltip.push(`${spoils}/${bounty} musu plundered`);
+    if (kill.IsDeath) tooltip.push(`${salvage}/${bounty} ${salvageItem} salvaged`);
+    else tooltip.push(`${spoils}/${bounty} ${nodeItem} plundered`);
     return tooltip;
   };
 

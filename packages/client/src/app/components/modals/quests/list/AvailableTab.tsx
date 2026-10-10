@@ -19,6 +19,7 @@ export const AvailableTab = ({
   utils: {
     describeEntity: (type: string, index: number) => DetailedEntity;
     getItemBalance: (index: number) => number;
+    findRoomByName: (name: string) => number | undefined;
   };
   imageCache: Map<string, JSX.Element>;
   isVisible: boolean;
@@ -27,7 +28,9 @@ export const AvailableTab = ({
 
   return (
     <Container style={{ display }}>
-      {quests.length === 0 && <EmptyText text={emptyText} />}
+      {quests.length === 0 && (
+        <EmptyText text={emptyText} size={0.8} gapScale={2} textColor='#666' />
+      )}
       {quests.map((q: Quest) => (
         <QuestCard
           key={q.id}

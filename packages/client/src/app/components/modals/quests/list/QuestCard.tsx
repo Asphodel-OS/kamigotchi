@@ -1,14 +1,17 @@
 import styled from 'styled-components';
 
-import { ActionListButton, IconButton, TextTooltip } from 'app/components/library';
+import { ActionListButton, TextTooltip } from 'app/components/library';
+import { getObjectiveIcon, ObjectiveRow, Palette, RewardChip } from 'app/components/library/pastel';
 import { useSelected } from 'app/stores';
 import { triggerQuestDetailsModal } from 'app/triggers/triggerQuestDetailsModal';
 import { mainQuestIcon } from 'assets/images/icons/misc';
+import { ItemImages } from 'assets/images/items';
 import { Allo } from 'network/shapes/Allo';
 import { parseConditionalTracking } from 'network/shapes/Conditional';
 import { meetsObjectives, Objective, Quest } from 'network/shapes/Quest';
 import { DetailedEntity } from 'network/shapes/utils';
 import { getFactionImage } from 'network/shapes/utils/images';
+import { playClick } from 'utils/sounds';
 
 // Quest Card
 export const QuestCard = ({
@@ -24,28 +27,33 @@ export const QuestCard = ({
   utils: {
     describeEntity: (type: string, index: number) => DetailedEntity;
     getItemBalance: (index: number) => number;
+    findRoomByName: (name: string) => number | undefined;
   };
   imageCache: Map<string, JSX.Element>;
 }) => {
-  const { accept, complete, burnItems } = actions;
-  const { describeEntity, getItemBalance } = utils;
+  const { complete, burnItems } = actions;
+  const { describeEntity, getItemBalance, findRoomByName } = utils;
 
   /////////////////
   // INTERPRETATION
 
   function getButtonText(status: string) {
     if (status === 'AVAILABLE') return 'Accept';
-    if ((status === 'ONGOING' && !meetsObjectives(quest)) || status === 'COMPLETED') return 'Details';
+    if ((status === 'ONGOING' && !meetsObjectives(quest)) || status === 'COMPLETED')
+      return 'Details';
     return 'Complete';
   }
 
-  // idea: room objectives should state the number of rooms away you are on the grid map
-  const getObjectiveText = (objective: Objective): string => {
-    let prefix = '';
-    if (status === 'AVAILABLE') prefix = '•';
-    else if (status === 'ONGOING') prefix = parseConditionalTracking(objective);
-    else if (status === 'COMPLETED') prefix = '✓';
-    return `${prefix} ${objective.name}`;
+  // progress count for an objective, e.g. "1/3"; burn objectives track gave/want
+  const getCount = (objective: Objective): string | undefined => {
+    if (status !== 'ONGOING') return;
+    if (objective.target.type === 'ITEM_BURN') {
+      const gave = (objective.status?.current ?? 0) * 1;
+      const want = (objective.status?.target ?? 0) * 1;
+      return want ? `${gave}/${want}` : undefined;
+    }
+    const tracking = parseConditionalTracking(objective).trim();
+    return tracking.startsWith('[') ? tracking.slice(1, -1) : undefined;
   };
 
   // get the Faction image of a Quest based on whether it has a REPUTATION reward
@@ -75,22 +83,17 @@ export const QuestCard = ({
     return imageCache.get(key);
   };
 
-  // get the Reward image component of a Quest
-  const getRewardImage = (reward: Allo) => {
-    if (reward.type === 'NFT') return <div />;
-
-    const key = `reward-${reward.type}-${reward.index}`;
+  const getRewardChip = (reward: Allo, i: number) => {
+    if (reward.type === 'NFT') return null;
+    const key = `chip-${reward.type}-${reward.index}-${reward.value}`;
     if (!imageCache.has(key)) {
       const entity = describeEntity(reward.type, reward.index || 0);
-      const component = (
-        <TextTooltip key={key} text={[entity.name]} direction='row'>
-          <Image src={entity.image} size={1.5} />
-        </TextTooltip>
+      imageCache.set(
+        key,
+        <RewardChip key={key} entity={entity} amount={reward.value ?? 0} size='sm' />
       );
-      imageCache.set(key, component);
     }
-
-    return imageCache.get(key);
+    return <span key={`${key}-${i}`}>{imageCache.get(key)}</span>;
   };
 
   /////////////////
@@ -98,56 +101,55 @@ export const QuestCard = ({
 
   const ItemBurnButton = (objective: Objective) => {
     const show = status === 'ONGOING' && objective.target.type === 'ITEM_BURN';
-    if (!show) return <></>;
+    if (!show) return null;
 
     const index = objective.target.index ?? 0;
     const have = getItemBalance(index);
     const gave = (objective.status?.current ?? 0) * 1;
     const want = (objective.status?.target ?? 0) * 1;
     const diff = want - gave;
-
-    if (diff <= 0) return <></>;
+    if (diff <= 0) return null;
 
     const options = [];
-    if (have > 0) {
-      options.push({
-        text: 'Give 1',
-        onClick: () => burnItems([index], [1]),
-      });
-    }
-    if (diff > have && have > 1) {
-      options.push({
-        text: `Give ${have}`,
-        onClick: () => burnItems([index], [have]),
-      });
-    }
-    if (have >= diff && diff > 1) {
-      options.push({
-        text: `Give ${diff}`,
-        onClick: () => burnItems([index], [diff]),
-      });
-    }
+    if (have > 0) options.push({ text: 'Give 1', onClick: () => burnItems([index], [1]) });
+    if (diff > have && have > 1)
+      options.push({ text: `Give ${have}`, onClick: () => burnItems([index], [have]) });
+    if (have >= diff && diff > 1)
+      options.push({ text: `Give ${diff}`, onClick: () => burnItems([index], [diff]) });
 
     return (
       <ActionListButton
         id={`quest-item-burn-${objective.id}`}
-        text={`[${gave}/${want}]`}
+        text='Give'
         options={options}
-        size='medium'
+        size='small'
         disabled={have == 0}
       />
     );
   };
 
+  const handleButton = () => {
+    playClick();
+    triggerQuestDetailsModal(quest.entity);
+    if (status === 'ONGOING' && meetsObjectives(quest)) {
+      useSelected.setState({ questJustCompleted: quest.entity });
+      complete(quest);
+    }
+  };
+
   /////////////////
   // RENDER
+
   const factionStamp = getFactionStamp(quest);
   const isMainQuest = quest.typeComp === 'MAIN';
+  const tint = quest.repeatable ? CardTints.daily : isMainQuest ? CardTints.main : CardTints.side;
+  const buttonText = getButtonText(status);
+  const rewards = quest.rewards.filter((r) => r.type !== 'NFT');
 
   return (
-    <Container key={quest.id} isMainQuest={isMainQuest}>
-      <Title>
-        {quest.name}
+    <Container key={quest.id} style={{ background: tint }}>
+      <Head>
+        <Title>{quest.name}</Title>
         <IconsContainer>
           {isMainQuest && (
             <Faction>
@@ -156,78 +158,82 @@ export const QuestCard = ({
               </TextTooltip>
             </Faction>
           )}
+          {quest.repeatable && (
+            <Faction>
+              <TextTooltip text={['Daily Quest']} direction='row'>
+                <IconImage src={ItemImages.blue_pansy} size={1.5} />
+              </TextTooltip>
+            </Faction>
+          )}
           {factionStamp && <Faction>{factionStamp}</Faction>}
         </IconsContainer>
-      </Title>
-      <Section key='objectives' style={{ display: quest.objectives.length > 0 ? 'block' : 'none' }}>
-        <SubTitle>Objectives</SubTitle>
-        {quest.objectives.map((o) => (
-          <Row key={o.id}>
-            {ItemBurnButton(o)}
-            <ConditionText objective={true}>{getObjectiveText(o)}</ConditionText>
-          </Row>
-        ))}
-      </Section>
-      <Section key='rewards' style={{ display: quest.rewards.length > 0 ? 'block' : 'none' }}>
-        <SubTitle>Rewards</SubTitle>
-        <Row>
-          {quest.rewards.map((r, i) => (
-            <ConditionText key={`${r.type}-${r.index}-${i}`} objective={false}>
-              {getRewardImage(r)}
-              {`x${(r.value ?? 0) * 1}`}
-            </ConditionText>
+      </Head>
+
+      {quest.objectives.length > 0 && (
+        <Section>
+          <Label>Objectives</Label>
+          {quest.objectives.map((o) => (
+            <ObjectiveRow
+              key={o.id}
+              text={o.name}
+              icon={getObjectiveIcon(o, describeEntity, findRoomByName)}
+              complete={status === 'COMPLETED' || (status === 'ONGOING' && !!o.status?.completable)}
+              count={getCount(o)}
+              action={ItemBurnButton(o)}
+            />
           ))}
-        </Row>
-      </Section>
-      <ButtonRow>
-        <IconButton
-          scale={2.5}
-          text={getButtonText(status)}
-          onClick={() => {
-            triggerQuestDetailsModal(quest.entity);
-            if (status === 'ONGOING' && meetsObjectives(quest)) {
-              useSelected.setState({ questJustCompleted: quest.entity });
-              complete(quest);
-            }
-          }}
-        />
-      </ButtonRow>
+        </Section>
+      )}
+
+      <Foot>
+        {rewards.length > 0 ? (
+          <Section>
+            <Label>Rewards</Label>
+            <Chips>{rewards.map(getRewardChip)}</Chips>
+          </Section>
+        ) : (
+          <span />
+        )}
+        <Button primary={buttonText !== 'Details'} onClick={handleButton}>
+          {buttonText}
+        </Button>
+      </Foot>
     </Container>
   );
 };
 
-const Container = styled.div<{ isMainQuest?: boolean }>`
-  position: relative;
-  border: solid black 0.15vw;
-  border-radius: 1.2vw;
-  padding: 1.2vw;
-  margin: 0.9vw;
-  background-color: ${({ isMainQuest }) => (isMainQuest ? '#E8F5E9' : '#fff')};
+// card tint by quest kind: daily blue, main green, side golden brown
+const CardTints = { daily: '#eaf3fd', main: '#eef8ef', side: '#faf6ec' };
 
+const Container = styled.div`
   display: flex;
-  flex-flow: column nowrap;
-  justify-content: flex-start;
-  align-items: flex-start;
+  flex-direction: column;
+  gap: 0.75vw;
+  margin-bottom: 0.8vw;
+  padding: 0.9vw 1vw;
+
+  border: solid ${Palette.ink} 0.15vw;
+  border-radius: 0.9vw;
 `;
 
-const Title = styled.div`
+const Head = styled.div`
   display: flex;
-  font-size: 0.9vw;
-  line-height: 1.2vw;
-  width: 100%;
-  font-weight: bold;
-  background-color: rgba(248, 246, 228, 1);
-  border-radius: 0.5vw;
-  padding: 0.3vw;
-  justify-content: space-between;
   align-items: center;
-  flex-direction: row;
-  flex-wrap: nowrap;
+  justify-content: space-between;
+  gap: 0.6vw;
+`;
+
+const Title = styled.span`
+  min-width: 0;
+  font-family: Pixel;
+  font-size: 0.82vw;
+  line-height: 1.35;
+  color: ${Palette.ink};
 `;
 
 const IconsContainer = styled.div`
+  flex: none;
   display: flex;
-  flex-direction: row;
   align-items: center;
   gap: 0.3vw;
 `;
@@ -245,61 +251,57 @@ const Faction = styled.div`
 const Section = styled.div`
   display: flex;
   flex-direction: column;
-  justify-content: flex-start;
-  align-items: flex-start;
-  margin: 0.3vw;
+  gap: 0.4vw;
+  min-width: 0;
 `;
 
-const SubTitle = styled.div`
-  font-size: 0.8vw;
-  line-height: 1.5vw;
-  text-align: left;
-  justify-content: flex-start;
-  background-color: #f5f0cdff;
+const Label = styled.span`
+  font-family: Pixel;
+  font-size: 0.5vw;
+  text-transform: uppercase;
+  letter-spacing: 0.06vw;
+  color: ${Palette.faint};
+`;
+
+const Foot = styled.div`
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 0.8vw;
+`;
+
+const Chips = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6vw;
+  padding: 0 0.3vw 0.3vw 0;
+`;
+
+const Button = styled.button<{ primary: boolean }>`
+  flex: none;
+  height: 2vw;
+  padding: 0 1vw;
+  font-family: Pixel;
+  font-size: 0.68vw;
+  color: ${Palette.ink};
+  background: ${({ primary }) => (primary ? Palette.button.bg : Palette.info.bg)};
+  border: solid ${Palette.ink} 0.15vw;
   border-radius: 0.5vw;
-  padding: 0.3vw;
-  width: fit-content;
-`;
+  cursor: pointer;
+  transition:
+    background 0.1s ease,
+    transform 0.05s ease;
 
-const Row = styled.div`
-  display: flex;
-  flex-flow: row wrap;
-
-  justify-content: left;
-  align-items: flex-start;
-  margin: 0.3vw;
-  gap: 0.3vw;
-`;
-
-const ConditionText = styled.div<{ objective: boolean }>`
-  font-size: 0.7vw;
-  padding: ${({ objective }) => (objective ? '0.6vw' : '0.2vw')};
-  display: flex;
-  flex-direction: row;
-  justify-content: flex-start;
-  align-items: center;
-  border: solid black 0.15vw;
-  border-radius: 0.3vw;
-  background-color: #fff;
-`;
-
-const Image = styled.img<{ size: number }>`
-  height: ${({ size }) => size}vw;
-  width: ${({ size }) => size}vw;
-  margin-right: ${({ size }) => size * 0.2}vw;
-  user-drag: none;
+  &:hover {
+    background: ${({ primary }) => (primary ? Palette.button.hover : Palette.info.hover)};
+  }
+  &:active {
+    transform: translateY(0.08vw);
+  }
 `;
 
 const IconImage = styled.img<{ size: number }>`
   height: ${({ size }) => size}vw;
   width: ${({ size }) => size}vw;
   user-drag: none;
-`;
-
-const ButtonRow = styled.div`
-  position: absolute;
-  right: 3%;
-  bottom: 5%;
-  display: flex;
-  z-index: 0;
 `;

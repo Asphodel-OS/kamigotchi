@@ -1,19 +1,20 @@
 import { EntityIndex } from 'engine/recs';
-import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
+import { formatFull, Palette } from 'app/components/library/pastel';
 import { Account } from 'network/shapes/Account';
 import { Contribution, Goal } from 'network/shapes/Goals';
 import { DetailedEntity } from 'network/shapes/utils';
-import { parseQuantity } from 'network/shapes/utils/parse';
 import { ActionBar } from './ActionBar';
 import { ProgressBar } from './ProgressBar';
 
+// pinned footer: shared progress, your standing, and the contribute/claim action
 export const Progress = ({
   actions,
   account,
   goal,
   accContribution,
+  unit,
   utils,
 }: {
   actions: {
@@ -23,6 +24,7 @@ export const Progress = ({
   account: Account;
   accContribution: Contribution | undefined;
   goal: Goal;
+  unit: string;
   utils: {
     canContribute: () => [boolean, string];
     canClaim: () => [boolean, string];
@@ -30,67 +32,89 @@ export const Progress = ({
     getFromDescription: (type: string, index: number) => DetailedEntity;
   };
 }) => {
-  const [objType, setObjType] = useState<DetailedEntity>({ ObjectType: '', image: '', name: '' });
+  const max = Number(goal.objective.target.value ?? 0);
+  const current = Number(goal.currBalance);
+  const mine = Number(accContribution?.value ?? 0);
 
-  useEffect(() => {
-    const type = utils.getFromDescription(
-      goal.objective.target.type,
-      goal.objective.target.index ?? 0
-    );
-    setObjType(type);
-  }, [goal]);
+  const tiers = goal.tiers
+    .filter((t) => Number(t.cutoff) > 0)
+    .sort((a, b) => Number(a.cutoff) - Number(b.cutoff));
+  const reached = [...tiers].reverse().find((t) => mine >= Number(t.cutoff));
+  const next = tiers.find((t) => mine < Number(t.cutoff));
 
-  const max = goal.objective.target.value ?? 0;
-  const rightText = ` ${parseQuantity(objType, goal.currBalance)}/${parseQuantity(objType, max)}`;
-  const contributedAmtText = `You've contributed ${parseQuantity(objType, accContribution ? accContribution.value : 0)}`;
+  const standing = () => {
+    if (mine === 0)
+      return next ? `Contribute ${formatFull(next.cutoff)} ${unit} for ${next.name}` : '';
+    const parts = [`You've given ${formatFull(mine)} ${unit}`];
+    if (reached) parts.push(`${reached.name} reached`);
+    if (next && !goal.complete)
+      parts.push(`${formatFull(Number(next.cutoff) - mine)} more for ${next.name}`);
+    return parts.join(' · ');
+  };
 
   return (
-    <Container>
-      <SubTitleText>Progress</SubTitleText>
-      <Row>
-        <div style={{ flexGrow: 1 }}>
-          <ProgressBar
-            max={max}
-            current={goal.currBalance}
-            rightText={rightText}
-            width={90}
-            indicator
-          />
-        </div>
-        <ActionBar actions={actions} account={account} goal={goal} utils={utils} />
-      </Row>
-      <SubText>{contributedAmtText}</SubText>
-    </Container>
+    <Footer>
+      <Left>
+        <Row>
+          <Label>{goal.complete ? 'Complete' : 'Progress'}</Label>
+          <Amount>
+            {formatFull(current)} / {formatFull(max)} {unit}
+          </Amount>
+        </Row>
+        <ProgressBar max={max} current={current} />
+        <Standing>{standing()}</Standing>
+      </Left>
+      <ActionBar
+        actions={actions}
+        account={account}
+        goal={goal}
+        accContribution={accContribution}
+        unit={unit}
+        utils={utils}
+      />
+    </Footer>
   );
 };
 
-const Container = styled.div`
+const Footer = styled.div`
   display: flex;
-  flex-flow: column;
+  align-items: center;
+  gap: 1.4vw;
+  padding: 0.9vw 1.4vw;
+  background: ${Palette.soft};
+`;
 
-  margin: 1vh 1vw;
+const Left = styled.div`
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.45vw;
+  min-width: 0;
 `;
 
 const Row = styled.div`
   display: flex;
-  flex-flow: row;
-  justify-content: space-around;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1vw;
 `;
 
-const SubTitleText = styled.h2`
-  font-size: 1.2vw;
+const Label = styled.span`
   font-family: Pixel;
-  text-align: left;
-  color: #333;
-
-  padding: 0 1vw;
+  font-size: 0.8vw;
+  color: ${Palette.ink};
 `;
 
-const SubText = styled.p`
-  font-size: 1vw;
+const Amount = styled.span`
   font-family: Pixel;
-  text-align: center;
-  color: #333;
+  font-size: 0.68vw;
+  color: ${Palette.muted};
+  font-variant-numeric: tabular-nums;
+`;
 
-  padding: 1vh 1vw 0;
+const Standing = styled.span`
+  font-family: Pixel;
+  font-size: 0.6vw;
+  color: ${Palette.muted};
+  min-height: 0.8vw;
 `;

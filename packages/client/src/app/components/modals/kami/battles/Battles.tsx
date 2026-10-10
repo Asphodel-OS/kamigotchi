@@ -112,7 +112,7 @@ export const Battles = ({
         </Text>
       </Stats>
       <Table>
-        <EventColumn kami={kami} kills={kamidenKills} />
+        <EventColumn kami={kami} kills={kamidenKills} utils={utils} />
         <DateColumn kills={kamidenKills} />
         <AdversaryColumn kills={kamidenKills} utils={utils} />
         <OwnerColumn kills={kamidenKills} utils={utils} />

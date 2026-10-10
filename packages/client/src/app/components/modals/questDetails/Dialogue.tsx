@@ -1,14 +1,12 @@
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 import styled from 'styled-components';
 
-import { EmptyText } from 'app/components/library';
-import { TypewriterComponent } from './Typewriter';
+import { Palette } from 'app/components/library/pastel';
+import { SpeechTypewriter } from './SpeechTypewriter';
 
-type MODE = 'INTRO' | 'OUTRO';
-
+// intro dialogue, then (once the quest is complete) a divider and the outro dialogue below it
 export const Dialogue = ({
   text,
-  color,
   completionText = '',
   isComplete,
   isAccepted,
@@ -17,7 +15,6 @@ export const Dialogue = ({
   onOutroFinished,
 }: {
   text: string;
-  color: string;
   completionText?: string;
   isModalOpen: boolean;
   isComplete: boolean;
@@ -25,178 +22,101 @@ export const Dialogue = ({
   justCompleted: boolean;
   onOutroFinished?: () => void;
 }) => {
-  const [mode, setMode] = useState<MODE>('INTRO');
-  const [wasToggled, setWasToggled] = useState(false);
-
-  const introRef = useRef<HTMLDivElement>(null);
-  const outroRef = useRef<HTMLDivElement>(null);
-  const isUserScrollingIntroRef = useRef(false);
-  const isUserScrollingOutroRef = useRef(false);
-
-  // shows completion text by default intro text as fallback
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const userScrolledRef = useRef(false);
 
   useEffect(() => {
-    if (isModalOpen) {
-      setMode(completionText && isComplete ? 'OUTRO' : 'INTRO');
-      // reset scroll
-      isUserScrollingIntroRef.current = false;
-      isUserScrollingOutroRef.current = false;
-    }
-  }, [isModalOpen, completionText, isComplete]);
+    userScrolledRef.current = false;
+  }, [isModalOpen, justCompleted]);
 
-  // if the user is not scrolling autoscroll to track generated text
-  const handleScroll = (
-    ref: React.RefObject<HTMLDivElement>,
-    isUserScrollingRef: React.MutableRefObject<boolean>
-  ) => {
-    if (ref.current && !isUserScrollingRef.current) {
-      ref.current.scrollTop = ref.current.scrollHeight;
-    }
+  // follow the typed text unless the reader scrolled up
+  const followText = useCallback(() => {
+    const el = scrollRef.current;
+    if (el && !userScrolledRef.current) el.scrollTop = el.scrollHeight;
+  }, []);
+
+  const handleScroll = () => {
+    const el = scrollRef.current;
+    if (!el) return;
+    userScrolledRef.current = Math.abs(el.scrollHeight - el.clientHeight - el.scrollTop) >= 50;
   };
 
-  // determine whether the user is scrolling based on scroll position
-  const handleUserScroll = (
-    ref: React.RefObject<HTMLDivElement>,
-    scrollingRef: React.MutableRefObject<boolean>
-  ) => {
-    if (!ref.current) return;
-    const { scrollTop, scrollHeight, clientHeight } = ref.current;
-    const isAtBottom = Math.abs(scrollHeight - clientHeight - scrollTop) < 50;
-    scrollingRef.current = !isAtBottom;
-  };
-
-  // trigger a toggle between the two modes
-  const toggleSections = () => {
-    setMode((mode) => (mode === 'INTRO' ? 'OUTRO' : 'INTRO'));
-    setWasToggled((t) => !t);
-  };
-
-  /////////////////
-  // RENDER
+  const showOutro = isComplete && !!completionText;
 
   return (
-    <>
-      {!!completionText && (
-        <Divider color={color} expanded={mode === 'INTRO'} onClick={toggleSections}>
-          Intro:
-        </Divider>
-      )}
-      <Text
-        ref={introRef}
-        isExpanded={mode === 'INTRO'}
-        color={color}
-        onScroll={() => handleUserScroll(introRef, isUserScrollingIntroRef)}
-      >
-        {!isAccepted ? (
-          <TypewriterComponent
-            text={text}
-            multiLine
-            speed={15}
-            retrigger={`${isModalOpen}${wasToggled}`}
-            onUpdate={() => handleScroll(introRef, isUserScrollingIntroRef)}
-          />
-        ) : (
-          <TypewriterComponent text={text} interrupted />
-        )}
-      </Text>
-      {!!completionText && (
+    <Scroll ref={scrollRef} onScroll={handleScroll}>
+      <Card>
+        <SpeechTypewriter
+          text={text}
+          animate={!isAccepted}
+          retrigger={`${isModalOpen}`}
+          onUpdate={followText}
+        />
+      </Card>
+      {showOutro && (
         <>
-          <Divider color={color} expanded={mode === 'OUTRO'} onClick={toggleSections}>
-            Outro:
-          </Divider>
-          <Text
-            ref={outroRef}
-            isExpanded={mode === 'OUTRO'}
-            color={color}
-            onScroll={() => handleUserScroll(outroRef, isUserScrollingOutroRef)}
-          >
-            {isComplete && justCompleted ? (
-              <TypewriterComponent
-                text={completionText}
-                multiLine
-                speed={15}
-                retrigger={`${isModalOpen}${wasToggled}${justCompleted}`}
-                onUpdate={() => handleScroll(outroRef, isUserScrollingOutroRef)}
-                onAllLinesComplete={onOutroFinished}
-              />
-            ) : isComplete && !justCompleted ? (
-              <TypewriterComponent text={completionText} interrupted />
-            ) : (
-              <EmptyText
-                textColor={color}
-                text={['Empty for now, finish this quest and maybe then...']}
-              />
-            )}
-          </Text>
+          <Divider>Quest completed</Divider>
+          <Card>
+            <SpeechTypewriter
+              text={completionText}
+              animate={justCompleted}
+              retrigger={`${isModalOpen}${justCompleted}`}
+              onUpdate={followText}
+              onAllLinesComplete={onOutroFinished}
+            />
+          </Card>
         </>
       )}
-    </>
+    </Scroll>
   );
 };
 
-const Text = styled.div<{ isExpanded?: boolean; color?: string }>`
-  position: relative;
-  visibility: ${({ isExpanded }) => (isExpanded ? 'visible' : 'hidden')};
-
-  width: 100%;
-  height: ${({ isExpanded }) => (isExpanded ? '65%' : '0%')};
-  padding: 0vw 1vw;
-  top: 0;
-
-  flex-grow: 1;
-  display: flex;
-  flex-flow: column nowrap;
-  justify-content: flex-start;
-
-  font-size: 1vw;
-  line-height: 2vw;
-  text-align: justify;
-  white-space: pre-line;
-  word-wrap: break-word;
-  color: ${({ isExpanded, color }) => (isExpanded ? color : '#cfcfcf')};
-
-  transition:
-    height 0.3s ease,
-    visibility 0.3s ease;
-
+const Scroll = styled.div`
+  flex: 1;
+  min-height: 0;
   overflow-y: auto;
-  scrollbar-gutter: stable;
+  padding: 1vw 1.2vw;
 
-  ::-webkit-scrollbar {
-    background: transparent;
+  display: flex;
+  flex-direction: column;
+  gap: 0.9vw;
+
+  scrollbar-width: thin;
+  scrollbar-color: #b6b6b6 transparent;
+  &::-webkit-scrollbar {
     width: 0.3vw;
+    background: transparent;
   }
-
-  ::-webkit-scrollbar-thumb {
-    background-color: ${({ color }) => color};
+  &::-webkit-scrollbar-thumb {
+    background-color: #b6b6b6;
     border-radius: 0.3vw;
-    background-clip: padding-box;
   }
 `;
 
-const Divider = styled.button<{ color?: string; expanded?: boolean }>`
-  position: relative;
-  border: ${({ color }) => `solid ${color} 0.15vw`};
+const Card = styled.div`
+  flex: none;
+  padding: 0.9vw;
+  background: ${Palette.soft};
+  border: solid ${Palette.line} 0.12vw;
+  border-radius: 0.8vw;
+`;
 
-  width: 100%;
-  height: 3%;
-
+const Divider = styled.div`
+  flex: none;
   display: flex;
-  flex-flow: row nowrap;
-  justify-content: space-between;
   align-items: center;
+  gap: 0.6vw;
 
-  font-size: 1vw;
-  padding: 0.8vw;
-  color: ${({ color }) => color};
+  font-family: Pixel;
+  font-size: 0.55vw;
+  text-transform: uppercase;
+  letter-spacing: 0.06vw;
+  color: ${Palette.faint};
 
-  cursor: pointer;
-
-  ::after {
-    content: ${({ expanded }) => (expanded ? '"▾"' : '"▸"')};
-    color: ${({ color }) => color};
-    font-size: 2.5vw;
-    transform: scale(0.8) translateY(-0.2vw);
-    transition: transform 0.3s ease;
+  &::before,
+  &::after {
+    content: '';
+    flex: 1;
+    border-top: solid ${Palette.line} 0.1vw;
   }
 `;
