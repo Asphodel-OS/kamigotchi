@@ -1812,7 +1812,7 @@ ROB: “Maybe you folks all just look alike.”
 ROB: “Could be I look different from time to time.”
 ROB: “Does it even matter? How ‘bout this?”
 ROB: “I had one of these burgers in my pocket. You can have it.”",Complete SQ802,Move to Restricted Area,1x Cheeseburger
-SQ900,3900,To Deploy,Warm Your Hands,Yes,SIDE,MENU,"MENU: “Operator, something’s tugging at my sensors. It points back to the old graves.”
+SQ900,3900,In Game,Warm Your Hands,Yes,SIDE,MENU,"MENU: “Operator, something’s tugging at my sensors. It points back to the old graves.”
 MENU: “Mina said there were no lost souls left there. Not even remnants. So what’s calling?”
 MENU: “Whatever it is, it feels cold. Bring three sticks and let’s give it a fire.”","MENU: “Whoa. That’s a lot of flame for three sticks.”
 MENU: “There’s something in the ashes… a card. It’s warm. Looks like someone climbing out of a fire.”
