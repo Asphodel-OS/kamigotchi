@@ -121,7 +121,10 @@ export const Room = ({ index }: { index: number }) => {
     return room.backgrounds[phase];
   };
 
-  const getClickbox = (object: RoomAsset) => {
+  // keyed by room and position: object names repeat (room 77 has two 'coop trigger'), and a duplicate
+  // key leaves a stale clickbox mounted in the next rooms
+  const getClickbox = (object: RoomAsset, i: number) => {
+    const key = `${room.index}-${i}`;
     let coords = object.coordinates;
     if (!coords) return;
     const scale = 100 / 128;
@@ -135,10 +138,10 @@ export const Room = ({ index }: { index: number }) => {
     else if (object.onClick) onClick = object.onClick;
 
     return object.name !== 'trading' ? (
-      <Clickbox key={object.name} x1={x1} y1={y1} x2={x2} y2={y2} onClick={onClick} />
+      <Clickbox key={key} x1={x1} y1={y1} x2={x2} y2={y2} onClick={onClick} />
     ) : (
       <Clickbox
-        key={object.name}
+        key={key}
         x1={x1}
         y1={y1}
         x2={x2}
@@ -157,7 +160,7 @@ export const Room = ({ index }: { index: number }) => {
     <Wrapper>
       <Container>
         <Background draggable='false' src={getBackground()} />
-        {room.objects.map((object) => getClickbox(object))}
+        {room.objects.map((object, i) => getClickbox(object, i))}
       </Container>
     </Wrapper>
   );
